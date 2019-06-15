@@ -25,9 +25,10 @@ public class LidarServer {
     private Thread mThread;
     private Process mProcess;
     private boolean mEnding = false;
-	private final String FILENAME = "LidarServer.java";
-    public Hashtable<Double,Double> lidarScan = new Hashtable<Double,Double>();
-    private Hashtable<Double,Integer> lidarZeros = new Hashtable<Double,Integer>();
+    private final String FILENAME = "LidarServer.java";
+    public enum LidarScanInfo {RealAngle, Distance}
+    public Hashtable<Double, Hashtable<LidarScanInfo, Double>> lidarScan = new Hashtable<>();
+    private Hashtable<Double,Integer> lidarZeros = new Hashtable<>();
     private String lidarPath = "/home/root/ultra_simple";
     private double minimumZeros = 5;
 
@@ -138,15 +139,22 @@ public class LidarServer {
             try {
                 long ts = Long.parseLong(parts[0]);
                 long ms_ago = curSystemTime - ts;
-                double angle = ((int) Double.parseDouble(parts[1])) % 360;
-                double distance = Double.parseDouble(parts[2]);
+                double angle = Double.parseDouble(parts[1]) % 360;
+                double roundedAngle = ((int) Double.parseDouble(parts[1])) % 360;
+                double distance = Double.parseDouble(parts[2]) / 1000;
 
-                if (!(lidarZeros.containsKey(angle))){lidarZeros.put(angle,0);}
+                if (!(lidarZeros.containsKey(roundedAngle))){
+                    lidarZeros.put(roundedAngle,0);
+                }
 
-                if (distance == 0 && !(lidarZeros.get(angle) >= minimumZeros))
+                if (distance == 0 && !(lidarZeros.get(angle) >= minimumZeros)){
                    lidarZeros.put(angle,lidarZeros.get(angle) + 1);
-                else
-                    lidarScan.put(angle,distance);
+                } else {
+                    Hashtable<LidarScanInfo,Double> data = new Hashtable<>();
+                    data.put(LidarScanInfo.RealAngle, angle);
+                    data.put(LidarScanInfo.Distance,  distance);
+                    lidarScan.put(roundedAngle,data);
+                }
                 if (distance != 0)
                     lidarZeros.put(angle,0);
             } catch (java.lang.NumberFormatException e) {
