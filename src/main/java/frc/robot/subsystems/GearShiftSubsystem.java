@@ -47,12 +47,8 @@ public class GearShiftSubsystem extends Subsystem {
 
     public void toggleGear() {Utils.toggleDoubleSolenoid(this.gearShiftSolenoid);}
 
-    public double getCurrentGearRatio(){
-        if (currentlyInHighGear()){
-            return HIGH_GEAR_RATIO;
-        } else {
-            return LOW_GEAR_RATIO;
-        }
+    public double getCurrentGearRatios() {
+        return currentlyInHighGear() ? HIGH_GEAR_RATIO : LOW_GEAR_RATIO;
     }
 
     @Override
