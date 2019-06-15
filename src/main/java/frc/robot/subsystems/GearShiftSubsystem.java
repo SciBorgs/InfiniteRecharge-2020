@@ -34,7 +34,7 @@ public class GearShiftSubsystem extends Subsystem {
 	}
     
     public void autoShift(){
-        double speed = Robot.robotPosition.getSpeed();
+        double speed = Robot.encoderLocalization.getSpeed();
         if(speed > UPPER_HIGH_GEAR_THRESHOLD){shiftDown();}
         if(speed < LOWER_LOW_GEAR_THRESHOLD) {shiftUp();}
     }

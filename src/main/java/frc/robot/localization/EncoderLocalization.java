@@ -1,4 +1,4 @@
-package frc.robot.helpers;
+package frc.robot.localization;
 
 import frc.robot.Robot;
 
@@ -13,7 +13,7 @@ import frc.robot.Utils;
 import frc.robot.helpers.Pigeon;
 import frc.robot.logging.Logger.DefaultValue;
 
-public class RobotPosition {
+public class EncoderLocalization {
 
     public static final double WHEEL_RADIUS = Utils.inchesToMeters(3);
     public static final double ROBOT_RADIUS = Utils.inchesToMeters(15.945); // Half the distance from wheel to wheel
@@ -32,7 +32,7 @@ public class RobotPosition {
     private Pigeon pigeon;
     private TalonSRX pigeonTalon;
 
-    public RobotPosition(){
+    public EncoderLocalization(){
 
         this.pigeonTalon = new TalonSRX(PortMap.PIGEON_TALON);
         this.pigeon      = new Pigeon(pigeonTalon);
