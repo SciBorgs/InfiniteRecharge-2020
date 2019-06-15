@@ -14,6 +14,10 @@ public class GearShiftSubsystem extends Subsystem {
 	private final String FILENAME = "GearShiftSubsystem.java";
     public DoubleSolenoid gearShiftSolenoid;
     
+
+    public static final double LOW_GEAR_RATIO = 1 / 19.16; // 1 rotations of the wheel is 9.08 rotations of the encoder
+    public static final double HIGH_GEAR_RATIO = 1 / 9.07;
+
     private final double UPPER_HIGH_GEAR_THRESHOLD = 1000;
     private final double LOWER_LOW_GEAR_THRESHOLD = 500;
 	public static final DoubleSolenoid.Value HIGH_GEAR_VALUE = Value.kForward;
@@ -42,6 +46,10 @@ public class GearShiftSubsystem extends Subsystem {
     public void shiftDown(){this.gearShiftSolenoid.set(LOW_GEAR_VALUE);}
 
     public void toggleGear() {Utils.toggleDoubleSolenoid(this.gearShiftSolenoid);}
+
+    public double getCurrentGearRatios() {
+        return currentlyInHighGear() ? HIGH_GEAR_RATIO : LOW_GEAR_RATIO;
+    }
 
     @Override
     protected void initDefaultCommand() {

@@ -57,6 +57,10 @@ public class DriveSubsystem extends Subsystem {
 		this.rm = newMotorObject(PortMap.RIGHT_MIDDLE_SPARK);
         this.rb = newMotorObject(PortMap.RIGHT_BACK_SPARK);
 
+        this.lf.setInverted(true);
+        this.lm.setInverted(true);
+        this.lb.setInverted(true);
+
         this.lm.follow(this.lf);
         this.lb.follow(this.lf);
 
@@ -137,8 +141,8 @@ public class DriveSubsystem extends Subsystem {
     }
         	
 	public void setSpeedTank(double leftSpeed, double rightSpeed) {
-        setMotorSpeed(this.lf,  leftSpeed * this.driveMultiplier);
-        setMotorSpeed(this.rf, -rightSpeed * this.driveMultiplier); // Possible needs to be negated
+        setMotorSpeed(this.lf, leftSpeed  * this.driveMultiplier);
+        setMotorSpeed(this.rf, rightSpeed * this.driveMultiplier);
         Robot.logger.addData(FILENAME, "wheel output", this.lf.get(), DefaultValue.Previous);
     }
 	

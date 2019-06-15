@@ -15,11 +15,7 @@ import frc.robot.logging.Logger.DefaultValue;
 
 public class RobotPosition {
 
-    public static enum ChassisSide {Left, Right};
-
     public static final double WHEEL_RADIUS = Utils.inchesToMeters(3);
-    public static final double ENC_WHEEL_RATIO_LOW_GEAR = 1 / 19.16; // 1 rotations of the wheel is 9.08 rotations of the encoder
-    public static final double ENC_WHEEL_RATIO_HIGH_GEAR = 1 / 9.07;
     public static final double ROBOT_RADIUS = Utils.inchesToMeters(15.945); // Half the distance from wheel to wheel
 
     public static final double ORIGINAL_ANGLE = Math.PI/2, ORIGINAL_X = 0, ORIGINAL_Y = 0;
@@ -28,11 +24,10 @@ public class RobotPosition {
     public static final double INTERVAL_LENGTH = .02; // Seconds between each tick for commands
     public static final double STATIC_POSITION_ERROR = .01 * WHEEL_MEASURMENTS; // If we have moved less than this, we say we aren't moving (in meters)
     public static final double STATIC_ANGLE_ERROR = Math.toRadians(.4) * ANGLE_MEASURMENTS; // If we have turned less than this, we say we aren't turning
-	private final String FILENAME = "robotPosition.java";
+	private final String FILENAME = "RobotPosition.java";
 
     private ArrayList<Double> robotXs, robotYs, robotAngles;
     private Hashtable<CANSparkMax,ArrayList<Double>> wheelPositions;
-    private Hashtable<CANSparkMax,Boolean> negated; // The motors on the left have negated inputs/outputs. This keeps track of that
     private ArrayList<CANSparkMax> sparks;
     private Pigeon pigeon;
     private TalonSRX pigeonTalon;
@@ -47,11 +42,10 @@ public class RobotPosition {
         this.robotAngles = new ArrayList<Double>();
 
         this.wheelPositions = new Hashtable<CANSparkMax,ArrayList<Double>>();
-        this.negated        = new Hashtable<CANSparkMax,Boolean>();
         this.sparks         = new ArrayList<CANSparkMax>();
 
-        keepTrackOfWheel(Robot.driveSubsystem.lm,ChassisSide.Left);
-        keepTrackOfWheel(Robot.driveSubsystem.rm,ChassisSide.Right);
+        keepTrackOfWheel(Robot.driveSubsystem.lf);
+        keepTrackOfWheel(Robot.driveSubsystem.rf);
 
         resetPosition();
     }
@@ -60,10 +54,9 @@ public class RobotPosition {
     public ArrayList<Double> getRobotYs(){return this.robotYs;}
     public ArrayList<Double> getAngles() {return this.robotAngles;}
 
-    public void keepTrackOfWheel(CANSparkMax spark,ChassisSide chassisSide){
+    public void keepTrackOfWheel(CANSparkMax spark){
         // this allows the code to easily keep track of the position of motors for the chassis
         this.wheelPositions.put(spark,new ArrayList<Double>());
-        this.negated.put(spark,chassisSide == ChassisSide.Left);
         this.sparks.add(spark);
     }
 
@@ -89,8 +82,8 @@ public class RobotPosition {
 
     public double wheelPosition(CANSparkMax motor) {
         // Returns the encoder position of a spark
-        double value = ENC_WHEEL_RATIO_LOW_GEAR * Robot.encoderSubsystem.getSparkAngle(motor) * WHEEL_RADIUS; // Should change to alternate low gear/high gear with whatever it is
-        return this.negated.get(motor) ? (0 - value) : value;
+        // TODO: Should change to alternate low gear/high gear with whatever it is
+        return Robot.gearShiftSubsystem.getCurrentGearRatio() * Robot.encoderSubsystem.getSparkAngle(motor) * WHEEL_RADIUS;
     }
 
     public void recordWheelPosition(CANSparkMax spark){
@@ -172,7 +165,6 @@ public class RobotPosition {
     }
 
     public void updatePositionTank(){
-        //System.out.println("updating position");
         changePoint(nextPosTankPigeon(getX(), getY(), getAngle(), wheelRotationChange(Robot.driveSubsystem.lm), wheelRotationChange(Robot.driveSubsystem.rm))); 
     }
     
