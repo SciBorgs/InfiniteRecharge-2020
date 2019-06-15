@@ -4,6 +4,7 @@ import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import frc.robot.subsystems.*;
 import frc.robot.commands.*;
 import frc.robot.helpers.*;
+import frc.robot.localization.*;
 import frc.robot.logging.*;
 import frc.robot.logging.Logger.DefaultValue;
 import edu.wpi.first.wpilibj.TimedRobot;
@@ -15,7 +16,7 @@ public class Robot extends TimedRobot {
     
     public static DriveSubsystem      driveSubsystem      = new DriveSubsystem();
     public static EncoderSubsystem    encoderSubsystem    = new EncoderSubsystem();
-    public static RobotPosition       robotPosition       = new RobotPosition();
+    public static EncoderLocalization encoderLocalization = new EncoderLocalization();
     public static GearShiftSubsystem  gearShiftSubsystem  = new GearShiftSubsystem();
     public static LimelightSubsystem  limelightSubsystem  = new LimelightSubsystem();
     public static PneumaticsSubsystem pneumaticsSubsystem = new PneumaticsSubsystem();
@@ -36,7 +37,7 @@ public class Robot extends TimedRobot {
 
     public void robotInit() {
         attemptsSinceLastLog = 0;
-        robotPosition.updatePositionTank();
+        encoderLocalization.updatePositionTank();
         pneumaticsSubsystem.stopCompressor();
         logger.incrementPrevious("robot.java", "deploy", DefaultValue.Previous);
 
@@ -65,7 +66,7 @@ public class Robot extends TimedRobot {
  
     public void robotPeriodic() {
         Scheduler.getInstance().run();
-        robotPosition.updatePositionTank();
+        encoderLocalization.updatePositionTank();
     }
         
     public void autonomousInit() {
