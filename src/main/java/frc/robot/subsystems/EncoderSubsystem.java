@@ -10,7 +10,7 @@ public class EncoderSubsystem extends Subsystem {
     
     public static final double NEO_TICKS_PER_REV = 1; // For sparks
     public static final double ENC_TICKS_PER_REV = 4096; // For talons
-    private final String FILENAME = "positioningSubsystem.java";
+    private final String FILENAME = "EncoderSubsystem.java";
 
     public EncoderSubsystem(){}
 
