@@ -30,7 +30,7 @@ public class LidarServer {
     public Hashtable<Double, Hashtable<LidarScanInfo, Double>> lidarScan = new Hashtable<>();
     private Hashtable<Double,Integer> lidarZeros = new Hashtable<>();
     private String lidarPath = "/home/root/ultra_simple";
-    private double minimumZeros = 5;
+    private double minimumZeros = 3;
 
     public static LidarServer getInstance() {
         if (mInstance == null) {
