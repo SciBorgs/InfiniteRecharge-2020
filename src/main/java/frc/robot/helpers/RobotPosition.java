@@ -16,8 +16,6 @@ import frc.robot.logging.Logger.DefaultValue;
 public class RobotPosition {
 
     public static final double WHEEL_RADIUS = Utils.inchesToMeters(3);
-    public static final double ENC_WHEEL_RATIO_LOW_GEAR = 1 / 19.16; // 1 rotations of the wheel is 9.08 rotations of the encoder
-    public static final double ENC_WHEEL_RATIO_HIGH_GEAR = 1 / 9.07;
     public static final double ROBOT_RADIUS = Utils.inchesToMeters(15.945); // Half the distance from wheel to wheel
 
     public static final double ORIGINAL_ANGLE = Math.PI/2, ORIGINAL_X = 0, ORIGINAL_Y = 0;
@@ -85,7 +83,7 @@ public class RobotPosition {
     public double wheelPosition(CANSparkMax motor) {
         // Returns the encoder position of a spark
         // TODO: Should change to alternate low gear/high gear with whatever it is
-        return ENC_WHEEL_RATIO_LOW_GEAR * Robot.encoderSubsystem.getSparkAngle(motor) * WHEEL_RADIUS;
+        return Robot.gearShiftSubsystem.getCurrentGearRatio() * Robot.encoderSubsystem.getSparkAngle(motor) * WHEEL_RADIUS;
     }
 
     public void recordWheelPosition(CANSparkMax spark){
