@@ -2,7 +2,6 @@ package frc.robot.logging;
 
 import java.util.Hashtable;
 import java.util.Calendar;
-import java.util.HashSet;
 import java.util.ArrayList;
 
 import edu.wpi.first.wpilibj.Timer;
@@ -200,5 +199,7 @@ public class Logger{
         csvHelper.addRow(createFullCurrentData());
         resetCurrentData();
     }
+
+    public void writeLoggedData(){csvHelper.writeRows();}
 
 }

@@ -58,6 +58,7 @@ public class Robot extends TimedRobot {
     public void logDataPeriodic() {
         if (LOG_PERIOD == attemptsSinceLastLog) {
             attemptsSinceLastLog = 0;
+            allPeriodicLogs();
             logger.logData();
         } else {
             attemptsSinceLastLog++;
@@ -75,6 +76,7 @@ public class Robot extends TimedRobot {
     public void autonomousPeriodic() {
         new SwerveTankDriveCommand().start();
         pneumaticsSubsystem.startCompressor();
+        enabledPeriodic();
     }
     
     @Override
@@ -84,10 +86,20 @@ public class Robot extends TimedRobot {
     public void teleopPeriodic() {
         new TankDriveCommand().start();
         pneumaticsSubsystem.startCompressor();
+        enabledPeriodic();
     }
 
     public void testPeriodic() {
+        enabledPeriodic();
     }
 
-    public void disabledInit() {}
+    public void enabledPeriodic() {logDataPeriodic();}
+
+    public void disabledInit() {
+        /* 
+        allPeriodicLogs();
+        logger.logData();
+        logger.writeLoggedData(); // Uncomment to write the data to the file
+        */
+    }
 }
