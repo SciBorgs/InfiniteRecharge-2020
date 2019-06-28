@@ -16,14 +16,10 @@ public class Utils{
 
     public static double METERS_TO_INCHES = 39.37;
 
-    public static double metersToInches(double meters){
-        return meters * METERS_TO_INCHES;
-    }
-    public static double inchesToMeters(double inches){
-        return inches / METERS_TO_INCHES;
-    }
+    public static double metersToInches(double meters){return meters * METERS_TO_INCHES;}
+    public static double inchesToMeters(double inches){return inches / METERS_TO_INCHES;}
 
-    public static double last(ArrayList<Double> arr) {return arr.get(arr.size() - 1);}
+    public static<T> T last(ArrayList<T> arr) {return arr.get(arr.size() - 1);}
 
     public static int signOf(double value){
         if (value == 0){
@@ -35,8 +31,7 @@ public class Utils{
 
     public static void trimIf(ArrayList<Double> arr, int maxSize) {
         // Trims an array down to a max size, starting from the start
-        while (maxSize < arr.size())
-            arr.remove(0);
+        while (maxSize < arr.size()){arr.remove(0);}
     }
 
     public static boolean inRange(double n1, double n2, double error){
@@ -58,12 +53,13 @@ public class Utils{
     }
 
     public static double limitOutput(double output, double max){
-        if (output > max)
+        if (output > max) {
             return max;
-        else if (output < - max)
+        } else if (output < - max) {
             return -max;
-        else
+        } else {
             return output;
+        }
     }
 
     public static void setTalon(TalonSRX talon, double speed){
@@ -103,10 +99,8 @@ public class Utils{
 
     public static Value oppositeDoubleSolenoidValue(Value val){
         switch (val) {
-            case kForward:
-                return Value.kReverse;
-            case kReverse:
-                return Value.kForward;
+            case kForward: return Value.kReverse;
+            case kReverse: return Value.kForward;
         }
         return Value.kOff;
     }
@@ -115,9 +109,7 @@ public class Utils{
         doubleSolenoid.set(oppositeDoubleSolenoidValue(doubleSolenoid.get()));
     }
 
-    public static boolean oppositeDigitalOutput(boolean bool){
-        return !bool;
-    }
+    public static boolean oppositeDigitalOutput(boolean bool){return !bool;}
 
     public static void toggleDigitalOutput(DigitalOutput digitalOutput){
         oppositeDigitalOutput(digitalOutput.get());
