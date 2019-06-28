@@ -120,7 +120,7 @@ public class Logger{
     }
     public double getLastLogValueDouble(String filename, String valueName){
         // Converts last log value as a string to a double, returns 0 if it isn't a number
-        // Maybe TODO - should it return an error if the previous value is not a number of ""? I think it shouldn't but to consider
+        // Maybe TODO - should it throw an error if the previous value is not a number of ""? I think it shouldn't but to consider
         String stringValue = getLastValueLogged(filename, valueName);
         try {
             return Double.valueOf(stringValue);
@@ -157,13 +157,13 @@ public class Logger{
         double matchTime = Timer.getMatchTime();
         double batteryVoltage = RobotController.getBatteryVoltage();
         String prefix = "default";
-        addData(prefix, "year",year, DefaultValue.Previous);
-        addData(prefix, "month",month, DefaultValue.Previous);
-        addData(prefix, "day",day, DefaultValue.Previous);
-        addData(prefix, "hour",hour, DefaultValue.Previous);
-        addData(prefix, "minute",minute, DefaultValue.Previous);
-        addData(prefix, "second",second, DefaultValue.Previous);
-        addData(prefix, "match time",matchTime, DefaultValue.Previous);
+        addData(prefix, "year",year,                      DefaultValue.Previous);
+        addData(prefix, "month",month,                    DefaultValue.Previous);
+        addData(prefix, "day",day,                        DefaultValue.Previous);
+        addData(prefix, "hour",hour,                      DefaultValue.Previous);
+        addData(prefix, "minute",minute,                  DefaultValue.Previous);
+        addData(prefix, "second",second,                  DefaultValue.Previous);
+        addData(prefix, "match time",matchTime,           DefaultValue.Previous);
         addData(prefix, "battery voltage",batteryVoltage, DefaultValue.Previous);
     }
 
