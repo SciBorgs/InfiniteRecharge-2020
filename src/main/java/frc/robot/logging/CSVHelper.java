@@ -15,6 +15,7 @@ public class CSVHelper {
     private String fileName;
     private String fileContent;
     private ArrayList<String> topics;
+    private ArrayList<String> rowsToAdd;
     private HashSet<String> topicLookup;
     private String lastLine;
 
@@ -23,15 +24,16 @@ public class CSVHelper {
     public CSVHelper(String filename) throws IOException{
         this.fileName = filename;
         BufferedReader reader = new BufferedReader(new FileReader(fileName));
-        topics = new ArrayList<String>();
+        this.topics = new ArrayList<String>();
         try{
             StringTokenizer firstRow = new StringTokenizer(reader.readLine(), ",");
         
             while(firstRow.hasMoreTokens()){
-                topics.add(firstRow.nextToken());
+                this.topics.add(firstRow.nextToken());
             }
         }catch (Exception e){}
-        topicLookup = Utils.arrayListToHashset(topics);
+        this.topicLookup = Utils.arrayListToHashset(this.topics);
+        this.rowsToAdd = new ArrayList<String>();
         reader.close();
         updateLastLine();
 
@@ -101,7 +103,7 @@ public class CSVHelper {
         String tempLastLine = "";
         String current = "";
         while((current = readLine(reader)) != null){
-            fileContent += current;
+            this.fileContent += current;
             tempLastLine = current;
         }
         lastLine = tempLastLine;
@@ -112,7 +114,7 @@ public class CSVHelper {
         updateLastLine();
         StringTokenizer lastLineString = new StringTokenizer(lastLine, ",");
         Hashtable<String, String> lastrow = new Hashtable<String, String>();
-        for(String topic : topics){
+        for(String topic : this.topics){
             String value = "";
             try{
                 value = lastLineString.nextToken();
@@ -126,19 +128,26 @@ public class CSVHelper {
     public void addRow(Hashtable<String,String> row){
         // Should add a row to the next empty row of the sheet
         // The key of the hashtable should be the name of the topic
-        PrintWriter writer = newPrintWriter(fileName, true);
         String content = "";
-        for(String topic : topics){
+        for(String topic : this.topics){
             String value = row.get(topic);
             if (value == null){
                 value = "";
             }
             content += (value + ",");
         }
-        int contentSize = content.length();
-        content = content.substring(0, contentSize - 1);
-        writer.println(content);
+        this.rowsToAdd.add(content);
+    }
+
+    public void writeRows(){
+        PrintWriter writer = newPrintWriter(fileName, true);
+        for (String content : this.rowsToAdd){
+            int contentSize = content.length();
+            content = content.substring(0, contentSize - 1);
+            writer.println(content);
+        }
         writer.close();
+        this.rowsToAdd = new ArrayList<String>();
     }
 
     public void addTopic(String topic){
@@ -178,8 +187,8 @@ public class CSVHelper {
         newFile.renameTo(oldFile);
         closeReader(reader);
         writer.close();
-        topics.add(topic);
-        topicLookup.add(topic);
+        this.topics.add(topic);
+        this.topicLookup.add(topic);
     }
 
     public ArrayList<String> getTopics(){
@@ -188,7 +197,7 @@ public class CSVHelper {
     }
 
     public boolean topicExists(String topic){
-        return topicLookup.contains(topic);
+        return this.topicLookup.contains(topic);
     }
 
 }
