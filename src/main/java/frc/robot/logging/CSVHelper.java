@@ -12,8 +12,7 @@ import java.io.*;
 // FILE HAS NOT BEEN CLEANED UP //
 public class CSVHelper {
 
-    private String fileName;
-    private String fileContent;
+    private String filename;
     private ArrayList<String> topics;
     private ArrayList<String> rowsToAdd;
     private HashSet<String> topicLookup;
@@ -22,9 +21,11 @@ public class CSVHelper {
     // Precondition: File already has 1 entry that doesn't end in a comma
 
     public CSVHelper(String filename) throws IOException{
-        this.fileName = filename;
-        BufferedReader reader = new BufferedReader(new FileReader(fileName));
-        this.topics = new ArrayList<String>();
+        this.filename = filename;
+        // Not using newBufferedReader b/c when instantiated, we want it to error out of the file isn't found
+        BufferedReader reader = new BufferedReader(new FileReader(this.filename));
+        this.topics    = new ArrayList<String>();
+        this.rowsToAdd = new ArrayList<String>();
         try{
             StringTokenizer firstRow = new StringTokenizer(reader.readLine(), ",");
         
@@ -33,19 +34,17 @@ public class CSVHelper {
             }
         }catch (Exception e){}
         this.topicLookup = Utils.arrayListToHashset(this.topics);
-        this.rowsToAdd = new ArrayList<String>();
         reader.close();
         updateLastLine();
-
     }
 
     private void fileNotFound(){
         System.out.println("FILE NOT FOUND (CSVHelper)");
     }
 
-    private BufferedReader newBufferedReader(String fileName){
+    private BufferedReader newBufferedReader(String filename){
         try {
-            return new BufferedReader(new FileReader(fileName));
+            return new BufferedReader(new FileReader(filename));
         } catch (IOException E) {
             fileNotFound();
             return null;
@@ -53,9 +52,9 @@ public class CSVHelper {
     }
 
     // Check With Bowen -> should the append be false in the cases when there is currently no bool in the constructor?
-    private PrintWriter newPrintWriter(String fileName, boolean append){
+    private PrintWriter newPrintWriter(String filename, boolean append){
         try {
-            return new PrintWriter(new BufferedWriter(new FileWriter(fileName, append)));
+            return new PrintWriter(new BufferedWriter(new FileWriter(filename, append)));
         } catch (IOException E) {
             fileNotFound();
             return null;
@@ -99,14 +98,13 @@ public class CSVHelper {
     }
 
     private void updateLastLine(){
-        BufferedReader reader = newBufferedReader(fileName);
+        BufferedReader reader = newBufferedReader(filename);
         String tempLastLine = "";
         String current = "";
         while((current = readLine(reader)) != null){
-            this.fileContent += current;
             tempLastLine = current;
         }
-        lastLine = tempLastLine;
+        this.lastLine = tempLastLine;
         closeReader(reader);
     }
 
@@ -140,10 +138,9 @@ public class CSVHelper {
     }
 
     public void writeRows(){
-        PrintWriter writer = newPrintWriter(fileName, true);
+        PrintWriter writer = newPrintWriter(filename, true);
         for (String content : this.rowsToAdd){
-            int contentSize = content.length();
-            content = content.substring(0, contentSize - 1);
+            content = content.substring(0, content.length() - 1);
             writer.println(content);
         }
         writer.close();
@@ -153,21 +150,22 @@ public class CSVHelper {
     public void addTopic(String topic){
         // Adds a rightmost topic with every cell empty except the top one w/ the topic name
         // Should only work if the topic has not been used before
-        if (topicExists(topic)){
-            return;
-        }
-        File oldFile = new File(fileName);
-        int insertionSpot = fileName.length() - 4;
-        String newFileName = fileName.substring(0, insertionSpot) + "0" + fileName.substring(insertionSpot);
-        File newFile = new File(newFileName);
+        if (topicExists(topic)){return;}
+
+        int insertionSpot = filename.length() - ".csv".length(); // Write before the ".csv"
+        String newfilename = filename.substring(0, insertionSpot) + "-THIS-IS-A-TEMPORARY-FILE" + filename.substring(insertionSpot);
+        File oldFile = new File(filename);
+        File newFile = new File(newfilename);
+
         try {
             newFile.createNewFile();
         } catch (Exception e) {
-            System.out.println("couldn't create file: ");
-            System.out.println(newFileName);
+            System.out.println("ERROR (CSVHelper), couldn't create file: ");
+            System.out.println(newfilename);
         };
+
         BufferedReader reader = newBufferedReader(oldFile);
-        PrintWriter writer = newPrintWriter(newFile);
+        PrintWriter    writer = newPrintWriter(newFile);
         
         boolean firstRow = true;
         String line = "";
@@ -191,10 +189,7 @@ public class CSVHelper {
         this.topicLookup.add(topic);
     }
 
-    public ArrayList<String> getTopics(){
-        // Gives a list of the topics names in order
-        return topics;
-    }
+    public ArrayList<String> getTopics(){return topics;}
 
     public boolean topicExists(String topic){
         return this.topicLookup.contains(topic);
