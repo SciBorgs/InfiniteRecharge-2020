@@ -23,9 +23,7 @@ public class Utils{
         return inches / METERS_TO_INCHES;
     }
 
-    public static double last(ArrayList<Double> arr) {
-        return arr.get(arr.size() - 1);
-    }
+    public static double last(ArrayList<Double> arr) {return arr.get(arr.size() - 1);}
 
     public static int signOf(double value){
         if (value == 0){

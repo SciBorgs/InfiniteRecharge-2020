@@ -14,7 +14,7 @@ public class CSVHelper {
 
     private String filename;
     private ArrayList<String> topics;
-    private ArrayList<String> rowsToAdd;
+    private ArrayList<Hashtable<String, String>> rowsToAdd;
     private HashSet<String> topicLookup;
     private String lastLine;
 
@@ -24,8 +24,8 @@ public class CSVHelper {
         this.filename = filename;
         // Not using newBufferedReader b/c when instantiated, we want it to error out of the file isn't found
         BufferedReader reader = new BufferedReader(new FileReader(this.filename));
-        this.topics    = new ArrayList<String>();
-        this.rowsToAdd = new ArrayList<String>();
+        this.topics    = new ArrayList<>();
+        this.rowsToAdd = new ArrayList<>();
         try{
             StringTokenizer firstRow = new StringTokenizer(reader.readLine(), ",");
         
@@ -109,42 +109,51 @@ public class CSVHelper {
     }
 
     public Hashtable<String, String> getLastRow(){
-        updateLastLine();
-        StringTokenizer lastLineString = new StringTokenizer(lastLine, ",");
-        Hashtable<String, String> lastrow = new Hashtable<String, String>();
-        for(String topic : this.topics){
-            String value = "";
-            try{
-                value = lastLineString.nextToken();
-            }catch (Exception e){}
-            lastrow.put(topic, value);
+        if (rowsToAdd.size() == 0){
+            updateLastLine();
+            return contentToRow(this.lastLine);
+        } else {
+            return rowsToAdd.get(rowsToAdd.size() - 1);
         }
-
-        return lastrow;
     }
 
-    public void addRow(Hashtable<String,String> row){
-        // Should add a row to the next empty row of the sheet
-        // The key of the hashtable should be the name of the topic
+    public String rowToContent(Hashtable<String,String> row){
         String content = "";
-        for(String topic : this.topics){
+        for (String topic : this.topics) {
             String value = row.get(topic);
-            if (value == null){
+            if (value == null) {
                 value = "";
             }
             content += (value + ",");
         }
-        this.rowsToAdd.add(content);
+        return content.substring(0, content.length() - 1);
+    }
+
+    public Hashtable<String,String> contentToRow(String content){
+        StringTokenizer lastLineString = new StringTokenizer(content, ",");
+        Hashtable<String, String> row = new Hashtable<String, String>();
+        for (String topic : this.topics) {
+            String value = "";
+            try {
+                value = lastLineString.nextToken();
+            } catch (Exception e) {}
+            row.put(topic, value);
+        }
+        return row;
+    }
+
+    public void addRow(Hashtable<String,String> row){
+        this.rowsToAdd.add(row);
     }
 
     public void writeRows(){
         PrintWriter writer = newPrintWriter(filename, true);
-        for (String content : this.rowsToAdd){
-            content = content.substring(0, content.length() - 1);
+        for (Hashtable<String, String> row : this.rowsToAdd){
+            String content = rowToContent(row);
             writer.println(content);
         }
         writer.close();
-        this.rowsToAdd = new ArrayList<String>();
+        this.rowsToAdd = new ArrayList<>();
     }
 
     public void addTopic(String topic){
@@ -189,7 +198,7 @@ public class CSVHelper {
         this.topicLookup.add(topic);
     }
 
-    public ArrayList<String> getTopics(){return topics;}
+    public ArrayList<String> getTopics(){return this.topics;}
 
     public boolean topicExists(String topic){
         return this.topicLookup.contains(topic);
