@@ -51,6 +51,7 @@ public class CSVHelper {
         }
     }
 
+    // Check With Bowen -> should the append be false in the cases when there is currently no bool in the constructor?
     private PrintWriter newPrintWriter(String filename, boolean append){
         try {
             return new PrintWriter(new BufferedWriter(new FileWriter(filename, append)));
@@ -69,6 +70,7 @@ public class CSVHelper {
         }
     }
 
+    // Check With Bowen -> should the append be false in the cases when there is currently no bool in the constructor?
     private PrintWriter newPrintWriter(File file){
         try {
             return new PrintWriter(new BufferedWriter(new FileWriter(file)));
