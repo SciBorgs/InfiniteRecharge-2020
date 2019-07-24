@@ -8,10 +8,12 @@ public class PathSmoother{
 
 	ArrayList<Point> Waypoints;
 	int N;
+	double numPoints;
 
-	public PathSmoother(ArrayList<Point> Waypoints) {
+	public PathSmoother(ArrayList<Point> Waypoints, double numPoints) {
 		this.Waypoints = Waypoints;
 		this.N = this.Waypoints.size() - 1;
+		this.numPoints = numPoints;
 	}
 
     //special matrix utils
@@ -82,7 +84,7 @@ public class PathSmoother{
 	public Point[] calculateP2(Point[] p1) {
 		Point[] p2 = new Point[N];
 		for(int i = 0; i < p1.length; i++) {
-			p1[i] = new Point(0, 0);
+			p2[i] = new Point(0, 0);
 		}
 
 		for (int i = 0; i < N - 1; i++) {
@@ -114,26 +116,24 @@ public class PathSmoother{
 		return newPoint;
 	}
 
-	public ArrayList<Point> finalPath(Point[] Waypoints, double numPoints){
-		double interval = 1 / numPoints;
-		double t = interval;
-
+	public ArrayList<Point> finalPath(ArrayList<Point> Waypoints){
+		double step = 1 / this.numPoints;
+		
 		ArrayList<Point> finalPath = new ArrayList<Point>();
-		finalPath.set(0, Waypoints[0]);
-
-		for(int i = 0; i < Waypoints.length; i++){
+		finalPath.add(Waypoints.get(0));
+		System.out.println(Waypoints.size());
+		
+		for(int i = 0; i < Waypoints.size() - 1; i++){
 			Point[] p1 = calculateP1();
 			Point[] p2 = calculateP2(p1);
 
-			for (int j = 0; j < numPoints; j ++){
-				Point nextCurvePoint = calculatePointBezier(Waypoints[i], p1[i], p2[i], Waypoints[i + 1], t);
-				finalPath.set(i + 1, nextCurvePoint);
-				t += interval;
+			for (double j = 0; j < 1; j += step){
+				Point nextCurvePoint = calculatePointBezier(Waypoints.get(i), p1[i], p2[i], Waypoints.get(i + 1), j);
+				finalPath.add(nextCurvePoint);
 			}
-
-			t = interval;
 		}
 
+		finalPath.add(Waypoints.get(Waypoints.size()-1));
 		return finalPath;
 	}
 }
