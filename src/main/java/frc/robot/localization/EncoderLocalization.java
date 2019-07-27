@@ -56,7 +56,7 @@ public class EncoderLocalization {
 
     public void keepTrackOfWheel(CANSparkMax spark){
         // this allows the code to easily keep track of the position of motors for the chassis
-        this.wheelPositions.put(spark,new ArrayList<Double>());
+        this.wheelPositions.put(spark, new ArrayList<Double>());
         this.sparks.add(spark);
     }
 
@@ -124,7 +124,11 @@ public class EncoderLocalization {
     
     public double lastWheelPosition(CANSparkMax spark)  {
         // Takes a spark. Returns the last recorded pos of that spark/wheel
-        return Utils.last(wheelPositions.get(spark));
+        if (wheelPositions.get(spark).isEmpty()){
+            return wheelPosition(spark);
+        } else {
+            return Utils.last(wheelPositions.get(spark));
+        }
     }
 
     public double getWheelSpeed(CANSparkMax spark) {
@@ -165,7 +169,7 @@ public class EncoderLocalization {
     }
 
     public void updatePositionTank(){
-        changePoint(nextPosTankPigeon(getX(), getY(), getAngle(), wheelRotationChange(Robot.driveSubsystem.lm), wheelRotationChange(Robot.driveSubsystem.rm))); 
+        changePoint(nextPosTankPigeon(getX(), getY(), getAngle(), wheelRotationChange(Robot.driveSubsystem.lf), wheelRotationChange(Robot.driveSubsystem.rf))); 
     }
     
 	public void periodicLog(){

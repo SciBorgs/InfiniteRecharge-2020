@@ -12,15 +12,15 @@ import edu.wpi.first.wpilibj.command.Scheduler;
 
 public class Robot extends TimedRobot {
     public static Logger logger = new Logger();
-    public static OI oi = new OI();
     
     public static DriveSubsystem      driveSubsystem      = new DriveSubsystem();
+    public static GearShiftSubsystem  gearShiftSubsystem  = new GearShiftSubsystem();
     public static EncoderSubsystem    encoderSubsystem    = new EncoderSubsystem();
     public static EncoderLocalization encoderLocalization = new EncoderLocalization();
-    public static GearShiftSubsystem  gearShiftSubsystem  = new GearShiftSubsystem();
     public static LimelightSubsystem  limelightSubsystem  = new LimelightSubsystem();
     public static PneumaticsSubsystem pneumaticsSubsystem = new PneumaticsSubsystem();
     
+    public static OI oi = new OI();
     public static Following following = new Following();
 
     private int attemptsSinceLastLog;    
@@ -96,10 +96,10 @@ public class Robot extends TimedRobot {
     public void enabledPeriodic() {logDataPeriodic();}
 
     public void disabledInit() {
-        /* 
+        
         allPeriodicLogs();
         logger.logData();
         logger.writeLoggedData(); // Uncomment to write the data to the file
-        */
+        
     }
 }
