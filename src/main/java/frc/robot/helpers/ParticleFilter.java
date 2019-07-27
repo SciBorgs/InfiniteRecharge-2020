@@ -31,13 +31,13 @@ public class ParticleFilter {
         double sumOfWeights = 0;
 
         for (int i = 0; i <= this.numOfParticles; i++) {
-            Double weight = this.computeGaussian(prediction, measurementNoise, measurement);
+            double weight = this.computeGaussian(prediction, measurementNoise, measurement);
             weights.add(weight);
             sumOfWeights += weight;
         }
 
         for (int i = 0; i <= this.numOfParticles; i++) {
-            Double normalizedWeight = weights.get(i)/sumOfWeights;
+            double normalizedWeight = weights.get(i)/sumOfWeights;
             weights.set(i, normalizedWeight);
         }
     }
@@ -48,8 +48,8 @@ public class ParticleFilter {
         ArrayList<Double> newParticles = new ArrayList<Double>();
 
         int randomIndex = generator.nextInt() *numOfParticles;
-        Double beta = 0.0;
-        Double biggestWeight = Collections.max(this.weights);
+        double beta = 0.0;
+        double biggestWeight = Collections.max(this.weights);
 
         for (int i = 0; i <= this.numOfParticles; i++) {
             beta += generator.nextDouble() * 2.0 * biggestWeight;
