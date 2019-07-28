@@ -4,6 +4,14 @@ import java.util.ArrayList;
 import java.util.Random;
 import java.util.Collections;
 
+interface updateFunction {
+    double updateState ();
+};
+
+interface predictFunction {
+    double predictParticle (double particle);
+};
+
 public class ParticleFilter {
 
     private int numOfParticles = 100;
@@ -25,6 +33,19 @@ public class ParticleFilter {
         }
     }
 
+    public ArrayList<Double> predictParticles(predictFunction predictor){
+        for (int i = 0; i <= this.numOfParticles; i++) {
+            double particle = this.particles.get(i);
+            this.particles.set(i, predictor.predictParticle(particle));
+        }
+        return this.particles;
+    }
+
+    public double update(updateFunction updater){
+        double measurement = updater.updateState();
+        return measurement;
+    };
+
     public void computeWeights(Double prediction, Double measurement) {
         double randomDouble = generator.nextDouble() * 5;
         double measurementNoise = this.computeGaussian(0, 5, randomDouble);
@@ -32,13 +53,13 @@ public class ParticleFilter {
 
         for (int i = 0; i <= this.numOfParticles; i++) {
             double weight = this.computeGaussian(prediction, measurementNoise, measurement);
-            weights.add(weight);
+            this.weights.add(weight);
             sumOfWeights += weight;
         }
 
         for (int i = 0; i <= this.numOfParticles; i++) {
             double normalizedWeight = weights.get(i)/sumOfWeights;
-            weights.set(i, normalizedWeight);
+            this.weights.set(i, normalizedWeight);
         }
     }
 
@@ -75,7 +96,6 @@ public class ParticleFilter {
 
         return this.particles;
     }
-
     public double computeGaussian(double mean, double variance, double x) {
         double gaussianProbability = 1/(variance * Math.sqrt(2 * Math.PI)) * Math.pow(Math.E, -(1/2) * Math.pow(((x - mean)/variance), 2));
         return gaussianProbability;
