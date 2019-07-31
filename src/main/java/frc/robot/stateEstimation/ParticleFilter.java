@@ -1,20 +1,15 @@
-package frc.robot.helpers;
+package frc.robot.stateEstimation;
 
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.Collections;
+import frc.robot.stateEstimation.updateFunction;
+import frc.robot.stateEstimation.predictFunction;
 
-interface updateFunction {
-    double updateState ();
-};
-
-interface predictFunction {
-    double predictParticle (double particle);
-};
 
 public class ParticleFilter {
 
-    private int numOfParticles = 100;
+    private int numOfParticles = 1000;
     private int numOfIterations = 100;
     private ArrayList<Double> particles;
     private ArrayList<Double> weights;
@@ -46,13 +41,13 @@ public class ParticleFilter {
         return measurement;
     };
 
-    public void computeWeights(Double prediction, Double measurement) {
+    public void computeWeights(ArrayList<Double> predictions, Double measurement) {
         double randomDouble = generator.nextDouble() * 5;
         double measurementNoise = this.computeGaussian(0, 5, randomDouble);
         double sumOfWeights = 0;
 
         for (int i = 0; i <= this.numOfParticles; i++) {
-            double weight = this.computeGaussian(prediction, measurementNoise, measurement);
+            double weight = this.computeGaussian(predictions.get(i), measurementNoise, measurement);
             this.weights.add(weight);
             sumOfWeights += weight;
         }
@@ -74,28 +69,31 @@ public class ParticleFilter {
 
         for (int i = 0; i <= this.numOfParticles; i++) {
             beta += generator.nextDouble() * 2.0 * biggestWeight;
-
             while(beta > this.weights.get(randomIndex)) {
                 beta -= this.weights.get(randomIndex);
                 randomIndex = (randomIndex + 1) % this.numOfParticles;
             }
-
             newParticles.add(this.particles.get(randomIndex));
         }
-
         this.particles = newParticles;
-
     }
 
-    public ArrayList<Double> filter(Double prediction, Double measurement) {
+    public double filter(ArrayList<Double> predictions, Double measurement) {
+        double averageParticle = 0.0;
+        double sumOfParticles = 0;
         this.generateParticles();
         for (int i = 0; i<= this.numOfIterations; i++) {
-            this.computeWeights(prediction, measurement);
+            this.computeWeights(predictions, measurement);
             this.resampleParticles(this.weights);
         }
-
-        return this.particles;
+        for (int i = 0; i <= this.numOfParticles; i++) {
+            sumOfParticles += this.particles.get(i);
+        }
+        
+        averageParticle = sumOfParticles/this.numOfParticles;
+        return averageParticle;
     }
+
     public double computeGaussian(double mean, double variance, double x) {
         double gaussianProbability = 1/(variance * Math.sqrt(2 * Math.PI)) * Math.pow(Math.E, -(1/2) * Math.pow(((x - mean)/variance), 2));
         return gaussianProbability;
