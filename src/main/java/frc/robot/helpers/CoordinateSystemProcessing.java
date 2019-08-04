@@ -1,14 +1,8 @@
+package frc.robot.helpers;
+
 import java.util.Optional;
 
 public class CoordinateSystemProcessing {
-    public static class Point {
-        public double x, y;
-
-        public Point(double x, double y) {
-            this.x = x;
-            this.y = y;
-        }
-    }
 
     public static class Line {
         public double m, b;
