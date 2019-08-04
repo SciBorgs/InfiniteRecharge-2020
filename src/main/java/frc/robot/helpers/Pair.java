@@ -2,7 +2,8 @@ package frc.robot.helpers;
 
 public class Pair<First, Second> {
 
-    public First first; Second second;
+    public First first; 
+    public Second second;
   
     public Pair(First first, Second second) {
         this.first = first;
