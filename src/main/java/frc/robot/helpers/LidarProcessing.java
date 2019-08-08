@@ -7,10 +7,6 @@ import frc.robot.subsystems.LidarServer;
 import frc.robot.subsystems.LidarServer.LidarScanInfo;
 
 // FILE HAS NOT BEEN CLEANED UP //
-class Line{
-    public double m, b;
-    public Line(double m_des, double b_des) {m = m_des; b = b_des;}
-}
 
 public class LidarProcessing{
     public LidarProcessing() {
