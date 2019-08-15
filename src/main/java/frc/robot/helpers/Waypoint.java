@@ -10,9 +10,9 @@ public class Waypoint{
         this.position = position;
     }
 
-    public double getVelocity()  { return velocity;  }
-    public double getCurvature() { return curvature; }
-    public Vector getPosition()  { return position;  }
+    public double getVelocity()  { return this.velocity;  }
+    public double getCurvature() { return this.curvature; }
+    public Vector getPosition()  { return this.position;  }
 
 	public void setVelocity(double velocity)   { this.velocity  = velocity;  }
     public void setCurvature(double curvature) { this.curvature = curvature; }

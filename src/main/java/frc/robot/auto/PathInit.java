@@ -1,6 +1,7 @@
 package frc.robot.auto;
 
 import java.util.ArrayList;
+import frc.robot.helpers.Waypoint;
 import frc.robot.helpers.Vector;
 
 // curvature -> problem 1 : x1 = x2 results in divide by zero
