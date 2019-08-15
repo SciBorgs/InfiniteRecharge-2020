@@ -1,4 +1,4 @@
-package frc.robot.auto;
+package frc.robot.helpers;
 
 import frc.robot.helpers.Vector;
 
