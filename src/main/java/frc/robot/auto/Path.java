@@ -6,13 +6,36 @@ import frc.robot.helpers.Vector;
 
 // curvature -> problem 1 : x1 = x2 results in divide by zero
 //              problem 2 : radius very large, ie curvature is 0, and path is a straight line
-public class PathInit {
+public class Path {
     private ArrayList<Waypoint> robotPath = new ArrayList<>();
-    
+
+    public Path(ArrayList<Vector> path, double maxVel, double maxAccel, double turningTolerance) {
+        copyPath(path);
+        initPath(maxVel, maxAccel, turningTolerance);
+    }
+
+    public void copyPath(ArrayList<Vector> path) {
+        Vector point = new Vector(0, 0);
+        for(int i = 0; i < path.size() - 1; i++) {
+            point.x = path.get(i).x;
+            point.y = path.get(i).y;
+            robotPath.add(new Waypoint(point));
+        }
+    }
+
     //initializes the path with velocity and curvature
     public void initPath(double maxVel, double maxAccel, double turningTolerance) {
 		setCurvature();
 		setTargetVelocity(maxAccel, maxVel, turningTolerance);
+    }
+
+    public ArrayList<Waypoint> getRobotPathWaypoints() { return this.robotPath; }
+    public ArrayList<Vector> getRobotPathVectors(){
+        ArrayList<Vector> temp = new ArrayList<Vector>();
+        for(int i = 0; i < robotPath.size() - 1; i++){
+            temp.add(robotPath.get(i).getPosition());
+        }
+        return temp;
     }
     
     // find curvature of each point in path - excluding first and last point
@@ -65,4 +88,16 @@ public class PathInit {
             robotPath.get(i).setVelocity(vf);
         }
     }
+    
+    // calculate the necessary curvature for a lookahead
+    public double calculateCurvatureLookAhead(Vector currPos, double heading, Vector lookahead, double lookaheadDistance) {
+		double a = -Math.tan(heading);
+		double b = 1;
+		double c = (Math.tan(heading) * currPos.x) - currPos.y;
+		double x = Math.abs(a * lookahead.x + b * lookahead.y + c) / Math.sqrt(Math.pow(a, 2) + Math.pow(b, 2));
+		double cross = (Math.sin(heading) * (lookahead.x - currPos.x)) - (Math.cos(heading) * (lookahead.y - currPos.y));
+		double side = cross > 0 ? 1 : -1;
+		double curvature = (2 * x) / (Math.pow(lookaheadDistance, 2));
+		return curvature * side;
+	}
 }

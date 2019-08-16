@@ -6,8 +6,11 @@ public class Waypoint{
     public Vector position;
     private double curvature, velocity;
     
-    public Waypoint(Vector position){
-        this.position = position;
+    public Waypoint(Vector position){ this.position = position; }
+    
+    public Waypoint(double x, double y){
+        this.position.x = x;
+        this.position.y = y;
     }
 
     public double getVelocity()  { return this.velocity;  }
