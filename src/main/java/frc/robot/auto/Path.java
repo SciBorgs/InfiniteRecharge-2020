@@ -90,6 +90,7 @@ public class Path {
     }
     
     // calculate the necessary curvature for a lookahead
+    // https://www.ri.cmu.edu/pub_files/pub3/coulter_r_craig_1992_1/coulter_r_craig_1992_1.pdf
     public double calculateCurvatureLookAhead(Vector currPos, double heading, Vector lookahead, double lookaheadDistance) {
 		double a = -Math.tan(heading);
 		double b = 1;

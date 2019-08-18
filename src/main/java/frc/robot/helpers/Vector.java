@@ -16,8 +16,8 @@ public class Vector{
 		this.y = y;
 	}  
 
-    public Vector scale(double c) { return new Vector(this.x * c, this.y *c); }
     public static Vector scale(Vector A, double c) { return new Vector(A.x * c, A.y *c); }
+    public Vector scale(double c) { return new Vector(this.x * c, this.y *c); }
 
     public double magnitude(Vector A) { return Math.sqrt(Math.pow(A.x, 2) + Math.pow(A.y, 2)); }
 
