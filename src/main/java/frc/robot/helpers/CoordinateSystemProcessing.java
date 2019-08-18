@@ -4,15 +4,6 @@ import java.util.Optional;
 
 public class CoordinateSystemProcessing {
 
-    public static class Line {
-        public double m, b;
-
-        public Line(double m, double b) {
-            this.m = m;
-            this.b = b;
-        }
-    }
-
     public static final Point ORIGIN = new Point(0, 0);
 
     public static Point rotatePoint(Point point, Point pointToRotateAround, double radiansToRotate) {
