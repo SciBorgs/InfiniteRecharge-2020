@@ -13,15 +13,27 @@ public class Matrix{
     }
 
     // new matrix based on 2D array
-    public Matrix(double[][] matrix){
+    public Matrix(double[][] matrix) {
+        checkDimensions(matrix);
+
         rows = matrix.length;
         columns = matrix[0].length;
         this.matrix = new double[rows][columns];
 
         for(int i = 0; i < rows; i++){
-            for(int j = 0; j < rows; j++){
+            for(int j = 0; j < columns; j++){
                 this.matrix[i][j] = matrix[i][j];
             }
+        }
+    }
+
+    // makes sure number of elements in a row are the same for each row
+    public static void checkDimensions(double[][] matrix) {
+        int numCol1, numCol2;
+        numCol1 = matrix[0].length;
+        for(int i = 1; i < matrix.length  - 1; i++) {
+            numCol2 = matrix[i].length;
+            if (!(numCol1 == numCol2)) throw new RuntimeException("Illegal matrix dimensions.");
         }
     }
 
@@ -31,7 +43,7 @@ public class Matrix{
     public Matrix getMatrix(){ return this; }
 
     //get value of specific element
-    public double getElement(int row, int column){
+    public double getElement(int row, int column) {
         return this.matrix[row][column];
     }
 
@@ -110,7 +122,7 @@ public class Matrix{
 	}
 
     // scale entire matrix by factor
-    public static void multiply(Matrix A, double scaleFactor){
+    public static void multiply(Matrix A, double scaleFactor) {
         for (int i = 0; i < A.rows; i++) {
             for (int j = 0; j < A.columns; j++) {
                 A.matrix[i][j] *= scaleFactor;

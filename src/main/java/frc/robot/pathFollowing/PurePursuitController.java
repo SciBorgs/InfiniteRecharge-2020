@@ -1,4 +1,4 @@
-package frc.robot.auto;
+package frc.robot.pathFollowing;
 
 import java.util.ArrayList;
 import java.util.Optional;
@@ -90,9 +90,7 @@ public class PurePursuitController{
         return (kv * rateLimitedVel) + (ka * targetAccel);
 	}
 	
-    private double calculateFeedback(double targetVel, double currVel) {
-        return kp * (targetVel - currVel);
-	}
+    private double calculateFeedback(double targetVel, double currVel) { return kp * (targetVel - currVel); }
 	
 	private double rateLimiter(double input, double maxRate, boolean right) {
         double maxChange = updateTime * maxRate;

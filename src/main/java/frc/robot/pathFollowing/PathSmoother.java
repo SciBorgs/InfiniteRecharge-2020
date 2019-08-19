@@ -1,4 +1,4 @@
-package frc.robot.auto;
+package frc.robot.pathFollowing;
 
 import java.util.ArrayList;
 import frc.robot.helpers.Point;
