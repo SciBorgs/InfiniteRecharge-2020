@@ -41,7 +41,7 @@ public class PurePursuitController{
 	}
 
     // updates the power delivered to the motors
-	public DriveBase update(Vector currPos, double currRightVel, double heading) {
+	public DriveBase update(Vector currPos, double heading) {
 		boolean onLastSegment = false;
 		int closestPointIndex = getClosestPointIndex(currPos);
 		Vector lookaheadPoint = new Vector(0, 0);
@@ -49,7 +49,7 @@ public class PurePursuitController{
 
 		for (int i = closestPointIndex + 1; i < robotPath.size(); i++) {
 			Vector startPoint = robotPath.get(i - 1).getPosition();
-			Vector endPoint = robotPath.get(i).getPosition();
+			Vector endPoint   = robotPath.get(i).getPosition();
             if (i == robotPath.size() - 1){
                 onLastSegment = true;
             }
@@ -65,17 +65,17 @@ public class PurePursuitController{
 		double rightTargetVel = calculateRightTargetVelocity(robotPath.get(getClosestPointIndex(currPos)).getVelocity(), curvature);
 
 		// feedforward 
-		double rightPower = calculateFeedForward(rightTargetVel, this.rightVel, this.right);
-		double leftPower  = calculateFeedForward(leftTargetVel,  this.leftVel,  this.left);
+		double rightFF = calculateFeedForward(rightTargetVel, this.rightVel, this.right);
+		double leftFF  = calculateFeedForward(leftTargetVel,  this.leftVel,  this.left);
 		
-		/*
-		// feedback control
+		// feedback 
         double rightFB = calculateFeedback(rightTargetVel, this.rightVel);
-        double leftFB  = calculateFeedback(leftTargetVel,  this.leftVel );
-        double leftPower  = leftTargetVel  + leftFB;
-        double rightPower = rightTargetVel + rightFB;
-		*/
-
+		double leftFB  = calculateFeedback(leftTargetVel,  this.leftVel );
+		
+		// final output
+        double leftPower  = leftFF  + leftFB;
+        double rightPower = rightFF + rightFB;
+		
         return new DriveBase(leftPower, rightPower);
 	}
 
