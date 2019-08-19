@@ -1,21 +1,22 @@
 package frc.robot.pathFollowing;
 
 import java.util.ArrayList;
+import frc.robot.helpers.Point;
 import frc.robot.helpers.Waypoint;
-import frc.robot.helpers.Vector;
+import frc.robot.helpers.CoordinateSystemProcessing;;
 
 // curvature -> problem 1 : x1 = x2 results in divide by zero
 //              problem 2 : radius very large, ie curvature is 0, and path is a straight line
 public class Path {
     private ArrayList<Waypoint> robotPath = new ArrayList<>();
 
-    public Path(ArrayList<Vector> path, double maxVel, double maxAccel, double turningTolerance) {
+    public Path(ArrayList<Point> path, double maxVel, double maxAccel, double turningTolerance) {
         copyPath(path);
         initPath(maxVel, maxAccel, turningTolerance);
     }
 
-    public void copyPath(ArrayList<Vector> path) {
-        Vector point = new Vector(0, 0);
+    public void copyPath(ArrayList<Point> path) {
+        Point point = new Point(0, 0);
         for(int i = 0; i < path.size() - 1; i++) {
             point.x = path.get(i).x;
             point.y = path.get(i).y;
@@ -30,8 +31,8 @@ public class Path {
     }
 
     public ArrayList<Waypoint> getRobotPathWaypoints() { return this.robotPath; }
-    public ArrayList<Vector> getRobotPathVectors(){
-        ArrayList<Vector> temp = new ArrayList<Vector>();
+    public ArrayList<Point> getRobotPathPoints(){
+        ArrayList<Point> temp = new ArrayList<Point>();
         for(int i = 0; i < robotPath.size() - 1; i++){
             temp.add(robotPath.get(i).getPosition());
         }
@@ -44,13 +45,13 @@ public class Path {
         // uses 
         for (int i = 1; i < robotPath.size() - 1; i++) {
             Waypoint point = robotPath.get(i);
-            Vector pastPoint = robotPath.get(i - 1).getPosition();
-            Vector currPoint = robotPath.get(i).getPosition();
-            Vector nextPoint = robotPath.get(i + 1).getPosition();
+            Point pastPoint = robotPath.get(i - 1).getPosition();
+            Point currPoint = robotPath.get(i).getPosition();
+            Point nextPoint = robotPath.get(i + 1).getPosition();
 
-            side1 = Vector.distanceBetween(pastPoint, currPoint);
-            side2 = Vector.distanceBetween(currPoint, nextPoint);
-            side3 = Vector.distanceBetween(pastPoint, nextPoint);
+            side1 = CoordinateSystemProcessing.getDistance(pastPoint, currPoint);
+            side2 = CoordinateSystemProcessing.getDistance(currPoint, nextPoint);
+            side3 = CoordinateSystemProcessing.getDistance(pastPoint, nextPoint);
 
             productOfSides = side1 * side2 * side3;
             semiperimeter = .5 * (side1 + side2 + side2);
@@ -81,7 +82,7 @@ public class Path {
         robotPath.get(robotPath.size() - 1).setVelocity(0); // want ending velocity to be 0
 
         for (int i = robotPath.size() - 2; i >= 0; i--) {
-            distance = Vector.distanceBetween(robotPath.get(i + 1).getPosition(), robotPath.get(i).getPosition()); 
+            distance = CoordinateSystemProcessing.getDistance(robotPath.get(i + 1).getPosition(), robotPath.get(i).getPosition()); 
             vi = robotPath.get(i + 1).getVelocity();
             double maxReachableVel = Math.sqrt(Math.pow(vi, 2) + (2 * maxAccel * distance));
             vf = Math.min(calcMaxVelocity(maxVel, turningTolerance, i), maxReachableVel);
@@ -91,7 +92,7 @@ public class Path {
     
     // calculate the necessary curvature for a lookahead
     // https://www.ri.cmu.edu/pub_files/pub3/coulter_r_craig_1992_1/coulter_r_craig_1992_1.pdf
-    public double calculateCurvatureLookAhead(Vector currPos, double heading, Vector lookahead, double lookaheadDistance) {
+    public double calculateCurvatureLookAhead(Point currPos, double heading, Point lookahead, double lookaheadDistance) {
 		double a = -Math.tan(heading);
 		double b = 1;
 		double c = (Math.tan(heading) * currPos.x) - currPos.y;

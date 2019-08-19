@@ -43,4 +43,19 @@ public class CoordinateSystemProcessing {
         double x = (line2.b - line1.b) / (line1.m - line2.m);
         return Optional.of(new Point(x, line1.m * x + line1.b));
     }
+
+    public static Point scale(Point point, double c) { return new Point(point.x * c, point.y *c); }
+
+    public static double magnitude(Point A) { return Math.sqrt(Math.pow(A.x, 2) + Math.pow(A.y, 2)); }
+    public static double dot(Point A, Point B) { return A.x * B.x + A.y * B.y; }
+    
+    public static Point add(Point A, Point B) { return new Point(A.x + B.x, A.y +B.y); }
+	public static Point sub(Point A, Point B) { return add(A, scale(B, -1)); }
+
+    public static double angleBetween(Point A, Point B) {
+		double dot = dot(A, B);
+		double magnitudeA = Math.sqrt(Math.pow(A.x, 2) + Math.pow(A.y, 2));
+		double magnitudeB = Math.sqrt(Math.pow(B.x, 2) + Math.pow(B.y, 2));
+		return Math.acos(dot / (magnitudeA * magnitudeB));
+    }
 }
