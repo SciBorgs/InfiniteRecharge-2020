@@ -10,30 +10,32 @@ import frc.robot.localization.EncoderLocalization;
 
 public class PurePursuitController{
     private static PurePursuitController instance;
-	private int lastClosestPoint;
+	private int lastClosestPoint, lastPointHitIndex;
 	private Path path;
-	private double lookaheadDistance;
-	private double robotWidth = 0;
-	private double updateTime; // refresh time
-	private double maxAccel;
-	private double kp, kv, ka;
+	private double lookaheadDistance; // smaller for more curvier paths
+	private double robotWidth = 0;    // in inches?, recommended to be a little larger than the actual
+	private double updateTime = 0;    // refresh time
+	private double distanceTolerance = 0;
+	private double maxAccel = 0; 	  // through testing
+	private double kp, kv, ka; 	 	  // kv is approx. 1/maxVel
 	private double rightVel, leftVel, prevRightVel, prevLeftVel;
-	private boolean right = true;  // for rateLimiter
-	private boolean left  = false;
-    public EncoderLocalization encoderLocalization;
+	private boolean right = true;     // for rateLimiter
+	private boolean left  = !right;
+	public EncoderLocalization encoderLocalization;
 
 	private PurePursuitController() { reset(); }
 
 	public static PurePursuitController getInstance() {	return instance == null ? instance = new PurePursuitController() : instance; }
-
+	
+	public void setRobotWidth(double robotWidth) { this.robotWidth = robotWidth; }
 	public void setPath(Path path, double lookaheadDistance) {
 		reset();
 		this.path = path;
 		this.lookaheadDistance = lookaheadDistance;
 	}
 
-	public void setRobotWidth(double robotWidth) { this.robotWidth = robotWidth; }
 	public void reset() { 
+		this.lastPointHitIndex = 0;
 		this.lastClosestPoint = 0;
 		this.leftVel  = 0;
 		this.rightVel = 0;
@@ -142,12 +144,8 @@ public class PurePursuitController{
 			double t1 = (-b - discriminant) / (2 * a);
 			double t2 = (-b + discriminant) / (2 * a);
 
-			if (t1 >= 0 && t1 <= 1) {
-				return Optional.of(t1);
-			}
-			if (t2 >= 0 && t2 <= 1) {
-				return Optional.of(t2);
-			}
+			if (t1 >= 0 && t1 <= 1) { return Optional.of(t1); }
+			if (t2 >= 0 && t2 <= 1) { return Optional.of(t2); }
 		}
 		return Optional.empty();
 	}
@@ -182,10 +180,19 @@ public class PurePursuitController{
 		return closestPoint;
 	}
 
+	// Calculates the index of the point on the path that robot has last reached
+	private int getLastPointHitIndex(Point currPos) {
+		ArrayList<Waypoint> robotPath = path.getRobotPathWaypoints();
+		int pointToHit = lastPointHitIndex + 1;
+		double distance = CoordinateSystemProcessing.getDistance(robotPath.get(pointToHit).getPosition(), currPos);
+		if (distance < distanceTolerance) { lastPointHitIndex = pointToHit; }
+		return lastPointHitIndex;
+	}
+
     // checks to see if current position is close to the final point on the path
 	public boolean isDone() {
 		Point currPos = new Point(encoderLocalization.getX(), encoderLocalization.getY());
-		return getClosestPointIndex(currPos) == path.getRobotPathWaypoints().size() - 1;
+		return getClosestPointIndex(currPos) == (path.getRobotPathWaypoints().size() - 1);
     }
     
 }
