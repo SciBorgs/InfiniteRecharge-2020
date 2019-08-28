@@ -1,7 +1,6 @@
 package frc.robot.helpers;
 
 import java.util.Optional;
-import frc.robot.routing.navigationmesh.Edge;
 
 public class CoordinateSystemProcessing {
 
@@ -49,18 +48,6 @@ public class CoordinateSystemProcessing {
     
     public static boolean arePointsCollinear(Point p1, Point p2, Point p3) {
         return (p2.y - p1.y) * (p3.x - p2.x) - (p2.x - p1.x) * (p3.y - p2.y) <= EPSILON;
-    }
-
-    private static double getOrientation(Point point, Edge edge) {
-        return (edge.dest.x - edge.origin.x) * (point.y - edge.origin.y) - (point.x - edge.origin.x) * (edge.dest.y - edge.origin.y);
-    }
-
-    public static boolean isRightOf(Point point, Edge edge) {
-        return getOrientation(point, edge) < 0;
-    }
-
-    public static boolean isLeftOf(Point point, Edge edge) {
-        return getOrientation(point, edge) > 0;
     }
 
     public static boolean isPointInCircle(Point p1, Point p2, Point p3, Point pointToTest) {
