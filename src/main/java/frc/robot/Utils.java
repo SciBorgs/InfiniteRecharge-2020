@@ -90,11 +90,18 @@ public class Utils{
         return end;
     }
 
-    // Generic function to merge 2 arrays of same type in Java
+    // Generic function to merge 2 arrays of same type 
     public static<T> T[] combineArray(T[] arr1, T[] arr2) {
 	    T[] result = Arrays.copyOf(arr1, arr1.length + arr2.length);
 	    System.arraycopy(arr2, 0, result, arr1.length, arr2.length);
 	    return result;
+    }
+
+    // Deep copy (no referencing) of an arraylist
+    public static<T> void deepCopy(ArrayList<T> arrToCopy, ArrayList<T> newArr) {
+        for(int i = 0; i < arrToCopy.size() - 1; i++) {
+            newArr.add(arrToCopy.get(i));
+        }
     }
 
     public static Value oppositeDoubleSolenoidValue(Value val){

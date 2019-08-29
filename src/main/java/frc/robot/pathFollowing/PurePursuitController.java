@@ -2,13 +2,14 @@ package frc.robot.pathFollowing;
 
 import java.util.ArrayList;
 import java.util.Optional;
+import frc.robot.Robot;
 import frc.robot.Utils;
 import frc.robot.helpers.CoordinateSystemProcessing;
 import frc.robot.helpers.Point;
 import frc.robot.helpers.Waypoint;
 import frc.robot.localization.EncoderLocalization;
 
-public class PurePursuitController{
+public class PurePursuitController {
     private static PurePursuitController instance;
 	private int lastClosestPoint, lastPointHitIndex;
 	private Path path;
@@ -25,7 +26,7 @@ public class PurePursuitController{
 
 	private PurePursuitController() { reset(); }
 
-	public static PurePursuitController getInstance() {	return instance == null ? instance = new PurePursuitController() : instance; }
+	public static PurePursuitController getInstance() {	return instance; }
 	
 	public void setRobotWidth(double robotWidth) { this.robotWidth = robotWidth; }
 	public void setPath(Path path, double lookaheadDistance) {
@@ -44,7 +45,7 @@ public class PurePursuitController{
 	}
 
     // updates the power delivered to the motors
-	public DriveBase update(Point currPos, double heading) {
+	public void update(Point currPos, double heading) {
 		boolean onLastSegment = false;
 		int closestPointIndex = getClosestPointIndex(currPos);
 		Point lookaheadPoint = new Point(0, 0);
@@ -79,7 +80,7 @@ public class PurePursuitController{
         double leftPower  = leftFF  + leftFB;
         double rightPower = rightFF + rightFB;
 		
-        return new DriveBase(leftPower, rightPower);
+		Robot.driveSubsystem.setSpeedTank(leftPower, rightPower);
 	}
 
 	private double calculateLeftTargetVelocity (double targetRobotVelocity, double curvature) { return targetRobotVelocity * ((2 + (robotWidth * curvature))) / 2; }

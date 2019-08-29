@@ -17,14 +17,13 @@ public class PathSmoother{
 	}
 
     //special matrix utils
-
-	void multiplyRow(double[][] m, int j, double s) {
+	private void multiplyRow(double[][] m, int j, double s) {
 		for (int k = j; k < m[j].length; k++) {
 			m[j][k] *= s;
 		}
 	}
 
-	void replaceRow(double[][] m, int j, int k) {
+	private void replaceRow(double[][] m, int j, int k) {
 		double mult = -m[k][j];
 		for (int i = j; i < m[k].length; i++) {
 			m[k][i] += mult * m[j][i];
@@ -32,7 +31,7 @@ public class PathSmoother{
 	}
 
     //find control point 1
-	public Point[] calculateP1() {
+	private Point[] calculateP1() {
 		Point[] p1 = new Point[N];
 		for(int i = 0; i < p1.length; i++) {
 			p1[i] = new Point(0, 0);
@@ -98,7 +97,7 @@ public class PathSmoother{
 
     //create a final path using all 4 points
 
-	public Point calculatePointBezier(Point p0, Point p1, Point p2, Point p3, double t){
+	private Point calculatePointBezier(Point p0, Point p1, Point p2, Point p3, double t){
 		double x = (
 			(Math.pow( (1 - t), 3) * p0.x) + 
 			(3 * Math.pow( (1 - t), 2) * t * p1.x) +
@@ -116,7 +115,7 @@ public class PathSmoother{
 		return newPoint;
 	}
 
-	public ArrayList<Point> finalPath(ArrayList<Point> Waypoints){
+	public ArrayList<Point> getFinalPath(){
 		double step = 1 / this.numPoints;
 		
 		ArrayList<Point> finalPath = new ArrayList<Point>();
@@ -133,7 +132,7 @@ public class PathSmoother{
 			}
 		}
 
-		finalPath.add(Waypoints.get(Waypoints.size()-1));
+		finalPath.add(Waypoints.get(Waypoints.size() - 1));
 		return finalPath;
 	}
 }
