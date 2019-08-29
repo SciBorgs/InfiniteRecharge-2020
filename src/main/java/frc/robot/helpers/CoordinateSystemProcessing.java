@@ -86,6 +86,10 @@ public class CoordinateSystemProcessing {
         return u > 0 && v > 0; // If both are greater, then the two rays do intersect
     }
 
+    public static boolean isOnSegment(LineSegment lineSegment, Point point) {
+        return getDistance(lineSegment.p1, point) + getDistance(point, lineSegment.p2) == getDistance(lineSegment.p1, lineSegment.p2);
+    }
+
     public static Optional<Point> getIntersection(Line line1, Line line2) { 
         // Return empty value if the lines are parallel
         if (line1.m == line2.m){return Optional.empty();}
@@ -94,25 +98,24 @@ public class CoordinateSystemProcessing {
         return Optional.of(new Point(x, line1.m * x + line1.b));
     }
     
-    public static Point getSegmentIntersection(LineSegment lineSegment1, LineSegment lineSegment2) {
+    public static Optional<Point> getSegmentIntersection(LineSegment lineSegment1, LineSegment lineSegment2) {
         Line fakeLine1 = createLine(lineSegment1.p1, lineSegment1.p2);
         Line fakeLine2 = createLine(lineSegment2.p1, lineSegment2.p2);
 
-        Optional<Point> pointOfIntersection = getIntersection(fakeLine1, fakeLine2);
+        Optional<Point> intersection = getIntersection(fakeLine1, fakeLine2);
 
-        if (!arePointsCollinear(lineSegment1.p1, lineSegment1.p2, pointOfIntersection.get()) || 
-            !arePointsCollinear(lineSegment2.p1, lineSegment2.p2, pointOfIntersection.get())) {return null;}
+        if (!isOnSegment(lineSegment1, intersection.get()) || !isOnSegment(lineSegment2, intersection.get())){return Optional.empty();}
 
-        return pointOfIntersection.get();
+        return intersection;
     }
 
-    public static Point getRayIntersection(Ray ray1, Ray ray2) {
-        if (!doRaysIntersect(ray1, ray2)) {return null;}
+    public static Optional<Point> getRayIntersection(Ray ray1, Ray ray2) {
+        if (!doRaysIntersect(ray1, ray2)){return Optional.empty();}
 
         Line fakeLine1 = createLine(ray1.pEnd, ray1.pDir);
-        Line fakeLine2 = createLine(ray2.pEnd, ray2.pEnd);
+        Line fakeLine2 = createLine(ray2.pEnd, ray2.pDir);
         
-        return getIntersection(fakeLine1, fakeLine2).get();
+        return getIntersection(fakeLine1, fakeLine2);
     }
 
     // for vectors
