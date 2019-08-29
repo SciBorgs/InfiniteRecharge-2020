@@ -45,6 +45,25 @@ public class CoordinateSystemProcessing {
 
         return numerator / denominator;
     }
+
+    public static double getDistance(Ray ray, Point point) {
+        Line fakeLine = createLine(ray.pEnd, ray.pDir);
+    
+        Optional<Point> intersection = getIntersection(getPerpendicular(fakeLine, point), fakeLine);
+        
+        Ray fakeRay = new Ray(point, intersection.get());
+    
+        double endPointToIntersection;
+        double pointToIntersection = getDistance(point, intersection.get());
+        
+        if (doRaysIntersect(ray, fakeRay)) {
+          endPointToIntersection = getDistance(fakeLine, point);
+        } else {
+          endPointToIntersection = getDistance(ray.pEnd, intersection.get());
+        }
+        
+        return Math.sqrt(Math.pow(endPointToIntersection, 2) + Math.pow(pointToIntersection, 2));
+    }
     
     public static boolean arePointsCollinear(Point p1, Point p2, Point p3) {
         return (p2.y - p1.y) * (p3.x - p2.x) - (p2.x - p1.x) * (p3.y - p2.y) <= EPSILON;
@@ -98,7 +117,7 @@ public class CoordinateSystemProcessing {
         return Optional.of(new Point(x, line1.m * x + line1.b));
     }
     
-    public static Optional<Point> getSegmentIntersection(LineSegment lineSegment1, LineSegment lineSegment2) {
+    public static Optional<Point> getIntersection(LineSegment lineSegment1, LineSegment lineSegment2) {
         Line fakeLine1 = createLine(lineSegment1.p1, lineSegment1.p2);
         Line fakeLine2 = createLine(lineSegment2.p1, lineSegment2.p2);
 
@@ -109,7 +128,7 @@ public class CoordinateSystemProcessing {
         return intersection;
     }
 
-    public static Optional<Point> getRayIntersection(Ray ray1, Ray ray2) {
+    public static Optional<Point> getIntersection(Ray ray1, Ray ray2) {
         if (!doRaysIntersect(ray1, ray2)){return Optional.empty();}
 
         Line fakeLine1 = createLine(ray1.pEnd, ray1.pDir);
