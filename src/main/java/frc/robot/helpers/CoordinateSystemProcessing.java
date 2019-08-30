@@ -32,18 +32,35 @@ public class CoordinateSystemProcessing {
     }
 
     public static double getDistance(LineSegment lineSegment, Point point) {
+        Point closestPoint;
         double dX = lineSegment.p2.x - lineSegment.p1.x;
         double dY = lineSegment.p2.y - lineSegment.p1.y;
 
-        if (dX == 0 && dY == 0) {return 0;} // p1 and p2 cannot be on the same point
+        if (dX == 0 && dY == 0) {
+            closestPoint = lineSegment.p1;
+            dX = point.x - lineSegment.p1.x;
+            dY = point.y - lineSegment.p1.y;
+            
+            return Math.sqrt(Math.pow(dX, 2) + Math.pow(dY, 2));
+        } // p1 and p2 cannot be on the same point
 
-        double numerator = 
-                Math.abs(dY * point.x - dX * point.y - lineSegment.p1.x * lineSegment.p2.y + lineSegment.p2.x * lineSegment.p1.y);
-        double denominator = Math.sqrt(Math.pow(dX, 2) + Math.pow(dY, 2));
+        double t = ((point.x - lineSegment.p1.x) * dX + (point.y - lineSegment.p1.y) * dY) / (Math.pow(dX, 2) + Math.pow(dY, 2));
 
-        if (denominator == 0){return getDistance(point, lineSegment.p1);}
+        if (t < 0) {
+            closestPoint = new Point(lineSegment.p1.x, lineSegment.p1.y);
+            dX = point.x - lineSegment.p1.x;
+            dY = point.y - lineSegment.p1.y;
+        } else if (t > 1) {
+            closestPoint = new Point(lineSegment.p2.x, lineSegment.p2.y);
+            dX = point.x - lineSegment.p2.x;
+            dY = point.y - lineSegment.p2.y;
+        } else {
+            closestPoint = new Point(lineSegment.p1.x + t * dX, lineSegment.p1.y + t * dY);
+            dX = point.x - closestPoint.x;
+            dY = point.y - closestPoint.y;
+        }
 
-        return numerator / denominator;
+        return Math.sqrt(Math.pow(dX, 2) + Math.pow(dY, 2));
     }
 
     public static double getDistance(Ray ray, Point point) {
@@ -95,18 +112,11 @@ public class CoordinateSystemProcessing {
     public static Line getPerpendicular(Line line, Point point){return createLine(point, -1 / line.m);}
 
     public static boolean doRaysIntersect(Ray ray1, Ray ray2) {
-        double dx = ray2.pEnd.x - ray1.pEnd.x;
-        double dy = ray2.pEnd.y - ray1.pEnd.y;
-        double det = ray2.pDir.x * ray1.pDir.y - ray2.pDir.y * ray1.pDir.x;
-
-        double u = (dy * ray2.pDir.x - dx * ray2.pDir.y) / det;
-        double v = (dy * ray1.pDir.x - dx * ray1.pDir.y) / det;
-
+        double u = (ray1.pEnd.y * ray2.pDir.x + ray2.pDir.y * ray2.pEnd.x - ray2.pEnd.y * ray2.pDir.x - ray2.pDir.y * ray1.pEnd.x) / 
+                   (ray1.pDir.x * ray2.pDir.y - ray1.pDir.y * ray2.pDir.x);
+        double v = (ray1.pEnd.x + ray1.pDir.x * u - ray2.pEnd.x) / ray2.pDir.x;
+        
         return u > 0 && v > 0; // If both are greater, then the two rays do intersect
-    }
-
-    public static boolean isOnSegment(LineSegment lineSegment, Point point) {
-        return getDistance(lineSegment.p1, point) + getDistance(point, lineSegment.p2) == getDistance(lineSegment.p1, lineSegment.p2);
     }
 
     public static Optional<Point> getIntersection(Line line1, Line line2) { 
@@ -123,8 +133,11 @@ public class CoordinateSystemProcessing {
 
         Optional<Point> intersection = getIntersection(fakeLine1, fakeLine2);
 
-        if (!isOnSegment(lineSegment1, intersection.get()) || !isOnSegment(lineSegment2, intersection.get())){return Optional.empty();}
-
+        if (!arePointsCollinear(lineSegment1.p1, lineSegment1.p2, intersection.get()) 
+        || !arePointsCollinear(lineSegment2.p1, lineSegment2.p2, intersection.get())) {
+            return Optional.empty();
+        }
+        
         return intersection;
     }
 
