@@ -65,20 +65,20 @@ public class CoordinateSystemProcessing {
 
     public static double getDistance(Ray ray, Point point) {
         Line fakeLine = createLine(ray.pEnd, ray.pDir);
-    
+
         Optional<Point> intersection = getIntersection(getPerpendicular(fakeLine, point), fakeLine);
-        
+
         Ray fakeRay = new Ray(point, intersection.get());
-    
+
         double endPointToIntersection;
         double pointToIntersection = getDistance(point, intersection.get());
-        
-        if (doRaysIntersect(ray, fakeRay)) {
-          endPointToIntersection = getDistance(fakeLine, point);
+
+        if (!(getIntersection(ray, fakeRay).isPresent())) {
+            endPointToIntersection = getDistance(fakeLine, point);
         } else {
-          endPointToIntersection = getDistance(ray.pEnd, intersection.get());
+            endPointToIntersection = getDistance(ray.pEnd, intersection.get());
         }
-        
+
         return Math.sqrt(Math.pow(endPointToIntersection, 2) + Math.pow(pointToIntersection, 2));
     }
     
@@ -111,12 +111,33 @@ public class CoordinateSystemProcessing {
     
     public static Line getPerpendicular(Line line, Point point){return createLine(point, -1 / line.m);}
 
-    public static boolean doRaysIntersect(Ray ray1, Ray ray2) {
-        double u = (ray1.pEnd.y * ray2.pDir.x + ray2.pDir.y * ray2.pEnd.x - ray2.pEnd.y * ray2.pDir.x - ray2.pDir.y * ray1.pEnd.x) / 
-                   (ray1.pDir.x * ray2.pDir.y - ray1.pDir.y * ray2.pDir.x);
-        double v = (ray1.pEnd.x + ray1.pDir.x * u - ray2.pEnd.x) / ray2.pDir.x;
-        
-        return u > 0 && v > 0; // If both are greater, then the two rays do intersect
+    public static double getDirectionOfRay(Ray ray) {
+        // Based on the left and right of pEnd
+        if (ray.pEnd.x < ray.pDir.x) {
+            return 1; // Right
+        } else {
+            return -1; // Left
+        }
+    }
+
+    public static boolean isPointOnLine(Line line, Point point) {
+        return point.y == (line.m * point.x) + line.b;
+    }
+    
+    public static boolean isPointOnSegment(LineSegment lineSegment, Point point) {
+        return arePointsCollinear(lineSegment.p1, lineSegment.p2, point);
+    }
+    
+    public static boolean isPointOnRay(Ray ray, Point point) {
+        double sideOfLine = getDirectionOfRay(ray);
+        Line fakeLine = createLine(ray.pEnd, ray.pDir);
+    
+        if (getDirectionOfRay(new Ray(ray.pEnd, point)) == sideOfLine) {
+            if (isPointOnLine(fakeLine, point)) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public static Optional<Point> getIntersection(Line line1, Line line2) { 
@@ -131,23 +152,30 @@ public class CoordinateSystemProcessing {
         Line fakeLine1 = createLine(lineSegment1.p1, lineSegment1.p2);
         Line fakeLine2 = createLine(lineSegment2.p1, lineSegment2.p2);
 
-        Optional<Point> intersection = getIntersection(fakeLine1, fakeLine2);
+        Optional<Point> pointOfIntersection = getIntersection(fakeLine1, fakeLine2);
 
-        if (!arePointsCollinear(lineSegment1.p1, lineSegment1.p2, intersection.get()) 
-        || !arePointsCollinear(lineSegment2.p1, lineSegment2.p2, intersection.get())) {
+        if (!isPointOnSegment(lineSegment1, pointOfIntersection.get()) || !isPointOnSegment(lineSegment2, pointOfIntersection.get())) {
             return Optional.empty();
         }
-        
-        return intersection;
+
+        return pointOfIntersection;
     }
 
     public static Optional<Point> getIntersection(Ray ray1, Ray ray2) {
-        if (!doRaysIntersect(ray1, ray2)){return Optional.empty();}
+        double ray1Direction = getDirectionOfRay(ray1);
+        double ray2Direction = getDirectionOfRay(ray2);
 
         Line fakeLine1 = createLine(ray1.pEnd, ray1.pDir);
         Line fakeLine2 = createLine(ray2.pEnd, ray2.pDir);
+
+        Optional<Point> intersection = getIntersection(fakeLine1, fakeLine2);
+
+        Ray fakeRay1 = new Ray(ray1.pEnd, intersection.get());
+        Ray fakeRay2 = new Ray(ray2.pEnd, intersection.get());
+
+        if (!(getDirectionOfRay(fakeRay1) == ray1Direction) && !(getDirectionOfRay(fakeRay2) == ray2Direction)){return Optional.empty();}
         
-        return getIntersection(fakeLine1, fakeLine2);
+        return intersection;
     }
 
     // for vectors
