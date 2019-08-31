@@ -22,18 +22,6 @@ public class LidarProcessing{
 
     public static Point   toPoint(double l, double theta)       {return new Point(l * Math.cos(theta), l * Math.sin(theta));}
     public static Point   toPointDegrees(double l, double theta){return toPoint(l,Math.toRadians(theta));}
-    public static Point   center(Point p1, Point p2)            {return new Point((p1.x + p2.x)/2,(p1.y + p2.y)/2);}
-    public static Line    pointSlopeForm(Point p, double m)     {return new Line(m, p.y - m * p.x);}
-    public static double  yOf(Line l, double x)                 {return l.m * x + l.b;}
-    public static Line    twoPointForm(Point p1, Point p2)      {return pointSlopeForm(p1,(p2.y - p1.y)/(p2.x - p1.x));}
-    public static double  distance(Point p1, Point p2)          {return Math.sqrt(Math.pow((p1.x - p2.x),2) + Math.pow((p1.y - p2.y),2));}   
-    public static Point   pointOfX(Line l, double x)            {return new Point(x,yOf(l,x));}
-    public static Point   intersection(Line l1, Line l2)        {return pointOfX(l1, (l1.b - l2.b)/(l2.m - l1.m));}
-    public static Line    perpindicular(Line l, Point p)        {return pointSlopeForm(p, -1/l.m);}
-    public static double  distanceToLine(Line l, Point p)       {return distance(p,intersection(perpindicular(l,p),l));}
-    public static double  length(Point p)                       {return distance(p,new Point(0,0));}
-    public static boolean isOrigin(Point p)                     {return length(p) == 0;}
-    public static Point   angleOnLine(double theta, Line l)     {return intersection(l, pointSlopeForm(new Point(0,0), Math.tan(theta)));}
     
     public static double makeAngleInRange(double angle){
         while(angle < FIRST_ANGLE){angle += FINAL_ANGLE;}
@@ -98,8 +86,8 @@ public class LidarProcessing{
     }
     public static double wallRotation(double a1, double a2){
         Point[] points = fetchScan();
-        Line wall = twoPointForm(points[angleToIndex(a1)],points[angleToIndex(a2)]);
-        return Math.atan(wall.m);
+        Line wall = new Line(points[angleToIndex(a1)],points[angleToIndex(a2)]);
+        return Geo.thetaOf(wall);
     }
 
     public static void displayPoints(Point[] points){
