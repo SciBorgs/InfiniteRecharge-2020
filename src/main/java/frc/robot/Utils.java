@@ -8,6 +8,8 @@ import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 
 import edu.wpi.first.wpilibj.DigitalOutput;
 
+import frc.robot.helpers.Pair;
+
 import java.util.*;
 import java.util.Collections;
 
@@ -120,5 +122,11 @@ public class Utils{
     }
     public static DoubleSolenoid newDoubleSolenoid(int pdpPort, int[] ports){
         return new DoubleSolenoid(pdpPort, ports[0], ports[1]);
+    }
+
+    public static boolean inBounds(double v, Pair<Double,Double> bounds){
+        double min = Math.min(bounds.first, bounds.second);
+        double max = Math.max(bounds.first, bounds.second);
+        return v >= min && v <= max;
     }
 }
