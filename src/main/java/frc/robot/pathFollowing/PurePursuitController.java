@@ -7,7 +7,6 @@ import frc.robot.Utils;
 import frc.robot.helpers.CoordinateSystemProcessing;
 import frc.robot.helpers.Point;
 import frc.robot.helpers.Waypoint;
-import frc.robot.localization.EncoderLocalization;
 
 public class PurePursuitController {
     private static PurePursuitController instance;
@@ -22,7 +21,6 @@ public class PurePursuitController {
 	private double rightVel, leftVel, prevRightVel, prevLeftVel;
 	private boolean right = true;     // for rateLimiter
 	private boolean left  = !right;
-	public EncoderLocalization encoderLocalization;
 
 	private PurePursuitController() { reset(); }
 
@@ -192,7 +190,7 @@ public class PurePursuitController {
 
     // checks to see if current position is close to the final point on the path
 	public boolean isDone() {
-		Point currPos = new Point(encoderLocalization.getX(), encoderLocalization.getY());
+		Point currPos = new Point(Robot.encoderLocalization.getX(), Robot.encoderLocalization.getY());
 		return getClosestPointIndex(currPos) == (path.getRobotPathWaypoints().size() - 1);
     }
     
