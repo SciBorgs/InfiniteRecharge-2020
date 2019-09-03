@@ -89,50 +89,18 @@ public class Geo {
         Line fakeLine = lLike.toLine();  
         Optional<Point> intersection = getIntersection(getPerpendicular(fakeLine, point), fakeLine); // Intersection will never be empty in this case
         
-        if (lLike.getClass() == Line.class) { // Line
-            return getDistance(point, intersection.get());
-        } else if (lLike.getClass() == Ray.class) { // Ray
-            Ray ray = new Ray(lLike.p1, lLike.p2);
-            Ray fakeRay = new Ray(point, intersection.get());
-          
-            if (!getIntersection(ray, fakeRay).isPresent()) {
-                return getDistance(point, ray.p1);
+        if (!lLike.contains(intersection.get())) {
+            double distanceToP1 = getDistance(lLike.p1, point);
+            double distanceToP2 = getDistance(lLike.p2, point);
+
+            if (distanceToP1 < distanceToP2) {
+                return distanceToP1;
             } else {
-                return getDistance(point, intersection.get());
+                return distanceToP2;
             }
-        } else { // Line segment
-            Point closestPoint;
-            LineSegment lineSegment = new LineSegment(lLike.p1, lLike.p2);
-            
-            double dX = lineSegment.p2.x - lineSegment.p1.x;
-            double dY = lineSegment.p2.y - lineSegment.p1.y;
-        
-            if (dX == 0 && dY == 0) {
-                closestPoint = lineSegment.p1;
-                dX = point.x - lineSegment.p1.x;
-                dY = point.y - lineSegment.p1.y;
-        
-                return Math.sqrt(Math.pow(dX, 2) + Math.pow(dY, 2));
-            } // p1 and p2 cannot be on the same point
-    
-            double t = ((point.x - lineSegment.p1.x) * dX + (point.y - lineSegment.p1.y) * dY) / (Math.pow(dX, 2) + Math.pow(dY, 2));
-    
-            if (t < 0) {
-                closestPoint = new Point(lineSegment.p1.x, lineSegment.p1.y);
-                dX = point.x - lineSegment.p1.x;
-                dY = point.y - lineSegment.p1.y;
-            } else if (t > 1) {
-                closestPoint = new Point(lineSegment.p2.x, lineSegment.p2.y);
-                dX = point.x - lineSegment.p2.x;
-                dY = point.y - lineSegment.p2.y;
-            } else {
-                closestPoint = new Point(lineSegment.p1.x + t * dX, lineSegment.p1.y + t * dY);
-                dX = point.x - closestPoint.x;
-                dY = point.y - closestPoint.y;
-            }
-        
-            return Math.sqrt(Math.pow(dX, 2) + Math.pow(dY, 2));
         }
+        
+        return getDistance(point, intersection.get());
     }
 
     public static boolean arePointsCollinear(Point p1, Point p2, Point p3) {
@@ -200,32 +168,13 @@ public class Geo {
             return getIntersection(line2, line1);
         }
     
-        Optional<Point> intersection = Optional.of(new Point(x, yOf(line2, x)));
+        Point intersection = new Point(x, yOf(line2, x));
     
-        if (lLike1.getClass() == LineSegment.class && lLike2.getClass() == LineSegment.class) { // Line Segment
-            LineSegment lineSegment1 = new LineSegment(lLike1.p1, lLike1.p2);
-            LineSegment lineSegment2 = new LineSegment(lLike2.p1, lLike2.p2);
-    
-            if (!isPointOn(lineSegment1, intersection.get()) || !isPointOn(lineSegment2, intersection.get())) {
-                return Optional.empty();
-            }
-    
-        } else { // Ray
-            Ray ray1 = new Ray(lLike1.p1, lLike1.p2);
-            Ray ray2 = new Ray(lLike2.p1, lLike2.p2);
-        
-            double ray1Direction = getDirectionOfRay(ray1);
-            double ray2Direction = getDirectionOfRay(ray2);
-        
-            Ray fakeRay1 = new Ray(lLike1.p1, intersection.get());
-            Ray fakeRay2 = new Ray(lLike2.p1, intersection.get());
-    
-            if (!(getDirectionOfRay(fakeRay1) == ray1Direction) && !(getDirectionOfRay(fakeRay2) == ray2Direction)) {
-                return Optional.empty();
-            }
+        if (lLike1.contains(intersection) && lLike2.contains(intersection)){
+            return Optional.of(intersection);
+        } else {
+            return Optional.empty();
         }
-    
-        return intersection;
     }
 
     // for vectors
