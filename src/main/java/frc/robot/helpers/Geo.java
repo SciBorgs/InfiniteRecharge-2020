@@ -14,18 +14,10 @@ public class Geo {
         return new Point(p.x + x, p.y + y);
     }
 
-    public static Point addPoints(Point p1, Point p2) {
-        return shiftPoint(p1, p2.x, p2.y);
-    }
-
-    public static Point subtractPoints(Point p1, Point p2) {
-        return addPoints(p1, scale(p2, -1));
-    }
-
     public static Point rotatePoint(Point point, double theta, Point rotateAround) {
-        Point shifted = subtractPoints(point, rotateAround);
+        Point shifted = sub(point, rotateAround);
         Point rotated = rotatePoint(shifted, theta);
-        return addPoints(rotated, rotateAround);
+        return add(rotated, rotateAround);
     }
 
     public static Point rotatePoint(Point p, double theta) {
@@ -45,11 +37,11 @@ public class Geo {
         return Math.atan2(l.p1.y - l.p2.y, l.p1.x - l.p2.x);
     }
 
-    public static double mOf(LineLike lLike) {
+    public static double mOf(LineLike lLike) { // Slope
         return Math.tan(thetaOf(lLike));
     }
 
-    public static double bOf(LineLike lLike) {
+    public static double bOf(LineLike lLike) { // Y-intercept
         Line l = lLike.toLine();
         return l.p1.y - mOf(l) * l.p1.x;
     }
@@ -131,7 +123,7 @@ public class Geo {
     }
 
     public static Line getPerpendicular(Line line, Point point) {
-        return pointAngleForm(point, thetaOf(line) + (MAX_ANGLE - MIN_ANGLE) / 2);
+        return pointAngleForm(point, thetaOf(line) + (MAX_ANGLE - MIN_ANGLE) / 4);
     }
 
     public static double getDirectionOfRay(Ray ray) {
@@ -152,25 +144,19 @@ public class Geo {
     }
 
     public static Optional<Point> getIntersection(LineLike lLike1, LineLike lLike2) {
-        Line line1 = lLike1.toLine();
-        Line line2 = lLike2.toLine();
-    
-        if (areParellel(line1, line2)) {
+        if (areParellel(lLike1, lLike2)) {
             return Optional.empty();
         }
-        
-        double x = (bOf(line2) - bOf(line1)) / (mOf(line1) - mOf(line2));
-    
-        if (isVertical(line1)) {
-            x = line1.p1.x;
-        }
-        if (isVertical(line2)) {
-            return getIntersection(line2, line1);
-        }
-    
-        Point intersection = new Point(x, yOf(line2, x));
-    
-        if (lLike1.contains(intersection) && lLike2.contains(intersection)){
+
+        // Algorithim: http://geomalgorithms.com/a05-_intersect-1.html
+        Point u = sub(lLike1.p2, lLike1.p1);
+        Point v = sub(lLike2.p2, lLike2.p1);
+        Point w = sub(lLike1.p1, lLike2.p1);
+
+        double s = (v.y * w.x - v.x * w.y) / (v.x * u.y - v.y * u.x);
+        Point intersection = add(lLike1.p1, scale(u, s));
+
+        if (lLike1.contains(intersection) && lLike2.contains(intersection)) {
             return Optional.of(intersection);
         } else {
             return Optional.empty();
