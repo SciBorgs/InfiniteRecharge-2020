@@ -200,32 +200,13 @@ public class Geo {
             return getIntersection(line2, line1);
         }
     
-        Optional<Point> intersection = Optional.of(new Point(x, yOf(line2, x)));
+        Point intersection = new Point(x, yOf(line2, x));
     
-        if (lLike1.getClass() == LineSegment.class && lLike2.getClass() == LineSegment.class) { // Line Segment
-            LineSegment lineSegment1 = new LineSegment(lLike1.p1, lLike1.p2);
-            LineSegment lineSegment2 = new LineSegment(lLike2.p1, lLike2.p2);
-    
-            if (!isPointOn(lineSegment1, intersection.get()) || !isPointOn(lineSegment2, intersection.get())) {
-                return Optional.empty();
-            }
-    
-        } else { // Ray
-            Ray ray1 = new Ray(lLike1.p1, lLike1.p2);
-            Ray ray2 = new Ray(lLike2.p1, lLike2.p2);
-        
-            double ray1Direction = getDirectionOfRay(ray1);
-            double ray2Direction = getDirectionOfRay(ray2);
-        
-            Ray fakeRay1 = new Ray(lLike1.p1, intersection.get());
-            Ray fakeRay2 = new Ray(lLike2.p1, intersection.get());
-    
-            if (!(getDirectionOfRay(fakeRay1) == ray1Direction) && !(getDirectionOfRay(fakeRay2) == ray2Direction)) {
-                return Optional.empty();
-            }
+        if (lLike1.contains(intersection) && lLike2.contains(intersection)){
+            return Optional.of(intersection);
+        } else {
+            return Optional.empty();
         }
-    
-        return intersection;
     }
 
     // for vectors
