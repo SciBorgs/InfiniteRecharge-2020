@@ -85,62 +85,54 @@ public class Geo {
         return Math.sqrt(Math.pow(point2.x - point1.x, 2) + Math.pow(point2.y - point1.y, 2));
     }
 
-    public static double getDistance(Line line, Point point) {
-        Optional<Point> intersection = getIntersection(getPerpendicular(line, point), line);
-        // Intersection will never be empty in this case
-        return getDistance(point, intersection.get());
-    }
-
-    public static double getDistance(LineSegment lineSegment, Point point) {
-        Point closestPoint;
-        double dX = lineSegment.p2.x - lineSegment.p1.x;
-        double dY = lineSegment.p2.y - lineSegment.p1.y;
-
-        if (dX == 0 && dY == 0) {
-            closestPoint = lineSegment.p1;
-            dX = point.x - lineSegment.p1.x;
-            dY = point.y - lineSegment.p1.y;
-
+    public static double getDistance(LineLike lLike, Point point) {
+        Line fakeLine = lLike.toLine();  
+        Optional<Point> intersection = getIntersection(getPerpendicular(fakeLine, point), fakeLine); // Intersection will never be empty in this case
+        
+        if (lLike.getClass() == Line.class) { // Line
+            return getDistance(point, intersection.get());
+        } else if (lLike.getClass() == Ray.class) { // Ray
+            Ray ray = new Ray(lLike.p1, lLike.p2);
+            Ray fakeRay = new Ray(point, intersection.get());
+          
+            if (!getIntersection(ray, fakeRay).isPresent()) {
+                return getDistance(point, ray.p1);
+            } else {
+                return getDistance(point, intersection.get());
+            }
+        } else { // Line segment
+            Point closestPoint;
+            LineSegment lineSegment = new LineSegment(lLike.p1, lLike.p2);
+            
+            double dX = lineSegment.p2.x - lineSegment.p1.x;
+            double dY = lineSegment.p2.y - lineSegment.p1.y;
+        
+            if (dX == 0 && dY == 0) {
+                closestPoint = lineSegment.p1;
+                dX = point.x - lineSegment.p1.x;
+                dY = point.y - lineSegment.p1.y;
+        
+                return Math.sqrt(Math.pow(dX, 2) + Math.pow(dY, 2));
+            } // p1 and p2 cannot be on the same point
+    
+            double t = ((point.x - lineSegment.p1.x) * dX + (point.y - lineSegment.p1.y) * dY) / (Math.pow(dX, 2) + Math.pow(dY, 2));
+    
+            if (t < 0) {
+                closestPoint = new Point(lineSegment.p1.x, lineSegment.p1.y);
+                dX = point.x - lineSegment.p1.x;
+                dY = point.y - lineSegment.p1.y;
+            } else if (t > 1) {
+                closestPoint = new Point(lineSegment.p2.x, lineSegment.p2.y);
+                dX = point.x - lineSegment.p2.x;
+                dY = point.y - lineSegment.p2.y;
+            } else {
+                closestPoint = new Point(lineSegment.p1.x + t * dX, lineSegment.p1.y + t * dY);
+                dX = point.x - closestPoint.x;
+                dY = point.y - closestPoint.y;
+            }
+        
             return Math.sqrt(Math.pow(dX, 2) + Math.pow(dY, 2));
-        } // p1 and p2 cannot be on the same point
-
-        double t = ((point.x - lineSegment.p1.x) * dX + (point.y - lineSegment.p1.y) * dY)
-                / (Math.pow(dX, 2) + Math.pow(dY, 2));
-
-        if (t < 0) {
-            closestPoint = new Point(lineSegment.p1.x, lineSegment.p1.y);
-            dX = point.x - lineSegment.p1.x;
-            dY = point.y - lineSegment.p1.y;
-        } else if (t > 1) {
-            closestPoint = new Point(lineSegment.p2.x, lineSegment.p2.y);
-            dX = point.x - lineSegment.p2.x;
-            dY = point.y - lineSegment.p2.y;
-        } else {
-            closestPoint = new Point(lineSegment.p1.x + t * dX, lineSegment.p1.y + t * dY);
-            dX = point.x - closestPoint.x;
-            dY = point.y - closestPoint.y;
         }
-
-        return Math.sqrt(Math.pow(dX, 2) + Math.pow(dY, 2));
-    }
-
-    public static double getDistance(Ray ray, Point point) {
-        Line fakeLine = ray.toLine();
-
-        Optional<Point> intersection = getIntersection(getPerpendicular(fakeLine, point), fakeLine);
-
-        Ray fakeRay = new Ray(point, intersection.get());
-
-        double endPointToIntersection;
-        double pointToIntersection = getDistance(point, intersection.get());
-
-        if (!(getIntersection(ray, fakeRay).isPresent())) {
-            endPointToIntersection = getDistance(fakeLine, point);
-        } else {
-            endPointToIntersection = getDistance(ray.p1, intersection.get());
-        }
-
-        return Math.sqrt(Math.pow(endPointToIntersection, 2) + Math.pow(pointToIntersection, 2));
     }
 
     public static boolean arePointsCollinear(Point p1, Point p2, Point p3) {
@@ -183,73 +175,56 @@ public class Geo {
         }
     }
 
-    public static boolean isPointOnSegment(LineSegment lineSegment, Point point) {
-        return arePointsCollinear(lineSegment.p1, lineSegment.p2, point);
-    }
-
-    public static boolean isPointOnRay(Ray ray, Point point) {
-        double sideOfLine = getDirectionOfRay(ray);
-        Line fakeLine = ray.toLine();
-
-        if (getDirectionOfRay(new Ray(ray.p1, point)) == sideOfLine) {
-            if (fakeLine.contains(point)) {
-                return true;
-            }
-        }
-        return false;
+    public static boolean isPointOn(AlmostLine almostLine, Point point) {
+        return almostLine.contains(point);
     }
 
     public static boolean areParellel(LineLike l1, LineLike l2) {
         return thetaOf(l1) == thetaOf(l2);
     }
 
-    public static Optional<Point> getIntersection(Line line1, Line line2) {
-        // Return empty value if the lines are parallel
+    public static Optional<Point> getIntersection(LineLike lLike1, LineLike lLike2) {
+        Line line1 = lLike1.toLine();
+        Line line2 = lLike2.toLine();
+    
         if (areParellel(line1, line2)) {
             return Optional.empty();
         }
+        
         double x = (bOf(line2) - bOf(line1)) / (mOf(line1) - mOf(line2));
-
+    
         if (isVertical(line1)) {
             x = line1.p1.x;
         }
         if (isVertical(line2)) {
             return getIntersection(line2, line1);
         }
-
-        return Optional.of(new Point(x, yOf(line2, x)));
-    }
-
-    public static Optional<Point> getIntersection(LineSegment lineSegment1, LineSegment lineSegment2) {
-        Line fakeLine1 = new Line(lineSegment1.p1, lineSegment1.p2);
-        Line fakeLine2 = new Line(lineSegment2.p1, lineSegment2.p2);
-
-        Optional<Point> pointOfIntersection = getIntersection(fakeLine1, fakeLine2);
-
-        if (!isPointOnSegment(lineSegment1, pointOfIntersection.get())
-                || !isPointOnSegment(lineSegment2, pointOfIntersection.get())) {
-            return Optional.empty();
+    
+        Optional<Point> intersection = Optional.of(new Point(x, yOf(line2, x)));
+    
+        if (lLike1.getClass() == LineSegment.class && lLike2.getClass() == LineSegment.class) { // Line Segment
+            LineSegment lineSegment1 = new LineSegment(lLike1.p1, lLike1.p2);
+            LineSegment lineSegment2 = new LineSegment(lLike2.p1, lLike2.p2);
+    
+            if (!isPointOn(lineSegment1, intersection.get()) || !isPointOn(lineSegment2, intersection.get())) {
+                return Optional.empty();
+            }
+    
+        } else { // Ray
+            Ray ray1 = new Ray(lLike1.p1, lLike1.p2);
+            Ray ray2 = new Ray(lLike2.p1, lLike2.p2);
+        
+            double ray1Direction = getDirectionOfRay(ray1);
+            double ray2Direction = getDirectionOfRay(ray2);
+        
+            Ray fakeRay1 = new Ray(lLike1.p1, intersection.get());
+            Ray fakeRay2 = new Ray(lLike2.p1, intersection.get());
+    
+            if (!(getDirectionOfRay(fakeRay1) == ray1Direction) && !(getDirectionOfRay(fakeRay2) == ray2Direction)) {
+                return Optional.empty();
+            }
         }
-
-        return pointOfIntersection;
-    }
-
-    public static Optional<Point> getIntersection(Ray ray1, Ray ray2) {
-        double ray1Direction = getDirectionOfRay(ray1);
-        double ray2Direction = getDirectionOfRay(ray2);
-
-        Line fakeLine1 = ray1.toLine();
-        Line fakeLine2 = ray2.toLine();
-
-        Optional<Point> intersection = getIntersection(fakeLine1, fakeLine2);
-
-        Ray fakeRay1 = new Ray(ray1.p1, intersection.get());
-        Ray fakeRay2 = new Ray(ray2.p1, intersection.get());
-
-        if (!(getDirectionOfRay(fakeRay1) == ray1Direction) && !(getDirectionOfRay(fakeRay2) == ray2Direction)) {
-            return Optional.empty();
-        }
-
+    
         return intersection;
     }
 
