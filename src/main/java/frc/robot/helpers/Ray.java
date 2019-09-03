@@ -7,8 +7,8 @@ public class Ray extends LineLike implements AlmostLine{
     }
 
     public boolean contains(Point p){
-        Point diff1 = Geo.subtractPoints(p,       this.p1);
-        Point diff2 = Geo.subtractPoints(this.p2, this.p1);
+        Point diff1 = Geo.sub(p,       this.p1);
+        Point diff2 = Geo.sub(this.p2, this.p1);
         boolean correctSide = diff1.y * diff2.y > 0 || diff1.x * diff2.x > 0;
         return this.toLine().contains(p) && correctSide;
     }
