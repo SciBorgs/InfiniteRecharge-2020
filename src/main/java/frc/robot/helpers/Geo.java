@@ -79,27 +79,27 @@ public class Geo {
 
     public static double getDistance(LineLike lLike, Point point) {
         Line fakeLine = lLike.toLine();  
-        Optional<Point> intersection = getIntersection(getPerpendicular(fakeLine, point), fakeLine); // Intersection will never be empty in this case
+        Optional<Point> intersection = getIntersection(getPerpendicular(fakeLine, point), lLike); // If not a line, it might not intersect
         
-        if (!intersection.isPresent()) {
+        if (!intersection.isPresent()) { // Gets shortest distances from point to all bounded points 
             ArrayList<Double> distances = new ArrayList<>();
-            for (int i = 0; i < lLike.getBounds().length; i++) {
-                Point likeLinePoint = lLike.getBounds()[i];
-                distances.add(getDistance(point, likeLinePoint));
+            for (Point bounds : lLike.getBounds()) {
+                Point boundingPoint = bounds;
+                distances.add(getDistance(point, boundingPoint));
             }
 
-            return Collections.max(distances);
+            return Collections.min(distances);
         }
         
         return getDistance(point, intersection.get());
     }
 
     public static boolean arePointsCollinear(Point p1, Point p2, Point p3) {
-        return collinear(p1, p2, p3) <= EPSILON;
+        return arePointsCollinear(p1, p2, p3, EPSILON);
     }
 
     public static boolean arePointsExactlyCollinear(Point p1, Point p2, Point p3) {
-        return collinear(p1, p2, p3) == 0;
+        return arePointsCollinear(p1, p2, p3, 0);
     }
 
     public static boolean arePointsCollinear(Point p1, Point p2, Point p3, double precision) {
