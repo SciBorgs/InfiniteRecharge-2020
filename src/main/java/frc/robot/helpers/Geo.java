@@ -33,8 +33,7 @@ public class Geo {
     }
 
     public static double thetaOf(LineLike lLike) {
-        Line l = lLike.toLine();
-        return Math.atan2(l.p1.y - l.p2.y, l.p1.x - l.p2.x);
+        return Math.atan2(lLike.p1.y - lLike.p2.y, lLike.p1.x - lLike.p2.x);
     }
 
     public static double mOf(LineLike lLike) { // Slope
@@ -42,8 +41,7 @@ public class Geo {
     }
 
     public static double bOf(LineLike lLike) { // Y-intercept
-        Line l = lLike.toLine();
-        return l.p1.y - mOf(l) * l.p1.x;
+        return lLike.p1.y - mOf(lLike) * lLike.p1.x;
     }
 
     public static boolean isVertical(LineLike lLike) {
@@ -82,8 +80,16 @@ public class Geo {
         Optional<Point> intersection = getIntersection(getPerpendicular(fakeLine, point), fakeLine); // Intersection will never be empty in this case
         
         if (!lLike.contains(intersection.get())) {
-            double distanceToP1 = getDistance(lLike.p1, point);
-            double distanceToP2 = getDistance(lLike.p2, point);
+            double distanceToP1;
+            double distanceToP2;
+            
+            distanceToP1 = getDistance(lLike.getBounds()[0], point);
+
+            if (lLike.getBounds().length == 2) { // Line segment case
+                distanceToP2 = getDistance(lLike.getBounds()[1], point);
+            } else { // Ray case
+                distanceToP2 = 0;
+            }
 
             if (distanceToP1 < distanceToP2) {
                 return distanceToP1;
@@ -97,6 +103,10 @@ public class Geo {
 
     public static boolean arePointsCollinear(Point p1, Point p2, Point p3) {
         return (p2.y - p1.y) * (p3.x - p2.x) - (p2.x - p1.x) * (p3.y - p2.y) <= EPSILON;
+    }
+
+    public static boolean arePointsExactlyCollinear(Point p1, Point p2, Point p3) {
+        return (p2.y - p1.y) * (p3.x - p2.x) - (p2.x - p1.x) * (p3.y - p2.y) == 0;
     }
 
     public static boolean isPointInCircle(Point p1, Point p2, Point p3, Point pointToTest) {
@@ -126,25 +136,16 @@ public class Geo {
         return pointAngleForm(point, thetaOf(line) + (MAX_ANGLE - MIN_ANGLE) / 4);
     }
 
-    public static double getDirectionOfRay(Ray ray) {
-        // Based on the left and right of pEnd
-        if (ray.p1.x < ray.p2.x) {
-            return 1; // Right
-        } else {
-            return -1; // Left
-        }
-    }
-
-    public static boolean isPointOn(AlmostLine almostLine, Point point) {
-        return almostLine.contains(point);
-    }
-
     public static boolean areParellel(LineLike l1, LineLike l2) {
+        return thetaOf(l1) - thetaOf(l2) <= EPSILON;
+    }
+
+    public static boolean areExactlyParellel(LineLike l1, LineLike l2) {
         return thetaOf(l1) == thetaOf(l2);
     }
 
     public static Optional<Point> getIntersection(LineLike lLike1, LineLike lLike2) {
-        if (areParellel(lLike1, lLike2)) {
+        if (areExactlyParellel(lLike1, lLike2)) {
             return Optional.empty();
         }
 
