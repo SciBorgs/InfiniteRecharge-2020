@@ -31,15 +31,13 @@ public class Geo {
         return new Line(flipXandY(l.p1), flipXandY(l.p2));
     }
 
+    private static double bringInRange(double val, double min, double max) {
+        return ((val - min) % (max - min)) + min;
+    }
+
     public static double thetaOf(LineLike lLike) {
         double theta = angleBetween(lLike.p1, lLike.p2);
-        if (theta > MAX_ANGLE / 4){
-            return theta - MAX_ANGLE / 2;
-        } else if (theta < MAX_ANGLE / -4){
-            return theta + MAX_ANGLE / 2;
-        } else {
-            return theta;
-        }
+        return bringInRange(theta, -MAX_ANGLE / 4, MAX_ANGLE / 4);
     }
 
     public static double mOf(LineLike lLike) { // Slope
