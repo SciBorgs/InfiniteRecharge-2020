@@ -1,5 +1,7 @@
 package frc.robot.helpers;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Optional;
 
 public class Geo {
@@ -9,10 +11,6 @@ public class Geo {
     private static final double DELTA = 1;
     public static final double MIN_ANGLE = 0;
     public static final double MAX_ANGLE = 2 * Math.PI;
-
-    public static Point shiftPoint(Point p, double x, double y) {
-        return new Point(p.x + x, p.y + y);
-    }
 
     public static Point rotatePoint(Point point, double theta, Point rotateAround) {
         Point shifted = sub(point, rotateAround);
@@ -79,35 +77,35 @@ public class Geo {
         Line fakeLine = lLike.toLine();  
         Optional<Point> intersection = getIntersection(getPerpendicular(fakeLine, point), fakeLine); // Intersection will never be empty in this case
         
-        if (!lLike.contains(intersection.get())) {
-            double distanceToP1;
-            double distanceToP2;
-            
-            distanceToP1 = getDistance(lLike.getBounds()[0], point);
-
-            if (lLike.getBounds().length == 2) { // Line segment case
-                distanceToP2 = getDistance(lLike.getBounds()[1], point);
-            } else { // Ray case
-                distanceToP2 = 0;
+        if (!intersection.isPresent()) {
+            ArrayList<Double> distances = new ArrayList<>();
+            for (int i = 0; i < lLike.getBounds().length; i++) {
+                Point likeLinePoint = lLike.getBounds()[i];
+                distances.add(getDistance(point, likeLinePoint));
             }
 
-            if (distanceToP1 < distanceToP2) {
-                return distanceToP1;
-            } else {
-                return distanceToP2;
-            }
+            return Collections.max(distances);
         }
         
         return getDistance(point, intersection.get());
     }
 
     public static boolean arePointsCollinear(Point p1, Point p2, Point p3) {
-        return (p2.y - p1.y) * (p3.x - p2.x) - (p2.x - p1.x) * (p3.y - p2.y) <= EPSILON;
+        return collinear(p1, p2, p3) <= EPSILON;
     }
 
     public static boolean arePointsExactlyCollinear(Point p1, Point p2, Point p3) {
-        return (p2.y - p1.y) * (p3.x - p2.x) - (p2.x - p1.x) * (p3.y - p2.y) == 0;
+        return collinear(p1, p2, p3) == 0;
     }
+
+    public static boolean arePointsCollinear(Point p1, Point p2, Point p3, double precision) {
+        return collinear(p1, p2, p3) <= precision;
+    }
+
+    private static double collinear(Point p1, Point p2, Point p3) {
+        return (p2.y - p1.y) * (p3.x - p2.x) - (p2.x - p1.x) * (p3.y - p2.y);
+    }
+
 
     public static boolean isPointInCircle(Point p1, Point p2, Point p3, Point pointToTest) {
         double p1dx = p1.x - pointToTest.x;
@@ -144,6 +142,10 @@ public class Geo {
         return thetaOf(l1) == thetaOf(l2);
     }
 
+    public static boolean areParellel(LineLike l1, LineLike l2, double precision) {
+        return thetaOf(l1) - thetaOf(l2) <= precision;
+    }
+
     public static Optional<Point> getIntersection(LineLike lLike1, LineLike lLike2) {
         if (areExactlyParellel(lLike1, lLike2)) {
             return Optional.empty();
@@ -178,7 +180,7 @@ public class Geo {
     }
 
     public static double magnitude(Point A) {
-        return Math.sqrt(Math.pow(A.x, 2) + Math.pow(A.y, 2));
+        return getDistance(A, new Point(0,0));
     }
 
     public static double dot(Point A, Point B) {
