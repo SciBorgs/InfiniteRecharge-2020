@@ -9,7 +9,6 @@ public class Geo {
     public static final Point ORIGIN = new Point(0, 0);
     private static final double EPSILON = 1e-9;
     private static final double DELTA = 1;
-    public static final double MIN_ANGLE = 0;
     public static final double MAX_ANGLE = 2 * Math.PI;
 
     public static Point rotatePoint(Point point, double theta, Point rotateAround) {
@@ -31,7 +30,14 @@ public class Geo {
     }
 
     public static double thetaOf(LineLike lLike) {
-        return Math.atan2(lLike.p1.y - lLike.p2.y, lLike.p1.x - lLike.p2.x);
+        double theta = angleBetween(lLike.p1, lLike.p2);
+        if (theta > MAX_ANGLE / 4){
+            return theta - MAX_ANGLE / 2;
+        } else if (theta < MAX_ANGLE / -4){
+            return theta + MAX_ANGLE / 2;
+        } else {
+            return theta;
+        }
     }
 
     public static double mOf(LineLike lLike) { // Slope
@@ -131,7 +137,7 @@ public class Geo {
     }
 
     public static Line getPerpendicular(Line line, Point point) {
-        return pointAngleForm(point, thetaOf(line) + (MAX_ANGLE - MIN_ANGLE) / 4);
+        return pointAngleForm(point, thetaOf(line) + MAX_ANGLE / 4);
     }
 
     public static boolean areParellel(LineLike l1, LineLike l2) {
@@ -188,9 +194,6 @@ public class Geo {
     }
 
     public static double angleBetween(Point A, Point B) {
-        double dot = dot(A, B);
-        double magnitudeA = Math.sqrt(Math.pow(A.x, 2) + Math.pow(A.y, 2));
-        double magnitudeB = Math.sqrt(Math.pow(B.x, 2) + Math.pow(B.y, 2));
-        return Math.acos(dot / (magnitudeA * magnitudeB));
+        return Math.atan2(B.y - A.y, B.x - A.x);
     }
 }
