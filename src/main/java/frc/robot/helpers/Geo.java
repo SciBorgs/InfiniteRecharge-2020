@@ -139,11 +139,11 @@ public class Geo {
     }
 
     public static boolean areParellel(LineLike l1, LineLike l2) {
-        return thetaOf(l1) - thetaOf(l2) <= EPSILON;
+        return areParellel(l1, l2, EPSILON);
     }
 
     public static boolean areExactlyParellel(LineLike l1, LineLike l2) {
-        return thetaOf(l1) == thetaOf(l2);
+        return areParellel(l1, l2, 0);
     }
 
     public static boolean areParellel(LineLike l1, LineLike l2, double precision) {
