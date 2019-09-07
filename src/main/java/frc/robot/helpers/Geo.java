@@ -18,7 +18,8 @@ public class Geo {
     }
 
     public static Point rotatePoint(Point p, double theta) {
-        return new Point(p.x * Math.cos(theta) - p.y * Math.sin(theta), p.y * Math.cos(theta) + p.x * Math.sin(theta));
+        return new Point(p.x * Math.cos(theta) - p.y * Math.sin(theta), 
+                         p.y * Math.cos(theta) + p.x * Math.sin(theta));
     }
 
     public static Point flipXandY(Point p) {
@@ -74,7 +75,11 @@ public class Geo {
     }
 
     public static double getDistance(Point point1, Point point2) {
-        return Math.sqrt(Math.pow(point2.x - point1.x, 2) + Math.pow(point2.y - point1.y, 2));
+        return Math.sqrt(getDistanceSquared(point1, point2));
+    }
+
+    public static double getDistanceSquared(Point point1, Point point2) {
+        return ((point2.x - point1.x) * (point2.x - point1.x)) + ((point2.y - point1.y) * (point2.y - point1.y));
     }
 
     public static double getDistance(LineLike lLike, Point point) {
@@ -84,8 +89,7 @@ public class Geo {
         if (!intersection.isPresent()) { // Gets shortest distances from point to all bounded points 
             ArrayList<Double> distances = new ArrayList<>();
             for (Point bounds : lLike.getBounds()) {
-                Point boundingPoint = bounds;
-                distances.add(getDistance(point, boundingPoint));
+                distances.add(getDistance(point, bounds));
             }
 
             return Collections.min(distances);
@@ -127,7 +131,7 @@ public class Geo {
         double p2Lift = Math.pow(p2dx, 2) + Math.pow(p2dy, 2);
         double p3Lift = Math.pow(p3dx, 2) + Math.pow(p3dy, 2);
 
-        return p1Lift * p2p3Det + p2Lift * p3p1Det + p3Lift * p1p2Det > 0;
+        return p1Lift * p2p3Det + p2Lift * p3p1Det + p3Lift * p1p2Det > 0; // If is greater, point lies outside of circle.
     }
 
     public static Point getMidpoint(Point point1, Point point2) {
@@ -170,7 +174,7 @@ public class Geo {
         }
     }
 
-    // for vectors
+    // vector-like functionality
     public static Point scale(Point point, double c) {
         return new Point(point.x * c, point.y * c);
     }
@@ -183,8 +187,12 @@ public class Geo {
         return add(A, scale(B, -1));
     }
 
-    public static double magnitude(Point A) {
-        return getDistance(A, new Point(0,0));
+    public static double getMagnitude(Point A) {
+        return Math.sqrt(getMagnitudeSquared(A));
+    }
+
+    public static double getMagnitudeSquared(Point A) {
+        return getDistanceSquared(A, new Point(0,0));
     }
 
     public static double dot(Point A, Point B) {
