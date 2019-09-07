@@ -2,37 +2,35 @@ package frc.robot;
 
 import frc.robot.stateEstimation.*;
 
+import java.util.Hashtable;
+
 public class RobotState {
-    public updateFunction xUpdater;
-    public updateFunction yUpdater;
-    public updateFunction angleUpdater;
-    public double xPosition;
-    public double yPosition;
-    public double angle;
-    public EncoderLocalization localizer;
+    
+    public enum RS {
+        Xpos, Ypos, Angle
+    }
+
+    private Hashtable<RS, Double> data;
 
     public RobotState() {
-        this.xPosition = this.updateX();
-        this.yPosition = this.updateY();
-        this.angle = this.updateAngle();
-        this.localizer = new EncoderLocalization();
-        this.xUpdater = ()->this.updateX(); // Lambda expression used to represent function used for this interface
-        this.yUpdater = ()->this.updateY();
-        this.angleUpdater = ()->this.updateAngle();
+        this.data = new Hashtable<>();
+    }
+    public RobotState(Hashtable<RS, Double> data) {
+        this.data = data;
     }
 
-    public double updateX(){
-        this.localizer.updatePositionTank();
-        return this.localizer.getX();
+    public double get(RS rs){
+        return this.data.get(rs);
     }
-
-    public double updateY(){
-        this.localizer.updatePositionTank();
-        return this.localizer.getY();
+    public void set(RS rs, double val){
+        this.data.put(rs, val);
     }
-
-    public double updateAngle() {
-        this.localizer.updatePositionTank();
-        return this.localizer.getAngle();
+    public RobotState copy(){
+        return new RobotState((Hashtable<RS, Double>) data.clone());
+    }
+    public RobotState setCopy(RS rs, double val){
+        RobotState newRobotState = copy();
+        newRobotState.set(rs, val);
+        return newRobotState;
     }
 }
