@@ -3,6 +3,7 @@ package frc.robot.stateEstimation;
 import frc.robot.Robot;
 
 import java.util.ArrayList;
+import java.util.Hashtable;
 
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
@@ -21,6 +22,10 @@ public class EncoderLocalization implements Updater, PositionModel {
     public static final double ORIGINAL_ANGLE = Math.PI/2, ORIGINAL_X = 0, ORIGINAL_Y = 0;
     public static final double INTERVAL_LENGTH = .02; // Seconds between each tick for commands
     private final String FILENAME = "RobotPosition.java";
+    private static final double X_UNCERTIANTY     = 0;
+    private static final double Y_UNCERTIANTY     = 0;
+    private static final double ANGLE_UNCERTIANTY = 0;
+    private Hashtable<RS, Double> variances;
 
     private Pigeon pigeon;
     private TalonSRX pigeonTalon;
@@ -36,13 +41,19 @@ public class EncoderLocalization implements Updater, PositionModel {
     public EncoderLocalization(){
         this.pigeonTalon = new TalonSRX(PortMap.PIGEON_TALON);
         this.pigeon      = new Pigeon(pigeonTalon);
+
+        this.variances = new Hashtable<>();
+        this.variances.put(RS.X,     X_UNCERTIANTY);
+        this.variances.put(RS.Y,     Y_UNCERTIANTY);
+        this.variances.put(RS.Angle, ANGLE_UNCERTIANTY);
     }
 
     public TalonSRX[] getTalons() {
         return new TalonSRX[]{this.pigeonTalon};
     }
 
-    public Pigeon getPigeon(){return this.pigeon;}
+    public Pigeon                getPigeon()   {return this.pigeon;}
+    public Hashtable<RS, Double> getVariances(){return this.variances;}
 
     public double calculateWheelPosition(RobotState state, RS wheelAngleRS) {
         // Returns the encoder position of a spark
