@@ -1,5 +1,9 @@
 package frc.robot.stateEstimation;
 
-public interface predictFunction {
-    double predictParticle (double particle);
+import frc.robot.RobotState;
+
+import java.util.ArrayList;
+
+public interface Weighter {
+    RobotState weight(RobotState guess, ArrayList<RobotState> pastStates);
 };

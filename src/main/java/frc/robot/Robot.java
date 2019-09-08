@@ -10,18 +10,29 @@ import frc.robot.logging.Logger.DefaultValue;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.command.Scheduler;
 
+import java.util.ArrayList;
+
 public class Robot extends TimedRobot {
     public static Logger logger = new Logger();
     public static OI oi = new OI();
     
     public static DriveSubsystem      driveSubsystem      = new DriveSubsystem();
     public static EncoderSubsystem    encoderSubsystem    = new EncoderSubsystem();
-    public static EncoderLocalization encoderLocalization = new EncoderLocalization();
     public static GearShiftSubsystem  gearShiftSubsystem  = new GearShiftSubsystem();
     public static LimelightSubsystem  limelightSubsystem  = new LimelightSubsystem();
     public static PneumaticsSubsystem pneumaticsSubsystem = new PneumaticsSubsystem();
     
-    public static Following following = new Following();
+    public static Following     following     = new Following();
+    public static PositionModel positionModel = new EncoderLocalization();
+
+    public static ArrayList<RobotState> robotStates = new ArrayList<>();
+
+    public static RobotState getCurrentState(){
+        return robotStates.get(0);
+    }
+    public static double get(RobotState.RS rs){
+        return getCurrentState().get(rs);
+    }
 
     private int attemptsSinceLastLog;    
     public static final int LOG_PERIOD = 5;
@@ -37,7 +48,7 @@ public class Robot extends TimedRobot {
 
     public void robotInit() {
         attemptsSinceLastLog = 0;
-        encoderLocalization.updatePositionTank();
+        positionModel.updatePosition();
         pneumaticsSubsystem.stopCompressor();
         logger.incrementPrevious("robot.java", "deploy", DefaultValue.Previous);
 
@@ -67,7 +78,8 @@ public class Robot extends TimedRobot {
  
     public void robotPeriodic() {
         Scheduler.getInstance().run();
-        encoderLocalization.updatePositionTank();
+        robotStates.add(0, getCurrentState().copy());
+        positionModel.updatePosition();
     }
         
     public void autonomousInit() {
