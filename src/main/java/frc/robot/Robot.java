@@ -30,8 +30,9 @@ public class Robot extends TimedRobot {
     public static ArrayList<RobotState> robotStates = new ArrayList<>();
 
     public static RobotState getState(){return robotStates.get(0);}
-    
+
     public static double get(RS rs)            {return getState().get(rs);}
+    public static void   set(RS rs, double val){       getState().set(rs, val);}
     public static Value getSolenoidValue(RS rs){return getState().getSolenoidValue(rs);}
 
     private int attemptsSinceLastLog;    
@@ -44,6 +45,11 @@ public class Robot extends TimedRobot {
         pneumaticsSubsystem.periodicLog();
         encoderSubsystem.periodicLog();
         following.periodicLog();
+    }
+    private void allUpdateRobotStates() {
+        driveSubsystem.updateRobotState();
+        gearShiftSubsystem.updateRobotState();
+        pneumaticsSubsystem.updateRobotState();
     }
 
     public void robotInit() {
@@ -77,6 +83,7 @@ public class Robot extends TimedRobot {
     }
  
     public void robotPeriodic() {
+        allUpdateRobotStates();
         Scheduler.getInstance().run();
         robotStates.add(0, getState().copy());
         positionModel.updatePosition();

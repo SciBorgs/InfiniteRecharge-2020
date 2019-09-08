@@ -3,10 +3,8 @@ package frc.robot.stateEstimation;
 import frc.robot.Robot;
 
 import java.util.ArrayList;
-import java.util.Hashtable;
 
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
-import com.revrobotics.CANSparkMax;
 
 import frc.robot.PortMap;
 import frc.robot.Utils;
@@ -24,19 +22,20 @@ public class EncoderLocalization implements Updater, PositionModel {
     public static final double INTERVAL_LENGTH = .02; // Seconds between each tick for commands
     private final String FILENAME = "RobotPosition.java";
 
-    private ArrayList<CANSparkMax> sparks;
     private Pigeon pigeon;
     private TalonSRX pigeonTalon;
 
-    public EncoderLocalization(){
+    private class WheelChangeInfo{
+        public double rotationChange, angle;
+        public WheelChangeInfo(double rotationChange, double angle){
+            this.rotationChange = rotationChange;
+            this.angle = angle;
+        }
+    }
 
+    public EncoderLocalization(){
         this.pigeonTalon = new TalonSRX(PortMap.PIGEON_TALON);
         this.pigeon      = new Pigeon(pigeonTalon);
-
-        this.sparks         = new ArrayList<>();
-
-        keepTrackOfWheel(Robot.driveSubsystem.l);
-        keepTrackOfWheel(Robot.driveSubsystem.r);
     }
 
     public TalonSRX[] getTalons() {
@@ -44,46 +43,37 @@ public class EncoderLocalization implements Updater, PositionModel {
     }
 
     public Pigeon getPigeon(){return this.pigeon;}
-    
-    public void keepTrackOfWheel(CANSparkMax spark) {
-        // this allows the code to easily keep track of the position of motors for the
-        // chassis
-        this.sparks.add(spark);
-    }
 
-    public double calculateWheelPosition(CANSparkMax motor) {
+    public double calculateWheelPosition(RobotState state, RS wheelAngleRS) {
         // Returns the encoder position of a spark
         // TODO: Should change to alternate low gear/high gear with whatever it is
-        return Robot.gearShiftSubsystem.getCurrentGearRatio() * Robot.encoderSubsystem.getSparkAngle(motor) * WHEEL_RADIUS;
+        return Robot.gearShiftSubsystem.getCurrentGearRatio() * state.get(wheelAngleRS) * WHEEL_RADIUS;
     }
     
-    public double wheelRotationChange(CANSparkMax spark, ArrayList<RobotState> states){
-        return getWheelPosition(spark, states, 0) - getWheelPosition(spark, states, 1);
+    public double wheelRotationChange(RS wheelAngleRS, ArrayList<RobotState> states){
+        return getWheelPosition(wheelAngleRS, states, 0) - getWheelPosition(wheelAngleRS, states, 1);
     }
     
-    public double getWheelPosition(CANSparkMax spark, ArrayList<RobotState> robotStates, int ticksAgo)  {
-        return getWheelPosition(spark, robotStates.get(ticksAgo));
+    public double getWheelPosition(RS wheelAngleRS, ArrayList<RobotState> robotStates, int ticksAgo)  {
+        return getWheelPosition(wheelAngleRS, robotStates.get(ticksAgo));
     }
-    public double getWheelPosition(CANSparkMax spark, RobotState state){
+    public double getWheelPosition(RS wheelAngleRS, RobotState state){
         // Takes a spark. Returns the last recorded pos of that spark/wheel
-        return state.get(Robot.driveSubsystem.sparkToWheelAngleRS.get(spark));
+        return calculateWheelPosition(state, wheelAngleRS);
     }
 
-    public Hashtable<String,Double> newWheelChangeInfo(double rotationChange, double angle){
-        return new Hashtable<String,Double>(){{
-            put("rotationChange", rotationChange);
-            put("angle", angle);
-        }};
+    public WheelChangeInfo newWheelChangeInfo(double rotationChange, double angle){
+        return new WheelChangeInfo(rotationChange, angle);
     }
 
-    public RobotState nextPosition(double x, double y, double theta, ArrayList<Hashtable<String,Double>> allChangeInfo){
+    public RobotState nextPosition(double x, double y, double theta, ArrayList<WheelChangeInfo> allChangeInfo){
         // Works for all forms of drive where the displacement is the average of the movement vectors over the wheels
         double newTheta = pigeon.getAngle();
         double avgTheta = (theta + newTheta)/2;
         int wheelAmount = allChangeInfo.size();
-        for(Hashtable<String,Double> wheelChangeInfo : allChangeInfo){
-            x += wheelChangeInfo.get("rotationChange") * Math.cos(avgTheta + wheelChangeInfo.get("angle")) / wheelAmount;
-            y += wheelChangeInfo.get("rotationChange") * Math.sin(avgTheta + wheelChangeInfo.get("angle")) / wheelAmount;
+        for(WheelChangeInfo wheelChangeInfo : allChangeInfo){
+            x += wheelChangeInfo.rotationChange * Math.cos(avgTheta + wheelChangeInfo.angle) / wheelAmount;
+            y += wheelChangeInfo.rotationChange * Math.sin(avgTheta + wheelChangeInfo.angle) / wheelAmount;
         }
         RobotState state = new RobotState();
         state.set(RS.X, x);
@@ -95,17 +85,18 @@ public class EncoderLocalization implements Updater, PositionModel {
     public RobotState nextPosTankPigeon(double x, double y, double theta, double leftChange, double rightChange) {
         // This assumes tank drive and you want to use the pigeon for calculating your angle
         // Takes a pos (x,y,theta), a left side Δx and a right side Δx and returns an x,y,theta array
-        ArrayList<Hashtable<String,Double>> allChangeInfo = new ArrayList<Hashtable<String,Double>>();
-        allChangeInfo.add(newWheelChangeInfo(leftChange,0));
-        allChangeInfo.add(newWheelChangeInfo(rightChange, 0)); // the zeros represent that they aren't turned
+        ArrayList<WheelChangeInfo> allChangeInfo = new ArrayList<>();
+        allChangeInfo.add(new WheelChangeInfo(leftChange,  0));
+        allChangeInfo.add(new WheelChangeInfo(rightChange, 0)); // the zeros represent that they aren't turned
         return nextPosition(x,y,theta,allChangeInfo);
     }
 
     public RobotState updateState(ArrayList<RobotState> pastStates){
+        RobotState state = pastStates.get(0);
         RobotState newPosition = 
-            nextPosTankPigeon(Robot.get(RS.X), Robot.get(RS.Y), Robot.get(RS.Angle), 
-                wheelRotationChange(Robot.driveSubsystem.l, pastStates), 
-                wheelRotationChange(Robot.driveSubsystem.r, pastStates));
+            nextPosTankPigeon(state.get(RS.X), state.get(RS.Y), state.get(RS.Angle), 
+                wheelRotationChange(RS.LeftWheelAngle,  pastStates), 
+                wheelRotationChange(RS.RightWheelAngle, pastStates));
         return pastStates.get(0).incorporateIntoNew(newPosition); 
     }
 

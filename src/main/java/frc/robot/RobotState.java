@@ -21,6 +21,11 @@ public class RobotState {
         GearShiftSolenoid,
         //
 
+        // Joysticks
+        LJX, LJY,
+        RJX, RJY,
+        //
+
         PressureSensorVoltage,
     }
 
