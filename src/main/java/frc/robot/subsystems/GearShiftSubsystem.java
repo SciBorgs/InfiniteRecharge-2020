@@ -2,6 +2,7 @@ package frc.robot.subsystems;
 
 import frc.robot.Robot;
 import frc.robot.Utils;
+import frc.robot.helpers.RobotStateInference;
 import frc.robot.logging.Logger.DefaultValue;
 import frc.robot.PortMap;
 
@@ -34,7 +35,7 @@ public class GearShiftSubsystem extends Subsystem {
 	}
     
     public void autoShift(){
-        double speed = Robot.encoderLocalization.getSpeed();
+        double speed = RobotStateInference.getSpeed();
         if(speed > UPPER_HIGH_GEAR_THRESHOLD){shiftDown();}
         if(speed < LOWER_LOW_GEAR_THRESHOLD) {shiftUp();}
     }

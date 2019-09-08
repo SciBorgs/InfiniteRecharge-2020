@@ -3,12 +3,17 @@ package frc.robot.subsystems;
 import frc.robot.PortMap;
 import frc.robot.Robot;
 import frc.robot.Utils;
+import frc.robot.RobotState.RS;
 import frc.robot.helpers.PID;
+import frc.robot.helpers.RobotStateInference;
 import frc.robot.logging.Logger.DefaultValue;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.command.Subsystem;
 
 import com.revrobotics.CANSparkMax;
+
+import java.util.Hashtable;
+
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
@@ -33,11 +38,11 @@ public class DriveSubsystem extends Subsystem {
     private PID tankAnglePID;
     public boolean assisted = false;
     public double driveMultiplier = 1;
-
-    // d value so that when x=INPUT_DEADZONE the wheels move
-    private static final double ALEJANDROS_CONSTANT = (MAX_JOYSTICK * Math.pow(MOTOR_MOVEPOINT / MAX_JOYSTICK, 1/(EXPONENT+1)) - INPUT_DEADZONE) /
-                                                    (Math.pow(MOTOR_MOVEPOINT / MAX_JOYSTICK, 1/(EXPONENT+1)) - 1);
-
+    public Hashtable<CANSparkMax, RS> sparkToWheelRS =
+        new Hashtable<>(){
+            {put(lf, RS.lfWheelAngle); // this. doesn't work here
+             put(rf, RS.rfWheelAngle);}
+        };
 
     private CANSparkMax newMotorObject(int port){
         return new CANSparkMax(port, MotorType.kBrushless);
@@ -156,7 +161,7 @@ public class DriveSubsystem extends Subsystem {
             goalOmega -= Utils.signOf(goalOmega) * STRAIGHT_DEADZONE;
         }
         goalOmega = Utils.limitOutput(goalOmega, MAX_OMEGA_GOAL);
-        double error = goalOmega - Robot.encoderLocalization.getAngularVelocity();
+        double error = goalOmega - RobotStateInference.getAngularVelocity();
         tankAnglePID.addMeasurement(error);
         double inputDiff = tankAnglePID.getOutput();
         // If you are going almost straight and goalOmega is 0, it will simply give the same input to both wheels
