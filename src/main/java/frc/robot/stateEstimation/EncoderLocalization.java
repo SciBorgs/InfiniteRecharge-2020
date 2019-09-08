@@ -35,8 +35,8 @@ public class EncoderLocalization implements Updater, PositionModel {
 
         this.sparks         = new ArrayList<>();
 
-        keepTrackOfWheel(Robot.driveSubsystem.lf);
-        keepTrackOfWheel(Robot.driveSubsystem.rf);
+        keepTrackOfWheel(Robot.driveSubsystem.l);
+        keepTrackOfWheel(Robot.driveSubsystem.r);
     }
 
     public TalonSRX[] getTalons() {
@@ -66,7 +66,7 @@ public class EncoderLocalization implements Updater, PositionModel {
     }
     public double getWheelPosition(CANSparkMax spark, RobotState state){
         // Takes a spark. Returns the last recorded pos of that spark/wheel
-        return state.get(Robot.driveSubsystem.sparkToWheelRS.get(spark));
+        return state.get(Robot.driveSubsystem.sparkToWheelAngleRS.get(spark));
     }
 
     public Hashtable<String,Double> newWheelChangeInfo(double rotationChange, double angle){
@@ -104,8 +104,8 @@ public class EncoderLocalization implements Updater, PositionModel {
     public RobotState updateState(ArrayList<RobotState> pastStates){
         RobotState newPosition = 
             nextPosTankPigeon(Robot.get(RS.X), Robot.get(RS.Y), Robot.get(RS.Angle), 
-                wheelRotationChange(Robot.driveSubsystem.lm, pastStates), 
-                wheelRotationChange(Robot.driveSubsystem.rm, pastStates));
+                wheelRotationChange(Robot.driveSubsystem.l, pastStates), 
+                wheelRotationChange(Robot.driveSubsystem.r, pastStates));
         return pastStates.get(0).incorporateIntoNew(newPosition); 
     }
 

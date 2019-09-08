@@ -10,7 +10,12 @@ public class RobotState {
     
     public enum RS {
         X, Y, Angle, 
-        lfWheelAngle, rfWheelAngle
+        // Chassis motor values
+        LeftWheelAngle, RightWheelAngle, L1WheelAngle, R1WheelAngle, L2WheelAngle, R2WheelAngle,
+        LeftSparkVal, RightSparkVal, L1SparkVal, R1SparkVal, L2SparkVal, R2SparkVal,
+        LeftSparkVoltage, RightSparkVoltage, L1SparkVoltage, R1SparkVoltage, L2SparkVoltage, R2SparkVoltage,
+        LeftSparkCurrent, RightSparkCurrent, L1SparkCurrent, R1SparkCurrent, L2SparkCurrent, R2SparkCurrent
+        //
     }
 
     private Hashtable<RS, Double> data;

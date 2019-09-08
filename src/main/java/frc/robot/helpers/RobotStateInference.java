@@ -44,7 +44,10 @@ public class RobotStateInference{
         return Math.sqrt(getSpeedSquared(states));
     }
     public static double getWheelSpeed(ArrayList<RobotState> states, CANSparkMax wheel){
-        return getRateOfChange(states, Robot.driveSubsystem.sparkToWheelRS.get(wheel), WHEEL_SPEED_PRECISION);
+        return getRateOfChange(states, Robot.driveSubsystem.sparkToWheelAngleRS.get(wheel), WHEEL_SPEED_PRECISION);
+    }
+    public static double getAvgWheelInput(RobotState state){
+        return (state.get(RS.LeftSparkVal) + state.get(RS.RightSparkVal)) / 2;
     }
 
     public static double getAngularVelocity() {return getAngularVelocity(Robot.robotStates);}
@@ -52,6 +55,8 @@ public class RobotStateInference{
     public static double getYVelocity()       {return getYVelocity(      Robot.robotStates);}
     public static double getSpeedSquared()    {return getSpeedSquared(   Robot.robotStates);}
     public static double getSpeed()           {return getSpeed(          Robot.robotStates);}
+
+    public static double getAvgWheelInput() {return getAvgWheelInput(Robot.getCurrentState());}
 
     public static double getWheelSpeed(CANSparkMax wheel){return getWheelSpeed(Robot.robotStates, wheel);}
 
