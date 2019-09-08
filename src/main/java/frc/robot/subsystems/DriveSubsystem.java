@@ -5,7 +5,7 @@ import frc.robot.Robot;
 import frc.robot.Utils;
 import frc.robot.RobotState.RS;
 import frc.robot.helpers.PID;
-import frc.robot.helpers.RobotStateInference;
+import frc.robot.helpers.StateInf;
 import frc.robot.logging.Logger.DefaultValue;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.command.Subsystem;
@@ -94,10 +94,10 @@ public class DriveSubsystem extends Subsystem {
         for(CANSparkMax spark : getSparks()){updateSparkState(spark);}
     }
     public void updateSparkState(CANSparkMax spark){
-        Robot.getCurrentState().set(this.sparkToWheelAngleRS.get(spark), Robot.encoderSubsystem.getSparkAngle(spark));
-        Robot.getCurrentState().set(this.sparkToValueRS.get(spark),   spark.get());
-        Robot.getCurrentState().set(this.sparkToVoltageRS.get(spark), spark.getBusVoltage());
-        Robot.getCurrentState().set(this.sparkToCurrentRS.get(spark), spark.getOutputCurrent());
+        Robot.getState().set(this.sparkToWheelAngleRS.get(spark), Robot.encoderSubsystem.getSparkAngle(spark));
+        Robot.getState().set(this.sparkToValueRS.get(spark),   spark.get());
+        Robot.getState().set(this.sparkToVoltageRS.get(spark), spark.getBusVoltage());
+        Robot.getState().set(this.sparkToCurrentRS.get(spark), spark.getOutputCurrent());
     }
 
 	public CANSparkMax[] getSparks() {
@@ -176,7 +176,7 @@ public class DriveSubsystem extends Subsystem {
             goalOmega -= Utils.signOf(goalOmega) * STRAIGHT_DEADZONE;
         }
         goalOmega = Utils.limitOutput(goalOmega, MAX_OMEGA_GOAL);
-        double error = goalOmega - RobotStateInference.getAngularVelocity();
+        double error = goalOmega - StateInf.getAngularVelocity();
         tankAnglePID.addMeasurement(error);
         double inputDiff = tankAnglePID.getOutput();
         // If you are going almost straight and goalOmega is 0, it will simply give the same input to both wheels

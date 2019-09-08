@@ -7,7 +7,9 @@ import frc.robot.helpers.*;
 import frc.robot.stateEstimation.*;
 import frc.robot.logging.*;
 import frc.robot.logging.Logger.DefaultValue;
+import frc.robot.RobotState.RS;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.command.Scheduler;
 
 import java.util.ArrayList;
@@ -27,12 +29,10 @@ public class Robot extends TimedRobot {
 
     public static ArrayList<RobotState> robotStates = new ArrayList<>();
 
-    public static RobotState getCurrentState(){
-        return robotStates.get(0);
-    }
-    public static double get(RobotState.RS rs){
-        return getCurrentState().get(rs);
-    }
+    public static RobotState getState(){return robotStates.get(0);}
+    
+    public static double get(RS rs)            {return getState().get(rs);}
+    public static Value getSolenoidValue(RS rs){return getState().getSolenoidValue(rs);}
 
     private int attemptsSinceLastLog;    
     public static final int LOG_PERIOD = 5;
@@ -78,7 +78,7 @@ public class Robot extends TimedRobot {
  
     public void robotPeriodic() {
         Scheduler.getInstance().run();
-        robotStates.add(0, getCurrentState().copy());
+        robotStates.add(0, getState().copy());
         positionModel.updatePosition();
     }
         

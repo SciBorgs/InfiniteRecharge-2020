@@ -1,10 +1,10 @@
 package frc.robot;
 
-import frc.robot.stateEstimation.*;
-
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.Set;
+
+import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 
 public class RobotState {
     
@@ -14,8 +14,14 @@ public class RobotState {
         LeftWheelAngle, RightWheelAngle, L1WheelAngle, R1WheelAngle, L2WheelAngle, R2WheelAngle,
         LeftSparkVal, RightSparkVal, L1SparkVal, R1SparkVal, L2SparkVal, R2SparkVal,
         LeftSparkVoltage, RightSparkVoltage, L1SparkVoltage, R1SparkVoltage, L2SparkVoltage, R2SparkVoltage,
-        LeftSparkCurrent, RightSparkCurrent, L1SparkCurrent, R1SparkCurrent, L2SparkCurrent, R2SparkCurrent
+        LeftSparkCurrent, RightSparkCurrent, L1SparkCurrent, R1SparkCurrent, L2SparkCurrent, R2SparkCurrent,
         //
+
+        // Solenoids
+        GearShiftSolenoid,
+        //
+
+        PressureSensorVoltage,
     }
 
     private Hashtable<RS, Double> data;
@@ -30,6 +36,31 @@ public class RobotState {
     public double get(RS rs)      {return this.data.get(rs);}
     public void   set(RS rs, double val) {this.data.put(rs, val);}
     public void   remove(RS rs)          {this.data.remove(rs);}
+
+    public static Value intToSolenoidValue(int i){
+        switch (i){
+            case 1:  return Value.kForward;
+            case 0:  return Value.kReverse;
+            case -1: return Value.kOff;
+        }
+        throw new IllegalArgumentException("attempted to convert" + i + " to solenoid value, but v is not -1, 1 or 0");
+    }
+    public static int solenoidValueToInt(Value v){
+        switch (v){
+            case kForward: return 1;
+            case kOff:     return 0;
+            case kReverse: return -1;
+            default: return 0;
+        }
+    }
+
+    public Value getSolenoidValue(RS rs){
+        if ((int) get(rs) - get(rs) == 0){
+            return intToSolenoidValue((int) get(rs));
+        } else {
+            throw new IllegalArgumentException("getSolenoidValue requires an RS bound to an int");
+        }
+    }
 
     public RobotState copy(){
         return new RobotState((Hashtable<RS, Double>) data.clone());

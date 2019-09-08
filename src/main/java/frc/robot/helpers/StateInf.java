@@ -8,7 +8,7 @@ import java.util.ArrayList;
 
 import com.revrobotics.CANSparkMax;
 
-public class RobotStateInference{
+public class StateInf{
 
     public static final int ANGULAR_VELOCITY_PRECISION = 5;
     public static final int X_VELOCITY_PRECISION = 5;
@@ -56,7 +56,7 @@ public class RobotStateInference{
     public static double getSpeedSquared()    {return getSpeedSquared(   Robot.robotStates);}
     public static double getSpeed()           {return getSpeed(          Robot.robotStates);}
 
-    public static double getAvgWheelInput() {return getAvgWheelInput(Robot.getCurrentState());}
+    public static double getAvgWheelInput() {return getAvgWheelInput(Robot.getState());}
 
     public static double getWheelSpeed(CANSparkMax wheel){return getWheelSpeed(Robot.robotStates, wheel);}
 
