@@ -74,6 +74,27 @@ public class Geo {
         return pointSlopeForm(point, Math.tan(theta));
     }
 
+    public static boolean arePointsTheSame(Point point1, Point point2) {
+        return point1.x == point2.x && point1.y == point2.y;
+    }
+
+    public static boolean areSegmentsTheSame(LineSegment lineSegment1, LineSegment lineSegment2) {
+        return lineSegment1.p1.x == lineSegment2.p1.x && lineSegment1.p1.y == lineSegment2.p1.y
+            && lineSegment1.p2.x == lineSegment2.p2.x && lineSegment1.p2.y == lineSegment2.p2.y;
+    }
+
+    public static boolean areRaysTheSame(Ray ray1, Ray ray2) {
+        if (ray1.getBounds()[0].x == ray2.getBounds()[0].x && ray1.getBounds()[0].y == ray2.getBounds()[0].y) {
+            return ray1.contains(ray2.p2) || ray2.contains(ray1.p2);
+        }
+        
+        return false;
+    }
+
+    public static boolean areLinesTheSame(Line line1, Line line2) {
+        return mOf(line1) == mOf(line2) && bOf(line1) == bOf(line2);
+    }
+
     public static double getDistance(Point point1, Point point2) {
         return Math.sqrt(getDistanceSquared(point1, point2));
     }
