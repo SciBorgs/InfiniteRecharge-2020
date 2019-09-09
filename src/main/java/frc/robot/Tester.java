@@ -13,8 +13,10 @@ public class Tester{
         testBool(testName, "Statement false", b);
     }
     
-    public static void assertEquals(Number n1, Number n2, String testName){
-        testBool(testName, "Assertion that " + n1 + " == " + n2, n1 == n2);
+    public static <N1 extends Number, N2 extends Number> void assertEquals(N1 n1, N2 n2, String testName) {
+        double d1 = n1.doubleValue();
+        double d2 = n2.doubleValue();
+        testBool(testName, "Assertion that " + d1 + " == " + d2, d1 == d2);
     }
 
     public static void assertEquals(Object o1, Object o2, String testName){
