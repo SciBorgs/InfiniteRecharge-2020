@@ -14,6 +14,8 @@ public class Tester{
     }
     
     private static <N1 extends Number, N2 extends Number> void equalAssertion(N1 n1, N2 n2, String testName, boolean requireEqual) {
+        // It is possible you could get some rounding errors here, maybe not
+        // Someone should look into that
         double d1 = n1.doubleValue();
         double d2 = n2.doubleValue();
         String equalString = requireEqual ? "==" : "!=";
