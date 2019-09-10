@@ -1,7 +1,6 @@
 package frc.robot.helpers;
 
 public class Line extends LineLike{
-
     public Line(Point p1, Point p2) {
         super(p1, p2);
     }
@@ -12,5 +11,9 @@ public class Line extends LineLike{
 
      public Point[] getBounds(){
         return new Point[0];
+    }
+
+    public boolean equals(Line line) {
+        return Geo.thetaOf(this) == Geo.thetaOf(line) && this.contains(line.p2);
     }
 }
