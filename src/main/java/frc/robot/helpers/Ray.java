@@ -13,7 +13,11 @@ public class Ray extends LineLike implements AlmostLine{
         return this.toLine().contains(p) && correctSide;
     }
 
-     public Point[] getBounds(){
+    public Point[] getBounds(){
         return new Point[]{p1};
+    }
+
+    public boolean equals(Ray ray) {
+        return this.p1.equals(ray.p1) && this.contains(ray.p2);
     }
 }

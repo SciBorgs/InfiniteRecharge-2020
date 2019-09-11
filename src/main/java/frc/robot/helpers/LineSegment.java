@@ -16,4 +16,9 @@ public class LineSegment extends LineLike implements AlmostLine {
     public Point[] getBounds() {
         return new Point[]{this.p1, this.p2};
     }
+
+    public boolean equals(LineSegment lineSegment) {
+        return this.p1.equals(lineSegment.p1) && this.p2.equals(lineSegment.p2)
+            || this.p1.equals(lineSegment.p2) && this.p2.equals(lineSegment.p1);
+    }
 }
