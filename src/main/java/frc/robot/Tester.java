@@ -2,15 +2,18 @@ package frc.robot;
 
 public class Tester{
 
-    private static void testFailed(String testName, String description){
-        throw new RuntimeException("test \"" + testName + "\" FAILED: " + description);
+    private static void testFailed(String testName, String message){
+        throw new RuntimeException("test \"" + testName + "\" FAILED: " + message);
     }
-    private static void testBool(String testName, String description, boolean succeded){
-        if (!succeded){testFailed(testName, description);}
+    private static void testBool(String testName, String message, boolean succeded){
+        if (!succeded){testFailed(testName, message);}
     }
 
     public static void assertTrue(boolean b, String testName) {
         testBool(testName, "Statement false", b);
+    }
+    public static void assertFalse(boolean b, String testName) {
+        testBool(testName, "Statement true", !b);
     }
     
     private static <N1 extends Number, N2 extends Number> void equalAssertion(N1 n1, N2 n2, String testName, boolean requireEqual) {
