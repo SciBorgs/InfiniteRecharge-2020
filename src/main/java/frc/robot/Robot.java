@@ -7,8 +7,12 @@ import frc.robot.helpers.*;
 import frc.robot.stateEstimation.*;
 import frc.robot.logging.*;
 import frc.robot.logging.Logger.DefaultValue;
+import frc.robot.RobotState.RS;
 import edu.wpi.first.wpilibj.TimedRobot;
+import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.command.Scheduler;
+
+import java.util.ArrayList;
 
 public class Robot extends TimedRobot {
     public static Logger logger = new Logger();
@@ -16,12 +20,20 @@ public class Robot extends TimedRobot {
     
     public static DriveSubsystem      driveSubsystem      = new DriveSubsystem();
     public static EncoderSubsystem    encoderSubsystem    = new EncoderSubsystem();
-    public static EncoderLocalization encoderLocalization = new EncoderLocalization();
     public static GearShiftSubsystem  gearShiftSubsystem  = new GearShiftSubsystem();
     public static LimelightSubsystem  limelightSubsystem  = new LimelightSubsystem();
     public static PneumaticsSubsystem pneumaticsSubsystem = new PneumaticsSubsystem();
     
-    public static Following following = new Following();
+    public static Following     following     = new Following();
+    public static PositionModel positionModel = new EncoderLocalization();
+
+    public static ArrayList<RobotState> robotStates = new ArrayList<>();
+
+    public static RobotState getState(){return robotStates.get(0);}
+
+    public static double get(RS rs)            {return getState().get(rs);}
+    public static void   set(RS rs, double val){       getState().set(rs, val);}
+    public static Value getSolenoidValue(RS rs){return getState().getSolenoidValue(rs);}
 
     private int attemptsSinceLastLog;    
     public static final int LOG_PERIOD = 5;
@@ -34,10 +46,15 @@ public class Robot extends TimedRobot {
         encoderSubsystem.periodicLog();
         following.periodicLog();
     }
+    private void allUpdateRobotStates() {
+        driveSubsystem.updateRobotState();
+        gearShiftSubsystem.updateRobotState();
+        pneumaticsSubsystem.updateRobotState();
+    }
 
     public void robotInit() {
         attemptsSinceLastLog = 0;
-        encoderLocalization.updatePositionTank();
+        positionModel.updatePosition();
         pneumaticsSubsystem.stopCompressor();
         logger.incrementPrevious("robot.java", "deploy", DefaultValue.Previous);
 
@@ -66,8 +83,10 @@ public class Robot extends TimedRobot {
     }
  
     public void robotPeriodic() {
+        allUpdateRobotStates();
         Scheduler.getInstance().run();
-        encoderLocalization.updatePositionTank();
+        robotStates.add(0, getState().copy());
+        positionModel.updatePosition();
     }
         
     public void autonomousInit() {
