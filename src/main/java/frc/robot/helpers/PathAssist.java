@@ -11,7 +11,7 @@ public class PathAssist {
     private static final double TURN_P = 0, TURN_I = 0, TURN_D = 0;
     private PID turnPID = new PID(TURN_P, TURN_I, TURN_D);
 
-    private static final double SMOOTHER_A = .225; // points up to 2-2.5 meters away produce weights btwn .051 and .024
+    private static final double EXPONENTIAL_WEIGHT = .225; // points up to 2-2.5 meters away produce weights btwn .051 and .024
     private double distanceTolerance = 0;
     private ArrayList<Double> angles, distances, weights;
     private ArrayList<Point> path;
@@ -36,7 +36,7 @@ public class PathAssist {
         Robot.driveSubsystem.setSpeedTankTurningPercentage(turnMagnitude);
     }
 
-    private double assignWeight(double distance) { return Math.pow(SMOOTHER_, distance); }
+    private double assignWeight(double distance) { return Math.pow(EXPONENTIAL_WEIGHT, distance); }
 
     private double getDistCurrPoint(Point currPos) { return CoordinateSystemProcessing.getDistance(currPos, this.path.get(lastPointHitIndex + 1)); }
 
