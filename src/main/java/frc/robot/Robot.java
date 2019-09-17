@@ -27,9 +27,9 @@ public class Robot extends TimedRobot {
     public static Following     following     = new Following();
     public static PositionModel positionModel = new EncoderLocalization();
 
-    public static ArrayList<RobotState> robotStates = new ArrayList<>();
+    public static RobotStates robotStates = new RobotStates();
 
-    public static RobotState getState(){return robotStates.get(0);}
+    public static RobotState getState(){return robotStates.currentState();}
 
     public static double get(RS rs)            {return getState().get(rs);}
     public static void   set(RS rs, double val){       getState().set(rs, val);}
@@ -85,7 +85,7 @@ public class Robot extends TimedRobot {
     public void robotPeriodic() {
         allUpdateRobotStates();
         Scheduler.getInstance().run();
-        robotStates.add(0, getState().copy());
+        robotStates.addState(getState().copy());
         positionModel.updatePosition();
     }
         

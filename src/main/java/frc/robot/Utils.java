@@ -14,6 +14,8 @@ import java.util.Collections;
 // FILE HAS NOT BEEN CLEANED UP //
 public class Utils{
 
+    private static Random r = new Random();
+
     public static double METERS_TO_INCHES = 39.37;
 
     public static double metersToInches(double meters){return meters * METERS_TO_INCHES;}
@@ -121,4 +123,30 @@ public class Utils{
     public static DoubleSolenoid newDoubleSolenoid(int pdpPort, int[] ports){
         return new DoubleSolenoid(pdpPort, ports[0], ports[1]);
     }
+
+    public static double generateGaussian(double mean, double stdDev){
+        return r.nextGaussian() * stdDev + mean;
+    }
+
+    public static ArrayList<Double> cummSums(ArrayList<Double> arr){
+        ArrayList<Double> ans = new ArrayList<>();
+        double sum = 0;
+        for(double n : arr){
+            sum += n;
+            ans.add(sum);
+        }
+        return ans;
+    }
+
+    public static ArrayList<Double> randomArrayList(int length, double min, double max){
+        ArrayList<Double> arr = new ArrayList<>();
+        for(int _i = 0; _i < length; _i++){
+            arr.add(r.nextDouble() * (max - min) + min);
+        }
+        return arr;
+    }
+
+    public static Comparator<Double> doubleComparator = 
+        (Double d1, Double d2) -> d1 == d2 ? 0 : (d1 < d2 ? -1 : 1);
+
 }
