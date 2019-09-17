@@ -3,99 +3,127 @@ package frc.robot.stateEstimation;
 import java.util.ArrayList;
 import java.util.Random;
 import java.util.Collections;
-import frc.robot.stateEstimation.updateFunction;
-import frc.robot.stateEstimation.predictFunction;
+import java.util.Hashtable;
 
+import frc.robot.stateEstimation.Updater;
+import frc.robot.stateEstimation.Weighter;
+import frc.robot.Robot;
+import frc.robot.RobotState;
+import frc.robot.RobotState.RS;
+import frc.robot.RobotStates;
+import frc.robot.Utils;
 
 public class ParticleFilter {
 
     private int numOfParticles = 1000;
     private int numOfIterations = 100;
-    private ArrayList<Double> particles;
+    private double weightSum = this.numOfParticles;
+    // Need to combine particles and weights fields using Pair by merging master into this branch
+    private ArrayList<RobotStates> particles;
     private ArrayList<Double> weights;
     private Random generator = new Random();
+    public Updater  updater;
+    public Weighter weighter;
+    public IllegalStateDeterminer illegalStateDeterminer;
 
-    public ParticleFilter(){}
+    public ParticleFilter(Updater updater, Weighter weighter, RobotStates ogState){
+        this.updater  = updater;
+        this.weighter = weighter;
+        this.illegalStateDeterminer = new NeverIllegal();
 
-    public void reset() {
-        this.particles.clear(); 
-        this.weights.clear();
+        this.particles = new ArrayList<>();
+        this.particles.add(ogState);
     }
 
-    public void generateParticles() {
-        for (int i = 0; i<= this.numOfParticles; i++) {
-            this.particles.add(generator.nextDouble() * 100);
-        }
+    public ParticleFilter(Updater updater, Weighter weighter, IllegalStateDeterminer illegalStateDeterminer) {
+        this.updater = updater;
+        this.weighter = weighter;
+        this.illegalStateDeterminer = illegalStateDeterminer;
     }
 
-    public ArrayList<Double> predictParticles(predictFunction predictor){
-        for (int i = 0; i <= this.numOfParticles; i++) {
-            double particle = this.particles.get(i);
-            this.particles.set(i, predictor.predictParticle(particle));
-        }
-        return this.particles;
+    public ParticleFilter(Updater updater, Weighter weighter, IllegalStateDeterminer illegalStateDeterminer, ArrayList<RobotStates> particles) {
+        this.updater   = updater;
+        this.weighter  = weighter;
+        this.particles = particles;
+        this.illegalStateDeterminer = illegalStateDeterminer;
     }
 
-    public double update(updateFunction updater){
-        double measurement = updater.updateState();
-        return measurement;
-    };
-
-    public void computeWeights(ArrayList<Double> predictions, Double measurement) {
-        double randomDouble = generator.nextDouble() * 5;
-        double measurementNoise = this.computeGaussian(0, 5, randomDouble);
-        double sumOfWeights = 0;
-
-        for (int i = 0; i <= this.numOfParticles; i++) {
-            double weight = this.computeGaussian(predictions.get(i), measurementNoise, measurement);
-            this.weights.add(weight);
-            sumOfWeights += weight;
+    private RobotStates updateParticle(RobotStates particle){
+        RobotState updatedState = updater.updateState(particle);
+        Hashtable<RS, Double> variances = updater.getVariances();
+        for (RS rs : variances.keySet()){
+            updatedState.set(rs, Utils.generateGaussian(updatedState.get(rs), variances.get(rs)));
         }
-
-        for (int i = 0; i <= this.numOfParticles; i++) {
-            double normalizedWeight = weights.get(i)/sumOfWeights;
-            this.weights.set(i, normalizedWeight);
-        }
+        RobotStates newParticle = particle.copy();
+        RobotState nextState = Robot.getState().incorporateIntoNew(updatedState, variances.keySet());
+        newParticle.addState(nextState);
+        return newParticle;
     }
 
-    public ArrayList<Double> getParticles() {return this.particles;}
-
-    public void resampleParticles(ArrayList<Double> weights) {
-        ArrayList<Double> newParticles = new ArrayList<Double>();
-
-        int randomIndex = generator.nextInt() *numOfParticles;
-        double beta = 0.0;
-        double biggestWeight = Collections.max(this.weights);
-
-        for (int i = 0; i <= this.numOfParticles; i++) {
-            beta += generator.nextDouble() * 2.0 * biggestWeight;
-            while(beta > this.weights.get(randomIndex)) {
-                beta -= this.weights.get(randomIndex);
-                randomIndex = (randomIndex + 1) % this.numOfParticles;
+    private void updateParticles(){
+        ArrayList<RobotStates> newParticles = new ArrayList<>();
+        ArrayList<Double> nextParticleGuesses = Utils.randomArrayList(this.numOfParticles, 0, this.weightSum);
+        ArrayList<Double> cummWeights = Utils.cummSums(this.weights); 
+        nextParticleGuesses.sort(Utils.doubleComparator);
+        while (!nextParticleGuesses.isEmpty()) {
+            if (nextParticleGuesses.get(0) > cummWeights.get(0)){
+                cummWeights.remove(0);
+                this.weights.remove(0);
+                this.particles.remove(0);
+            } else {
+                newParticles.add(updateParticle(this.particles.get(0)));
             }
-            newParticles.add(this.particles.get(randomIndex));
         }
         this.particles = newParticles;
     }
 
-    public double filter(ArrayList<Double> predictions, Double measurement) {
-        double averageParticle = 0.0;
-        double sumOfParticles = 0;
-        this.generateParticles();
-        for (int i = 0; i<= this.numOfIterations; i++) {
-            this.computeWeights(predictions, measurement);
-            this.resampleParticles(this.weights);
+    private void adjustWeights(){
+        double currentSum = 0;
+        for(double weight : this.weights){currentSum += weight;}
+        int size = this.weights.size();
+        double scale = weightSum / currentSum;
+        for(int i = 0; i < size; i++){
+            this.weights.set(i, this.weights.get(i) * scale);
         }
-        for (int i = 0; i <= this.numOfParticles; i++) {
-            sumOfParticles += this.particles.get(i);
-        }
-        
-        averageParticle = sumOfParticles/this.numOfParticles;
-        return averageParticle;
     }
 
-    public double computeGaussian(double mean, double variance, double x) {
-        double gaussianProbability = 1/(variance * Math.sqrt(2 * Math.PI)) * Math.pow(Math.E, -(1/2) * Math.pow(((x - mean)/variance), 2));
-        return gaussianProbability;
+    private void computeWeights() {
+        int size = this.particles.size();
+        for(int i = 0; i < size; i++){
+            this.weights.set(i, this.weights.get(i) * this.weighter.weight(this.particles.get(i)));
+        }
+        adjustWeights();
+    }
+
+    private void filterParticles() {
+        int size = particles.size();
+        for(int i = 0; i < size; i++){
+            if(illegalStateDeterminer.isIllegalState(this.particles.get(i))){
+                this.particles.remove(i);
+                this.weights.remove(i);
+                i--; size--;
+            }
+        }
+    }
+
+    public ArrayList<RobotStates> getParticles() {return this.particles;}
+
+    public RobotStates bestParticle(){
+        RobotStates bestParticle = this.particles.get(0);
+        double bestWeight = this.weights.get(0);
+        int size = this.particles.size();
+        for(int i = 1; i < size; i++){
+            if (this.weights.get(i) > bestWeight){
+                bestParticle = this.particles.get(i);
+                bestWeight = this.weights.get(i);
+            }
+        }
+        return bestParticle;
+    }
+
+    public void nextGeneration() {
+        updateParticles();
+        filterParticles();
+        computeWeights();
     }
 }

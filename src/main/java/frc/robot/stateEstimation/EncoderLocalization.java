@@ -10,6 +10,7 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import frc.robot.PortMap;
 import frc.robot.Utils;
 import frc.robot.RobotState;
+import frc.robot.RobotStates;
 import frc.robot.RobotState.RS;
 import frc.robot.helpers.Pigeon;
 import frc.robot.logging.Logger.DefaultValue;
@@ -61,12 +62,12 @@ public class EncoderLocalization implements Updater, PositionModel {
         return Robot.gearShiftSubsystem.getCurrentGearRatio() * state.get(wheelAngleRS) * WHEEL_RADIUS;
     }
     
-    public double wheelRotationChange(RS wheelAngleRS, ArrayList<RobotState> states){
+    public double wheelRotationChange(RS wheelAngleRS, RobotStates states){
         return getWheelPosition(wheelAngleRS, states, 0) - getWheelPosition(wheelAngleRS, states, 1);
     }
     
-    public double getWheelPosition(RS wheelAngleRS, ArrayList<RobotState> robotStates, int ticksAgo)  {
-        return getWheelPosition(wheelAngleRS, robotStates.get(ticksAgo));
+    public double getWheelPosition(RS wheelAngleRS, RobotStates robotStates, int ticksAgo)  {
+        return getWheelPosition(wheelAngleRS, robotStates.statesAgo(ticksAgo));
     }
     public double getWheelPosition(RS wheelAngleRS, RobotState state){
         // Takes a spark. Returns the last recorded pos of that spark/wheel
@@ -102,17 +103,17 @@ public class EncoderLocalization implements Updater, PositionModel {
         return nextPosition(x,y,theta,allChangeInfo);
     }
 
-    public RobotState updateState(ArrayList<RobotState> pastStates){
-        RobotState state = pastStates.get(0);
+    public RobotState updateState(RobotStates pastStates){
+        RobotState state = pastStates.currentState();
         RobotState newPosition = 
             nextPosTankPigeon(state.get(RS.X), state.get(RS.Y), state.get(RS.Angle), 
                 wheelRotationChange(RS.LeftWheelAngle,  pastStates), 
                 wheelRotationChange(RS.RightWheelAngle, pastStates));
-        return pastStates.get(0).incorporateIntoNew(newPosition); 
+        return pastStates.currentState().incorporateIntoNew(newPosition); 
     }
 
     public void updatePosition(){
-        Robot.robotStates.set(0, updateState(Robot.robotStates));
+        Robot.robotStates.setCurrentState(updateState(Robot.robotStates));
     }
     
 	public void periodicLog(){
