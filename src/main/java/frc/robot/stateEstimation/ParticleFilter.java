@@ -7,6 +7,7 @@ import java.util.Hashtable;
 
 import frc.robot.stateEstimation.Updater;
 import frc.robot.stateEstimation.Weighter;
+import frc.robot.Robot;
 import frc.robot.RobotState;
 import frc.robot.RobotState.RS;
 import frc.robot.RobotStates;
@@ -48,12 +49,13 @@ public class ParticleFilter {
     }
 
     private RobotStates updateParticle(RobotStates particle){
-        RobotState nextState = updater.updateState(particle);
+        RobotState updatedState = updater.updateState(particle);
         Hashtable<RS, Double> variances = updater.getVariances();
         for (RS rs : variances.keySet()){
-            nextState.set(rs, Utils.generateGaussian(nextState.get(rs), variances.get(rs)));
+            updatedState.set(rs, Utils.generateGaussian(updatedState.get(rs), variances.get(rs)));
         }
         RobotStates newParticle = particle.copy();
+        RobotState nextState = Robot.getState().incorporateIntoNew(updatedState, variances.keySet());
         newParticle.addState(nextState);
         return newParticle;
     }
