@@ -148,8 +148,7 @@ public class Utils{
         return arr;
     }
 
-    public static Comparator<Double> doubleComparator = 
-        (Double d1, Double d2) -> d1 == d2 ? 0 : (d1 < d2 ? -1 : 1);
+    public static Comparator<Double> ascendingDoubleComparator = Comparator.comparingDouble(d -> d);
 
     public static boolean inBounds(double v, Pair<Double,Double> bounds){
         double min = Math.min(bounds.first, bounds.second);
