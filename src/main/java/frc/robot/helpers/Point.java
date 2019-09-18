@@ -12,8 +12,17 @@ public class Point implements Serializable {
         this.y = y;
     }
 
-    public boolean equals(Point point) {
-        return this.x == point.x 
-            && this.y == point.y;
+    @Override
+    public boolean equals(Object o) {
+        if (o.getClass() != Point.class) {return false;}
+        Point point = (Point) o;
+
+        return this.x - point.x <= Geo.getEpsilon()
+            && this.y - point.y <= Geo.getEpsilon();
+    }
+
+    @Override
+    public String toString() {
+        return getClass().getName() + "(" + x + "," + y + ")";
     }
 }

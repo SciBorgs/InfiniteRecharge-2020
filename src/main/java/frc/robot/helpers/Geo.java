@@ -56,7 +56,8 @@ public class Geo {
     }
 
     public static double xOf(Line l, double y) {
-        return yOf(flipXandY(l), y);
+        return (y - bOf(l)) / mOf(l); // Still thinking on this
+        //return yOf(flipXandY(l), y);
     }
 
     public static Line pointSlopeForm(Point point, double m) {
@@ -110,8 +111,8 @@ public class Geo {
         return collinear(p1, p2, p3) <= precision;
     }
 
-    private static double collinear(Point p1, Point p2, Point p3) {
-        return (p2.y - p1.y) * (p3.x - p2.x) - (p2.x - p1.x) * (p3.y - p2.y);
+    private static double collinear(Point p1, Point p2, Point p3) { // Also thinking on this
+        return Math.abs((p2.y - p1.y) * (p3.x - p2.x) - (p2.x - p1.x) * (p3.y - p2.y));
     }
 
 
@@ -202,4 +203,17 @@ public class Geo {
     public static double angleBetween(Point A, Point B) {
         return Math.atan2(B.y - A.y, B.x - A.x);
     }
+    
+    public static double getEpsilon() {
+        return EPSILON;
+    }
+
+    public static boolean isPerciseEnough(double value1, double value2) {
+        return isPreciseEnoughPrecision(value1, value2, EPSILON);
+    }
+
+    public static boolean isPreciseEnoughPrecision(double value1, double value2, double precision) {
+        return value1 - value2 <= precision;
+    }
+
 }

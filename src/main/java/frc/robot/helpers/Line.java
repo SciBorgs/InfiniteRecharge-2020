@@ -13,7 +13,16 @@ public class Line extends LineLike{
         return new Point[0];
     }
 
-    public boolean equals(Line line) {
-        return Geo.thetaOf(this) == Geo.thetaOf(line) && this.contains(line.p2);
+    @Override
+    public boolean equals(Object o) {
+        if (o.getClass() != Line.class) {return false;}
+        Line line = (Line) o;
+
+        return Geo.thetaOf(this) - Geo.thetaOf(line) <= Geo.getEpsilon() && this.contains(line.p2);
+    }
+
+    @Override
+    public String toString() {
+        return getClass().getName() + " @ " + "P1:(" + p1.x + "," + p1.y + ") " + "P2:(" + p2.x + "," + p2.y + ")";
     }
 }
