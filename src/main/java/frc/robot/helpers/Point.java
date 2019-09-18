@@ -11,4 +11,9 @@ public class Point implements Serializable {
         this.x = x;
         this.y = y;
     }
+
+    public boolean equals(Point point) {
+        return this.x == point.x 
+            && this.y == point.y;
+    }
 }

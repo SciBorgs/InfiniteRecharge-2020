@@ -16,16 +16,16 @@ import java.util.ArrayList;
 
 public class Robot extends TimedRobot {
     public static Logger logger = new Logger();
-    public static OI oi = new OI();
     
     public static DriveSubsystem      driveSubsystem      = new DriveSubsystem();
-    public static EncoderSubsystem    encoderSubsystem    = new EncoderSubsystem();
     public static GearShiftSubsystem  gearShiftSubsystem  = new GearShiftSubsystem();
+    public static EncoderSubsystem    encoderSubsystem    = new EncoderSubsystem();
     public static LimelightSubsystem  limelightSubsystem  = new LimelightSubsystem();
     public static PneumaticsSubsystem pneumaticsSubsystem = new PneumaticsSubsystem();
     
     public static Following     following     = new Following();
     public static PositionModel positionModel = new EncoderLocalization();
+    public static OI oi = new OI();
 
     public static RobotStates robotStates = new RobotStates();
 
@@ -115,10 +115,10 @@ public class Robot extends TimedRobot {
     public void enabledPeriodic() {logDataPeriodic();}
 
     public void disabledInit() {
-        /* 
+        
         allPeriodicLogs();
         logger.logData();
         logger.writeLoggedData(); // Uncomment to write the data to the file
-        */
+        
     }
 }

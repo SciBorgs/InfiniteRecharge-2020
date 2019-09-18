@@ -8,6 +8,8 @@ import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 
 import edu.wpi.first.wpilibj.DigitalOutput;
 
+import frc.robot.helpers.Pair;
+
 import java.util.*;
 import java.util.Collections;
 
@@ -149,4 +151,9 @@ public class Utils{
     public static Comparator<Double> doubleComparator = 
         (Double d1, Double d2) -> d1 == d2 ? 0 : (d1 < d2 ? -1 : 1);
 
+    public static boolean inBounds(double v, Pair<Double,Double> bounds){
+        double min = Math.min(bounds.first, bounds.second);
+        double max = Math.max(bounds.first, bounds.second);
+        return v >= min && v <= max;
+    }
 }
