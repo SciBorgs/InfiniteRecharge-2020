@@ -15,7 +15,7 @@ import frc.robot.RobotState.RS;
 import frc.robot.helpers.Pigeon;
 import frc.robot.logging.Logger.DefaultValue;
 
-public class EncoderLocalization implements Updater, PositionModel {
+public class EncoderLocalization implements Updater, Model {
 
     public static final double WHEEL_RADIUS = Utils.inchesToMeters(3);
     public static final double ROBOT_RADIUS = Utils.inchesToMeters(15.945); // Half the distance from wheel to wheel
@@ -23,10 +23,10 @@ public class EncoderLocalization implements Updater, PositionModel {
     public static final double ORIGINAL_ANGLE = Math.PI/2, ORIGINAL_X = 0, ORIGINAL_Y = 0;
     public static final double INTERVAL_LENGTH = .02; // Seconds between each tick for commands
     private final String FILENAME = "RobotPosition.java";
-    private static final double X_UNCERTIANTY     = 0;
-    private static final double Y_UNCERTIANTY     = 0;
-    private static final double ANGLE_UNCERTIANTY = 0;
-    private Hashtable<RS, Double> variances;
+    private static final double X_STD_DEV     = 0; // These are meant to be estimates
+    private static final double Y_STD_DEV     = 0;
+    private static final double ANGLE_STD_DEV = 0;
+    private Hashtable<RS, Double> stdDevs;
 
     private Pigeon pigeon;
     private TalonSRX pigeonTalon;
@@ -43,18 +43,18 @@ public class EncoderLocalization implements Updater, PositionModel {
         this.pigeonTalon = new TalonSRX(PortMap.PIGEON_TALON);
         this.pigeon      = new Pigeon(pigeonTalon);
 
-        this.variances = new Hashtable<>();
-        this.variances.put(RS.X,     X_UNCERTIANTY);
-        this.variances.put(RS.Y,     Y_UNCERTIANTY);
-        this.variances.put(RS.Angle, ANGLE_UNCERTIANTY);
+        this.stdDevs = new Hashtable<>();
+        this.stdDevs.put(RS.X,     X_STD_DEV);
+        this.stdDevs.put(RS.Y,     Y_STD_DEV);
+        this.stdDevs.put(RS.Angle, ANGLE_STD_DEV);
     }
 
     public TalonSRX[] getTalons() {
         return new TalonSRX[]{this.pigeonTalon};
     }
 
-    public Pigeon                getPigeon()   {return this.pigeon;}
-    public Hashtable<RS, Double> getVariances(){return this.variances;}
+    public Pigeon                getPigeon() {return this.pigeon;}
+    public Hashtable<RS, Double> getStdDevs(){return this.stdDevs;}
 
     public double calculateWheelPosition(RobotState state, RS wheelAngleRS) {
         // Returns the encoder position of a spark
@@ -112,9 +112,11 @@ public class EncoderLocalization implements Updater, PositionModel {
         return pastStates.currentState().incorporateIntoNew(newPosition); 
     }
 
-    public void updatePosition(){
+    public void updateRobotState(){
         Robot.robotStates.setCurrentState(updateState(Robot.robotStates));
     }
+
+    public Iterable<RS> getRSs(){return this.stdDevs.keySet();}
     
 	public void periodicLog(){
         Robot.logger.addData(FILENAME, "robot X",     Robot.get(RS.X),     DefaultValue.Previous);

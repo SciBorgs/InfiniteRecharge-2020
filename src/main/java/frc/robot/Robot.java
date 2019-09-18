@@ -23,8 +23,8 @@ public class Robot extends TimedRobot {
     public static LimelightSubsystem  limelightSubsystem  = new LimelightSubsystem();
     public static PneumaticsSubsystem pneumaticsSubsystem = new PneumaticsSubsystem();
     
-    public static Following     following     = new Following();
-    public static PositionModel positionModel = new EncoderLocalization();
+    public static Following following     = new Following();
+    public static Model     positionModel = new EncoderLocalization();
     public static OI oi = new OI();
 
     public static RobotStates robotStates = new RobotStates();
@@ -54,7 +54,7 @@ public class Robot extends TimedRobot {
 
     public void robotInit() {
         attemptsSinceLastLog = 0;
-        positionModel.updatePosition();
+        positionModel.updateRobotState();
         pneumaticsSubsystem.stopCompressor();
         logger.incrementPrevious("robot.java", "deploy", DefaultValue.Previous);
 
@@ -86,7 +86,7 @@ public class Robot extends TimedRobot {
         allUpdateRobotStates();
         Scheduler.getInstance().run();
         robotStates.addState(getState().copy());
-        positionModel.updatePosition();
+        positionModel.updateRobotState();
     }
         
     public void autonomousInit() {
@@ -118,7 +118,7 @@ public class Robot extends TimedRobot {
         
         allPeriodicLogs();
         logger.logData();
-        logger.writeLoggedData(); // Uncomment to write the data to the file
+        logger.writeLoggedData();
         
     }
 }

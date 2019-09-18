@@ -41,6 +41,7 @@ public class RobotState {
     public double get(RS rs)      {return this.data.get(rs);}
     public void   set(RS rs, double val) {this.data.put(rs, val);}
     public void   remove(RS rs)          {this.data.remove(rs);}
+    public Set<RS> getKeys(){return data.keySet();}
 
     public static Value intToSolenoidValue(int i){
         switch (i){
@@ -55,7 +56,7 @@ public class RobotState {
             case kForward: return 1;
             case kOff:     return 0;
             case kReverse: return -1;
-            default: return 0;
+            default:       return 0;
         }
     }
 
@@ -75,12 +76,11 @@ public class RobotState {
         newRobotState.set(rs, val);
         return newRobotState;
     }
-    public Set<RS> keys(){return data.keySet();}
 
     public void incorporateOtherState(RobotState otherState){
         // Will use any values from the other state
         // But will keep any values it has from keys that that the other state lacks 
-        incorporateOtherState(otherState, otherState.keys());
+        incorporateOtherState(otherState, otherState.getKeys());
     }
     public void incorporateOtherState(RobotState otherState, Iterable<RS> toTake) {
         // Will use any the toTake values from otherState
@@ -94,12 +94,12 @@ public class RobotState {
         return newRobotState;
     }
     public RobotState incorporateIntoNew(RobotState otherState){
-        return incorporateIntoNew(otherState, otherState.keys());
+        return incorporateIntoNew(otherState, otherState.getKeys());
     }
 
     public void cutDownTo(ArrayList<RS> rsToInclude){
         // Will get rid of all keys not in rsToInclude
-        for(RS rs : keys()){
+        for(RS rs : getKeys()){
             if (!rsToInclude.contains(rs)){
                 remove(rs);
             }

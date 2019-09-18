@@ -6,6 +6,9 @@ import frc.robot.RobotState;
 
 public class RobotStates{
 
+    // allows us to more clearly pass through a history of states
+    // and really allows it to be distinguished from just a list of RobotState objects
+
     private ArrayList<RobotState> robotStates;
 
     public RobotStates(){

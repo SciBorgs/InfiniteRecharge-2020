@@ -9,6 +9,7 @@ import frc.robot.RobotState.RS;
 
 public class GaussianWeighter implements Weighter {
 
+    // Allows an Updater to essentially become a Weighter (or Predictor)
     private Updater updater;
 
     public GaussianWeighter(Updater updater){
@@ -25,7 +26,7 @@ public class GaussianWeighter implements Weighter {
         pastStates.dropFirstState();
         RobotState expectedState = updater.updateState(pastStates);
         double weight = 1;
-        for(Map.Entry<RS, Double> rsVariance : updater.getVariances().entrySet()){
+        for(Map.Entry<RS, Double> rsVariance : updater.getStdDevs().entrySet()){
             weight *= computeGaussian(expectedState.get(rsVariance.getKey()), 
                                               state.get(rsVariance.getKey()),
                                                         rsVariance.getValue());
