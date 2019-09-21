@@ -12,6 +12,8 @@ import frc.robot.helpers.Pair;
 
 import java.util.*;
 import java.util.Collections;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 // FILE HAS NOT BEEN CLEANED UP //
 public class Utils{
@@ -154,5 +156,21 @@ public class Utils{
         double min = Math.min(bounds.first, bounds.second);
         double max = Math.max(bounds.first, bounds.second);
         return v >= min && v <= max;
+    }
+
+    public static<T> ArrayList<T> toArrayList(Iterable<T> iterable){
+        ArrayList<T> arrayList = new ArrayList<>();
+        for(T el : iterable){arrayList.add(el);}
+        return arrayList;
+    }
+    public static<T> ArrayList<T> toArrayList(T[] arr){
+        ArrayList<T> arrayList = new ArrayList<>();
+        for(T el : arr){arrayList.add(el);}
+        return arrayList;
+    }
+    public static<T> ArrayList<T> toArrayList(Stream<T> stream){
+        ArrayList<T> arrayList = new ArrayList<>();
+        for(T el : stream.collect(Collectors.toList())){arrayList.add(el);}
+        return arrayList;
     }
 }

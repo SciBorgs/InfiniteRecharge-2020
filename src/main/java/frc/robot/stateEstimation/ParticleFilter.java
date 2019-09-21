@@ -3,6 +3,8 @@ package frc.robot.stateEstimation;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Hashtable;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import frc.robot.stateEstimation.Updater;
 import frc.robot.stateEstimation.Weighter;
@@ -59,31 +61,23 @@ public class ParticleFilter {
     }
 
     public ArrayList<RobotStates> getStatesList(){ // converts the Particles to a list of RobotStates
-        ArrayList<RobotStates> statesList = new ArrayList<>();
-        for(Particle particle : this.particles){
-            statesList.add(particle.states);
-        }
-        return statesList;
+        return Utils.toArrayList(this.particles.stream().map(particle -> particle.states));
     }
     public ArrayList<Double> getWeights(){ // converts the Particles to weights
-        ArrayList<Double> weights = new ArrayList<>();
-        for(Particle particle : this.particles){
-            weights.add(particle.weight);
-        }
-        return weights;
+        return Utils.toArrayList(this.particles.stream().map(particle -> particle.weight));
     }
 
     private Particle updateParticle(Particle particle){ 
         // Updates a particle factoring noise
         RobotState updatedState = updater.updateState(particle.states);
-        Hashtable<RS, Double> variances = updater.getVariances(); // variations = std_devs
-        for (RS rs : variances.keySet()){
+        Hashtable<RS, Double> stdDevs = updater.getStdDevs();
+        for (RS rs : stdDevs.keySet()){
             // generate gaussian creates noise
-            updatedState.set(rs, Utils.generateGaussian(updatedState.get(rs), variances.get(rs)));
+            updatedState.set(rs, Utils.generateGaussian(updatedState.get(rs), stdDevs.get(rs)));
         }
         Particle newParticle = particle.copy();
         // incorporates state from Robot.java except for RS values being updated by updater
-        RobotState nextState = Robot.getState().incorporateIntoNew(updatedState, variances.keySet());
+        RobotState nextState = Robot.getState().incorporateIntoNew(updatedState, stdDevs.keySet());
         newParticle.states.addState(nextState);
         return newParticle;
     }
@@ -112,30 +106,21 @@ public class ParticleFilter {
         // Makes the sum of all the weights = this.weightSum
         double currentSum = 0;
         for(double weight : getWeights()){currentSum += weight;}
-        int size = this.particles.size();
-        double scale = weightSum / currentSum;
-        for(int i = 0; i < size; i++){
-            this.particles.get(i).weight *= scale;
+        double scale = this.weightSum / currentSum;
+        for(Particle particle : this.particles){
+            particle.weight *= scale;
         }
     }
 
     private void computeWeights() {
-        int size = this.particles.size();
-        for(int i = 0; i < size; i++){
-            this.particles.get(i).weight *= this.weighter.weight(this.particles.get(i).states);
+        for(Particle particle : this.particles){
+            particle.weight *= this.weighter.weight(particle.states);
         }
         adjustWeights();
     }
 
     private void filterParticles() {
-        // gets rid of illegal particles
-        int size = particles.size();
-        for(int i = 0; i < size; i++){
-            if(illegalStateDeterminer.isIllegalState(this.particles.get(i).states)){
-                this.particles.remove(i);
-                i--; size--;
-            }
-        }
+        this.particles.removeIf(particle -> illegalStateDeterminer.isIllegalState(particle.states));
     }
 
     private void sortParticle(){

@@ -9,23 +9,19 @@ import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 public class RobotState {
     
     public enum RS {
-        X, Y, Angle, 
+        // Position
+        X, Y, Angle,
+
         // Chassis motor values
         LeftWheelAngle, RightWheelAngle, L1WheelAngle, R1WheelAngle, L2WheelAngle, R2WheelAngle,
         LeftSparkVal, RightSparkVal, L1SparkVal, R1SparkVal, L2SparkVal, R2SparkVal,
         LeftSparkVoltage, RightSparkVoltage, L1SparkVoltage, R1SparkVoltage, L2SparkVoltage, R2SparkVoltage,
         LeftSparkCurrent, RightSparkCurrent, L1SparkCurrent, R1SparkCurrent, L2SparkCurrent, R2SparkCurrent,
-        //
 
         // Solenoids
         GearShiftSolenoid,
-        //
 
-        // Joysticks
-        LJX, LJY,
-        RJX, RJY,
-        //
-
+        // Pneumatics
         PressureSensorVoltage,
     }
 
@@ -61,17 +57,17 @@ public class RobotState {
     }
 
     public Value getSolenoidValue(RS rs){
-        if ((int) get(rs) - get(rs) == 0){
+        if ((int) get(rs) == get(rs)){
             return intToSolenoidValue((int) get(rs));
         } else {
-            throw new IllegalArgumentException("getSolenoidValue requires an RS bound to an int");
+            throw new IllegalArgumentException("getSolenoidValue requires an RS bound to an int, but given " + rs + " which is bound to " + get(rs));
         }
     }
 
     public RobotState copy(){
         return new RobotState((Hashtable<RS, Double>) data.clone());
     }
-    public RobotState setCopy(RS rs, double val){
+    public RobotState copyIntoNew(RS rs, double val){
         RobotState newRobotState = copy();
         newRobotState.set(rs, val);
         return newRobotState;
@@ -84,9 +80,7 @@ public class RobotState {
     }
     public void incorporateOtherState(RobotState otherState, Iterable<RS> toTake) {
         // Will use any the toTake values from otherState
-        for (RS rs : toTake) {
-            set(rs, otherState.get(rs));
-        }
+        for (RS rs : toTake) {set(rs, otherState.get(rs));}
     }
     public RobotState incorporateIntoNew(RobotState otherState, Iterable<RS> toTake){
         RobotState newRobotState = copy();
@@ -100,9 +94,7 @@ public class RobotState {
     public void cutDownTo(ArrayList<RS> rsToInclude){
         // Will get rid of all keys not in rsToInclude
         for(RS rs : getKeys()){
-            if (!rsToInclude.contains(rs)){
-                remove(rs);
-            }
+            if (!rsToInclude.contains(rs)){remove(rs);}
         }
     }
 

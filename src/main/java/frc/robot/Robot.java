@@ -115,10 +115,8 @@ public class Robot extends TimedRobot {
     public void enabledPeriodic() {logDataPeriodic();}
 
     public void disabledInit() {
-        
         allPeriodicLogs();
         logger.logData();
         logger.writeLoggedData();
-        
     }
 }
