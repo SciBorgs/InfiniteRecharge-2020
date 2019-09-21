@@ -26,6 +26,12 @@ class Particle {
     public Particle copy(){
         return new Particle(states.copy(), weight);
     }
+
+    public Particle addStateIntoNew(RobotState state){
+        Particle newParticle = this.copy();
+        newParticle.states.addState(state);
+        return newParticle;
+    }
 }
 
 public class ParticleFilter {
@@ -68,18 +74,13 @@ public class ParticleFilter {
     }
 
     private Particle updateParticle(Particle particle){ 
-        // Updates a particle factoring noise
+        // Updates a particle factoring in noise
         RobotState updatedState = updater.updateState(particle.states);
         Hashtable<RS, Double> stdDevs = updater.getStdDevs();
-        for (RS rs : stdDevs.keySet()){
-            // generate gaussian creates noise
-            updatedState.set(rs, Utils.generateGaussian(updatedState.get(rs), stdDevs.get(rs)));
-        }
-        Particle newParticle = particle.copy();
+        Utils.addNoise(updatedState, stdDevs);
         // incorporates state from Robot.java except for RS values being updated by updater
         RobotState nextState = Robot.getState().incorporateIntoNew(updatedState, stdDevs.keySet());
-        newParticle.states.addState(nextState);
-        return newParticle;
+        return particle.addStateIntoNew(nextState);
     }
 
     private void updateParticles(){
@@ -91,6 +92,7 @@ public class ParticleFilter {
         ArrayList<Double> particleOriginValues = Utils.randomArrayList(this.numOfParticles, 0, this.weightSum);
         ArrayList<Double> cummWeights = Utils.cummSums(getWeights()); 
         particleOriginValues.sort(Utils.ascendingDoubleComparator);
+        // I'm sorry about this. I don't know how to clean this up so if you have a good idea, please do so!
         while (!particleOriginValues.isEmpty()) {
             if (particleOriginValues.get(0) > cummWeights.get(0)){
                 cummWeights.remove(0);
@@ -104,9 +106,7 @@ public class ParticleFilter {
 
     private void adjustWeights(){
         // Makes the sum of all the weights = this.weightSum
-        double currentSum = 0;
-        for(double weight : getWeights()){currentSum += weight;}
-        double scale = this.weightSum / currentSum;
+        double scale = this.weightSum / Utils.sumArrayList(getWeights());
         for(Particle particle : this.particles){
             particle.weight *= scale;
         }
