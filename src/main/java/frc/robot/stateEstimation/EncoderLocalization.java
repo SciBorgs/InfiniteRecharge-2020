@@ -54,6 +54,7 @@ public class EncoderLocalization implements Updater, Model {
     }
 
     public Pigeon                getPigeon() {return this.pigeon;}
+    @Override
     public Hashtable<RS, Double> getStdDevs(){return this.stdDevs;}
 
     public double calculateWheelPosition(RobotState state, RS wheelAngleRS) {
@@ -103,6 +104,7 @@ public class EncoderLocalization implements Updater, Model {
         return nextPosition(x,y,theta,allChangeInfo);
     }
 
+    @Override
     public RobotState updateState(RobotStates pastStates){
         RobotState state = pastStates.currentState();
         RobotState newPosition = 
@@ -112,10 +114,12 @@ public class EncoderLocalization implements Updater, Model {
         return pastStates.currentState().incorporateIntoNew(newPosition); 
     }
 
-    public void updateRobotState(){
-        Robot.robotStates.setCurrentState(updateState(Robot.robotStates));
+    @Override
+    public RobotState updatedRobotState(){
+        return updateState(Robot.robotStates);
     }
 
+    @Override
     public Iterable<RS> getRSs(){return this.stdDevs.keySet();}
     
 	public void periodicLog(){

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Hashtable;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import frc.robot.stateEstimation.Updater;
@@ -34,7 +35,7 @@ class Particle {
     }
 }
 
-public class ParticleFilter {
+public class ParticleFilter implements Model{
 
     private int numOfParticles = 1000;
     private double weightSum = this.numOfParticles;
@@ -64,6 +65,14 @@ public class ParticleFilter {
         this.weighter  = weighter;
         this.particles = particles;
         this.illegalStateDeterminer = illegalStateDeterminer;
+    }
+
+    public void nextGeneration() {
+        // call to update everything
+        updateParticles();
+        filterParticles();
+        computeWeights(); // this must come after filter particles so that the weight sum is correct
+        sortParticle();
     }
 
     public ArrayList<RobotStates> getStatesList(){ // converts the Particles to a list of RobotStates
@@ -132,12 +141,15 @@ public class ParticleFilter {
     public RobotStates currentStates(){
         return particles.get(0).states;
     }
-
-    public void nextGeneration() {
-        // call to update everything
-        updateParticles();
-        filterParticles();
-        computeWeights(); // this must come after filter particles so that the weight sum is correct
-        sortParticle();
+    
+    // Model functionality:
+    @Override
+    public Set<RS> getRSs(){
+        return this.updater.getStdDevs().keySet();
+    }
+    @Override
+    public RobotState updatedRobotState(){
+        nextGeneration();
+        return currentStates().currentState();
     }
 }

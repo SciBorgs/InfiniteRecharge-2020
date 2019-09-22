@@ -52,9 +52,13 @@ public class Robot extends TimedRobot {
         pneumaticsSubsystem.updateRobotState();
     }
 
+    public void useModel(Model model){
+        robotStates.currentState().incorporateIntoNew(model.updatedRobotState(), model.getRSs());
+    }
+
     public void robotInit() {
         attemptsSinceLastLog = 0;
-        positionModel.updateRobotState();
+        useModel(positionModel);
         pneumaticsSubsystem.stopCompressor();
         logger.incrementPrevious("robot.java", "deploy", DefaultValue.Previous);
 
@@ -86,7 +90,7 @@ public class Robot extends TimedRobot {
         allUpdateRobotStates();
         Scheduler.getInstance().run();
         robotStates.addState(getState().copy());
-        positionModel.updateRobotState();
+        useModel(positionModel);
     }
         
     public void autonomousInit() {
