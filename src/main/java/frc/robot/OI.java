@@ -1,11 +1,8 @@
 package frc.robot;
 
-import java.util.Hashtable;
-
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
-import frc.robot.RobotState.RS;
 import frc.robot.commands.*;
 
 // FILE HAS NOT BEEN CLEANED UP //

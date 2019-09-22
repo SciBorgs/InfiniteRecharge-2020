@@ -12,8 +12,6 @@ import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.command.Scheduler;
 
-import java.util.ArrayList;
-
 public class Robot extends TimedRobot {
     public static Logger logger = new Logger();
     

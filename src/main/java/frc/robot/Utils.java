@@ -107,8 +107,9 @@ public class Utils{
         switch (val) {
             case kForward: return Value.kReverse;
             case kReverse: return Value.kForward;
+            default:       return Value.kOff;
         }
-        return Value.kOff;
+
     }
 
     public static void toggleDoubleSolenoid(DoubleSolenoid doubleSolenoid){

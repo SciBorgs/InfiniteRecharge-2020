@@ -13,7 +13,6 @@ import edu.wpi.first.wpilibj.command.Subsystem;
 import com.revrobotics.CANSparkMax;
 
 import java.util.Hashtable;
-import java.util.Map;
 
 import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
