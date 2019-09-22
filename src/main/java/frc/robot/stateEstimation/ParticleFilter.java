@@ -3,9 +3,7 @@ package frc.robot.stateEstimation;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Hashtable;
-import java.util.List;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 import frc.robot.stateEstimation.Updater;
 import frc.robot.stateEstimation.Weighter;
@@ -129,7 +127,7 @@ public class ParticleFilter implements Model{
     }
 
     private void filterParticles() {
-        this.particles.removeIf(particle -> illegalStateDeterminer.isIllegalState(particle.states));
+        this.particles.removeIf(particle -> illegalStateDeterminer.isStateIllegal(particle.states));
     }
 
     private void sortParticle(){

@@ -5,11 +5,9 @@ import frc.robot.RobotState;
 import frc.robot.RobotStates;
 import frc.robot.RobotState.RS;
 
-import java.util.ArrayList;
-
 import com.revrobotics.CANSparkMax;
 
-public class StateInf{
+public class StateInfo{
 
     public static final int ANGULAR_VELOCITY_PRECISION = 5;
     public static final int X_VELOCITY_PRECISION = 5;

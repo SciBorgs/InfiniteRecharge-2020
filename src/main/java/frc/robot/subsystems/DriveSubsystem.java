@@ -5,7 +5,7 @@ import frc.robot.Robot;
 import frc.robot.Utils;
 import frc.robot.RobotState.RS;
 import frc.robot.helpers.PID;
-import frc.robot.helpers.StateInf;
+import frc.robot.helpers.StateInfo;
 import frc.robot.logging.Logger.DefaultValue;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.command.Subsystem;
@@ -176,7 +176,7 @@ public class DriveSubsystem extends Subsystem {
             goalOmega -= Utils.signOf(goalOmega) * STRAIGHT_DEADZONE;
         }
         goalOmega = Utils.limitOutput(goalOmega, MAX_OMEGA_GOAL);
-        double error = goalOmega - StateInf.getAngularVelocity();
+        double error = goalOmega - StateInfo.getAngularVelocity();
         tankAnglePID.addMeasurement(error);
         double inputDiff = tankAnglePID.getOutput();
         // If you are going almost straight and goalOmega is 0, it will simply give the same input to both wheels

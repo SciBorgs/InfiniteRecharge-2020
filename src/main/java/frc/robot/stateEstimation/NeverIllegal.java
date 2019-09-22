@@ -4,7 +4,7 @@ import frc.robot.RobotStates;
 
 public class NeverIllegal implements IllegalStateDeterminer{
     @Override
-    public boolean isIllegalState(RobotStates state){
+    public boolean isStateIllegal(RobotStates state){
         return false;
     }
 }
