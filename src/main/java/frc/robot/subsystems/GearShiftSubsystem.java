@@ -3,7 +3,7 @@ package frc.robot.subsystems;
 import frc.robot.Robot;
 import frc.robot.RobotState;
 import frc.robot.Utils;
-import frc.robot.RobotState.RS;
+import frc.robot.RobotState.SD;
 import frc.robot.helpers.StateInfo;
 import frc.robot.logging.Logger.DefaultValue;
 import frc.robot.PortMap;
@@ -25,7 +25,7 @@ public class GearShiftSubsystem extends Subsystem {
     private final double LOWER_LOW_GEAR_THRESHOLD = 500;
 	public static final DoubleSolenoid.Value HIGH_GEAR_VALUE = Value.kForward;
 	public static final DoubleSolenoid.Value LOW_GEAR_VALUE = Utils.oppositeDoubleSolenoidValue(HIGH_GEAR_VALUE);
-    public static final RS GEAR_SHIFT_RS = RS.GearShiftSolenoid;
+    public static final SD GEAR_SHIFT_SD = SD.GearShiftSolenoid;
 
     public GearShiftSubsystem() {
         this.gearShiftSolenoid = Utils.newDoubleSolenoid(PortMap.GEAR_SHIFTER_SOLENOID_PDP, PortMap.GEAR_SHIFTER_SOLENOID);
@@ -37,7 +37,7 @@ public class GearShiftSubsystem extends Subsystem {
         Robot.logger.addData(FILENAME, "gear", gear, DefaultValue.Previous);
     }
     public void updateRobotState(){
-        Robot.getState().set(GEAR_SHIFT_RS, RobotState.solenoidValueToInt(this.gearShiftSolenoid.get()));
+        Robot.getState().set(GEAR_SHIFT_SD, RobotState.solenoidValueToInt(this.gearShiftSolenoid.get()));
     }
     
     public void autoShift(){
@@ -46,8 +46,8 @@ public class GearShiftSubsystem extends Subsystem {
         if(speed < LOWER_LOW_GEAR_THRESHOLD) {shiftUp();}
     }
 
-    public boolean currentlyInHighGear(){return Robot.getSolenoidValue(GEAR_SHIFT_RS) == HIGH_GEAR_VALUE;}
-    public boolean currentlyInLowGear() {return Robot.getSolenoidValue(GEAR_SHIFT_RS) == LOW_GEAR_VALUE;}
+    public boolean currentlyInHighGear(){return Robot.getSolenoidValue(GEAR_SHIFT_SD) == HIGH_GEAR_VALUE;}
+    public boolean currentlyInLowGear() {return Robot.getSolenoidValue(GEAR_SHIFT_SD) == LOW_GEAR_VALUE;}
 
     public void shiftUp()  {this.gearShiftSolenoid.set(HIGH_GEAR_VALUE);}
     public void shiftDown(){this.gearShiftSolenoid.set(LOW_GEAR_VALUE);}
