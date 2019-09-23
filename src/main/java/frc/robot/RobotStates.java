@@ -19,12 +19,11 @@ public class RobotStates{
     }
 
     public ArrayList<RobotState> getArrayList(){return this.robotStates;}
-    public RobotState statesAgo(int n){return robotStates.get(n);}
+    public RobotState statesAgo(int n){return this.robotStates.get(n);}
     public RobotState currentState(){return statesAgo(0);}
-    public void setCurrentState(RobotState state){robotStates.set(0, state);}
-    public void addState       (RobotState state){robotStates.add(0, state);}
-
-    public void dropFirstState(){this.robotStates.remove(0);}
+    public void setCurrentState(RobotState state){this.robotStates.set(0, state);}
+    public void addState       (RobotState state){this.robotStates.add(0, state);}
+    public void dropFirstState()                 {this.robotStates.remove(0);}
 
     public RobotStates copy(){
         return new RobotStates((ArrayList<RobotState>) this.robotStates.clone());
