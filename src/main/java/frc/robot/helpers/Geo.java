@@ -48,7 +48,7 @@ public class Geo {
     }
 
     public static boolean isVertical(LineLike lLike) {
-        return thetaOf(lLike) == Math.atan2(DELTA, 0);
+        return lLike.p1.x == lLike.p2.x;
     }
 
     public static double yOf(Line l, double x) {
@@ -56,8 +56,7 @@ public class Geo {
     }
 
     public static double xOf(Line l, double y) {
-        return (y - bOf(l)) / mOf(l); // Still thinking on this
-        //return yOf(flipXandY(l), y);
+        return yOf(flipXandY(l), y);
     }
 
     public static Line pointSlopeForm(Point point, double m) {
