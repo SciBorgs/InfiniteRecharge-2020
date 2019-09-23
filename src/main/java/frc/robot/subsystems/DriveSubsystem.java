@@ -3,7 +3,7 @@ package frc.robot.subsystems;
 import frc.robot.PortMap;
 import frc.robot.Robot;
 import frc.robot.Utils;
-import frc.robot.RobotState.RS;
+import frc.robot.RobotState.SD;
 import frc.robot.helpers.PID;
 import frc.robot.helpers.StateInfo;
 import frc.robot.logging.Logger.DefaultValue;
@@ -35,10 +35,10 @@ public class DriveSubsystem extends Subsystem {
     private PID tankAnglePID;
     public boolean assisted = false;
     public double driveMultiplier = 1;
-    public Hashtable<CANSparkMax, RS> sparkToWheelAngleRS;
-    public Hashtable<CANSparkMax, RS> sparkToValueRS;
-    public Hashtable<CANSparkMax, RS> sparkToVoltageRS;
-    public Hashtable<CANSparkMax, RS> sparkToCurrentRS;
+    public Hashtable<CANSparkMax, SD> sparkToWheelAngleSD;
+    public Hashtable<CANSparkMax, SD> sparkToValueSD;
+    public Hashtable<CANSparkMax, SD> sparkToVoltageSD;
+    public Hashtable<CANSparkMax, SD> sparkToCurrentSD;
 
     private CANSparkMax newMotorObject(int port){
         return new CANSparkMax(port, MotorType.kBrushless);
@@ -67,24 +67,24 @@ public class DriveSubsystem extends Subsystem {
         this.r1.follow(this.r);
         this.r2.follow(this.r);
 
-        setRSMappings(this.l, RS.LeftWheelAngle,  RS.LeftSparkVal,  RS.LeftSparkVoltage,  RS.LeftSparkCurrent);
-        setRSMappings(this.r, RS.RightWheelAngle, RS.RightSparkVal, RS.RightSparkVoltage, RS.RightSparkCurrent);
+        setSDMappings(this.l, SD.LeftWheelAngle,  SD.LeftSparkVal,  SD.LeftSparkVoltage,  SD.LeftSparkCurrent);
+        setSDMappings(this.r, SD.RightWheelAngle, SD.RightSparkVal, SD.RightSparkVoltage, SD.RightSparkCurrent);
         
-        setRSMappings(this.l1, RS.L1WheelAngle, RS.L1SparkVal, RS.L1SparkVoltage, RS.L1SparkCurrent);
-        setRSMappings(this.r1, RS.R1WheelAngle, RS.R1SparkVal, RS.R1SparkVoltage, RS.R1SparkCurrent);
-        setRSMappings(this.l2, RS.L2WheelAngle, RS.L2SparkVal, RS.L2SparkVoltage, RS.L2SparkCurrent);
-        setRSMappings(this.r2, RS.R2WheelAngle, RS.R2SparkVal, RS.R2SparkVoltage, RS.R2SparkCurrent);
+        setSDMappings(this.l1, SD.L1WheelAngle, SD.L1SparkVal, SD.L1SparkVoltage, SD.L1SparkCurrent);
+        setSDMappings(this.r1, SD.R1WheelAngle, SD.R1SparkVal, SD.R1SparkVoltage, SD.R1SparkCurrent);
+        setSDMappings(this.l2, SD.L2WheelAngle, SD.L2SparkVal, SD.L2SparkVoltage, SD.L2SparkCurrent);
+        setSDMappings(this.r2, SD.R2WheelAngle, SD.R2SparkVal, SD.R2SparkVoltage, SD.R2SparkCurrent);
 
         this.tankAnglePID = new PID(TANK_ANGLE_P, TANK_ANGLE_I, TANK_ANGLE_D);
         Robot.logger.logFinalPIDConstants(FILENAME, "tank angle PID", this.tankAnglePID);
         Robot.logger.logFinalField(FILENAME, "input deadzone", INPUT_DEADZONE);
     }
     
-    public void setRSMappings(CANSparkMax spark, RS wheelAngleRS, RS valueRS, RS volatageRS, RS currentRS){
-        this.sparkToWheelAngleRS.put(spark, wheelAngleRS);
-        this.sparkToValueRS     .put(spark, valueRS);
-        this.sparkToVoltageRS   .put(spark, volatageRS);
-        this.sparkToCurrentRS   .put(spark, currentRS);
+    public void setSDMappings(CANSparkMax spark, SD wheelAngleSD, SD valueSD, SD volatageSD, SD currentSd){
+        this.sparkToWheelAngleSD.put(spark, wheelAngleSD);
+        this.sparkToValueSD     .put(spark, valueSD);
+        this.sparkToVoltageSD   .put(spark, volatageSD);
+        this.sparkToCurrentSD   .put(spark, currentSd);
     }
     
 	public void periodicLog(){
@@ -93,10 +93,10 @@ public class DriveSubsystem extends Subsystem {
         for(CANSparkMax spark : getSparks()){updateSparkState(spark);}
     }
     public void updateSparkState(CANSparkMax spark){
-        Robot.getState().set(this.sparkToWheelAngleRS.get(spark), Robot.encoderSubsystem.getSparkAngle(spark));
-        Robot.getState().set(this.sparkToValueRS.get(spark),   spark.get());
-        Robot.getState().set(this.sparkToVoltageRS.get(spark), spark.getBusVoltage());
-        Robot.getState().set(this.sparkToCurrentRS.get(spark), spark.getOutputCurrent());
+        Robot.getState().set(this.sparkToWheelAngleSD.get(spark), Robot.encoderSubsystem.getSparkAngle(spark));
+        Robot.getState().set(this.sparkToValueSD.get(spark),   spark.get());
+        Robot.getState().set(this.sparkToVoltageSD.get(spark), spark.getBusVoltage());
+        Robot.getState().set(this.sparkToCurrentSD.get(spark), spark.getOutputCurrent());
     }
 
 	public CANSparkMax[] getSparks() {

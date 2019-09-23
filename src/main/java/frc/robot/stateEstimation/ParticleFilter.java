@@ -9,9 +9,12 @@ import frc.robot.stateEstimation.Updater;
 import frc.robot.stateEstimation.Weighter;
 import frc.robot.Robot;
 import frc.robot.RobotState;
-import frc.robot.RobotState.RS;
+import frc.robot.RobotState.SD;
 import frc.robot.RobotStates;
 import frc.robot.Utils;
+
+// What's a particle filter?
+// http://www.deepideas.net/robot-localization-particle-filter/
 
 class Particle {
     public RobotStates states;
@@ -83,9 +86,9 @@ public class ParticleFilter implements Model{
     private Particle updateParticle(Particle particle){ 
         // Updates a particle factoring in noise
         RobotState updatedState = updater.updateState(particle.states);
-        Hashtable<RS, Double> stdDevs = updater.getStdDevs();
+        Hashtable<SD, Double> stdDevs = updater.getStdDevs();
         Utils.addNoise(updatedState, stdDevs);
-        // incorporates state from Robot.java except for RS values being updated by updater
+        // incorporates state from Robot.java except for SD values being updated by updater
         RobotState nextState = Robot.getState().incorporateIntoNew(updatedState, stdDevs.keySet());
         return particle.addStateIntoNew(nextState);
     }
@@ -142,7 +145,7 @@ public class ParticleFilter implements Model{
     
     // Model functionality:
     @Override
-    public Set<RS> getRSs(){
+    public Set<SD> getSDs(){
         return this.updater.getStdDevs().keySet();
     }
     @Override

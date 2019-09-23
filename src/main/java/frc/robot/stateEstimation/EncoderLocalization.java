@@ -11,7 +11,7 @@ import frc.robot.PortMap;
 import frc.robot.Utils;
 import frc.robot.RobotState;
 import frc.robot.RobotStates;
-import frc.robot.RobotState.RS;
+import frc.robot.RobotState.SD;
 import frc.robot.helpers.Pigeon;
 import frc.robot.logging.Logger.DefaultValue;
 
@@ -26,7 +26,7 @@ public class EncoderLocalization implements Updater, Model {
     private static final double X_STD_DEV     = 0; // These are meant to be estimates
     private static final double Y_STD_DEV     = 0;
     private static final double ANGLE_STD_DEV = 0;
-    private Hashtable<RS, Double> stdDevs;
+    private Hashtable<SD, Double> stdDevs;
 
     private Pigeon pigeon;
     private TalonSRX pigeonTalon;
@@ -44,9 +44,9 @@ public class EncoderLocalization implements Updater, Model {
         this.pigeon      = new Pigeon(pigeonTalon);
 
         this.stdDevs = new Hashtable<>();
-        this.stdDevs.put(RS.X,     X_STD_DEV);
-        this.stdDevs.put(RS.Y,     Y_STD_DEV);
-        this.stdDevs.put(RS.Angle, ANGLE_STD_DEV);
+        this.stdDevs.put(SD.X,     X_STD_DEV);
+        this.stdDevs.put(SD.Y,     Y_STD_DEV);
+        this.stdDevs.put(SD.Angle, ANGLE_STD_DEV);
     }
 
     public TalonSRX[] getTalons() {
@@ -55,24 +55,24 @@ public class EncoderLocalization implements Updater, Model {
 
     public Pigeon                getPigeon() {return this.pigeon;}
     @Override
-    public Hashtable<RS, Double> getStdDevs(){return this.stdDevs;}
+    public Hashtable<SD, Double> getStdDevs(){return this.stdDevs;}
 
-    public double calculateWheelPosition(RobotState state, RS wheelAngleRS) {
+    public double calculateWheelPosition(RobotState state, SD wheelAngleSD) {
         // Returns the encoder position of a spark
         // TODO: Should change to alternate low gear/high gear with whatever it is
-        return Robot.gearShiftSubsystem.getCurrentGearRatio() * state.get(wheelAngleRS) * WHEEL_RADIUS;
+        return Robot.gearShiftSubsystem.getCurrentGearRatio() * state.get(wheelAngleSD) * WHEEL_RADIUS;
     }
     
-    public double wheelRotationChange(RS wheelAngleRS, RobotStates states){
-        return getWheelPosition(wheelAngleRS, states, 0) - getWheelPosition(wheelAngleRS, states, 1);
+    public double wheelRotationChange(SD wheelAngleSD, RobotStates states){
+        return getWheelPosition(wheelAngleSD, states, 0) - getWheelPosition(wheelAngleSD, states, 1);
     }
     
-    public double getWheelPosition(RS wheelAngleRS, RobotStates robotStates, int ticksAgo)  {
-        return getWheelPosition(wheelAngleRS, robotStates.statesAgo(ticksAgo));
+    public double getWheelPosition(SD wheelAngleSD, RobotStates robotStates, int ticksAgo)  {
+        return getWheelPosition(wheelAngleSD, robotStates.statesAgo(ticksAgo));
     }
-    public double getWheelPosition(RS wheelAngleRS, RobotState state){
+    public double getWheelPosition(SD wheelAngleSD, RobotState state){
         // Takes a spark. Returns the last recorded pos of that spark/wheel
-        return calculateWheelPosition(state, wheelAngleRS);
+        return calculateWheelPosition(state, wheelAngleSD);
     }
 
     public WheelChangeInfo newWheelChangeInfo(double rotationChange, double angle){
@@ -89,9 +89,9 @@ public class EncoderLocalization implements Updater, Model {
             y += wheelChangeInfo.rotationChange * Math.sin(avgTheta + wheelChangeInfo.angle) / wheelAmount;
         }
         RobotState state = new RobotState();
-        state.set(RS.X, x);
-        state.set(RS.Y, y);
-        state.set(RS.Angle, newTheta);
+        state.set(SD.X, x);
+        state.set(SD.Y, y);
+        state.set(SD.Angle, newTheta);
         return state;
     }
  
@@ -108,9 +108,9 @@ public class EncoderLocalization implements Updater, Model {
     public RobotState updateState(RobotStates pastStates){
         RobotState state = pastStates.currentState();
         RobotState newPosition = 
-            nextPosTankPigeon(state.get(RS.X), state.get(RS.Y), state.get(RS.Angle), 
-                wheelRotationChange(RS.LeftWheelAngle,  pastStates), 
-                wheelRotationChange(RS.RightWheelAngle, pastStates));
+            nextPosTankPigeon(state.get(SD.X), state.get(SD.Y), state.get(SD.Angle), 
+                wheelRotationChange(SD.LeftWheelAngle,  pastStates), 
+                wheelRotationChange(SD.RightWheelAngle, pastStates));
         return pastStates.currentState().incorporateIntoNew(newPosition); 
     }
 
@@ -120,17 +120,17 @@ public class EncoderLocalization implements Updater, Model {
     }
 
     @Override
-    public Iterable<RS> getRSs(){return this.stdDevs.keySet();}
+    public Iterable<SD> getSDs(){return this.stdDevs.keySet();}
     
 	public void periodicLog(){
-        Robot.logger.addData(FILENAME, "robot X",     Robot.get(RS.X),     DefaultValue.Previous);
-        Robot.logger.addData(FILENAME, "robot y",     Robot.get(RS.Y),     DefaultValue.Previous);
-        Robot.logger.addData(FILENAME, "robot angle", Robot.get(RS.Angle), DefaultValue.Previous);
+        Robot.logger.addData(FILENAME, "robot X",     Robot.get(SD.X),     DefaultValue.Previous);
+        Robot.logger.addData(FILENAME, "robot y",     Robot.get(SD.Y),     DefaultValue.Previous);
+        Robot.logger.addData(FILENAME, "robot angle", Robot.get(SD.Angle), DefaultValue.Previous);
 	}
 
     public void printPosition(){
-        System.out.println("X: " + Robot.get(RS.X));
-        System.out.println("Y: " + Robot.get(RS.Y));
-        System.out.println("Angle: " + Math.toDegrees(Robot.get(RS.Angle)));
+        System.out.println("X: " + Robot.get(SD.X));
+        System.out.println("Y: " + Robot.get(SD.Y));
+        System.out.println("Angle: " + Math.toDegrees(Robot.get(SD.Angle)));
     }
 }

@@ -7,7 +7,7 @@ import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 
 import edu.wpi.first.wpilibj.DigitalOutput;
-import frc.robot.RobotState.RS;
+import frc.robot.RobotState.SD;
 import frc.robot.helpers.Pair;
 
 import java.util.*;
@@ -179,10 +179,10 @@ public class Utils{
         return l.stream().mapToDouble(a -> a).sum();
     }
 
-    public static void addNoise(RobotState state, Hashtable<RS, Double> stdDevs){
-        for (RS rs : stdDevs.keySet()) {
+    public static void addNoise(RobotState state, Hashtable<SD, Double> stdDevs){
+        for (SD sd : stdDevs.keySet()) {
             // generate gaussian creates noise
-            state.set(rs, Utils.generateGaussian(state.get(rs), stdDevs.get(rs)));
+            state.set(sd, Utils.generateGaussian(state.get(sd), stdDevs.get(sd)));
         }
     }
 }

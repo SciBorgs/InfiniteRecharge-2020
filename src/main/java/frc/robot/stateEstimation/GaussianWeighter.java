@@ -4,7 +4,7 @@ import java.util.Map;
 
 import frc.robot.RobotState;
 import frc.robot.RobotStates;
-import frc.robot.RobotState.RS;
+import frc.robot.RobotState.SD;
 
 public class GaussianWeighter implements Weighter {
 
@@ -25,10 +25,10 @@ public class GaussianWeighter implements Weighter {
         pastStates.dropFirstState();
         RobotState expectedState = updater.updateState(pastStates);
         double weight = 1;
-        for(Map.Entry<RS, Double> rsVariance : updater.getStdDevs().entrySet()){
-            weight *= computeGaussian(expectedState.get(rsVariance.getKey()), 
-                                              state.get(rsVariance.getKey()),
-                                                        rsVariance.getValue());
+        for(Map.Entry<SD, Double> sdVariance : updater.getStdDevs().entrySet()){
+            weight *= computeGaussian(expectedState.get(sdVariance.getKey()), 
+                                              state.get(sdVariance.getKey()),
+                                                        sdVariance.getValue());
         }
         return weight;
     }

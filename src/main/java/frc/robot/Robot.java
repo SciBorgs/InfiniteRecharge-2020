@@ -7,7 +7,7 @@ import frc.robot.helpers.*;
 import frc.robot.stateEstimation.*;
 import frc.robot.logging.*;
 import frc.robot.logging.Logger.DefaultValue;
-import frc.robot.RobotState.RS;
+import frc.robot.RobotState.SD;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.command.Scheduler;
@@ -29,9 +29,9 @@ public class Robot extends TimedRobot {
 
     public static RobotState getState(){return robotStates.currentState();}
 
-    public static double get(RS rs)            {return getState().get(rs);}
-    public static void   set(RS rs, double val){       getState().set(rs, val);}
-    public static Value getSolenoidValue(RS rs){return getState().getSolenoidValue(rs);}
+    public static double get(SD sd)            {return getState().get(sd);}
+    public static void   set(SD sd, double val){       getState().set(sd, val);}
+    public static Value getSolenoidValue(SD sd){return getState().getSolenoidValue(sd);}
 
     private int attemptsSinceLastLog;    
     public static final int LOG_PERIOD = 5;
@@ -51,7 +51,7 @@ public class Robot extends TimedRobot {
     }
 
     public void useModel(Model model){
-        robotStates.currentState().incorporateIntoNew(model.updatedRobotState(), model.getRSs());
+        robotStates.currentState().incorporateIntoNew(model.updatedRobotState(), model.getSDs());
     }
 
     public void robotInit() {

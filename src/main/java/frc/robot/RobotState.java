@@ -8,7 +8,8 @@ import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 
 public class RobotState {
     
-    public enum RS {
+    // SD = State Dimension
+    public enum SD {
         // Position
         X, Y, Angle,
 
@@ -25,19 +26,19 @@ public class RobotState {
         PressureSensorVoltage,
     }
 
-    private Hashtable<RS, Double> data;
+    private Hashtable<SD, Double> data;
 
     public RobotState() {
         this.data = new Hashtable<>();
     }
-    public RobotState(Hashtable<RS, Double> data) {
+    public RobotState(Hashtable<SD, Double> data) {
         this.data = data;
     }
 
-    public double get(RS rs)      {return this.data.get(rs);}
-    public void   set(RS rs, double val) {this.data.put(rs, val);}
-    public void   remove(RS rs)          {this.data.remove(rs);}
-    public Set<RS> getKeys(){return data.keySet();}
+    public double get(SD sd)      {return this.data.get(sd);}
+    public void   set(SD sd, double val) {this.data.put(sd, val);}
+    public void   remove(SD sd)          {this.data.remove(sd);}
+    public Set<SD> getKeys(){return data.keySet();}
 
     public static Value intToSolenoidValue(int i){
         switch (i){
@@ -56,20 +57,20 @@ public class RobotState {
         }
     }
 
-    public Value getSolenoidValue(RS rs){
-        if ((int) get(rs) == get(rs)){
-            return intToSolenoidValue((int) get(rs));
+    public Value getSolenoidValue(SD sd){
+        if ((int) get(sd) == get(sd)){
+            return intToSolenoidValue((int) get(sd));
         } else {
-            throw new IllegalArgumentException("getSolenoidValue requires an RS bound to an int, but given " + rs + " which is bound to " + get(rs));
+            throw new IllegalArgumentException("getSolenoidValue requires an SD bound to an int, but given " + sd + " which is bound to " + get(sd));
         }
     }
 
     public RobotState copy(){
-        return new RobotState((Hashtable<RS, Double>) data.clone());
+        return new RobotState((Hashtable<SD, Double>) data.clone());
     }
-    public RobotState copyIntoNew(RS rs, double val){
+    public RobotState copyIntoNew(SD sd, double val){
         RobotState newRobotState = copy();
-        newRobotState.set(rs, val);
+        newRobotState.set(sd, val);
         return newRobotState;
     }
 
@@ -78,11 +79,11 @@ public class RobotState {
         // But will keep any values it has from keys that that the other state lacks 
         incorporateOtherState(otherState, otherState.getKeys());
     }
-    public void incorporateOtherState(RobotState otherState, Iterable<RS> toTake) {
+    public void incorporateOtherState(RobotState otherState, Iterable<SD> toTake) {
         // Will use any the toTake values from otherState
-        for (RS rs : toTake) {set(rs, otherState.get(rs));}
+        for (SD sd : toTake) {set(sd, otherState.get(sd));}
     }
-    public RobotState incorporateIntoNew(RobotState otherState, Iterable<RS> toTake){
+    public RobotState incorporateIntoNew(RobotState otherState, Iterable<SD> toTake){
         RobotState newRobotState = copy();
         newRobotState.incorporateOtherState(otherState, toTake);
         return newRobotState;
@@ -91,10 +92,10 @@ public class RobotState {
         return incorporateIntoNew(otherState, otherState.getKeys());
     }
 
-    public void cutDownTo(ArrayList<RS> rsToInclude){
-        // Will get rid of all keys not in rsToInclude
-        for(RS rs : getKeys()){
-            if (!rsToInclude.contains(rs)){remove(rs);}
+    public void cutDownTo(ArrayList<SD> sdToInclude){
+        // Will get rid of all keys not in sdToInclude
+        for(SD sd : getKeys()){
+            if (!sdToInclude.contains(sd)){remove(sd);}
         }
     }
 
