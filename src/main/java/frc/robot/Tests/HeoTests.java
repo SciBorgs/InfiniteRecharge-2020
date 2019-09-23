@@ -1,7 +1,7 @@
-package frc.robot;
+package frc.robot.Tests;
 import frc.robot.helpers.*;
 
-public class BaseRobotProkecy {
+public class HeoTests {
     public static void testGeo() {
         /// Rotate point around point
         Tester.assertEquals(Geo.rotatePoint(new Point(-2,0), Math.toRadians(0), new Point(0,0)), new Point(-2,0), "rotatePointAroundPoint, Test #1");
