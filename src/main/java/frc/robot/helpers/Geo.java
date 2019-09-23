@@ -207,11 +207,11 @@ public class Geo {
         return EPSILON;
     }
 
-    public static boolean isPerciseEnough(double value1, double value2) {
-        return isPreciseEnoughPrecision(value1, value2, EPSILON);
+    public static boolean impreciseEqual(double value1, double value2) {
+        return impreciseEqual(value1, value2, EPSILON);
     }
 
-    public static boolean isPreciseEnoughPrecision(double value1, double value2, double precision) {
+    public static boolean impreciseEqual(double value1, double value2, double precision) {
         return value1 - value2 <= precision;
     }
 
