@@ -38,14 +38,14 @@ public class PathAssist {
 
     private double assignWeight(double distance) { return Math.pow(EXPONENTIAL_WEIGHT, distance); }
 
-    private double getDistCurrPoint(Point currPos) { return CoordinateSystemProcessing.getDistance(currPos, this.path.get(0)); }
+    private double getDistCurrPoint(Point currPos) { return Geo.getDistance(currPos, this.path.get(0)); }
 
     private ArrayList<Double> getCumulativeDistances(Point currPos) {
         ArrayList<Double> distList = new ArrayList<Double>();
         double distance = getDistCurrPoint(currPos);
         distList.add(distance);
         for (int i = 0; i < this.path.size() - 1; i++) {
-            distance += CoordinateSystemProcessing.getDistance(this.path.get(i), this.path.get(i + 1));
+            distance += Geo.getDistance(this.path.get(i), this.path.get(i + 1));
             distList.add(distance);
         }
         return distList;
@@ -65,7 +65,7 @@ public class PathAssist {
         ArrayList<Double> angles = new ArrayList<Double>();
         double angle;
         for (int i = 0; i < this.path.size() - 1; i++) {
-            angle = CoordinateSystemProcessing.angleBetween(currPos, this.path.get(i));
+            angle = Geo.angleBetween(currPos, this.path.get(i));
             angles.add(angle);
         }
         return angles;
@@ -88,7 +88,7 @@ public class PathAssist {
 
     private void pointHit(Point currPos) {
         Point pointToHit = this.path.get(0);
-        double distance = CoordinateSystemProcessing.getDistance(pointToHit, currPos);
+        double distance = Geo.getDistance(pointToHit, currPos);
         if (distance < distanceTolerance) { this.path.remove(0); }
     }
 
