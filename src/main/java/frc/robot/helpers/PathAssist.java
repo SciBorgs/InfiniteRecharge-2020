@@ -17,7 +17,6 @@ public class PathAssist {
     private ArrayList<Point> path;
 
     public void setPath(ArrayList<Point> path) {
-        reset();
         Utils.deepCopy(path, this.path);
     }
 
@@ -29,7 +28,8 @@ public class PathAssist {
 
     public void update(Point currPos, double heading) {
         clear();
-        double desiredHeading = getDesiredHeading(angles, weights);
+        pointHit(currPos);
+        double desiredHeading = getDesiredHeading(currPos, heading);
         double error = desiredHeading - heading;
         turnPID.addMeasurement(error);
         double turnMagnitude = turnPID.getOutput();
@@ -38,7 +38,7 @@ public class PathAssist {
 
     private double assignWeight(double distance) { return Math.pow(EXPONENTIAL_WEIGHT, distance); }
 
-    private double getDistCurrPoint(Point currPos) { return CoordinateSystemProcessing.getDistance(currPos, this.path.get(lastPointHitIndex + 1)); }
+    private double getDistCurrPoint(Point currPos) { return CoordinateSystemProcessing.getDistance(currPos, this.path.get(0)); }
 
     private ArrayList<Double> getCumulativeDistances(Point currPos) {
         ArrayList<Double> distList = new ArrayList<Double>();
@@ -79,11 +79,11 @@ public class PathAssist {
         return weight;
     }
 
-    private void getDesiredHeading(Point currPos, double heading) {
-        Utils.deepCopy(getDistances(currPos), distances);        // find path distance to each point based on current position
+    private double getDesiredHeading(Point currPos, double heading) {
+        Utils.deepCopy(getCumulativeDistances(currPos), distances);        // find path distance to each point based on current position
         Utils.deepCopy(getWeights(currPos, distances), weights); // create weights based on those distances
         Utils.deepCopy(getAngles(currPos), angles);              // get angle to each point based on current position
-        getFinalWeight(angles, weights);
+        return getFinalWeight(angles, weights);
     }
 
     private void pointHit(Point currPos) {
@@ -92,8 +92,5 @@ public class PathAssist {
         if (distance < distanceTolerance) { this.path.remove(0); }
     }
 
-    public boolean isDone() {
-        Point currPos = new Point(Robot.encoderLocalization.getX(), Robot.encoderLocalization.getY());
-        return getLastPointHitIndex(currPos) == (this.path.size() - 1);
-    }
+    public boolean isDone() { return this.path.size() == 1 ? true : false; }
 }
