@@ -2,38 +2,38 @@ package frc.robot.helpers;
 
 public class Circle {
 
-    Point p0, p1;
-    double x0, y0, x1, y1;
-    double k, h , r, m;
+    Point  center;
+    double radius;
 
-    public Circle(Point currPos, double currHeading, Point finalPos) {
-        this.p0 = currPos;
-        this.p1 = finalPos;
-        setVars();
-        this.m = Math.atan(currHeading);
-        this.h = calculateH();
-        this.k = calculateK();
-        this.r = calculateR();
+    public Circle(Point center, double radius) {
+        this.center = center;
+        this.radius = radius;
     }
 
-    private void setVars() {
-        this.x0 = this.p0.x;
-        this.y0 = this.p0.y;
-        this.x1 = this.p1.x;
-        this.y1 = this.p1.y;
+    public Point  getCenter() { return this.center; }
+    public double getRadius() { return this.radius; }
+
+    public static Circle makeCircleTangentAnd2Points(Point currPos, double currHeading, Point finalPos) {
+        double x0, y0, x1, y1, m, h , k, radius;
+        x0 = currPos.x;
+        y0 = currPos.y;
+        x1 = finalPos.x;
+        y1 = finalPos.y;
+        m  = Math.atan(currHeading);
+        h  = calculateH(x0, y0, x1, y1, m);
+        k  = calculateK(x0, y0, m, h);
+        radius = calculateR(x0, y0, m, h, k);
+        Point center = new Point(h, k);
+        return new Circle(center, radius);
     }
-
-    public double getH() { return this.h; }
-    public double getK() { return this.k; }
-    public double getR() { return this.r; }
-
-    private double calculateH(){
-        double a = (.5 * this.y1 * this.y1 - this.y0 * this.y0 + this.x1 * this.x1 - this.x0 * this.x0);
-        double b = this.m * this.y0 * this.x1 - this.m * this.y0 * this.x0 + this.x0 * this.x1 - this.x0 * this.x0;
-        double c = this.m * this.x0 - this.m * this.x1 - this.y0 + this.y1;
+    
+    public static double calculateH(double x0, double y0, double x1, double y1, double m) {
+        double a = (.5 * y1 * y1 - y0 * y0 + x1 * x1 - x0 * x0);
+        double b = m * y0 * x1 - m * y0 * x0 + x0 * x1 - x0 * x0;
+        double c = m * x0 - m * x1 - y0 + y1;
         return (a - b) / c;
     }
     
-    private double calculateK() { return this.m * (this.y0 - this.h) + this.x0; }
-    private double calculateR() { return Math.sqrt(Math.pow(this.x0 - this.k, 2) + Math.pow(this.y0 - this.h, 2)); }
+    private static double calculateK(double x0, double y0, double m, double h) { return m * (y0 - h) + x0; }
+    private static double calculateR(double x0, double y0, double m, double h, double k) { return Math.sqrt(Math.pow(x0 - k, 2) + Math.pow(y0 - h, 2)); }
 }
