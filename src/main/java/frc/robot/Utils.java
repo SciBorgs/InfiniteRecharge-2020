@@ -17,6 +17,7 @@ import java.util.Collections;
 public class Utils{
 
     public static double METERS_TO_INCHES = 39.37;
+    private static final double EPSILON = 1e-9;
 
     public static double metersToInches(double meters){return meters * METERS_TO_INCHES;}
     public static double inchesToMeters(double inches){return inches / METERS_TO_INCHES;}
@@ -128,5 +129,17 @@ public class Utils{
         double min = Math.min(bounds.first, bounds.second);
         double max = Math.max(bounds.first, bounds.second);
         return v >= min && v <= max;
+    }
+
+    public static boolean impreciseEquals(double d1, double d2) {
+        return impreciseEquals(d1, d2, EPSILON);
+    }
+
+    public static boolean impreciseEquals(double d1, double d2, double precision) {
+        return Math.abs(d1 - d2) <= precision;
+    }
+
+    public static double getEpsilon() {
+        return EPSILON;
     }
 }

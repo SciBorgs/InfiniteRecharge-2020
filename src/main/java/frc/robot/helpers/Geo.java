@@ -1,13 +1,13 @@
 package frc.robot.helpers;
 
+import frc.robot.Utils;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Optional;
 
 public class Geo {
-
     public static final Point ORIGIN = new Point(0, 0);
-    private static final double EPSILON = 1e-9;
     private static final double DELTA = 1;
     public static final double MAX_ANGLE = 2 * Math.PI;
 
@@ -99,7 +99,7 @@ public class Geo {
     }
 
     public static boolean arePointsCollinear(Point p1, Point p2, Point p3) {
-        return arePointsCollinear(p1, p2, p3, EPSILON);
+        return arePointsCollinear(p1, p2, p3, Utils.getEpsilon());
     }
 
     public static boolean arePointsExactlyCollinear(Point p1, Point p2, Point p3) {
@@ -113,7 +113,6 @@ public class Geo {
     private static double collinear(Point p1, Point p2, Point p3) { // Also thinking on this
         return Math.abs((p2.y - p1.y) * (p3.x - p2.x) - (p2.x - p1.x) * (p3.y - p2.y));
     }
-
 
     public static boolean isPointInCircle(Point p1, Point p2, Point p3, Point pointToTest) {
         double p1dx = p1.x - pointToTest.x;
@@ -143,7 +142,7 @@ public class Geo {
     }
 
     public static boolean areParellel(LineLike l1, LineLike l2) {
-        return areParellel(l1, l2, EPSILON);
+        return Utils.impreciseEquals(thetaOf(l1), thetaOf(l2));
     }
 
     public static boolean areExactlyParellel(LineLike l1, LineLike l2) {
@@ -151,7 +150,7 @@ public class Geo {
     }
 
     public static boolean areParellel(LineLike l1, LineLike l2, double precision) {
-        return thetaOf(l1) - thetaOf(l2) <= precision;
+        return Utils.impreciseEquals(thetaOf(l1), thetaOf(l2), precision);
     }
 
     public static Optional<Point> getIntersection(LineLike lLike1, LineLike lLike2) {
@@ -202,17 +201,4 @@ public class Geo {
     public static double angleBetween(Point A, Point B) {
         return Math.atan2(B.y - A.y, B.x - A.x);
     }
-    
-    public static double getEpsilon() {
-        return EPSILON;
-    }
-
-    public static boolean impreciseEqual(double value1, double value2) {
-        return impreciseEqual(value1, value2, EPSILON);
-    }
-
-    public static boolean impreciseEqual(double value1, double value2, double precision) {
-        return value1 - value2 <= precision;
-    }
-
 }

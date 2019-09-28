@@ -2,6 +2,8 @@ package frc.robot.helpers;
 
 import java.io.Serializable;
 
+import frc.robot.Utils;
+
 public class Point implements Serializable {
     private static final long serialVersionUID = 2;
 
@@ -17,8 +19,8 @@ public class Point implements Serializable {
         if (o.getClass() != Point.class) {return false;}
         Point point = (Point) o;
 
-        return this.x - point.x <= Geo.getEpsilon()
-            && this.y - point.y <= Geo.getEpsilon();
+        return Utils.impreciseEquals(this.x, point.x)
+            && Utils.impreciseEquals(this.y, point.y);
     }
 
     @Override
