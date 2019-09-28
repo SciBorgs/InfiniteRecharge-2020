@@ -10,28 +10,28 @@ import frc.robot.stateEstimation.Weighter;
 import frc.robot.Robot;
 import frc.robot.RobotState;
 import frc.robot.RobotState.SD;
-import frc.robot.RobotStates;
+import frc.robot.RobotStateHistory;
 import frc.robot.Utils;
 
 // What's a particle filter?
 // http://www.deepideas.net/robot-localization-particle-filter/
 
 class Particle {
-    public RobotStates states;
+    public RobotStateHistory stateHistory;
     public double weight;
 
-    public Particle(RobotStates states, double weight){
-        this.states = states;
-        this.weight = weight;
+    public Particle(RobotStateHistory stateHistory, double weight){
+        this.stateHistory = stateHistory;
+        this.weight       = weight;
     }
 
     public Particle copy(){
-        return new Particle(states.copy(), weight);
+        return new Particle(stateHistory.copy(), weight);
     }
 
     public Particle addStateIntoNew(RobotState state){
         Particle newParticle = this.copy();
-        newParticle.states.addState(state);
+        newParticle.stateHistory.addState(state);
         return newParticle;
     }
 }
@@ -46,13 +46,13 @@ public class ParticleFilter implements Model{
     public Weighter weighter;
     public IllegalStateDeterminer illegalStateDeterminer;
 
-    public ParticleFilter(Updater updater, Weighter weighter, RobotStates ogState){
+    public ParticleFilter(Updater updater, Weighter weighter, RobotStateHistory startingStateHistory){
         this.updater  = updater;
         this.weighter = weighter;
         this.illegalStateDeterminer = new NeverIllegal(); // defaults to having no illegal states
 
         this.particles = new ArrayList<>();
-        this.particles.add(new Particle(ogState, weightSum));
+        this.particles.add(new Particle(startingStateHistory, weightSum));
     }
 
     public ParticleFilter(Updater updater, Weighter weighter, IllegalStateDeterminer illegalStateDeterminer) {
@@ -76,8 +76,8 @@ public class ParticleFilter implements Model{
         sortParticle();
     }
 
-    public ArrayList<RobotStates> getStatesList(){ // converts the Particles to a list of RobotStates
-        return Utils.toArrayList(this.particles.stream().map(particle -> particle.states));
+    public ArrayList<RobotStateHistory> getStatesList(){ // converts the Particles to a list of RobotStates
+        return Utils.toArrayList(this.particles.stream().map(particle -> particle.stateHistory));
     }
     public ArrayList<Double> getWeights(){ // converts the Particles to weights
         return Utils.toArrayList(this.particles.stream().map(particle -> particle.weight));
@@ -85,7 +85,7 @@ public class ParticleFilter implements Model{
 
     private Particle updateParticle(Particle particle){ 
         // Updates a particle factoring in noise
-        RobotState updatedState = updater.updateState(particle.states);
+        RobotState updatedState = updater.updateState(particle.stateHistory);
         Hashtable<SD, Double> stdDevs = updater.getStdDevs();
         Utils.addNoise(updatedState, stdDevs);
         // incorporates state from Robot.java except for SD values being updated by updater
@@ -124,13 +124,13 @@ public class ParticleFilter implements Model{
 
     private void computeWeights() {
         for(Particle particle : this.particles){
-            particle.weight *= this.weighter.weight(particle.states);
+            particle.weight *= this.weighter.weight(particle.stateHistory);
         }
         adjustWeights();
     }
 
     private void filterParticles() {
-        this.particles.removeIf(particle -> illegalStateDeterminer.isStateIllegal(particle.states));
+        this.particles.removeIf(particle -> illegalStateDeterminer.isStateIllegal(particle.stateHistory));
     }
 
     private void sortParticle(){
@@ -139,8 +139,8 @@ public class ParticleFilter implements Model{
         particles.sort(particleComparator);
     }
 
-    public RobotStates currentStates(){
-        return particles.get(0).states;
+    public RobotStateHistory currentStates(){
+        return particles.get(0).stateHistory;
     }
     
     // Model functionality:

@@ -1,7 +1,7 @@
 package frc.robot.stateEstimation;
 
-import frc.robot.RobotStates;
+import frc.robot.RobotStateHistory;
 
 public interface Weighter {
-    double weight(RobotStates states);
+    double weight(RobotStateHistory states);
 };

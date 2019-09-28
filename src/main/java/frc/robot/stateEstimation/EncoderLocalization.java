@@ -10,7 +10,7 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import frc.robot.PortMap;
 import frc.robot.Utils;
 import frc.robot.RobotState;
-import frc.robot.RobotStates;
+import frc.robot.RobotStateHistory;
 import frc.robot.RobotState.SD;
 import frc.robot.helpers.Pigeon;
 import frc.robot.logging.Logger.DefaultValue;
@@ -63,12 +63,12 @@ public class EncoderLocalization implements Updater, Model {
         return Robot.gearShiftSubsystem.getCurrentGearRatio() * state.get(wheelAngleSD) * WHEEL_RADIUS;
     }
     
-    public double wheelRotationChange(SD wheelAngleSD, RobotStates states){
-        return getWheelPosition(wheelAngleSD, states, 0) - getWheelPosition(wheelAngleSD, states, 1);
+    public double wheelRotationChange(SD wheelAngleSD, RobotStateHistory stateHistory){
+        return getWheelPosition(wheelAngleSD, stateHistory, 0) - getWheelPosition(wheelAngleSD, stateHistory, 1);
     }
     
-    public double getWheelPosition(SD wheelAngleSD, RobotStates robotStates, int ticksAgo)  {
-        return getWheelPosition(wheelAngleSD, robotStates.statesAgo(ticksAgo));
+    public double getWheelPosition(SD wheelAngleSD, RobotStateHistory stateHistory, int ticksAgo)  {
+        return getWheelPosition(wheelAngleSD, stateHistory.statesAgo(ticksAgo));
     }
     public double getWheelPosition(SD wheelAngleSD, RobotState state){
         // Takes a spark. Returns the last recorded pos of that spark/wheel
@@ -105,7 +105,7 @@ public class EncoderLocalization implements Updater, Model {
     }
 
     @Override
-    public RobotState updateState(RobotStates pastStates){
+    public RobotState updateState(RobotStateHistory pastStates){
         RobotState state = pastStates.currentState();
         RobotState newPosition = 
             nextPosTankPigeon(state.get(SD.X), state.get(SD.Y), state.get(SD.Angle), 
@@ -116,7 +116,7 @@ public class EncoderLocalization implements Updater, Model {
 
     @Override
     public RobotState updatedRobotState(){
-        return updateState(Robot.robotStates);
+        return updateState(Robot.stateHistory);
     }
 
     @Override

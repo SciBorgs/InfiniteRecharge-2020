@@ -3,7 +3,7 @@ package frc.robot.stateEstimation;
 import java.util.Map;
 
 import frc.robot.RobotState;
-import frc.robot.RobotStates;
+import frc.robot.RobotStateHistory;
 import frc.robot.RobotState.SD;
 
 public class GaussianWeighter implements Weighter {
@@ -19,9 +19,9 @@ public class GaussianWeighter implements Weighter {
         return 1 / (variance * Math.sqrt(2 * Math.PI)) * Math.pow(Math.E, -(1 / 2) * Math.pow(((x - mean) / variance), 2));
     }
     
-    public double weight(RobotStates states){
-        RobotState state = states.currentState();
-        RobotStates pastStates = states.copy();
+    public double weight(RobotStateHistory stateHistory){
+        RobotState state = stateHistory.currentState();
+        RobotStateHistory pastStates = stateHistory.copy();
         pastStates.dropFirstState();
         RobotState expectedState = updater.updateState(pastStates);
         double weight = 1;

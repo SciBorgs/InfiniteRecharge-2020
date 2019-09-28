@@ -1,7 +1,7 @@
 package frc.robot.stateEstimation;
 
-import frc.robot.RobotStates;
+import frc.robot.RobotStateHistory;;
 
 public interface IllegalStateDeterminer {
-    public boolean isStateIllegal(RobotStates states);
+    public boolean isStateIllegal(RobotStateHistory states);
 }

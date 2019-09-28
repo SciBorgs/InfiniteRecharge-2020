@@ -25,9 +25,9 @@ public class Robot extends TimedRobot {
     public static Model     positionModel = new EncoderLocalization();
     public static OI oi = new OI();
 
-    public static RobotStates robotStates = new RobotStates();
+    public static RobotStateHistory stateHistory = new RobotStateHistory();
 
-    public static RobotState getState(){return robotStates.currentState();}
+    public static RobotState getState(){return stateHistory.currentState();}
 
     public static double get(SD sd)            {return getState().get(sd);}
     public static void   set(SD sd, double val){       getState().set(sd, val);}
@@ -51,7 +51,7 @@ public class Robot extends TimedRobot {
     }
 
     public void useModel(Model model){
-        robotStates.currentState().incorporateIntoNew(model.updatedRobotState(), model.getSDs());
+        stateHistory.currentState().incorporateIntoNew(model.updatedRobotState(), model.getSDs());
     }
 
     public void robotInit() {
@@ -87,7 +87,7 @@ public class Robot extends TimedRobot {
     public void robotPeriodic() {
         allUpdateRobotStates();
         Scheduler.getInstance().run();
-        robotStates.addState(getState().copy());
+        stateHistory.addState(getState().copy());
         useModel(positionModel);
     }
         

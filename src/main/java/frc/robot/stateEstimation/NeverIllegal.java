@@ -1,10 +1,10 @@
 package frc.robot.stateEstimation;
 
-import frc.robot.RobotStates;
+import frc.robot.RobotStateHistory;
 
 public class NeverIllegal implements IllegalStateDeterminer{
     @Override
-    public boolean isStateIllegal(RobotStates state){
+    public boolean isStateIllegal(RobotStateHistory state){
         return false;
     }
 }
