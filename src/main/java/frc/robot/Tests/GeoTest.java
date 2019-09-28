@@ -1,6 +1,5 @@
-package frc.robot.Tests;
+package frc.robot.tests;
 import frc.robot.helpers.*;
-import frc.robot.Utils;
 
 public class GeoTest {
 
@@ -11,10 +10,6 @@ public class GeoTest {
         [unless f is this or something that returns the points]
         */
         return new Line(l.p2, l.p1);
-    }
-
-    private static boolean assertImpresiceEquals(double d1, double d2){
-        return Utils.impreciseEquals(d1, d2);
     }
 
     public static void testGeo() {
@@ -44,16 +39,17 @@ public class GeoTest {
         Tester.assertEquals(Math.toDegrees(Geo.thetaOf(new Line(o, new Point(0,-2)))),  -90, "thetaOf, Test #4");
         
         /// mOf 
-        Tester.assertTrue(assertImpresiceEquals(Geo.mOf(new Line(new Point(0,1), new Point(1,2))),    1), "mOf, Test #1");
-        Tester.assertTrue(assertImpresiceEquals(Geo.mOf(new Line(new Point(0,1), new Point(10,6))), 0.5), "mOf, Test #2");
+        Tester.assertImpresiceEquals(Geo.mOf(new Line(new Point(0,1), new Point(1,2))), 1, "mOf, Test #1");
+        Tester.assertImpresiceEquals(Geo.mOf(new Line(new Point(0,1), new Point(10,6))), 0.5, "mOf, Test #2");
         
         Tester.assertEquals(Geo.mOf(new Line(new Point(2,3), new Point(2,6))), 1/0.0, "mOf, Test #4");
         
         /// bOf
-        Tester.assertTrue(assertImpresiceEquals(Geo.bOf(new Line(new Point(2,8),   new Point(-4,-4))),  4),   "bOf, Test #1");
-        Tester.assertTrue(assertImpresiceEquals(Geo.bOf(new Line(new Point(-2,-8), new Point(2,4))),   -2),   "bOf, Test #1");
-        Tester.assertTrue(assertImpresiceEquals(Geo.bOf(new Line(new Point(6,2),   new Point(-2,-6))), -4),   "bOf, Test #3");
-        Tester.assertEquals(Geo.bOf(                    new Line(new Point(1,2),   new Point(1,4))),  -1/0.0, "bOf, Test #4");
+        Tester.assertImpresiceEquals(Geo.bOf(new Line(new Point(2,8),   new Point(-4,-4))),  4,   "bOf, Test #1");
+        Tester.assertImpresiceEquals(Geo.bOf(new Line(new Point(-2,-8), new Point(2,4))),   -2,   "bOf, Test #2");
+        Tester.assertImpresiceEquals(Geo.bOf(new Line(new Point(6,2),   new Point(-2,-6))), -4,   "bOf, Test #3");
+        
+        Tester.assertEquals(Geo.bOf( new Line(new Point(1,2),   new Point(1,4))),  -1/0.0, "bOf, Test #4");
 
         /// isVertical
         Tester.assertTrue(Geo.isVertical(  new Line(new Point(2,3),   new Point(2,4))),   "isVertical, Test #1");
@@ -62,16 +58,17 @@ public class GeoTest {
         Tester.assertFalse(Geo.isVertical( new Line(new Point(10,24), new Point(20,24))), "isVertical, Test #4");
         
         /// yOf 
-        Tester.assertTrue(assertImpresiceEquals( Geo.yOf( new Line(new Point(-2,-2), new Point(-3,-4)), 0),  2), "yOf, Test #1");
-        Tester.assertTrue(assertImpresiceEquals( Geo.yOf( new Line(new Point(-1,1),  new Point(-2,-4)), 0),  6), "yOf, Test #2");
-        Tester.assertFalse(assertImpresiceEquals(Geo.yOf( new Line( new Point(-2,2), new Point(2,10)),  0), -3), "yOf, Test #3"); // See if code gets confused with y and x intercept.
-        Tester.assertEquals(                  Geo.yOf( new Line( new Point(2,1),  new Point(10, 1)), 0),  1,  "yOf, Test #4"); // Horziontal
+        Tester.assertImpresiceEquals(Geo.yOf( new Line(new Point(-2,-2), new Point(-3,-4)), 0),  2,  "yOf, Test #1");
+        Tester.assertImpresiceEquals(Geo.yOf( new Line(new Point(-1,1),  new Point(-2,-4)), 0),  6,  "yOf, Test #2");
+        Tester.assertImpresiceEquals(Geo.yOf( new Line( new Point(-2,2), new Point(2,-6)),  0),  -2,  "yOf, Test #3");
+        Tester.assertEquals(         Geo.yOf( new Line( new Point(2,1),  new Point(10, 1)), 0),  1,  "yOf, Test #4"); // Horziontal
 
         /// xOf
-        Tester.assertTrue(assertImpresiceEquals(Geo.xOf(new Line(new Point(-2,-2), new Point(-3,-4)), 0), -1), "xOf, Test #1");
-        Tester.assertTrue(assertImpresiceEquals(Geo.xOf(new Line(new Point(-4,-1), new Point(1,4)), 0),   -3), "xOf, Test #2");
-        Tester.assertNotEquals(                 Geo.xOf(new Line(new Point(-2,-2), new Point(2,10)), 0),   6,  "xOf, Test #3");
-        Tester.assertEquals(                    Geo.xOf(new Line(new Point(-2,0),  new Point(-2,1)), 0),  -2,  "xOf, Test #4"); // Vertical
+        Tester.assertImpresiceEquals(Geo.xOf(new Line(new Point(-2,-2), new Point(-3,-4)), 0), -1, "xOf, Test #1");
+        Tester.assertImpresiceEquals(Geo.xOf(new Line(new Point(-4,-1), new Point(1,4)), 0),   -3, "xOf, Test #2");
+        
+        Tester.assertNotEquals(Geo.xOf(new Line(new Point(-2,-2), new Point(2,10)), 0),   6,  "xOf, Test #3");
+        Tester.assertEquals(   Geo.xOf(new Line(new Point(-2,0),  new Point(-2,1)), 0),  -2,  "xOf, Test #4"); // Vertical
 
         /// Point slope form
         Tester.assertEquals(Geo.pointSlopeForm(new Point(0,-4), 3), new Line(new Point(0,-4), new Point(1,-1)),  "pointSlopeForm, Test #1");
@@ -84,26 +81,31 @@ public class GeoTest {
         Tester.assertEquals(Geo.slopeInterceptForm(0,2),  new Line(new Point(0,2),  new Point(1,2)),  "slopeInterceptForm, Test #3");
         
         /// Point Angle Form
-        Tester.assertEquals(Geo.pointAngleForm(new Point(2,0), Math.toRadians(45)),  new Line(new Point(2,0),  new Point(3,1)),  "pointAngleForm, Test #1");
-        Tester.assertEquals(Geo.pointAngleForm(new Point(2,0), Math.toRadians(135)), new Line(new Point(2,0),  new Point(3,-1)), "pointAngleForm, Test #2");
-        Tester.assertEquals(Geo.pointAngleForm(o,              Math.toRadians(90)),  new Line(o,               new Point(0,1)),  "pointAngleForm, Test #3");
+        Tester.assertEquals(Geo.pointAngleForm(new Point(2,0), Math.toRadians(45)),  
+                                               new Line(new Point(2,0),  new Point(3,1)),  "pointAngleForm, Test #1");
+        Tester.assertEquals(Geo.pointAngleForm(new Point(2,0), Math.toRadians(135)), 
+                                               new Line(new Point(2,0),  new Point(3,-1)), "pointAngleForm, Test #2");
+        
+        Tester.assertEquals(Geo.pointAngleForm(o, Math.toRadians(90)),  
+                                               new Line(o, new Point(0,1)), "pointAngleForm, Test #3");
         
         /// Distance between two points 
-        Tester.assertEquals(   Geo.getDistance(o, new Point(0,1)), 1, "distanceOfTwoPoints, #1");
-        Tester.assertNotEquals(Geo.getDistance(o, new Point(3,0)), 1, "distanceOfTwoPoints, #2");
+        Tester.assertEquals(   Geo.getDistance(o, new Point(0,1)),  1, "distanceOfTwoPoints, #1");
+        Tester.assertNotEquals(Geo.getDistance(o, new Point(3,0 )), 1, "distanceOfTwoPoints, #2");
 
         /// Distance between lineLike and point 
         Tester.assertEquals(Geo.getDistance(new Line(       new Point(2,0), new Point(2,2)), new Point(0,0)),  2, "distanceLinePoint");
         Tester.assertEquals(Geo.getDistance(new LineSegment(new Point(0,1), new Point(1,0)), new Point(1,-1)), 1, "distanceLineSegmentPoint");
         Tester.assertEquals(Geo.getDistance(new Ray(        new Point(1,0), new Point(0,2)), new Point(1,-1)), 1, "distanceRayPoint");
 
-        /// arePointsCollinear (One broken)
+        /// arePointsCollinear
         Tester.assertTrue( Geo.arePointsCollinear(new Point(1,0), new Point(1,2), new Point(1,1)), "arePointsCollinear, Test #1");
         Tester.assertTrue( Geo.arePointsCollinear(new Point(3,0), new Point(1,2), new Point(2,1)), "arePointsCollinear, Test #2");
-        Tester.assertFalse(Geo.arePointsCollinear(new Point(1,0), new Point(1,2), new Point(0,1)), "arePointsCollinear, Test #3"); // This one is for some reason true
+        
+        Tester.assertFalse(Geo.arePointsCollinear(new Point(1,0), new Point(1,2), new Point(0,1)), "arePointsCollinear, Test #3");
         Tester.assertFalse(Geo.arePointsCollinear(new Point(3,0), new Point(1,2), new Point(3,2)), "arePointsCollinear, Test #4");
         
-        /// getMidpoint (Something fishy)
+        /// getMidpoint
         Tester.assertEquals(   Geo.getMidpoint(new Point(1,0), new Point(1,2)), new Point(1,1), "Midpoint, Test #1");
         Tester.assertEquals(   Geo.getMidpoint(new Point(1,0), new Point(3,0)), new Point(2,0), "Midpoint, Test #2");
         Tester.assertNotEquals(Geo.getMidpoint(new Point(1,0), new Point(3,0)), new Point(3,0), "Midpoint, Test #3");
@@ -124,7 +126,9 @@ public class GeoTest {
         /// areParallel
         Line parallelLine1 = new Line(new Point(0,2), new Point(-2,0));
         Line parallelLine2 = new Line(new Point(2,0), new Point(0,-2));
-        Tester.assertTrue(Geo.areParellel(new Line(new Point(0,0), new Point(0,1)), new Line(new Point(1,0), new Point(1,1))), "areParallel, Test #1"); // Vertical
+        
+        Tester.assertTrue(Geo.areParellel(new Line(new Point(0,0), new Point(0,1)), 
+                                          new Line(new Point(1,0), new Point(1,1))), "areParallel, Test #1"); // Vertical
         
         Tester.assertTrue(Geo.areParellel(parallelLine1, parallelLine2), "areParallel, Test #2");
         Tester.assertTrue(Geo.areParellel(flipPoints(parallelLine1), flipPoints(parallelLine2)), "areParallel, Test #3");
@@ -133,7 +137,9 @@ public class GeoTest {
         Line intersectionLine1 = new Line(new Point(-1,2), new Point(1,0));
         Line intersectionLine2 = new Line(new Point(-1,0), new Point(1,2));
 
-        Tester.assertEquals(Geo.getIntersection(new Line(new Point(0,1), new Point(1,0)), new Line(new Point(0,0), new Point(1,1))).get(), new Point(0.5,0.5), "getIntersection, Test #1");
+        Tester.assertEquals(Geo.getIntersection(new Line(new Point(0,1), new Point(1,0)), 
+                                                new Line(new Point(0,0), new Point(1,1))).get(), new Point(0.5,0.5), "getIntersection, Test #1");
+        
         Tester.assertEquals(Geo.getIntersection(intersectionLine1, intersectionLine2).get(), new Point(0,1), "getIntersection, Test #2");
         Tester.assertEquals(Geo.getIntersection(flipPoints(intersectionLine1), flipPoints(intersectionLine2)).get(), new Point(0,1), "getIntersection, Test #3");
 
@@ -152,11 +158,11 @@ public class GeoTest {
         Tester.assertEquals(Geo.sub(new Point(1,1), new Point(1,1)), new Point(0,0), "sub, Test #3");
 
         /// getMagnitude
-        Tester.assertEquals(Geo.getMagnitude(new Point(2,0)), 2, "getMagnitude, Test #1");
+        Tester.assertEquals(Geo.getMagnitude(new Point(2,0)),  2, "getMagnitude, Test #1");
         Tester.assertEquals(Geo.getMagnitude(new Point(0,-7)), 7, "getMagnitude, Test #1");
 
         /// dot
-        Tester.assertEquals(Geo.dot(new Point(1,1),   new Point(2,3)),  5,  "dot, Test #1");
+        Tester.assertEquals(Geo.dot(new Point(1,1),   new Point(2,3)),  5, "dot, Test #1");
         Tester.assertEquals(Geo.dot(new Point(-1,-1), new Point(4,5)), -9, "dot, Test #2");
         Tester.assertEquals(Geo.dot(new Point(2,5),   new Point(1,3)), 17, "dot, Test #3");
 
