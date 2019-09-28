@@ -40,6 +40,7 @@ public class Geo {
     }
 
     public static double mOf(LineLike lLike) { // Slope
+        if (isVertical(lLike)) {return Double.POSITIVE_INFINITY;}
         return Math.tan(thetaOf(lLike));
     }
 
