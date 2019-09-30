@@ -3,8 +3,6 @@ package frc.robot.helpers;
 import java.util.ArrayList;
 import frc.robot.Utils;
 import frc.robot.Robot;
-import frc.robot.helpers.PID;
-import frc.robot.helpers.Point;
 
 public class PathAssist {
 
