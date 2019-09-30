@@ -1,5 +1,10 @@
 package frc.robot.helpers;
 
+import frc.robot.shapes.Line;
+import frc.robot.shapes.LineSegment;
+import frc.robot.shapes.Ray;
+import frc.robot.shapes.Point;
+
 import java.util.ArrayList;
 
 public interface WallMap{

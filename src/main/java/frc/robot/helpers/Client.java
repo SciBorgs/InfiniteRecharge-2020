@@ -1,5 +1,7 @@
 package frc.robot.helpers;
 
+import frc.robot.shapes.Point;
+
 import java.io.IOException;
 import java.io.ObjectOutputStream;
 import java.net.Socket;

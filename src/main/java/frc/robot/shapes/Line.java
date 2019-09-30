@@ -1,6 +1,7 @@
-package frc.robot.helpers;
+package frc.robot.shapes;
 
 import frc.robot.Utils;
+import frc.robot.helpers.*;
 
 public class Line extends LineLike{
     public Line(Point p1, Point p2) {
