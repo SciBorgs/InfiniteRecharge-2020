@@ -134,8 +134,9 @@ public class Geo {
         return p1Lift * p2p3Det + p2Lift * p3p1Det + p3Lift * p1p2Det > 0; // If is greater, point lies outside of circle.
     }
 
-    public static double getTangentToCircle (Circle circle, Point tangentPoint) {
-        return (circle.center.x - tangentPoint.x) / (tangentPoint.y - circle.center.y);
+    public static Line getTangentToCircle (Circle circle, Point tangentPoint) {
+        double m = (circle.center.x - tangentPoint.x) / (tangentPoint.y - circle.center.y);
+        return pointSlopeForm(tangentPoint, m);
     }
 
     public static Point getMidpoint(Point point1, Point point2) {

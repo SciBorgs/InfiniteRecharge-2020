@@ -14,17 +14,17 @@ public class CircleController {
     public void update (Point currPos, double currHeading, Point finalPos, double finalHeading) {
         Circle currCircle  = Circle.makeCircleWithTangentAnd2Points(currPos, currHeading, finalPos);
         Line finalHeadingLine = Geo.pointAngleForm(finalPos, finalHeading);
-        double mFinalHeadingLine = Geo.mOf(finalHeadingLine);
-        Line tangentOnCircleToFinalPos = Geo.pointSlopeForm(finalPos, Geo.getTangentToCircle(currCircle, finalPos));
-        double mTangentOnCircleToFinalPos = Geo.mOf(tangentOnCircleToFinalPos);
+        double angleOfFinalHeadingLine = Geo.thetaOf(finalHeadingLine);
+        Line tangentOnCircleToFinalPos = Geo.getTangentToCircle(currCircle, finalPos);
+        double angleOfTangentOnCircleToFinalPos = Geo.thetaOf(tangentOnCircleToFinalPos);
 
-        double finalHeadingError = Math.atan((mFinalHeadingLine - mTangentOnCircleToFinalPos) / (1 - mFinalHeadingLine * mTangentOnCircleToFinalPos));
+        double finalHeadingError = angleOfFinalHeadingLine - angleOfTangentOnCircleToFinalPos;
         finalHeadingPID.addMeasurement(finalHeadingError);
 
         double desiredHeadingError = finalHeading - currHeading;
         desiredHeadingPID.addMeasurement(desiredHeadingError);
 
-        double turnMagnitude = desiredHeadingPID.getOutput() + finalHeadingPID.getOutput();           
+        double turnMagnitude = desiredHeadingPID.getOutput() + finalHeadingPID.getOutput();  
         Robot.driveSubsystem.setSpeedTankTurningPercentage(turnMagnitude);
     }
 }
