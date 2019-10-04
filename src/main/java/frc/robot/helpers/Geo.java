@@ -18,8 +18,7 @@ public class Geo {
     }
 
     public static Point rotatePoint(Point p, double theta) {
-        return new Point(p.x * Math.cos(theta) - p.y * Math.sin(theta), 
-                         p.y * Math.cos(theta) + p.x * Math.sin(theta));
+        return new Point(p.x * Math.cos(theta) - p.y * Math.sin(theta), p.y * Math.cos(theta) + p.x * Math.sin(theta));
     }
 
     public static Point flipXandY(Point p) {
@@ -83,10 +82,11 @@ public class Geo {
     }
 
     public static double getDistance(LineLike lLike, Point point) {
-        Line fakeLine = lLike.toLine();  
-        Optional<Point> intersection = getIntersection(getPerpendicular(fakeLine, point), lLike); // If not a line, it might not intersect
-        
-        if (!intersection.isPresent()) { // Gets shortest distances from point to all bounded points 
+        Line fakeLine = lLike.toLine();
+        Optional<Point> intersection = getIntersection(getPerpendicular(fakeLine, point), lLike); // If not a line, it
+                                                                                                  // might not intersect
+
+        if (!intersection.isPresent()) { // Gets shortest distances from point to all bounded points
             ArrayList<Double> distances = new ArrayList<>();
             for (Point bounds : lLike.getBounds()) {
                 distances.add(getDistance(point, bounds));
@@ -94,7 +94,7 @@ public class Geo {
 
             return Collections.min(distances);
         }
-        
+
         return getDistance(point, intersection.get());
     }
 
@@ -114,7 +114,6 @@ public class Geo {
         return (p2.y - p1.y) * (p3.x - p2.x) - (p2.x - p1.x) * (p3.y - p2.y);
     }
 
-
     public static boolean isPointInCircle(Point p1, Point p2, Point p3, Point pointToTest) {
         double p1dx = p1.x - pointToTest.x;
         double p1dy = p1.y - pointToTest.y;
@@ -131,12 +130,36 @@ public class Geo {
         double p2Lift = Math.pow(p2dx, 2) + Math.pow(p2dy, 2);
         double p3Lift = Math.pow(p3dx, 2) + Math.pow(p3dy, 2);
 
-        return p1Lift * p2p3Det + p2Lift * p3p1Det + p3Lift * p1p2Det > 0; // If is greater, point lies outside of circle.
+        return p1Lift * p2p3Det + p2Lift * p3p1Det + p3Lift * p1p2Det > 0; // If is greater, point lies outside of
+                                                                           // circle.
     }
 
-    public static Line getTangentToCircle (Circle circle, Point tangentPoint) {
-        double m = (circle.center.x - tangentPoint.x) / (tangentPoint.y - circle.center.y);
-        return pointSlopeForm(tangentPoint, m);
+    public static Line getTangentToCircle(Circle circle, Point tangentPoint) {
+        Line centerToPoint = new Line(circle.center, tangentPoint);
+        return getPerpendicular(centerToPoint, tangentPoint);
+    }
+
+    public static int getQuadrantOfPointToCircle(Circle circle, Point point) {
+        if      ((point.x > circle.center.x) && (point.y >= circle.center.y)) { return 1; }
+        else if ((point.x <= circle.center.x) && (point.y > circle.center.y)) { return 2; }
+        else if ((point.x < circle.center.x) && (point.y <= circle.center.y)) { return 3; }
+        else if ((point.x >= circle.center.x) && (point.y < circle.center.y)) { return 4; }
+        else return 0;
+    }
+
+    public static int getDirectionOnCircle(Circle circle, Point point, double currHeading) {
+        // returns 1 if ccw and -1 if cw
+        int quadrant = getQuadrantOfPointToCircle(circle, point);
+        if ((quadrant == 1) && (currHeading > 3 * Math.PI / 2) && (currHeading < 2 * Math.PI)) {
+            return 1;
+        } else if ((quadrant == 2) && (currHeading > 0) && (currHeading < Math.PI / 2)) {
+            return 1;
+        } else if ((quadrant == 3) && (currHeading > Math.PI / 2) && (currHeading < Math.PI)) {
+            return 1;
+        } else if ((quadrant == 4) && (currHeading > Math.PI) && (currHeading < 3 * Math.PI / 2)) {
+            return 1;
+        } else
+            return -1;
     }
 
     public static Point getMidpoint(Point point1, Point point2) {
@@ -197,7 +220,7 @@ public class Geo {
     }
 
     public static double getMagnitudeSquared(Point A) {
-        return getDistanceSquared(A, new Point(0,0));
+        return getDistanceSquared(A, new Point(0, 0));
     }
 
     public static double dot(Point A, Point B) {

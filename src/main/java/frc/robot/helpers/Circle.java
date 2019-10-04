@@ -10,11 +10,11 @@ public class Circle {
         this.radius = radius;
     }
 
-    public static Circle makeCircleWithTangentAnd2Points(Point currPos, double currHeading, Point finalPos) {
+    public static Circle makeCircleWithTangentAnd2Points (Point currPos, double currHeading, Point finalPos) {
         double rotateAngle, kRotated, hRotated, radius;
-
-        rotateAngle = -1 *  currHeading;        
-        Geo.rotatePoint(currPos, rotateAngle);
+        // rotate currPos so that currHeading becomes 0
+        rotateAngle = -1 * currHeading;
+        Geo.rotatePoint(currPos,  rotateAngle);
         Geo.rotatePoint(finalPos, rotateAngle);
 
         hRotated = calculateH(currPos, finalPos);
