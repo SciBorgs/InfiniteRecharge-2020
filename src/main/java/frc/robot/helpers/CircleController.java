@@ -1,30 +1,34 @@
 package frc.robot.helpers;
 
 import frc.robot.Robot;
+import frc.robot.Utils;
 
 public class CircleController { 
 
+    private static final double ERROR = 0;
     private static final double FINAL_HEADING_P = 0;
     private static final double DESIRED_HEADING_P = 0;
     private PID finalHeadingPID   = new PID(FINAL_HEADING_P, 0, 0);
     private PID desiredHeadingPID = new PID(DESIRED_HEADING_P, 0, 0);
 
-    public CircleController () {}
 
     public void update (Point currPos, double currHeading, Point finalPos, double finalHeading) {
         Circle currCircle  = Circle.makeCircleWithTangentAnd2Points(currPos, currHeading, finalPos);
         Line tangentOnCircleToFinalPos = Geo.getTangentToCircle(currCircle, finalPos);
-        double angleOfTangentOnCircleToFinalPos = Geo.thetaOf(tangentOnCircleToFinalPos);
+        double finalHeadingonCircle = Geo.thetaOf(tangentOnCircleToFinalPos);
 
-        int directionOnCircle = Geo.getDirectionOnCircle(currCircle, currPos, currHeading); // -1 if cw and 1 if ccw
+        double angle1 = Geo.normalizeAngle(currHeading  - Geo.angleBetween(currPos,  currCircle.center));
+        double angle2 = Geo.normalizeAngle(finalHeading - Geo.angleBetween(finalPos, currCircle.center));
 
-        double finalHeadingError = finalHeading - angleOfTangentOnCircleToFinalPos;
+        if (Utils.inRange(angle1, angle2, ERROR)) { finalHeadingonCircle *= -1; }
+
+        double finalHeadingError = finalHeading - finalHeadingonCircle;
         finalHeadingPID.addMeasurement(finalHeadingError);
 
         double desiredHeadingError = finalHeading - currHeading;
         desiredHeadingPID.addMeasurement(desiredHeadingError);
 
-        double turnMagnitude = (desiredHeadingPID.getOutput() + finalHeadingPID.getOutput()) * directionOnCircle;  
+        double turnMagnitude = desiredHeadingPID.getOutput() + finalHeadingPID.getOutput();  
         Robot.driveSubsystem.setSpeedTankTurningPercentage(turnMagnitude);
     }
 }

@@ -21,6 +21,10 @@ public class Geo {
         return new Point(p.x * Math.cos(theta) - p.y * Math.sin(theta), p.y * Math.cos(theta) + p.x * Math.sin(theta));
     }
 
+    public static double normalizeAngle (double angle) {
+        return (angle %= MAX_ANGLE) >= 0 ? angle : (angle + MAX_ANGLE);    
+    }
+
     public static Point flipXandY(Point p) {
         return new Point(p.y, p.x);
     }
@@ -137,29 +141,6 @@ public class Geo {
     public static Line getTangentToCircle(Circle circle, Point tangentPoint) {
         Line centerToPoint = new Line(circle.center, tangentPoint);
         return getPerpendicular(centerToPoint, tangentPoint);
-    }
-
-    public static int getQuadrantOfPointToCircle(Circle circle, Point point) {
-        if      ((point.x > circle.center.x) && (point.y >= circle.center.y)) { return 1; }
-        else if ((point.x <= circle.center.x) && (point.y > circle.center.y)) { return 2; }
-        else if ((point.x < circle.center.x) && (point.y <= circle.center.y)) { return 3; }
-        else if ((point.x >= circle.center.x) && (point.y < circle.center.y)) { return 4; }
-        else return 0;
-    }
-
-    public static int getDirectionOnCircle(Circle circle, Point point, double currHeading) {
-        // returns 1 if ccw and -1 if cw
-        int quadrant = getQuadrantOfPointToCircle(circle, point);
-        if ((quadrant == 1) && (currHeading > 3 * Math.PI / 2) && (currHeading < 2 * Math.PI)) {
-            return 1;
-        } else if ((quadrant == 2) && (currHeading > 0) && (currHeading < Math.PI / 2)) {
-            return 1;
-        } else if ((quadrant == 3) && (currHeading > Math.PI / 2) && (currHeading < Math.PI)) {
-            return 1;
-        } else if ((quadrant == 4) && (currHeading > Math.PI) && (currHeading < 3 * Math.PI / 2)) {
-            return 1;
-        } else
-            return -1;
     }
 
     public static Point getMidpoint(Point point1, Point point2) {
