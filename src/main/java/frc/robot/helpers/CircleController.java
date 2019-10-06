@@ -14,15 +14,14 @@ public class CircleController {
 
     public void update (Point currPos, double currHeading, Point finalPos, double finalHeading) {
         Circle currCircle  = Circle.twoPointTangentAngleForm(currPos, currHeading, finalPos);
-        Line tangentOnCircleToFinalPos = Geo.getTangentToCircle(currCircle, finalPos);
-        double finalHeadingOnCircle = Geo.thetaOf(tangentOnCircleToFinalPos);
+        double expectedFinalHeading = Geo.thetaOf(Geo.getTangentToCircle(currCircle, finalPos));
 
-        double angle1 = Geo.normalizeAngle(currHeading  - Geo.angleBetween(currPos,  currCircle.center));
-        double angle2 = Geo.normalizeAngle(finalHeading - Geo.angleBetween(finalPos, currCircle.center));
+        double angle1 = Geo.normalizeAngle(currHeading)  - Geo.angleBetween(currPos,  currCircle.center);
+        double angle2 = Geo.normalizeAngle(finalHeading) - Geo.angleBetween(finalPos, currCircle.center);
 
-        if (Utils.inRange(angle1, angle2, ERROR)) { finalHeadingOnCircle *= -1; }
+        if (Utils.inRange(angle1, angle2, ERROR)) { expectedFinalHeading *= -1; }
 
-        double finalHeadingError = finalHeading - finalHeadingOnCircle;
+        double finalHeadingError = finalHeading - expectedFinalHeading;
         finalHeadingPID.addMeasurement(finalHeadingError);
 
         double desiredHeadingError = Geo.angleBetween(currPos, finalPos) - currHeading;
