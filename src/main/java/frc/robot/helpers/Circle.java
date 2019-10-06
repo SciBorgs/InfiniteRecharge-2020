@@ -10,19 +10,18 @@ public class Circle {
         this.radius = radius;
     }
 
-    public static Circle makeCircleWithTangentAnd2Points (Point currPos, double currHeading, Point finalPos) {
-        double rotateAngle, kRotated, hRotated, radius;
+    public static Circle twoPointTangentAngleForm (Point currPos, double currHeading, Point finalPos) {
+        double kRotated, hRotated, radius;
         // rotate currPos so that currHeading becomes 0
-        rotateAngle = -1 * currHeading;
-        Geo.rotatePoint(currPos,  rotateAngle);
-        Geo.rotatePoint(finalPos, rotateAngle);
+        Geo.rotatePoint(currPos,  -1 * currHeading);
+        Geo.rotatePoint(finalPos, -1 * currHeading);
 
         hRotated = calculateH(currPos, finalPos);
-        kRotated = calculateK(currPos);
-        radius   = calculateR(kRotated, currPos);
+        kRotated = currPos.x;
+        radius   = currPos.x - kRotated;
 
         Point center  = new Point(kRotated, hRotated);
-        Geo.rotatePoint(center, -1 * rotateAngle);
+        Geo.rotatePoint(center, currHeading);
         return new Circle(center, radius);
     }
 
@@ -32,11 +31,8 @@ public class Circle {
         y0 = currPosRotated.y;
         x1 = finalPosRotated.x;
         y1 = finalPosRotated.y;
-        double a = (y1 * y1) - (y0 * y0) - ((x1 - x0) * (x1 - x0));
-        double b = 2 * (y0 - y1);
+        double a = (y1 * y1) - (y0 * y0) + ((x1 - x0) * (x1 - x0));
+        double b = 2 * (y1 - y0);
         return a / b;
     }
-    private static double calculateK (Point currPosRotated) { return currPosRotated.x; }
-    private static double calculateR (double k, Point currPosRotated){ return currPosRotated.x - k; }
-
 }

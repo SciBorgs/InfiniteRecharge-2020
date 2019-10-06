@@ -22,7 +22,7 @@ public class Geo {
     }
 
     public static double normalizeAngle (double angle) {
-        return (angle %= MAX_ANGLE) >= 0 ? angle : (angle + MAX_ANGLE);    
+        return bringInRange(angle, 0, MAX_ANGLE);    
     }
 
     public static Point flipXandY(Point p) {
