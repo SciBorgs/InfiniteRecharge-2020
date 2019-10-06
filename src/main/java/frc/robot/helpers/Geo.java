@@ -9,7 +9,9 @@ public class Geo {
     public static final Point ORIGIN = new Point(0, 0);
     private static final double EPSILON = 1e-9;
     private static final double DELTA = 1;
-    public static final double MAX_ANGLE = 2 * Math.PI;
+    public static final double ANGLE_RANGE = 2 * Math.PI;
+    public static final double MIN_ANGLE = 0;
+    public static final double MAX_ANGLE = MIN_ANGLE + ANGLE_RANGE;
 
     public static Point rotatePoint(Point point, double theta, Point rotateAround) {
         Point shifted = sub(point, rotateAround);
@@ -39,7 +41,7 @@ public class Geo {
 
     public static double thetaOf(LineLike lLike) {
         double theta = angleBetween(lLike.p1, lLike.p2);
-        return bringInRange(theta, -MAX_ANGLE / 4, MAX_ANGLE / 4);
+        return normalizeAngle(bringInRange(theta, 0, MAX_ANGLE / 2));
     }
 
     public static double mOf(LineLike lLike) { // Slope
@@ -51,7 +53,7 @@ public class Geo {
     }
 
     public static boolean isVertical(LineLike lLike) {
-        return thetaOf(lLike) == Math.atan2(DELTA, 0);
+        return thetaOf(lLike) == normalizeAngle(Math.atan2(DELTA, 0));
     }
 
     public static double yOf(Line l, double x) {
@@ -71,7 +73,7 @@ public class Geo {
     }
 
     public static Line pointAngleForm(Point point, double theta) {
-        if (theta == Math.atan2(DELTA, 0)) {
+        if (normalizeAngle(theta) == Math.atan2(DELTA, 0)) {
             return new Line(point, new Point(point.x, point.y + DELTA));
         }
         return pointSlopeForm(point, Math.tan(theta));
