@@ -24,6 +24,7 @@ public class Robot extends TimedRobot {
     
     public static Following following     = new Following();
     public static Model     positionModel = new EncoderLocalization();
+    public static CircleController circleController = new CircleController();
     public static OI oi = new OI();
 
     public static RobotStateHistory stateHistory = new RobotStateHistory();
@@ -34,7 +35,11 @@ public class Robot extends TimedRobot {
     public static void   set(SD sd, double val){       getState().set(sd, val);}
     public static Value getSolenoidValue(SD sd){return getState().getSolenoidValue(sd);}
 
-    public static Point getPos() {return new Point(get(SD.X),get(SD.Y));}
+    public static Point  getPos() {return new Point(get(SD.X),get(SD.Y));}
+    public static double getHeading() {return get(SD.Angle);}
+    public static final Point TEST_POINT = new Point (3, 4);
+    public static final double TEST_HEADING = Math.PI * .1;
+
 
     private int attemptsSinceLastLog;    
     public static final int LOG_PERIOD = 5;
@@ -99,6 +104,7 @@ public class Robot extends TimedRobot {
 
     public void autonomousPeriodic() {
         new SwerveTankDriveCommand().start();
+        circleController.update(getPos(), getHeading(), TEST_POINT, TEST_HEADING);
         pneumaticsSubsystem.startCompressor();
         enabledPeriodic();
     }
