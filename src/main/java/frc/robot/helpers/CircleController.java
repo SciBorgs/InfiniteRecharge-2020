@@ -2,6 +2,7 @@ package frc.robot.helpers;
 
 import frc.robot.Robot;
 import frc.robot.Utils;
+import frc.robot.shapes.*;
 
 public class CircleController { 
 
@@ -17,7 +18,6 @@ public class CircleController {
         double expectedFinalHeading = Geo.thetaOf(Geo.getTangentToCircle(currCircle, finalPos));
 
         // We don't need Geo.subtractAngles b/c we expect this to be 90 or -90. 
-        // Geo.subtractAngle could bring an errored -90 to 90 which would fuck it up
         double angle1 = Geo.normalizeAngle(currHeading)  - Geo.angleBetween(currPos,  currCircle.center);
         double angle2 = Geo.normalizeAngle(finalHeading) - Geo.angleBetween(finalPos, currCircle.center);
 

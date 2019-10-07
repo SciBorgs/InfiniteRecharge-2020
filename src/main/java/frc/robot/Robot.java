@@ -6,6 +6,7 @@ import frc.robot.commands.*;
 import frc.robot.helpers.*;
 import frc.robot.stateEstimation.*;
 import frc.robot.logging.*;
+import frc.robot.shapes.*;
 import frc.robot.logging.Logger.DefaultValue;
 import frc.robot.RobotState.SD;
 import edu.wpi.first.wpilibj.TimedRobot;

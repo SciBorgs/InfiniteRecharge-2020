@@ -175,8 +175,7 @@ public class Utils{
         return Math.abs(d1 - d2) <= precision;
     }
 
-    public static double getEpsilon() {
-        return EPSILON;
+    public static double getEpsilon() {return EPSILON;}
 
     public static<T> ArrayList<T> toArrayList(Iterable<T> iterable){
         ArrayList<T> arrayList = new ArrayList<>();

@@ -1,9 +1,11 @@
-package frc.robot.helpers;
+package frc.robot.shapes;
+
+import frc.robot.helpers.Geo;
 
 public class Circle {
     
-    Point  center;
-    double radius;
+    public Point center;
+    public double radius;
 
     public Circle (Point center, double radius) {
         this.center = center;

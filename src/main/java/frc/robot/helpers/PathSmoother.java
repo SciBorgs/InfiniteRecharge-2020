@@ -1,7 +1,7 @@
 package frc.robot.helpers;
 
 import java.util.ArrayList;
-import frc.robot.helpers.Point;
+import frc.robot.shapes.*;
 
 //uses cubic bezier curves to generate a smooth path between two Waypoints
 public class PathSmoother{
