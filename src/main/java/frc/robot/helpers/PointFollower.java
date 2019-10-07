@@ -5,16 +5,16 @@ import frc.robot.Utils;
 import frc.robot.RobotState.SD;
 import frc.robot.Robot;
 
-public class PathAssist {
+public class PointFollower {
 
     private static final double TURN_P = 0.4, TURN_I = 0, TURN_D = 0;
     private PID turnPID = new PID(TURN_P, TURN_I, TURN_D);
 
-    private static final double EXPONENTIAL_WEIGHT = .1; // every meter each point is weighted 10 times less
-    private double distanceTolerance = 0.1;
-    private ArrayList<Point> path;
+    public double exponentialWeight = .1; // every meter each point is weighted 10 times less
+    public double distanceTolerance = 0.1;
+    public ArrayList<Point> path;
     
-    public PathAssist(ArrayList<Point> path){
+    public PointFollower(ArrayList<Point> path){
         this.path = path;
     }
 
@@ -29,7 +29,7 @@ public class PathAssist {
     }
 
     private double assignWeight(double distance) { // as a point is farther away, it is weighted less and less
-        return Math.pow(EXPONENTIAL_WEIGHT, distance); 
+        return Math.pow(exponentialWeight, distance); 
     }
 
     private ArrayList<Double> getCumulativeDistances(Point currPos) {

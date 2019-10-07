@@ -15,7 +15,7 @@ public class Geo {
     public static final double HORIZONTAL_ANGLE = normalizeAngle(0);
 
     public static double subtractAngles(double a1, double a2){
-        return bringInRange(a1 - a2, HORIZONTAL_ANGLE - ANGLE_RANGE / 4, HORIZONTAL_ANGLE + ANGLE_RANGE / 4);
+        return bringInRange(a1 - a2, HORIZONTAL_ANGLE - ANGLE_RANGE / 2, HORIZONTAL_ANGLE + ANGLE_RANGE / 2);
     }
 
     public static Point rotatePoint(Point point, double theta, Point rotateAround) {
