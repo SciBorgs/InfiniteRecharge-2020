@@ -1,7 +1,4 @@
-package frc.robot.helpers;
-
-import frc.robot.helpers.Point;
-import frc.robot.helpers.Line;
+package frc.robot.shapes;
 
 public interface AlmostLine{
 

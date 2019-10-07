@@ -1,4 +1,6 @@
-package frc.robot;
+package frc.robot.tests;
+
+import frc.robot.Utils;
 
 public class Tester{
 
@@ -39,4 +41,7 @@ public class Tester{
         equalAssertion(n1, n2, testName, false);
     }
 
+    public static void assertImpresiceEquals(double d1, double d2, String testName) {
+        testBool(testName, "Assertion that " + d1 + " is about equal to " + d2, Utils.impreciseEquals(d1, d2));
+    }
 }

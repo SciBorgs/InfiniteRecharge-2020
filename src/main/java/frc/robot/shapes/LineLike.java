@@ -1,6 +1,4 @@
-package frc.robot.helpers;
-
-import frc.robot.helpers.Point;
+package frc.robot.shapes;
 
 public abstract class LineLike{
 

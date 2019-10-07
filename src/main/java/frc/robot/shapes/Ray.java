@@ -1,4 +1,6 @@
-package frc.robot.helpers;
+package frc.robot.shapes;
+
+import frc.robot.helpers.*;
 
 public class Ray extends LineLike implements AlmostLine{
     // p1 is the bounds, p2 determines the direction

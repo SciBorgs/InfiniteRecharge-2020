@@ -2,6 +2,9 @@ package frc.robot.helpers;
 
 import frc.robot.Utils;
 
+import frc.robot.shapes.Point;
+import frc.robot.shapes.Line;
+
 import java.util.Hashtable;
 import frc.robot.subsystems.LidarServer;
 import frc.robot.subsystems.LidarServer.LidarScanInfo;
