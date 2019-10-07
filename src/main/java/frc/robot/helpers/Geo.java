@@ -10,8 +10,13 @@ public class Geo {
     private static final double EPSILON = 1e-9;
     private static final double DELTA = 1;
     public static final double ANGLE_RANGE = 2 * Math.PI;
-    public static final double MIN_ANGLE = 0;
+    public static final double MIN_ANGLE = -1 * Math.PI;
     public static final double MAX_ANGLE = MIN_ANGLE + ANGLE_RANGE;
+    public static final double HORIZONTAL_ANGLE = normalizeAngle(0);
+
+    public static double subtractAngles(double a1, double a2){
+        return bringInRange(a1 - a2, HORIZONTAL_ANGLE - ANGLE_RANGE / 4, HORIZONTAL_ANGLE + ANGLE_RANGE / 4);
+    }
 
     public static Point rotatePoint(Point point, double theta, Point rotateAround) {
         Point shifted = sub(point, rotateAround);

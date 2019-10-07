@@ -33,6 +33,8 @@ public class Robot extends TimedRobot {
     public static void   set(SD sd, double val){       getState().set(sd, val);}
     public static Value getSolenoidValue(SD sd){return getState().getSolenoidValue(sd);}
 
+    public static Point getPos() {return new Point(get(SD.X),get(SD.Y));}
+
     private int attemptsSinceLastLog;    
     public static final int LOG_PERIOD = 5;
 

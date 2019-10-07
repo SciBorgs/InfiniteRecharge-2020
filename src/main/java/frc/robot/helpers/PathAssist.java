@@ -2,93 +2,73 @@ package frc.robot.helpers;
 
 import java.util.ArrayList;
 import frc.robot.Utils;
+import frc.robot.RobotState.SD;
 import frc.robot.Robot;
 
 public class PathAssist {
 
-    private static final double TURN_P = 0, TURN_I = 0, TURN_D = 0;
+    private static final double TURN_P = 0.4, TURN_I = 0, TURN_D = 0;
     private PID turnPID = new PID(TURN_P, TURN_I, TURN_D);
 
-    private static final double EXPONENTIAL_WEIGHT = .225; // points up to 2-2.5 meters away produce weights btwn .051 and .024
-    private double distanceTolerance = 0;
-    private ArrayList<Double> angles, distances, weights;
+    private static final double EXPONENTIAL_WEIGHT = .1; // every meter each point is weighted 10 times less
+    private double distanceTolerance = 0.1;
     private ArrayList<Point> path;
-
-    public void setPath(ArrayList<Point> path) {
-        Utils.deepCopy(path, this.path);
+    
+    public PathAssist(ArrayList<Point> path){
+        this.path = path;
     }
 
-    public void clear() {
-        this.angles.clear();
-        this.distances.clear();
-        this.weights.clear();
-    }
-
-    public void update(Point currPos, double heading) {
-        clear();
-        pointHit(currPos);
-        double desiredHeading = getDesiredHeading(currPos, heading);
-        double error = desiredHeading - heading;
+    public void update() {
+        if (isDone()){return;}
+        double heading = Robot.get(SD.Angle);
+        Point currPos = Robot.getPos(); // create weights based on those distances
+        checkIfHitPoint(currPos); // will remove points you are close enough to as you have "hit" them
+        double error = Geo.subtractAngles(heading, getDesiredHeading(currPos, heading));
         turnPID.addMeasurement(error);
-        double turnMagnitude = turnPID.getOutput();
-        Robot.driveSubsystem.setSpeedTankTurningPercentage(turnMagnitude);
+        Robot.driveSubsystem.setSpeedTankTurningPercentage(turnPID.getOutput());
     }
 
-    private double assignWeight(double distance) { return Math.pow(EXPONENTIAL_WEIGHT, distance); }
-
-    private double getDistCurrPoint(Point currPos) { return Geo.getDistance(currPos, this.path.get(0)); }
+    private double assignWeight(double distance) { // as a point is farther away, it is weighted less and less
+        return Math.pow(EXPONENTIAL_WEIGHT, distance); 
+    }
 
     private ArrayList<Double> getCumulativeDistances(Point currPos) {
-        ArrayList<Double> distList = new ArrayList<Double>();
-        double distance = getDistCurrPoint(currPos);
-        distList.add(distance);
-        for (int i = 0; i < this.path.size() - 1; i++) {
-            distance += Geo.getDistance(this.path.get(i), this.path.get(i + 1));
-            distList.add(distance);
+        ArrayList<Double> distList = new ArrayList<Double>(); // distance between each point
+        distList.add(Geo.getDistance(currPos, this.path.get(0))); // first point is this far away 
+        for (int i = 1; i < this.path.size(); i++) {
+            distList.add(Geo.getDistance(this.path.get(i - 1), this.path.get(i)));
         }
-        return distList;
+        return Utils.cummSums(distList); // we take the cummSums so that if a point is real far away, it is weighted less
     }
 
-    private ArrayList<Double> getWeights(Point currPos, ArrayList<Double> distances) {
-        ArrayList<Double> weights = new ArrayList<Double>();
-        double weight;
-        for (int i = 0; i < this.path.size() - 1; i++) {
-            weight = assignWeight(distances.get(i));
-            weights.add(weight);
-        }
-        return weights;
+    private ArrayList<Double> getWeights(Point currPos) {
+        ArrayList<Double> distances = getCumulativeDistances(currPos);
+        return Utils.toArrayList(distances.stream().map(distance -> assignWeight(distance)));
     }
 
-    private ArrayList<Double> getAngles(Point currPos) {
-        ArrayList<Double> angles = new ArrayList<Double>();
-        double angle;
-        for (int i = 0; i < this.path.size() - 1; i++) {
-            angle = Geo.angleBetween(currPos, this.path.get(i));
-            angles.add(angle);
-        }
-        return angles;
+    private ArrayList<Double> getAngles(Point currPos) { // gets the angle to each point
+        return Utils.toArrayList(this.path.stream().map(point -> Geo.angleBetween(currPos, point)));
     }
 
-    private double getFinalWeight(ArrayList<Double> angles, ArrayList<Double> weights) {
-        double weight = 0;
-        for(int i = 0; i < this.path.size() - 1; i++) {
-            weight += weights.get(i) * angles.get(i);
+    private double calculateDesiredHeading(ArrayList<Double> angles, ArrayList<Double> weights) {
+        // essentially just a weighted average
+        double angleSum = 0;
+        int size = this.path.size();
+        for(int i = 0; i < size; i++) {
+            angleSum += weights.get(i) * angles.get(i);
         }
-        return weight;
+        return angleSum / Utils.sumArrayList(weights);
     }
 
     private double getDesiredHeading(Point currPos, double heading) {
-        Utils.deepCopy(getCumulativeDistances(currPos), distances);        // find path distance to each point based on current position
-        Utils.deepCopy(getWeights(currPos, distances), weights); // create weights based on those distances
-        Utils.deepCopy(getAngles(currPos), angles);              // get angle to each point based on current position
-        return getFinalWeight(angles, weights);
+        return calculateDesiredHeading(getAngles(currPos), getWeights(currPos));
     }
 
-    private void pointHit(Point currPos) {
-        Point pointToHit = this.path.get(0);
-        double distance = Geo.getDistance(pointToHit, currPos);
-        if (distance < distanceTolerance) { this.path.remove(0); }
+    private void checkIfHitPoint(Point currPos) {
+        while(Geo.getDistance(this.path.get(0), currPos) < this.distanceTolerance){
+            this.path.remove(0);
+        }
     }
 
-    public boolean isDone() { return this.path.size() == 1 ? true : false; }
+    public boolean isDone() {return this.path.isEmpty();}
 }
