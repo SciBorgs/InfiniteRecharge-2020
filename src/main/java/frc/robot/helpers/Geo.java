@@ -10,7 +10,14 @@ import java.util.Optional;
 public class Geo {
     public static final Point ORIGIN = new Point(0, 0);
     private static final double DELTA = 1;
-    public static final double MAX_ANGLE = 2 * Math.PI;
+    public static final double ANGLE_RANGE = 2 * Math.PI;
+    public static final double MIN_ANGLE = -1 * Math.PI;
+    public static final double MAX_ANGLE = MIN_ANGLE + ANGLE_RANGE;
+    public static final double HORIZONTAL_ANGLE = normalizeAngle(0);
+
+    public static double subtractAngles(double a1, double a2){
+        return bringInRange(a1 - a2, HORIZONTAL_ANGLE - ANGLE_RANGE / 2, HORIZONTAL_ANGLE + ANGLE_RANGE / 2);
+    }
 
     public static Point rotatePoint(Point point, double theta, Point rotateAround) {
         Point shifted = sub(point, rotateAround);
@@ -19,8 +26,11 @@ public class Geo {
     }
 
     public static Point rotatePoint(Point p, double theta) {
-        return new Point(p.x * Math.cos(theta) - p.y * Math.sin(theta), 
-                         p.y * Math.cos(theta) + p.x * Math.sin(theta));
+        return new Point(p.x * Math.cos(theta) - p.y * Math.sin(theta), p.y * Math.cos(theta) + p.x * Math.sin(theta));
+    }
+
+    public static double normalizeAngle (double angle) {
+        return bringInRange(angle, 0, MAX_ANGLE);    
     }
 
     public static Point flipXandY(Point p) {
@@ -37,7 +47,7 @@ public class Geo {
 
     public static double thetaOf(LineLike lLike) {
         double theta = angleBetween(lLike.p1, lLike.p2);
-        return bringInRange(theta, -MAX_ANGLE / 4, MAX_ANGLE / 4);
+        return normalizeAngle(bringInRange(theta, 0, MAX_ANGLE / 2));
     }
 
     public static double mOf(LineLike lLike) { // Slope
@@ -70,7 +80,7 @@ public class Geo {
     }
 
     public static Line pointAngleForm(Point point, double theta) {
-        if (theta == Math.atan2(DELTA, 0)) {
+        if (normalizeAngle(theta) == Math.atan2(DELTA, 0)) {
             return new Line(point, new Point(point.x, point.y + DELTA));
         }
         return pointSlopeForm(point, Math.tan(theta));
@@ -85,10 +95,11 @@ public class Geo {
     }
 
     public static double getDistance(LineLike lLike, Point point) {
-        Line fakeLine = lLike.toLine();  
-        Optional<Point> intersection = getIntersection(getPerpendicular(fakeLine, point), lLike); // If not a line, it might not intersect
-        
-        if (!intersection.isPresent()) { // Gets shortest distances from point to all bounded points 
+        Line fakeLine = lLike.toLine();
+        Optional<Point> intersection = getIntersection(getPerpendicular(fakeLine, point), lLike); // If not a line, it
+                                                                                                  // might not intersect
+
+        if (!intersection.isPresent()) { // Gets shortest distances from point to all bounded points
             ArrayList<Double> distances = new ArrayList<>();
             for (Point bounds : lLike.getBounds()) {
                 distances.add(getDistance(point, bounds));
@@ -96,7 +107,7 @@ public class Geo {
 
             return Collections.min(distances);
         }
-        
+
         return getDistance(point, intersection.get());
     }
 
@@ -132,7 +143,13 @@ public class Geo {
         double p2Lift = Math.pow(p2dx, 2) + Math.pow(p2dy, 2);
         double p3Lift = Math.pow(p3dx, 2) + Math.pow(p3dy, 2);
 
-        return p1Lift * p2p3Det + p2Lift * p3p1Det + p3Lift * p1p2Det > 0; // If is greater, point lies outside of circle.
+        return p1Lift * p2p3Det + p2Lift * p3p1Det + p3Lift * p1p2Det > 0; // If is greater, point lies outside of
+                                                                           // circle.
+    }
+
+    public static Line getTangentToCircle(Circle circle, Point tangentPoint) {
+        Line centerToPoint = new Line(circle.center, tangentPoint);
+        return getPerpendicular(centerToPoint, tangentPoint);
     }
 
     public static Point getMidpoint(Point point1, Point point2) {
@@ -193,7 +210,7 @@ public class Geo {
     }
 
     public static double getMagnitudeSquared(Point A) {
-        return getDistanceSquared(A, new Point(0,0));
+        return getDistanceSquared(A, new Point(0, 0));
     }
 
     public static double dot(Point A, Point B) {

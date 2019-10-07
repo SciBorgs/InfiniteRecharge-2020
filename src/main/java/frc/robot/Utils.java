@@ -7,14 +7,18 @@ import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 
 import edu.wpi.first.wpilibj.DigitalOutput;
-
+import frc.robot.RobotState.SD;
 import frc.robot.helpers.Pair;
 
 import java.util.*;
 import java.util.Collections;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 // FILE HAS NOT BEEN CLEANED UP //
 public class Utils{
+
+    private static Random r = new Random();
 
     public static double METERS_TO_INCHES = 39.37;
     private static final double EPSILON = 1e-9;
@@ -93,19 +97,27 @@ public class Utils{
         return end;
     }
 
-    // Generic function to merge 2 arrays of same type in Java
+    // Generic function to merge 2 arrays of same type 
     public static<T> T[] combineArray(T[] arr1, T[] arr2) {
 	    T[] result = Arrays.copyOf(arr1, arr1.length + arr2.length);
 	    System.arraycopy(arr2, 0, result, arr1.length, arr2.length);
 	    return result;
     }
 
+    // Deep copy (no referencing) of an arraylist
+    public static<T> void deepCopy(ArrayList<T> arrToCopy, ArrayList<T> newArr) {
+        for(int i = 0; i < arrToCopy.size() - 1; i++) {
+            newArr.add(arrToCopy.get(i));
+        }
+    }
+
     public static Value oppositeDoubleSolenoidValue(Value val){
         switch (val) {
             case kForward: return Value.kReverse;
             case kReverse: return Value.kForward;
+            default:       return Value.kOff;
         }
-        return Value.kOff;
+
     }
 
     public static void toggleDoubleSolenoid(DoubleSolenoid doubleSolenoid){
@@ -125,6 +137,30 @@ public class Utils{
         return new DoubleSolenoid(pdpPort, ports[0], ports[1]);
     }
 
+    public static double generateGaussian(double mean, double stdDev){
+        return r.nextGaussian() * stdDev + mean;
+    }
+
+    public static ArrayList<Double> cummSums(ArrayList<Double> arr){
+        ArrayList<Double> ans = new ArrayList<>();
+        double sum = 0;
+        for(double n : arr){
+            sum += n;
+            ans.add(sum);
+        }
+        return ans;
+    }
+
+    public static ArrayList<Double> randomArrayList(int length, double min, double max){
+        ArrayList<Double> arr = new ArrayList<>();
+        for(int _i = 0; _i < length; _i++){
+            arr.add(r.nextDouble() * (max - min) + min);
+        }
+        return arr;
+    }
+
+    public static Comparator<Double> ascendingDoubleComparator = Comparator.comparingDouble(d -> d);
+
     public static boolean inBounds(double v, Pair<Double,Double> bounds){
         double min = Math.min(bounds.first, bounds.second);
         double max = Math.max(bounds.first, bounds.second);
@@ -141,5 +177,31 @@ public class Utils{
 
     public static double getEpsilon() {
         return EPSILON;
+
+    public static<T> ArrayList<T> toArrayList(Iterable<T> iterable){
+        ArrayList<T> arrayList = new ArrayList<>();
+        for(T el : iterable){arrayList.add(el);}
+        return arrayList;
+    }
+    public static<T> ArrayList<T> toArrayList(T[] arr){
+        ArrayList<T> arrayList = new ArrayList<>();
+        for(T el : arr){arrayList.add(el);}
+        return arrayList;
+    }
+    public static<T> ArrayList<T> toArrayList(Stream<T> stream){
+        ArrayList<T> arrayList = new ArrayList<>();
+        for(T el : stream.collect(Collectors.toList())){arrayList.add(el);}
+        return arrayList;
+    }
+
+    public static double sumArrayList(List<Double> l){
+        return l.stream().mapToDouble(a -> a).sum();
+    }
+
+    public static void addNoise(RobotState state, Hashtable<SD, Double> stdDevs){
+        for (SD sd : stdDevs.keySet()) {
+            // generate gaussian creates noise
+            state.set(sd, Utils.generateGaussian(state.get(sd), stdDevs.get(sd)));
+        }
     }
 }
