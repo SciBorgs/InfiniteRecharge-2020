@@ -47,10 +47,10 @@ public class Geo {
 
     public static double thetaOf(LineLike lLike) {
         double theta = angleBetween(lLike.p1, lLike.p2);
-        return normalizeAngle(bringInRange(theta, 0, MAX_ANGLE / 2));
+        return normalizeAngle(bringInRange(theta, HORIZONTAL_ANGLE - ANGLE_RANGE / 4, HORIZONTAL_ANGLE + ANGLE_RANGE / 4));
     }
 
-    public static double mOf(LineLike lLike) { // Slope
+    public static double mOf(LineLike lLike) { // Slope (Something is broken)
         if (isVertical(lLike)) {return Double.POSITIVE_INFINITY;}
         return Math.tan(thetaOf(lLike));
     }
@@ -96,8 +96,8 @@ public class Geo {
 
     public static double getDistance(LineLike lLike, Point point) {
         Line fakeLine = lLike.toLine();
-        Optional<Point> intersection = getIntersection(getPerpendicular(fakeLine, point), lLike); // If not a line, it
-                                                                                                  // might not intersect
+        Optional<Point> intersection = getIntersection(getPerpendicular(fakeLine, point), lLike); // If not a line, 
+                                                                                                  // it might not intersect.
 
         if (!intersection.isPresent()) { // Gets shortest distances from point to all bounded points
             ArrayList<Double> distances = new ArrayList<>();
@@ -157,7 +157,7 @@ public class Geo {
     }
 
     public static Line getPerpendicular(Line line, Point point) {
-        return pointAngleForm(point, thetaOf(line) + MAX_ANGLE / 4);
+        return pointAngleForm(point, thetaOf(line) + ANGLE_RANGE / 4);
     }
 
     public static boolean areParellel(LineLike l1, LineLike l2) {
