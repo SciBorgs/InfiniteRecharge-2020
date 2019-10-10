@@ -65,7 +65,6 @@ public class Robot extends TimedRobot {
     }
 
     private void delayedPrint (String message) {
-        numTicks += 1;
         if (numTicks % INTERVAL == 0) {
             numTicks = 1;
             System.out.println(message);
@@ -103,6 +102,7 @@ public class Robot extends TimedRobot {
     }
  
     public void robotPeriodic() {
+        numTicks += 1;
         allUpdateRobotStates();
         Scheduler.getInstance().run();
         stateHistory.addState(getState().copy());
