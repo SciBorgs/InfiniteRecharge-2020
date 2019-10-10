@@ -39,6 +39,8 @@ public class Robot extends TimedRobot {
     public static double getHeading() {return get(SD.Angle);}
     public static final Point TEST_POINT = new Point (3, 4);
     public static final double TEST_HEADING = Math.PI * .1;
+    public static final int INTERVAL = 50; // change this to change your frequency of prints
+    public static double numTicks = 0;      // rmbr that each tick is .02 seconds, 50 ticks/second
 
 
     private int attemptsSinceLastLog;    
@@ -60,6 +62,14 @@ public class Robot extends TimedRobot {
 
     public void useModel(Model model){
         stateHistory.currentState().incorporateIntoNew(model.updatedRobotState(), model.getSDs());
+    }
+
+    private void delayedPrint (String message) {
+        numTicks += 1;
+        if (numTicks % INTERVAL == 0) {
+            numTicks = 1;
+            System.out.println(message);
+        }
     }
 
     public void robotInit() {
@@ -97,13 +107,14 @@ public class Robot extends TimedRobot {
         Scheduler.getInstance().run();
         stateHistory.addState(getState().copy());
         useModel(positionModel);
+        delayedPrint("X: " + Robot.get(SD.X) + "\nY: " + Robot.get(SD.Y) + "\nAngle: " + Math.toDegrees(Robot.get(SD.Angle)));
     }
         
     public void autonomousInit() {
     }
 
     public void autonomousPeriodic() {
-        new SwerveTankDriveCommand().start();
+        // new SwerveTankDriveCommand().start();
         circleController.update(getPos(), getHeading(), TEST_POINT, TEST_HEADING);
         pneumaticsSubsystem.startCompressor();
         enabledPeriodic();
