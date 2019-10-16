@@ -13,6 +13,7 @@ public class RobotStateHistory{
 
     public RobotStateHistory(){
         this.robotStates = new ArrayList<>();
+        this.robotStates.add(new RobotState());
     }
     public RobotStateHistory(ArrayList<RobotState> robotStates){
         this.robotStates = robotStates;

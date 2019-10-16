@@ -49,6 +49,11 @@ public class DriveSubsystem extends Subsystem {
 
     public DriveSubsystem(){
 
+        this.sparkToWheelAngleSD = new Hashtable<>();
+        this.sparkToCurrentSD = new Hashtable<>();
+        this.sparkToValueSD = new Hashtable<>();
+        this.sparkToVoltageSD = new Hashtable<>();
+
 		this.l  = newMotorObject(PortMap.LEFT_FRONT_SPARK);
 		this.l1 = newMotorObject(PortMap.LEFT_MIDDLE_SPARK);
         this.l2 = newMotorObject(PortMap.LEFT_BACK_SPARK);

@@ -39,6 +39,8 @@ public class Robot extends TimedRobot {
     public static double getHeading() {return get(SD.Angle);}
     public static final Point TEST_POINT = new Point (3, 4);
     public static final double TEST_HEADING = Math.PI * .1;
+    public static final Point ORIGINAL_POINT = new Point(0,0);
+    public static final double ORIGINAL_ANGLE = Geo.HORIZONTAL_ANGLE;
     public static final int INTERVAL = 50; // change this to change your frequency of prints
     public static double numTicks = 0;      // rmbr that each tick is .02 seconds, 50 ticks/second
 
@@ -73,6 +75,9 @@ public class Robot extends TimedRobot {
 
     public void robotInit() {
         attemptsSinceLastLog = 0;
+        set(SD.X, ORIGINAL_POINT.x);
+        set(SD.Y, ORIGINAL_POINT.y);
+        set(SD.Angle, ORIGINAL_ANGLE);
         useModel(positionModel);
         pneumaticsSubsystem.stopCompressor();
         logger.incrementPrevious("robot.java", "deploy", DefaultValue.Previous);
