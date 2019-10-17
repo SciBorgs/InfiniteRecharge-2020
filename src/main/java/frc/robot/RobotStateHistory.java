@@ -1,6 +1,7 @@
 package frc.robot;
 
 import java.util.ArrayList;
+import java.util.ListIterator;
 
 import frc.robot.RobotState;
 import frc.robot.helpers.QueuedArrayList;
@@ -40,6 +41,13 @@ public class RobotStateHistory{
     public void addState       (RobotState state){this.robotStates.add(state);}
     public void dropFirstState()                 {this.robotStates.remove(0);}
 
+    public void trimRobotStateHistory(int desiredSize) {
+        ListIterator<RobotState> it = robotStates.listIterator(robotStates.size());
+        while(it.hasPrevious() && robotStates.size() > desiredSize) {
+            it.remove();
+        }
+    }
+    
     public RobotStateHistory copy(){
         return new RobotStateHistory((QueuedArrayList<RobotState>) this.robotStates.clone());
     }
