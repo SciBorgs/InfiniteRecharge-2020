@@ -16,7 +16,7 @@ public class Geo {
     public static final double HORIZONTAL_ANGLE = normalizeAngle(0);
 
     public static double subtractAngles(double a1, double a2){
-        return bringInRange(a1 - a2, HORIZONTAL_ANGLE - ANGLE_RANGE / 2, HORIZONTAL_ANGLE + ANGLE_RANGE / 2);
+        return Utils.bringInRange(a1 - a2, HORIZONTAL_ANGLE - ANGLE_RANGE / 2, HORIZONTAL_ANGLE + ANGLE_RANGE / 2);
     }
 
     public static Point rotatePoint(Point point, double theta, Point rotateAround) {
@@ -30,7 +30,7 @@ public class Geo {
     }
 
     public static double normalizeAngle (double angle) {
-        return bringInRange(angle, 0, MAX_ANGLE);    
+        return Utils.bringInRange(angle, 0, MAX_ANGLE);    
     }
 
     public static Point flipXandY(Point p) {
@@ -41,13 +41,9 @@ public class Geo {
         return new Line(flipXandY(l.p1), flipXandY(l.p2));
     }
 
-    private static double bringInRange(double val, double min, double max) {
-        return ((val - min) % (max - min)) + min;
-    }
-
     public static double thetaOf(LineLike lLike) {
         double theta = angleBetween(lLike.p1, lLike.p2);
-        return normalizeAngle(bringInRange(theta, 0, MAX_ANGLE / 2));
+        return normalizeAngle(Utils.bringInRange(theta, 0, MAX_ANGLE / 2));
     }
 
     public static double mOf(LineLike lLike) { // Slope
