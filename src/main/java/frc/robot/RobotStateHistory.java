@@ -40,13 +40,6 @@ public class RobotStateHistory{
     public void setCurrentState(RobotState state){this.robotStates.set(0, state);}
     public void addState       (RobotState state){this.robotStates.add(state);}
     public void dropFirstState()                 {this.robotStates.remove(0);}
-
-    public void trimRobotStateHistory(int desiredSize) {
-        ListIterator<RobotState> it = robotStates.listIterator(robotStates.size());
-        while(it.hasPrevious() && robotStates.size() > desiredSize) {
-            it.remove();
-        }
-    }
     
     public RobotStateHistory copy(){
         return new RobotStateHistory((QueuedArrayList<RobotState>) this.robotStates.clone());
