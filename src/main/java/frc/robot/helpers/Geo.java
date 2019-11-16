@@ -14,9 +14,10 @@ public class Geo {
     public static final double MIN_ANGLE = -1 * Math.PI;
     public static final double MAX_ANGLE = MIN_ANGLE + ANGLE_RANGE;
     public static final double HORIZONTAL_ANGLE = normalizeAngle(0);
+    public static final double VERTICAL_ANGLE = normalizeAngle(HORIZONTAL_ANGLE + ANGLE_RANGE / 4);
 
     public static double subtractAngles(double a1, double a2){
-        return bringInRange(a1 - a2, HORIZONTAL_ANGLE - ANGLE_RANGE / 2, HORIZONTAL_ANGLE + ANGLE_RANGE / 2);
+        return normalizeAngle(Utils.bringInRange(a1 - a2, -VERTICAL_ANGLE, VERTICAL_ANGLE));
     }
 
     public static Point rotatePoint(Point point, double theta, Point rotateAround) {
@@ -29,8 +30,8 @@ public class Geo {
         return new Point(p.x * Math.cos(theta) - p.y * Math.sin(theta), p.y * Math.cos(theta) + p.x * Math.sin(theta));
     }
 
-    public static double normalizeAngle (double angle) {
-        return bringInRange(angle, 0, MAX_ANGLE);    
+    public static double normalizeAngle(double angle) {
+        return Utils.bringInRange(angle, MIN_ANGLE, MAX_ANGLE);    
     }
 
     public static Point flipXandY(Point p) {
@@ -41,13 +42,9 @@ public class Geo {
         return new Line(flipXandY(l.p1), flipXandY(l.p2));
     }
 
-    private static double bringInRange(double val, double min, double max) {
-        return ((val - min) % (max - min)) + min;
-    }
-
     public static double thetaOf(LineLike lLike) {
         double theta = angleBetween(lLike.p1, lLike.p2);
-        return normalizeAngle(bringInRange(theta, HORIZONTAL_ANGLE - ANGLE_RANGE / 4, HORIZONTAL_ANGLE + ANGLE_RANGE / 4));
+        return normalizeAngle(Utils.bringInRange(theta, -VERTICAL_ANGLE, VERTICAL_ANGLE));
     }
 
     public static double mOf(LineLike lLike) { // Slope (Something is broken)
@@ -169,7 +166,7 @@ public class Geo {
     }
 
     public static boolean areParellel(LineLike l1, LineLike l2, double precision) {
-        return Utils.impreciseEquals(thetaOf(l1), thetaOf(l2), precision);
+        return Utils.inRange(thetaOf(l1), thetaOf(l2), precision);
     }
 
     public static Optional<Point> getIntersection(LineLike lLike1, LineLike lLike2) {
