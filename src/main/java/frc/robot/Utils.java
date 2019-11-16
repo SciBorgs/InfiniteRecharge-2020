@@ -203,4 +203,8 @@ public class Utils{
             state.set(sd, Utils.generateGaussian(state.get(sd), stdDevs.get(sd)));
         }
     }
+
+    public static double bringInRange(double val, double min, double max) {
+        return ((val - min) % (max - min)) + min;
+    }
 }
