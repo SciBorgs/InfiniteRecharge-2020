@@ -58,11 +58,11 @@ public class RobotState {
     }
 
     public Value getSolenoidValue(SD sd){
-        if ((int) get(sd) == get(sd)){
+        // if ((int) get(sd) == get(sd)){
             return intToSolenoidValue((int) get(sd));
-        } else {
-            throw new IllegalArgumentException("getSolenoidValue requires an SD bound to an int, but given " + sd + " which is bound to " + get(sd));
-        }
+        //} else {
+        //    throw new IllegalArgumentException("getSolenoidValue requires an SD bound to an int, but given " + sd + " which is bound to " + get(sd));
+        //}
     }
 
     public RobotState copy(){

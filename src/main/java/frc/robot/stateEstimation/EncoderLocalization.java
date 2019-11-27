@@ -26,9 +26,10 @@ public class EncoderLocalization implements Updater, Model {
     private static final double X_STD_DEV     = 0; // These are meant to be estimates
     private static final double Y_STD_DEV     = 0;
     private static final double ANGLE_STD_DEV = 0;
+    private RobotState robotState;
     private Hashtable<SD, Double> stdDevs;
 
-    private Pigeon pigeon;
+    public Pigeon pigeon;
     private TalonSRX pigeonTalon;
 
     private class WheelChangeInfo{
@@ -47,6 +48,10 @@ public class EncoderLocalization implements Updater, Model {
         this.stdDevs.put(SD.X,     X_STD_DEV);
         this.stdDevs.put(SD.Y,     Y_STD_DEV);
         this.stdDevs.put(SD.Angle, ANGLE_STD_DEV);
+        this.stdDevs.put(SD.GearShiftSolenoid, 0.0);
+        this.stdDevs.put(SD.LeftWheelAngle, 0.0);
+        this.stdDevs.put(SD.RightWheelAngle, 0.0);
+        robotState = new RobotState(stdDevs);
     }
 
     public TalonSRX[] getTalons() {
@@ -64,7 +69,8 @@ public class EncoderLocalization implements Updater, Model {
     }
     
     public double wheelRotationChange(SD wheelAngleSD, RobotStateHistory stateHistory){
-        return getWheelPosition(wheelAngleSD, stateHistory, 0) - getWheelPosition(wheelAngleSD, stateHistory, 1);
+
+        return getWheelPosition(wheelAngleSD, stateHistory, 0) - getWheelPosition(wheelAngleSD, stateHistory, 5);
     }
     
     public double getWheelPosition(SD wheelAngleSD, RobotStateHistory stateHistory, int ticksAgo)  {
@@ -73,10 +79,6 @@ public class EncoderLocalization implements Updater, Model {
     public double getWheelPosition(SD wheelAngleSD, RobotState state){
         // Takes a spark. Returns the last recorded pos of that spark/wheel
         return calculateWheelPosition(state, wheelAngleSD);
-    }
-
-    public WheelChangeInfo newWheelChangeInfo(double rotationChange, double angle){
-        return new WheelChangeInfo(rotationChange, angle);
     }
 
     public RobotState nextPosition(double x, double y, double theta, ArrayList<WheelChangeInfo> allChangeInfo){
@@ -88,11 +90,14 @@ public class EncoderLocalization implements Updater, Model {
             x += wheelChangeInfo.rotationChange * Math.cos(avgTheta + wheelChangeInfo.angle) / wheelAmount;
             y += wheelChangeInfo.rotationChange * Math.sin(avgTheta + wheelChangeInfo.angle) / wheelAmount;
         }
-        RobotState state = new RobotState();
-        state.set(SD.X, x);
-        state.set(SD.Y, y);
-        state.set(SD.Angle, newTheta);
-        return state;
+        robotState.set(SD.X, x);
+        robotState.set(SD.Y, y);
+        robotState.set(SD.Angle, newTheta);
+        System.out.println("new theta:" + newTheta);
+        System.out.println("new x:" + x);
+        System.out.println("new y:" + y);
+        robotState.set(SD.GearShiftSolenoid, 0.0);
+        return robotState;
     }
  
     public RobotState nextPosTankPigeon(double x, double y, double theta, double leftChange, double rightChange) {
@@ -107,6 +112,8 @@ public class EncoderLocalization implements Updater, Model {
     @Override
     public RobotState updateState(RobotStateHistory pastStates){
         RobotState state = pastStates.currentState();
+        System.out.println("left wheel angle: " + Robot.get(SD.LeftWheelAngle));
+        System.out.println(wheelRotationChange(SD.LeftWheelAngle, pastStates));
         RobotState newPosition = 
             nextPosTankPigeon(state.get(SD.X), state.get(SD.Y), state.get(SD.Angle), 
                 wheelRotationChange(SD.LeftWheelAngle,  pastStates), 

@@ -11,7 +11,6 @@ public class OI {
     public XboxController xboxController;
     
     public OI() {
-        System.out.println("OI constructor");
         leftStick = new Joystick(PortMap.JOYSTICK_LEFT);
         rightStick = new Joystick(PortMap.JOYSTICK_RIGHT);
         xboxController = new XboxController(PortMap.XBOX_CONTROLLER);

@@ -22,7 +22,7 @@ public class Logger{
     // TODO: make default values not reset every deploy
     private CSVHelper csvHelper;
     private Calendar calendar;
-    private boolean loggingDisabled = false;
+    private boolean loggingDisabled = true;
 
     // Universal naming conventions
     public String commandStatusName = "status";

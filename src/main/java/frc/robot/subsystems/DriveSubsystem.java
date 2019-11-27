@@ -98,7 +98,7 @@ public class DriveSubsystem extends Subsystem {
         for(CANSparkMax spark : getSparks()){updateSparkState(spark);}
     }
     public void updateSparkState(CANSparkMax spark){
-        Robot.getState().set(this.sparkToWheelAngleSD.get(spark), Robot.encoderSubsystem.getSparkAngle(spark));
+        Robot.getState().set(this.sparkToWheelAngleSD.get(spark), Robot.encoderSubsystem.getSparkAngle(spark) * Robot.gearShiftSubsystem.getCurrentGearRatio());
         Robot.getState().set(this.sparkToValueSD.get(spark),   spark.get());
         Robot.getState().set(this.sparkToVoltageSD.get(spark), spark.getBusVoltage());
         Robot.getState().set(this.sparkToCurrentSD.get(spark), spark.getOutputCurrent());
@@ -125,8 +125,8 @@ public class DriveSubsystem extends Subsystem {
 
     public void setSpeed(Joystick leftStick, Joystick rightStick) {
         if (!this.assisted) {
-            double leftInput  = processStick(leftStick);
-            double rightInput = processStick(rightStick);
+            double leftInput  = -processStick(leftStick);
+            double rightInput = -processStick(rightStick);
             setSpeedTankAngularControl(leftInput, rightInput);
         }
     }
