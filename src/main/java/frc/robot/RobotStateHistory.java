@@ -1,12 +1,8 @@
 package frc.robot;
 
-import java.util.ArrayList;
-import java.util.Hashtable;
 import java.util.List;
-import java.util.ListIterator;
 
 import frc.robot.RobotState;
-import frc.robot.RobotState.SD;
 import frc.robot.helpers.Deque;
 
 public class RobotStateHistory{
@@ -19,27 +15,11 @@ public class RobotStateHistory{
 
     public RobotStateHistory() {
         this.robotStates = new Deque<RobotState>(DEFAULT_MAX_SIZE);
-        Hashtable<SD, Double> stdDevs = new Hashtable<>();
-        stdDevs.put(SD.X,     0.0);
-        stdDevs.put(SD.Y,     0.0);
-        stdDevs.put(SD.Angle, 0.0);
-        stdDevs.put(SD.GearShiftSolenoid, 0.0);
-        stdDevs.put(SD.LeftWheelAngle, 0.0);
-        stdDevs.put(SD.RightWheelAngle, 0.0);
-
-        this.robotStates.add(new RobotState(stdDevs));
+        this.robotStates.add(new RobotState());
     }
     public RobotStateHistory(int maxLength){
         this.robotStates = new Deque<RobotState>(maxLength);
-        Hashtable<SD, Double> stdDevs = new Hashtable<>();
-        stdDevs.put(SD.X,     0.0);
-        stdDevs.put(SD.Y,     0.0);
-        stdDevs.put(SD.Angle, 0.0);
-        stdDevs.put(SD.GearShiftSolenoid, 0.0);
-        stdDevs.put(SD.LeftWheelAngle, 0.0);
-        stdDevs.put(SD.RightWheelAngle, 0.0);
-
-        this.robotStates.add(new RobotState(stdDevs));
+        this.robotStates.add(new RobotState());
     }
     public RobotStateHistory(Deque<RobotState> robotStates){
         this.robotStates = robotStates;

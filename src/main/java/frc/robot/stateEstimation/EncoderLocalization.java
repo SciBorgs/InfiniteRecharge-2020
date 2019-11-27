@@ -69,8 +69,7 @@ public class EncoderLocalization implements Updater, Model {
     }
     
     public double wheelRotationChange(SD wheelAngleSD, RobotStateHistory stateHistory){
-
-        return getWheelPosition(wheelAngleSD, stateHistory, 0) - getWheelPosition(wheelAngleSD, stateHistory, 5);
+        return getWheelPosition(wheelAngleSD, stateHistory, 0) - getWheelPosition(wheelAngleSD, stateHistory, 1);
     }
     
     public double getWheelPosition(SD wheelAngleSD, RobotStateHistory stateHistory, int ticksAgo)  {
