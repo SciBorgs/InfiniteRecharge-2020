@@ -34,8 +34,7 @@ public class OutputLogger {
         String line = generateCSLine(Double.toString(time),                 Double.toString(getRIOAccel()),
                                      Double.toString(getIMUAccel()),        Double.toString(getIMUFusedHeading()),
                                      Double.toString(pigeon.getAngle()),    Double.toString(getIMUYawRate()), 
-                                     Double.toString(getEncoderVelocity()), Double.toString(getEncoderYawRate()),
-                                     Double.toString(getEncoderLeftV()),    Double.toString(getEncoderRightV()));
+                                     Double.toString(getEncoderPositionL()), Double.toString(getEncoderPositionR()));
 
         writer.write(line + "\n");
     }
@@ -57,23 +56,16 @@ public class OutputLogger {
         return radius * 2 * Math.PI * (RPM / 60);
     }
 
-    private double getEncoderVelocity() {
-        // double lRPM = Robot.driveSubsystem.l.getEncoder().getVelocity();
-        double RPMl = Robot.encoderSubsystem.getSparkAngle(Robot.driveSubsystem.l);
-        double RPMr = Robot.encoderSubsystem.getSparkAngle(Robot.driveSubsystem.r);
-        // double rRPM = Robot.driveSubsystem.r.getEncoder().getVelocity();
-        return (RPMr - RPMl) * WHEEL_RADIUS_METERS / 2;
-    }
-    public double getEncoderRightV(){
-        return Robot.encoderSubsystem.getSparkAngle(Robot.driveSubsystem.r);
+    private double getEncoderPositionL() {
+        double lEncoder = Robot.driveSubsystem.l.getEncoder()
+                                     .getPosition() * Robot.gearShiftSubsystem.getCurrentGearRatio() * 2 * Math.PI * WHEEL_RADIUS_METERS;
+        return lEncoder;
     }
 
-    public double getEncoderLeftV(){
-        return Robot.encoderSubsystem.getSparkAngle(Robot.driveSubsystem.l);
-    }
-
-    private double getEncoderYawRate() {
-        return getEncoderVelocity() / CHASSY_WIDTH;
+    private double getEncoderPositionR() {
+        double rEncoder =  Robot.driveSubsystem.r.getEncoder()
+                                     .getPosition() * Robot.gearShiftSubsystem.getCurrentGearRatio() * 2 * Math.PI * WHEEL_RADIUS_METERS;
+        return rEncoder;
     }
 
     private double getIMUYawRate() {

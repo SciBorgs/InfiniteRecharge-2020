@@ -30,7 +30,7 @@ public class GearShiftSubsystem extends Subsystem {
     public GearShiftSubsystem() {
         this.gearShiftSolenoid = Utils.newDoubleSolenoid(PortMap.GEAR_SHIFTER_SOLENOID_PDP, PortMap.GEAR_SHIFTER_SOLENOID);
         Robot.set(GEAR_SHIFT_SD, 0.0); 
-        shiftUp();
+        shiftDown();
     }
     
 	public void periodicLog(){

@@ -26,7 +26,6 @@ public class EncoderLocalization implements Updater, Model {
     private static final double X_STD_DEV     = 0; // These are meant to be estimates
     private static final double Y_STD_DEV     = 0;
     private static final double ANGLE_STD_DEV = 0;
-    private RobotState robotState;
     private Hashtable<SD, Double> stdDevs;
 
     public Pigeon pigeon;
@@ -51,7 +50,6 @@ public class EncoderLocalization implements Updater, Model {
         this.stdDevs.put(SD.GearShiftSolenoid, 0.0);
         this.stdDevs.put(SD.LeftWheelAngle, 0.0);
         this.stdDevs.put(SD.RightWheelAngle, 0.0);
-        robotState = new RobotState(stdDevs);
     }
 
     public TalonSRX[] getTalons() {
@@ -61,40 +59,37 @@ public class EncoderLocalization implements Updater, Model {
     public Pigeon                getPigeon() {return this.pigeon;}
     @Override
     public Hashtable<SD, Double> getStdDevs(){return this.stdDevs;}
-
-    public double calculateWheelPosition(RobotState state, SD wheelAngleSD) {
-        // Returns the encoder position of a spark
-        // TODO: Should change to alternate low gear/high gear with whatever it is
-        return Robot.gearShiftSubsystem.getCurrentGearRatio() * state.get(wheelAngleSD) * WHEEL_RADIUS;
-    }
     
     public double wheelRotationChange(SD wheelAngleSD, RobotStateHistory stateHistory){
-        return getWheelPosition(wheelAngleSD, stateHistory, 0) - getWheelPosition(wheelAngleSD, stateHistory, 1);
-    }
-    
-    public double getWheelPosition(SD wheelAngleSD, RobotStateHistory stateHistory, int ticksAgo)  {
-        return getWheelPosition(wheelAngleSD, stateHistory.statesAgo(ticksAgo));
+        return getWheelPosition(wheelAngleSD, stateHistory.statesAgo(0)) - 
+               getWheelPosition(wheelAngleSD, stateHistory.statesAgo(20));
     }
     public double getWheelPosition(SD wheelAngleSD, RobotState state){
         // Takes a spark. Returns the last recorded pos of that spark/wheel
-        return calculateWheelPosition(state, wheelAngleSD);
+        return Robot.gearShiftSubsystem.getCurrentGearRatio() * state.get(wheelAngleSD) * WHEEL_RADIUS;
     }
 
     public RobotState nextPosition(double x, double y, double theta, ArrayList<WheelChangeInfo> allChangeInfo){
         // Works for all forms of drive where the displacement is the average of the movement vectors over the wheels
         double newTheta = pigeon.getAngle();
+        RobotState robotState = new RobotState();
+        
+        if (x != 0 || robotState.get(SD.X) != 0){
+            System.out.println("new x:" + x);
+            System.out.println("rs x: " + robotState.get(SD.X));
+        }
         double avgTheta = (theta + newTheta)/2;
         int wheelAmount = allChangeInfo.size();
         for(WheelChangeInfo wheelChangeInfo : allChangeInfo){
+            if (wheelChangeInfo.rotationChange != 0){
+                //System.out.println("x change: " + wheelChangeInfo.rotationChange * Math.cos(avgTheta + wheelChangeInfo.angle) / wheelAmount);
+            }
             x += wheelChangeInfo.rotationChange * Math.cos(avgTheta + wheelChangeInfo.angle) / wheelAmount;
             y += wheelChangeInfo.rotationChange * Math.sin(avgTheta + wheelChangeInfo.angle) / wheelAmount;
         }
         robotState.set(SD.X, x);
         robotState.set(SD.Y, y);
         robotState.set(SD.Angle, newTheta);
-        System.out.println("new theta:" + newTheta);
-        System.out.println("new x:" + x);
-        System.out.println("new y:" + y);
         robotState.set(SD.GearShiftSolenoid, 0.0);
         return robotState;
     }
@@ -103,6 +98,9 @@ public class EncoderLocalization implements Updater, Model {
         // This assumes tank drive and you want to use the pigeon for calculating your angle
         // Takes a pos (x,y,theta), a left side Δx and a right side Δx and returns an x,y,theta array
         ArrayList<WheelChangeInfo> allChangeInfo = new ArrayList<>();
+        if (x != 0){
+            System.out.println("x: " + x);
+        }
         allChangeInfo.add(new WheelChangeInfo(leftChange,  0));
         allChangeInfo.add(new WheelChangeInfo(rightChange, 0)); // the zeros represent that they aren't turned
         return nextPosition(x,y,theta,allChangeInfo);
@@ -111,8 +109,12 @@ public class EncoderLocalization implements Updater, Model {
     @Override
     public RobotState updateState(RobotStateHistory pastStates){
         RobotState state = pastStates.currentState();
-        System.out.println("left wheel angle: " + Robot.get(SD.LeftWheelAngle));
-        System.out.println(wheelRotationChange(SD.LeftWheelAngle, pastStates));
+       // Robot.delayedPrint("left wheel angle: " + Robot.get(SD.LeftWheelAngle));
+       // Robot.delayedPrint("" + wheelRotationChange(SD.LeftWheelAngle, pastStates));
+       if (Robot.get(SD.X) != 0){
+           System.out.println("robot: " + Robot.get(SD.X));
+           System.out.println("state: " + state.get(SD.X));
+       }
         RobotState newPosition = 
             nextPosTankPigeon(state.get(SD.X), state.get(SD.Y), state.get(SD.Angle), 
                 wheelRotationChange(SD.LeftWheelAngle,  pastStates), 

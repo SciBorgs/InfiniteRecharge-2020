@@ -70,9 +70,8 @@ public class Robot extends TimedRobot {
         stateHistory.currentState().incorporateIntoNew(model.updatedRobotState(), model.getSDs());
     }
 
-    private void delayedPrint (String message) {
+    public static void delayedPrint (String message) {
         if (numTicks % INTERVAL == 0) {
-            numTicks = 1;
             System.out.println(message);
         }
     }
@@ -88,6 +87,7 @@ public class Robot extends TimedRobot {
         set(SD.X, ORIGINAL_POINT.x);
         set(SD.Y, ORIGINAL_POINT.y);
         set(SD.Angle, ORIGINAL_ANGLE);
+        allUpdateRobotStates();
         useModel(positionModel);
         pneumaticsSubsystem.stopCompressor();
         //logger.incrementPrevious("robot.java", "deploy", DefaultValue.Previous);
@@ -118,7 +118,7 @@ public class Robot extends TimedRobot {
  
     public void robotPeriodic() {
         double time = timer.get();
-        if (time <= 10) {
+        if (time <= 15) {
             try {
                 outputLogger.logToFile(time);
             } catch (IOException e) {
