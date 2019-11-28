@@ -17,7 +17,6 @@ public class GearShiftSubsystem extends Subsystem {
 	private final String FILENAME = "GearShiftSubsystem.java";
     public DoubleSolenoid gearShiftSolenoid;
     
-
     public static final double LOW_GEAR_RATIO = 1 / 19.16; // 1 rotations of the wheel is 9.08 rotations of the encoder
     public static final double HIGH_GEAR_RATIO = 1 / 9.07;
 
