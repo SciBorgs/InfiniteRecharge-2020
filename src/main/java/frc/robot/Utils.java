@@ -207,4 +207,16 @@ public class Utils{
     public static double bringInRange(double val, double min, double max) {
         return ((val - min) % (max - min)) + min;
     }
+
+    public static double limitChange(double oldN, double newN, double maxChange) {
+        // Makes sure that the change in input for a motor is not more than maxJerk
+        if (oldN - newN > maxChange) {
+            return oldN - maxChange;
+        } else if (newN - oldN > maxChange) {
+            return oldN + maxChange;
+        } else {
+            return newN;
+        }
+    }
+
 }

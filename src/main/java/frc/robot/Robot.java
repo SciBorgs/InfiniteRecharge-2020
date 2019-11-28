@@ -18,7 +18,6 @@ public class Robot extends TimedRobot {
     
     public static DriveSubsystem      driveSubsystem      = new DriveSubsystem();
     public static GearShiftSubsystem  gearShiftSubsystem  = new GearShiftSubsystem();
-    public static EncoderSubsystem    encoderSubsystem    = new EncoderSubsystem();
     public static LimelightSubsystem  limelightSubsystem  = new LimelightSubsystem();
     public static PneumaticsSubsystem pneumaticsSubsystem = new PneumaticsSubsystem();
     
@@ -44,7 +43,6 @@ public class Robot extends TimedRobot {
         gearShiftSubsystem.periodicLog();
         limelightSubsystem.periodicLog();
         pneumaticsSubsystem.periodicLog();
-        encoderSubsystem.periodicLog();
         following.periodicLog();
     }
     private void allUpdateRobotStates() {
