@@ -31,14 +31,6 @@ public class EncoderLocalization implements Updater, Model {
     public Pigeon pigeon;
     private TalonSRX pigeonTalon;
 
-    private class WheelChangeInfo{
-        public double rotationChange, angle;
-        public WheelChangeInfo(double rotationChange, double angle){
-            this.rotationChange = rotationChange;
-            this.angle = angle;
-        }
-    }
-
     public EncoderLocalization(){
         this.pigeonTalon = new TalonSRX(PortMap.PIGEON_TALON);
         this.pigeon      = new Pigeon(pigeonTalon);
@@ -69,7 +61,7 @@ public class EncoderLocalization implements Updater, Model {
         return Robot.gearShiftSubsystem.getCurrentGearRatio() * state.get(wheelAngleSD) * WHEEL_RADIUS;
     }
 
-    public RobotState nextPosition(double x, double y, double theta, ArrayList<WheelChangeInfo> allChangeInfo){
+    public RobotState nextPosition(double x, double y, double theta, ArrayList<Double> wheelDistances){
         // Works for all forms of drive where the displacement is the average of the movement vectors over the wheels
         double newTheta = pigeon.getAngle();
         RobotState robotState = new RobotState();
@@ -79,13 +71,12 @@ public class EncoderLocalization implements Updater, Model {
             System.out.println("rs x: " + robotState.get(SD.X));
         }
         double avgTheta = (theta + newTheta)/2;
-        int wheelAmount = allChangeInfo.size();
-        for(WheelChangeInfo wheelChangeInfo : allChangeInfo){
-            if (wheelChangeInfo.rotationChange != 0){
+        for(double wheelDistance : wheelDistances){
+            if (wheelDistance != 0){
                 //System.out.println("x change: " + wheelChangeInfo.rotationChange * Math.cos(avgTheta + wheelChangeInfo.angle) / wheelAmount);
             }
-            x += wheelChangeInfo.rotationChange * Math.cos(avgTheta + wheelChangeInfo.angle) / wheelAmount;
-            y += wheelChangeInfo.rotationChange * Math.sin(avgTheta + wheelChangeInfo.angle) / wheelAmount;
+            x += wheelDistance * Math.cos(avgTheta) / wheelDistances.size();
+            y += wheelDistance * Math.sin(avgTheta) / wheelDistances.size();
         }
         robotState.set(SD.X, x);
         robotState.set(SD.Y, y);
@@ -97,12 +88,12 @@ public class EncoderLocalization implements Updater, Model {
     public RobotState nextPosTankPigeon(double x, double y, double theta, double leftChange, double rightChange) {
         // This assumes tank drive and you want to use the pigeon for calculating your angle
         // Takes a pos (x,y,theta), a left side Δx and a right side Δx and returns an x,y,theta array
-        ArrayList<WheelChangeInfo> allChangeInfo = new ArrayList<>();
+        ArrayList<Double> allChangeInfo = new ArrayList<>();
         if (x != 0){
             System.out.println("x: " + x);
         }
-        allChangeInfo.add(new WheelChangeInfo(leftChange,  0));
-        allChangeInfo.add(new WheelChangeInfo(rightChange, 0)); // the zeros represent that they aren't turned
+        allChangeInfo.add(leftChange);
+        allChangeInfo.add(rightChange); // the zeros represent that they aren't turned
         return nextPosition(x,y,theta,allChangeInfo);
     }
 
