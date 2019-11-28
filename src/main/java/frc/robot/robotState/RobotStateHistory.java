@@ -1,8 +1,6 @@
-package frc.robot;
+package frc.robot.robotState;
 
 import java.util.ArrayList;
-
-import frc.robot.RobotState;
 
 public class RobotStateHistory{
 

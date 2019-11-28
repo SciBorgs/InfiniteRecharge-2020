@@ -3,18 +3,15 @@ package frc.robot.subsystems;
 import frc.robot.PortMap;
 import frc.robot.Robot;
 import frc.robot.Utils;
-import frc.robot.RobotState.SD;
+import frc.robot.robotState.RobotState.SD;
 import frc.robot.helpers.PID;
-import frc.robot.helpers.StateInfo;
+import frc.robot.robotState.StateInfo;
 import frc.robot.sciSensorsActuators.*;
 import frc.robot.logging.Logger.DefaultValue;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.command.Subsystem;
 
 import java.util.Hashtable;
-
-import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 public class DriveSubsystem extends Subsystem {
     // Define tested error values here
@@ -28,7 +25,6 @@ public class DriveSubsystem extends Subsystem {
     // deadzones by Alejandro at Chris' request. Graph them with the joystick function to understand the math.
     // https://www.desmos.com/calculator/ch19ahiwol
     private static final double INPUT_DEADZONE = 0.11; // deadzone because the joysticks are bad and they detect input when there is none
-    private static final double DEFAULT_MAX_JERK = 0.1; // Doesn't allow a motor's output to change by more than this in one tick
     private static final double STRAIGHT_DEADZONE = 0.15;
     private static final double STRAIGHT_EQUAL_INPUT_DEADZONE = 0; // If goal Omega is 0 and our regular input diff magnitude is less than this, the input diff goes to 0
     private PID tankAnglePID;
