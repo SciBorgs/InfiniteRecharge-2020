@@ -1,10 +1,10 @@
 package frc.robot.subsystems;
 
 import frc.robot.Robot;
-import frc.robot.RobotState;
+import frc.robot.robotState.RobotState;
 import frc.robot.Utils;
-import frc.robot.RobotState.SD;
-import frc.robot.helpers.StateInfo;
+import frc.robot.robotState.RobotState.SD;
+import frc.robot.robotState.StateInfo;
 import frc.robot.logging.Logger.DefaultValue;
 import frc.robot.PortMap;
 

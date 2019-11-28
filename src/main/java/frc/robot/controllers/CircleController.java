@@ -1,8 +1,9 @@
-package frc.robot.helpers;
+package frc.robot.controllers;
 
 import frc.robot.Robot;
 import frc.robot.Utils;
 import frc.robot.shapes.*;
+import frc.robot.helpers.Geo;
 
 public class CircleController { 
 
