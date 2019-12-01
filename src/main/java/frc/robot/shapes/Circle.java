@@ -21,7 +21,7 @@ public class Circle {
         double hRotated = currPosRotated.x;
         double radius   = Math.abs(currPosRotated.y - kRotated);
 
-        Point center = Geo.rotatePoint(new Point(hRotated, kRotated), currHeading);
+        Point center = Geo.rotatePoint(new Point(hRotated, kRotated), -currHeading);
         return new Circle(center, radius);
     }
 
