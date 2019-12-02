@@ -40,14 +40,14 @@ public class Robot extends TimedRobot {
     public static void   set(SD sd, double val){       getState().set(sd, val);}
     public static Value getSolenoidValue(SD sd){return getState().getSolenoidValue(sd);}
 
+    // testing
     public static Point  getPos() {return new Point(get(SD.X),get(SD.Y));}
     public static double getHeading() {return get(SD.Angle);}
     public static final Point TEST_POINT = new Point (3, 4);
     public static final double TEST_HEADING = Math.PI * .1;
     public static final Point ORIGINAL_POINT = new Point(0,0);
     public static final double ORIGINAL_ANGLE = Geo.HORIZONTAL_ANGLE;
-    public static final int INTERVAL = 50; // change this to change your frequency of prints
-    public static double numTicks = 0;     // rmbr that each tick is .02 seconds, 50 ticks/second
+    
 
     private int attemptsSinceLastLog;
     public static final int LOG_PERIOD = 5;
@@ -70,11 +70,7 @@ public class Robot extends TimedRobot {
         stateHistory.currentState().incorporateIntoNew(model.updatedRobotState(), model.getSDs());
     }
 
-    public static void delayedPrint (String message) {
-        if (numTicks % INTERVAL == 0) {
-            System.out.println(message);
-        }
-    }
+
 
     public void robotInit() {
         try {
@@ -132,12 +128,11 @@ public class Robot extends TimedRobot {
             }
             timer.stop();
         }
-        numTicks += 1;
         allUpdateRobotStates();
         Scheduler.getInstance().run();
         stateHistory.addState(getState().copy());
         useModel(positionModel);
-        //delayedPrint("X: " + Robot.get(SD.X) + "\nY: " + Robot.get(SD.Y) + "\nAngle: " + Math.toDegrees(Robot.get(SD.Angle)));
+        //DelayedPrinter.print("X: " + Robot.get(SD.X) + "\nY: " + Robot.get(SD.Y) + "\nAngle: " + Math.toDegrees(Robot.get(SD.Angle)));
     }
         
     public void autonomousInit() {
