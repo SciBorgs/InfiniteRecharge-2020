@@ -175,7 +175,7 @@ public class DriveSubsystem extends Subsystem {
             goalOmega -= Utils.signOf(goalOmega) * STRAIGHT_DEADZONE;
         }
         goalOmega = Utils.limitOutput(goalOmega, MAX_OMEGA_GOAL);
-        double error = goalOmega - StateInfo.getAngularVelocity();
+        double error = StateInfo.getAngularVelocity() - goalOmega;
         tankAnglePID.addMeasurement(error);
         double inputDiff = tankAnglePID.getOutput();
         // If you are going almost straight and goalOmega is 0, it will simply give the same input to both wheels
@@ -185,7 +185,7 @@ public class DriveSubsystem extends Subsystem {
         }
         Robot.logger.addData(FILENAME, "input diff", inputDiff, DefaultValue.Empty);
         Robot.logger.addData(FILENAME, "error", error, DefaultValue.Empty);
-		setSpeedTank(averageOutput - inputDiff, averageOutput + inputDiff); 
+		setSpeedTankForwardTurningMagnitude(averageOutput, inputDiff);
 	}
 	
 	public void setSpeedTankForwardTurningPercentage(double forward, double turnMagnitude) {
@@ -197,6 +197,10 @@ public class DriveSubsystem extends Subsystem {
         double forward = (processStick(Robot.oi.leftStick) + processStick(Robot.oi.rightStick)) / 2;
         setSpeedTankForwardTurningPercentage(forward, turnMagnitude);
 	}
+
+    public void setSpeedTankForwardTurningMagnitude(double forward, double turnMagnitude) {
+        setSpeedTank(forward + turnMagnitude, forward - turnMagnitude);
+    }
 
     @Override
     protected void initDefaultCommand() {
