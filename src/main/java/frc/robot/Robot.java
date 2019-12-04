@@ -17,7 +17,6 @@ import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.command.Scheduler;
 
 public class Robot extends TimedRobot {
-    private OutputLogger outputLogger;
     private Timer timer = new Timer();
     public static Logger logger = new Logger();
 
@@ -60,6 +59,7 @@ public class Robot extends TimedRobot {
     //     encoderSubsystem.periodicLog();
     //     following.periodicLog();
     // }
+    
     private void allUpdateRobotStates() {
         driveSubsystem.updateRobotState();
         gearShiftSubsystem.updateRobotState();
@@ -67,17 +67,12 @@ public class Robot extends TimedRobot {
     }
 
     public void useModel(Model model){
-        stateHistory.currentState().incorporateInto(model.updatedRobotState(), model.getSDs());
+        stateHistory.currentState().incorporateOtherState(model.updatedRobotState(), model.getSDs());
     }
 
 
 
     public void robotInit() {
-        try {
-            outputLogger = new OutputLogger("/home/lvuser/Logs/output_log.txt");
-        } catch (IOException e) {
-            System.out.println("[ERROR] Failed to initialize OutputLogger");
-        }
         timer.start();
         // attemptsSinceLastLog = 0;
         set(SD.X, ORIGINAL_POINT.x);
@@ -113,26 +108,10 @@ public class Robot extends TimedRobot {
     }
  
     public void robotPeriodic() {
-        double time = timer.get();
-        if (time <= 15) {
-            try {
-                outputLogger.logToFile(time);
-            } catch (IOException e) {
-                System.out.println("[ERROR] Failed to log @ " + time + "s");
-            }
-        } else {
-            try {
-                outputLogger.destroyWriter();
-            } catch (IOException e) {
-                System.out.println("[ERROR] Failed to destroy BufferedWriter");
-            }
-            timer.stop();
-        }
         allUpdateRobotStates();
         Scheduler.getInstance().run();
         stateHistory.addState(getState().copy());
         useModel(positionModel);
-        //DelayedPrinter.print("X: " + Robot.get(SD.X) + "\nY: " + Robot.get(SD.Y) + "\nAngle: " + Math.toDegrees(Robot.get(SD.Angle)));
     }
         
     public void autonomousInit() {

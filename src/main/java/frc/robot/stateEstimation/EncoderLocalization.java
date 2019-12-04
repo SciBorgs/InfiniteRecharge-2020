@@ -66,14 +66,10 @@ public class EncoderLocalization implements Updater, Model {
         double newTheta = pigeon.getAngle();
         RobotState robotState = new RobotState();
         
-        if (x != 0 || robotState.get(SD.X) != 0){
-            System.out.println("new x:" + x);
-            System.out.println("rs x: " + robotState.get(SD.X));
-        }
         double avgTheta = (theta + newTheta)/2;
         for(double wheelDistance : wheelDistances){
             if (wheelDistance != 0){
-                //System.out.println("x change: " + wheelChangeInfo.rotationChange * Math.cos(avgTheta + wheelChangeInfo.angle) / wheelAmount);
+                ////system.out.println("x change: " + wheelChangeInfo.rotationChange * Math.cos(avgTheta + wheelChangeInfo.angle) / wheelAmount);
             }
             x += wheelDistance * Math.cos(avgTheta) / wheelDistances.size();
             y += wheelDistance * Math.sin(avgTheta) / wheelDistances.size();
@@ -89,9 +85,6 @@ public class EncoderLocalization implements Updater, Model {
         // This assumes tank drive and you want to use the pigeon for calculating your angle
         // Takes a pos (x,y,theta), a left side Δx and a right side Δx and returns an x,y,theta array
         ArrayList<Double> allChangeInfo = new ArrayList<>();
-        if (x != 0){
-            System.out.println("x: " + x);
-        }
         allChangeInfo.add(leftChange);
         allChangeInfo.add(rightChange); // the zeros represent that they aren't turned
         return nextPosition(x,y,theta,allChangeInfo);
@@ -103,8 +96,8 @@ public class EncoderLocalization implements Updater, Model {
        // Robot.delayedPrint("left wheel angle: " + Robot.get(SD.LeftWheelAngle));
        // Robot.delayedPrint("" + wheelRotationChange(SD.LeftWheelAngle, pastStates));
        if (Robot.get(SD.X) != 0){
-           System.out.println("robot: " + Robot.get(SD.X));
-           System.out.println("state: " + state.get(SD.X));
+           //system.out.println("robot: " + Robot.get(SD.X));
+           //system.out.println("state: " + state.get(SD.X));
        }
         RobotState newPosition = 
             nextPosTankPigeon(state.get(SD.X), state.get(SD.Y), state.get(SD.Angle), 
@@ -128,8 +121,8 @@ public class EncoderLocalization implements Updater, Model {
 	}
 
     public void printPosition(){
-        System.out.println("X: " + Robot.get(SD.X));
-        System.out.println("Y: " + Robot.get(SD.Y));
-        System.out.println("Angle: " + Math.toDegrees(Robot.get(SD.Angle)));
+        //system.out.println("X: " + Robot.get(SD.X));
+        //system.out.println("Y: " + Robot.get(SD.Y));
+        //system.out.println("Angle: " + Math.toDegrees(Robot.get(SD.Angle)));
     }
 }
