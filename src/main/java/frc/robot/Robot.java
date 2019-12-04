@@ -67,7 +67,7 @@ public class Robot extends TimedRobot {
     }
 
     public void useModel(Model model){
-        stateHistory.currentState().incorporateIntoNew(model.updatedRobotState(), model.getSDs());
+        stateHistory.currentState().incorporateInto(model.updatedRobotState(), model.getSDs());
     }
 
 
