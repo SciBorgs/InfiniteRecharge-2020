@@ -198,6 +198,10 @@ public class DriveSubsystem extends Subsystem {
         setSpeedTankForwardTurningPercentage(forward, turnMagnitude);
 	}
 
+    public void setSpeedTankForwardTurningMagnitude(double forward, double turnMagnitude) {
+        setSpeedTank(forward - turnMagnitude, forward + turnMagnitude);
+    }
+    
     @Override
     protected void initDefaultCommand() {
 		//IGNORE THIS METHOD
