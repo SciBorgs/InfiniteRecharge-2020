@@ -5,7 +5,7 @@ import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.Compressor;
 import frc.robot.PortMap;
 import frc.robot.Robot;
-import frc.robot.RobotState.SD;
+import frc.robot.robotState.RobotState.SD;
 import frc.robot.logging.Logger.DefaultValue;
 
 public class PneumaticsSubsystem extends Subsystem {

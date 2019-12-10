@@ -1,6 +1,8 @@
-package frc.robot.helpers;
+package frc.robot.controllers;
 
 import frc.robot.Robot;
+
+// Follows an object at a certian angle
 
 public class Following {
 	private final String FILENAME = "Following.java";
@@ -11,10 +13,9 @@ public class Following {
     public Following() {
     }
 
-    public void followObject(PID pid, double tx){
-        if (Robot.limelightSubsystem.contourExists()){
-            pid.addMeasurement(tx);
-        }
+    public void followObject(PID pid, double angleTo){
+        // Angle to = how much the robot would have to turn to be pointing at the object
+        pid.addMeasurement(angleTo);
         double turnMagnitude = pid.getOutput();
         Robot.driveSubsystem.setSpeedTankTurningPercentage(turnMagnitude);  
     }

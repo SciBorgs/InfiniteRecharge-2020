@@ -1,10 +1,10 @@
 package frc.robot.subsystems;
 
 import frc.robot.Robot;
-import frc.robot.RobotState;
+import frc.robot.robotState.RobotState;
 import frc.robot.Utils;
-import frc.robot.RobotState.SD;
-import frc.robot.helpers.StateInfo;
+import frc.robot.robotState.RobotState.SD;
+import frc.robot.robotState.StateInfo;
 import frc.robot.logging.Logger.DefaultValue;
 import frc.robot.PortMap;
 
@@ -17,7 +17,6 @@ public class GearShiftSubsystem extends Subsystem {
 	private final String FILENAME = "GearShiftSubsystem.java";
     public DoubleSolenoid gearShiftSolenoid;
     
-
     public static final double LOW_GEAR_RATIO = 1 / 19.16; // 1 rotations of the wheel is 9.08 rotations of the encoder
     public static final double HIGH_GEAR_RATIO = 1 / 9.07;
 

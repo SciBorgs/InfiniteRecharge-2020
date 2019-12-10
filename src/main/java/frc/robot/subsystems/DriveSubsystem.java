@@ -3,59 +3,50 @@ package frc.robot.subsystems;
 import frc.robot.PortMap;
 import frc.robot.Robot;
 import frc.robot.Utils;
-import frc.robot.RobotState.SD;
-import frc.robot.helpers.PID;
-import frc.robot.helpers.StateInfo;
+import frc.robot.robotState.RobotState.SD;
+import frc.robot.controllers.PID;
+import frc.robot.robotState.StateInfo;
+import frc.robot.sciSensorsActuators.*;
 import frc.robot.logging.Logger.DefaultValue;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.command.Subsystem;
 
-import com.revrobotics.CANSparkMax;
-
 import java.util.Hashtable;
-
-import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
-import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 public class DriveSubsystem extends Subsystem {
     // Define tested error values here
     double TANK_ANGLE_P = .075, TANK_ANGLE_D = 0.0, TANK_ANGLE_I = 0;
     double GOAL_OMEGA_CONSTANT = 8; // Change this to change angle
     private double MAX_OMEGA_GOAL = 1 * GOAL_OMEGA_CONSTANT;
-    public CANSparkMax l, l1, l2, r, r1, r2;
+    public SciSpark l, l1, l2, r, r1, r2;
 	private final String FILENAME = "DriveSubsystem.java";
+    public static final double WHEEL_RADIUS = Utils.inchesToMeters(3);
 
     // deadzones by Alejandro at Chris' request. Graph them with the joystick function to understand the math.
     // https://www.desmos.com/calculator/ch19ahiwol
     private static final double INPUT_DEADZONE = 0.11; // deadzone because the joysticks are bad and they detect input when there is none
-    private static final double DEFAULT_MAX_JERK = 0.1; // Doesn't allow a motor's output to change by more than this in one tick
     private static final double STRAIGHT_DEADZONE = 0.15;
     private static final double STRAIGHT_EQUAL_INPUT_DEADZONE = 0; // If goal Omega is 0 and our regular input diff magnitude is less than this, the input diff goes to 0
     private PID tankAnglePID;
     public boolean assisted = false;
     public double driveMultiplier = 1;
-    public Hashtable<CANSparkMax, SD> sparkToWheelAngleSD;
-    public Hashtable<CANSparkMax, SD> sparkToValueSD;
-    public Hashtable<CANSparkMax, SD> sparkToVoltageSD;
-    public Hashtable<CANSparkMax, SD> sparkToCurrentSD;
-
-    private CANSparkMax newMotorObject(int port){
-        return new CANSparkMax(port, MotorType.kBrushless);
-    }
+    public Hashtable<SciSpark, SD> sparkToWheelAngleSD;
+    public Hashtable<SciSpark, SD> sparkToValueSD;
+    public Hashtable<SciSpark, SD> sparkToVoltageSD;
+    public Hashtable<SciSpark, SD> sparkToCurrentSD;
 
     public PID getTankAnglePID()   {return this.tankAnglePID;}
     public double getMaxOmegaGoal(){return MAX_OMEGA_GOAL;}
 
     public DriveSubsystem(){
 
-		this.l  = newMotorObject(PortMap.LEFT_FRONT_SPARK);
-		this.l1 = newMotorObject(PortMap.LEFT_MIDDLE_SPARK);
-        this.l2 = newMotorObject(PortMap.LEFT_BACK_SPARK);
+		this.l  = new SciSpark(PortMap.LEFT_FRONT_SPARK);
+		this.l1 = new SciSpark(PortMap.LEFT_MIDDLE_SPARK);
+        this.l2 = new SciSpark(PortMap.LEFT_BACK_SPARK);
         
-		this.r  = newMotorObject(PortMap.RIGHT_FRONT_SPARK);
-		this.r1 = newMotorObject(PortMap.RIGHT_MIDDLE_SPARK);
-        this.r2 = newMotorObject(PortMap.RIGHT_BACK_SPARK);
+		this.r  = new SciSpark(PortMap.RIGHT_FRONT_SPARK);
+		this.r1 = new SciSpark(PortMap.RIGHT_MIDDLE_SPARK);
+        this.r2 = new SciSpark(PortMap.RIGHT_BACK_SPARK);
 
         this.l .setInverted(true);
         this.l1.setInverted(true);
@@ -80,7 +71,7 @@ public class DriveSubsystem extends Subsystem {
         Robot.logger.logFinalField(FILENAME, "input deadzone", INPUT_DEADZONE);
     }
     
-    public void setSDMappings(CANSparkMax spark, SD wheelAngleSD, SD valueSD, SD volatageSD, SD currentSd){
+    public void setSDMappings(SciSpark spark, SD wheelAngleSD, SD valueSD, SD volatageSD, SD currentSd){
         this.sparkToWheelAngleSD.put(spark, wheelAngleSD);
         this.sparkToValueSD     .put(spark, valueSD);
         this.sparkToVoltageSD   .put(spark, volatageSD);
@@ -90,17 +81,17 @@ public class DriveSubsystem extends Subsystem {
 	public void periodicLog(){
     }
     public void updateRobotState(){
-        for(CANSparkMax spark : getSparks()){updateSparkState(spark);}
+        for(SciSpark spark : getSparks()){updateSparkState(spark);}
     }
-    public void updateSparkState(CANSparkMax spark){
-        Robot.getState().set(this.sparkToWheelAngleSD.get(spark), Robot.encoderSubsystem.getSparkAngle(spark));
+    public void updateSparkState(SciSpark spark){
+        Robot.getState().set(this.sparkToWheelAngleSD.get(spark), spark.getOutputAngle(Robot.gearShiftSubsystem.getCurrentGearRatio()));
         Robot.getState().set(this.sparkToValueSD.get(spark),   spark.get());
         Robot.getState().set(this.sparkToVoltageSD.get(spark), spark.getBusVoltage());
         Robot.getState().set(this.sparkToCurrentSD.get(spark), spark.getOutputCurrent());
     }
 
-	public CANSparkMax[] getSparks() {
-        return new CANSparkMax[]{this.l, this.l1, this.l2, this.r, this.r1, this.r2};
+	public SciSpark[] getSparks() {
+        return new SciSpark[]{this.l, this.l1, this.l2, this.r, this.r1, this.r2};
     }
 
     public double deadzone(double output){
@@ -141,28 +132,14 @@ public class DriveSubsystem extends Subsystem {
         }
     }
 
-    public void setMotorSpeed(CANSparkMax motor, double speed){setMotorSpeed(motor, speed, DEFAULT_MAX_JERK);}
-    public void setMotorSpeed(TalonSRX motor, double speed)   {setMotorSpeed(motor, speed, DEFAULT_MAX_JERK);}
-
-    public void setMotorSpeed(CANSparkMax motor, double speed, double maxJerk){
-        speed = limitJerk(motor.get(), speed, maxJerk);
-        //System.out.println("setting spark " + motor.getDeviceId() + " to " + speed);
-        motor.set(speed);
-    }
-    public void setMotorSpeed(TalonSRX motor, double speed, double maxJerk){
-        speed = limitJerk(motor.getMotorOutputPercent(), speed, maxJerk);
-        //System.out.println("setting talon to " + speed);
-        motor.set(ControlMode.PercentOutput, speed);
-    }
-
     public void defaultDriveMultilpier(){this.driveMultiplier = 1;}
     public void setDriveMultiplier(double driveMultiplier){
         this.driveMultiplier = driveMultiplier;
     }
         	
 	public void setSpeedTank(double leftSpeed, double rightSpeed) {
-        setMotorSpeed(this.l, leftSpeed  * this.driveMultiplier);
-        setMotorSpeed(this.r, rightSpeed * this.driveMultiplier);
+        this.l.set(leftSpeed  * this.driveMultiplier);
+        this.r.set(rightSpeed * this.driveMultiplier);
     }
 	
 	public void setSpeedTankAngularControl(double leftSpeed, double rightSpeed) {
