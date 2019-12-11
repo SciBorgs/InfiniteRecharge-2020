@@ -20,8 +20,8 @@ public class PointFollower {
         this.path = path;
     }
 
-    private void checkIfHitPoint() {
-        while(Geo.getDistance(this.path.get(0), Robot.getPos()) < this.distanceTolerance){
+    private void checkIfHitPoint(Point currPos) {
+        while(Geo.getDistance(this.path.get(0), currPos) < this.distanceTolerance){
             this.path.remove(0);
         }
     }
@@ -36,10 +36,10 @@ public class PointFollower {
     public boolean isDone() {return this.path.isEmpty();}
 
     public void update() {
-        checkIfHitPoint(); // will remove points you are close enough to as you have "hit" them
         if (isDone()){return;}
         double heading = Robot.get(SD.Angle);
         Point currPos  = Robot.getPos(); // create weights based on those distances
+        checkIfHitPoint(currPos); // will remove points you are close enough to as you have "hit" them
         double error = Geo.subtractAngles(heading, getDesiredHeading(currPos, heading));
         turnPID.addMeasurement(error);
         Robot.driveSubsystem.setSpeedTankTurningPercentage(turnPID.getOutput());

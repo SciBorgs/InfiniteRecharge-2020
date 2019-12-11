@@ -7,7 +7,7 @@ import frc.robot.Utils;
 
 public class SciTalon extends TalonSRX{
 
-    public final static double DEFAULT_MAX_JERK = 0.2;
+    public final static double DEFAULT_MAX_JERK = 0.1;
     public static final double ENC_TICKS_PER_REV = 4096;
     public double gearRatio;
     
