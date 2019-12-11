@@ -1,12 +1,18 @@
 package frc.robot.robotState;
 
+import frc.robot.Robot;
+
 import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Set;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 
+import frc.robot.logging.Logger.DefaultValue;
+
 public class RobotState {
+    private final String FILENAME = "RobotState.java";
     
     // SD = State Dimension
     public enum SD {
@@ -27,9 +33,11 @@ public class RobotState {
     }
 
     private Hashtable<SD, Double> data;
-
+    private List<SD> dataToLog;
+    
     public RobotState() {
         this.data = new Hashtable<>();
+        this.dataToLog = new ArrayList<>();
     }
     public RobotState(Hashtable<SD, Double> data) {
         this.data = data;
@@ -98,5 +106,12 @@ public class RobotState {
             if (!sdToInclude.contains(sd)){remove(sd);}
         }
     }
-
+    
+    public void addSDToLog(SD sd) { this.dataToLog.add(sd); }
+    
+    public void logData() {
+        for (SD sd : this.dataToLog) {
+            Robot.logger.addData(FILENAME, sd.name(), get(sd), DefaultValue.Previous);
+        }
+    }
 }
