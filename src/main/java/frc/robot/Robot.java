@@ -22,6 +22,7 @@ public class Robot extends TimedRobot {
 
     public static RobotStateHistory stateHistory = new RobotStateHistory();
     
+    public static PigeonSubsystem     pigeonSubsystem     = new PigeonSubsystem();
     public static DriveSubsystem      driveSubsystem      = new DriveSubsystem();
     public static GearShiftSubsystem  gearShiftSubsystem  = new GearShiftSubsystem();
     public static EncoderSubsystem    encoderSubsystem    = new EncoderSubsystem();
