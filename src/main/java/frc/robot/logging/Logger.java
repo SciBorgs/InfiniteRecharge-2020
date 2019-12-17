@@ -9,7 +9,7 @@ import edu.wpi.first.wpilibj.RobotController;
 import java.io.*;
 
 import frc.robot.Utils;
-import frc.robot.helpers.PID;
+import frc.robot.controllers.PID;
 
 // FILE HAS NOT BEEN CLEANED UP //
 public class Logger{

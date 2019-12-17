@@ -8,9 +8,9 @@ import java.util.Set;
 import frc.robot.stateEstimation.Updater;
 import frc.robot.stateEstimation.Weighter;
 import frc.robot.Robot;
-import frc.robot.RobotState;
-import frc.robot.RobotState.SD;
-import frc.robot.RobotStateHistory;
+import frc.robot.robotState.RobotState;
+import frc.robot.robotState.RobotState.SD;
+import frc.robot.robotState.RobotStateHistory;
 import frc.robot.Utils;
 
 // What's a particle filter?

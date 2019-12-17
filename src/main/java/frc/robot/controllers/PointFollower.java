@@ -1,9 +1,10 @@
-package frc.robot.helpers;
+package frc.robot.controllers;
 
 import java.util.ArrayList;
 import frc.robot.Utils;
 import frc.robot.shapes.*;
-import frc.robot.RobotState.SD;
+import frc.robot.helpers.Geo;
+import frc.robot.robotState.RobotState.SD;
 import frc.robot.Robot;
 
 public class PointFollower {
@@ -11,18 +12,33 @@ public class PointFollower {
     private static final double TURN_P = 0.4, TURN_I = 0, TURN_D = 0;
     private PID turnPID = new PID(TURN_P, TURN_I, TURN_D);
 
-    public double exponentialWeight = .1; // every meter each point is weighted 10 times less
-    public double distanceTolerance = 0.1;
-    public ArrayList<Point> path;
+    private double exponentialWeight = .1; // every meter farther away, each point is weighed 10 times less
+    private double distanceTolerance = 0.1; // if we are this close to a point, we say we hit it
+    private ArrayList<Point> path;
     
     public PointFollower(ArrayList<Point> path){
         this.path = path;
     }
 
+    private void checkIfHitPoint(Point currPos) {
+        while(Geo.getDistance(this.path.get(0), currPos) < this.distanceTolerance){
+            this.path.remove(0);
+        }
+    }
+
+    public double getExponentialWeight(){return this.exponentialWeight;}
+    public double getDistanceTolerance(){return this.distanceTolerance;}
+    public ArrayList<Point> getPath()   {return this.path;}
+
+    public void setExponentialWeight(double exponentialWeight){this.exponentialWeight = exponentialWeight;}
+    public void setDistanceTolerance(double distanceTolerance){this.distanceTolerance = distanceTolerance;}
+
+    public boolean isDone() {return this.path.isEmpty();}
+
     public void update() {
         if (isDone()){return;}
         double heading = Robot.get(SD.Angle);
-        Point currPos = Robot.getPos(); // create weights based on those distances
+        Point currPos  = Robot.getPos(); // create weights based on those distances
         checkIfHitPoint(currPos); // will remove points you are close enough to as you have "hit" them
         double error = Geo.subtractAngles(heading, getDesiredHeading(currPos, heading));
         turnPID.addMeasurement(error);
@@ -65,11 +81,4 @@ public class PointFollower {
         return calculateDesiredHeading(getAngles(currPos), getWeights(currPos));
     }
 
-    private void checkIfHitPoint(Point currPos) {
-        while(Geo.getDistance(this.path.get(0), currPos) < this.distanceTolerance){
-            this.path.remove(0);
-        }
-    }
-
-    public boolean isDone() {return this.path.isEmpty();}
 }

@@ -10,11 +10,14 @@ import frc.robot.stateEstimation.*;
 import frc.robot.logging.*;
 import frc.robot.shapes.*;
 import frc.robot.logging.Logger.DefaultValue;
-import frc.robot.RobotState.SD;
+import frc.robot.robotState.*;
+import frc.robot.robotState.RobotState.SD;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.command.Scheduler;
+import frc.robot.controllers.*;
+import frc.robot.robotState.*;
 
 public class Robot extends TimedRobot {
     private Timer timer = new Timer();
@@ -25,7 +28,6 @@ public class Robot extends TimedRobot {
     public static PigeonSubsystem     pigeonSubsystem     = new PigeonSubsystem();
     public static DriveSubsystem      driveSubsystem      = new DriveSubsystem();
     public static GearShiftSubsystem  gearShiftSubsystem  = new GearShiftSubsystem();
-    public static EncoderSubsystem    encoderSubsystem    = new EncoderSubsystem();
     public static LimelightSubsystem  limelightSubsystem  = new LimelightSubsystem();
     public static PneumaticsSubsystem pneumaticsSubsystem = new PneumaticsSubsystem();
     
@@ -52,15 +54,13 @@ public class Robot extends TimedRobot {
     private int attemptsSinceLastLog;
     public static final int LOG_PERIOD = 5;
 
-    // private void allPeriodicLogs() {
-    //     driveSubsystem.periodicLog();
-    //     gearShiftSubsystem.periodicLog();
-    //     limelightSubsystem.periodicLog();
-    //     pneumaticsSubsystem.periodicLog();
-    //     encoderSubsystem.periodicLog();
-    //     following.periodicLog();
-    // }
-    
+    private void allPeriodicLogs() {
+        driveSubsystem.periodicLog();
+        gearShiftSubsystem.periodicLog();
+        limelightSubsystem.periodicLog();
+        pneumaticsSubsystem.periodicLog();
+        following.periodicLog();
+    }
     private void allUpdateRobotStates() {
         driveSubsystem.updateRobotState();
         gearShiftSubsystem.updateRobotState();

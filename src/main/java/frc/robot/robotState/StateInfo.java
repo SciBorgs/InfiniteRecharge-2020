@@ -1,9 +1,7 @@
-package frc.robot.helpers;
+package frc.robot.robotState;
 
 import frc.robot.Robot;
-import frc.robot.RobotState;
-import frc.robot.RobotStateHistory;
-import frc.robot.RobotState.SD;
+import frc.robot.robotState.RobotState.SD;
 
 import com.revrobotics.CANSparkMax;
 
