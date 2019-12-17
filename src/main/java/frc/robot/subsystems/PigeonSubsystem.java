@@ -2,21 +2,21 @@ package frc.robot.subsystems;
 
 import frc.robot.PortMap;
 import frc.robot.Robot;
-import frc.robot.RobotState.SD;
-import frc.robot.helpers.Pigeon;
+import frc.robot.robotState.RobotState.SD;
+import frc.robot.sciSensorsActuators.SciPigeon;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 public class PigeonSubsystem extends Subsystem {
-    public  Pigeon pigeon;
+    public  SciPigeon pigeon;
     private TalonSRX pigeonTalon;
     
     public PigeonSubsystem () {
         this.pigeonTalon = new TalonSRX(PortMap.PIGEON_TALON);
-        this.pigeon      = new Pigeon(pigeonTalon);
+        this.pigeon      = new SciPigeon(pigeonTalon);
     }
 
-    public Pigeon getPigeon() {return this.pigeon;}
+    public SciPigeon getPigeon() {return this.pigeon;}
     public void   setAngle()  {Robot.set(SD.PigeonAngle, getPigeon().getAngle());}
     public void   updateRobotState () { setAngle(); }
 

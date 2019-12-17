@@ -8,7 +8,6 @@ import java.util.Hashtable;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 import frc.robot.PortMap;
-import frc.robot.Utils;
 import frc.robot.robotState.*;
 import frc.robot.robotState.RobotState.SD;
 import frc.robot.sciSensorsActuators.SciPigeon;
@@ -27,6 +26,14 @@ public class EncoderLocalization implements Updater, Model {
 
     private SciPigeon pigeon;
     private TalonSRX pigeonTalon;
+
+    private class WheelChangeInfo{
+        public double rotationChange, angle;
+        public WheelChangeInfo(double rotationChange, double angle){
+            this.rotationChange = rotationChange;
+            this.angle = angle;
+        }
+    }
 
     public EncoderLocalization(){
         this.pigeonTalon = new TalonSRX(PortMap.PIGEON_TALON);
@@ -56,7 +63,7 @@ public class EncoderLocalization implements Updater, Model {
 
     public RobotState nextPosition(double x, double y, double theta, ArrayList<Double> wheelDistances){
         // Works for all forms of drive where the displacement is the average of the movement vectors over the wheels
-        double newTheta = pigeon.getAngle();
+        double newTheta = Robot.get(SD.PigeonAngle);
         RobotState robotState = new RobotState();
         
         double avgTheta = (theta + newTheta)/2;

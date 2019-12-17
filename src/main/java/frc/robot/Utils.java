@@ -63,9 +63,6 @@ public class Utils{
     public static int bringInRange(int val, int min, int max) {
         return ((val - min) % (max - min)) + min;
     }
-    public static double bringInRange(double val, double min, double max) {
-        return ((val - min) % (max - min)) + min;
-    }
 
     public static double limitOutput(double output, double max){
         if (output > max) {
