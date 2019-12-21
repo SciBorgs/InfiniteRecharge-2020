@@ -5,6 +5,7 @@ import java.util.Hashtable;
 import java.util.Set;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
+import frc.robot.helpers.BiHashMap;
 
 public class RobotState {
     
@@ -55,6 +56,14 @@ public class RobotState {
             case kReverse: return -1;
             default:       return 0;
         }
+    }
+
+    private<K> void setMapped(BiHashMap<K, Double> biMap, K key, SD sd) {
+        biMap.put(key, get(sd));
+    }
+
+    private<K> K getMapped(BiHashMap<K, Double> biMap, SD sd) {
+        return biMap.getBackward(get(sd));
     }
 
     public Value getSolenoidValue(SD sd){
