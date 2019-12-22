@@ -41,37 +41,12 @@ public class RobotState {
     public void   remove(SD sd)          {this.data.remove(sd);}
     public Set<SD> getKeys(){return data.keySet();}
 
-    public static Value intToSolenoidValue(int i){
-        switch (i){
-            case 1:  return Value.kForward;
-            case 0:  return Value.kReverse;
-            case -1: return Value.kOff;
-        }
-        throw new IllegalArgumentException("attempted to convert" + i + " to solenoid value, but v is not -1, 1 or 0");
-    }
-    public static int solenoidValueToInt(Value v){
-        switch (v){
-            case kForward: return 1;
-            case kOff:     return 0;
-            case kReverse: return -1;
-            default:       return 0;
-        }
+    public<K> void setMapped(BiHashMap<K, Double> biMap, K key, SD sd) {
+        this.data.put(sd, biMap.getForward(key));
     }
 
-    private<K> void setMapped(BiHashMap<K, Double> biMap, K key, SD sd) {
-        biMap.put(key, get(sd));
-    }
-
-    private<K> K getMapped(BiHashMap<K, Double> biMap, SD sd) {
+    public<K> K getMapped(BiHashMap<K, Double> biMap, SD sd) {
         return biMap.getBackward(get(sd));
-    }
-
-    public Value getSolenoidValue(SD sd){
-        if ((int) get(sd) == get(sd)){
-            return intToSolenoidValue((int) get(sd));
-        } else {
-            throw new IllegalArgumentException("getSolenoidValue requires an SD bound to an int, but given " + sd + " which is bound to " + get(sd));
-        }
     }
 
     public RobotState copy(){
