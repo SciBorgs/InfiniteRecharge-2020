@@ -27,13 +27,19 @@ public class RobotState {
         PressureSensorVoltage,
     }
 
+    public BiHashMap<Value, Double> solenoidMapping;
     private Hashtable<SD, Double> data;
 
     public RobotState() {
-        this.data = new Hashtable<>();
+        this(new Hashtable<>());
     }
+
     public RobotState(Hashtable<SD, Double> data) {
         this.data = data;
+        this.solenoidMapping = new BiHashMap<>();
+        this.solenoidMapping.put(Value.kForward,  1.0);
+        this.solenoidMapping.put(Value.kOff,      0.0);
+        this.solenoidMapping.put(Value.kReverse, -1.0);
     }
 
     public double get(SD sd)      {return this.data.get(sd);}
