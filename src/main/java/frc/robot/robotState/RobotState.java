@@ -26,9 +26,22 @@ public class RobotState {
         // Pneumatics
         PressureSensorVoltage,
     }
-
-    public BiHashMap<Value, Double> solenoidMapping;
+    
     private Hashtable<SD, Double> data;
+
+    private final static BiHashMap<Value,   Double> solenoidMapping;
+    private final static BiHashMap<Boolean, Double> booleanMapping;
+
+    static {
+        solenoidMapping = new BiHashMap<>();
+        solenoidMapping.put(Value.kForward,  1.0);
+        solenoidMapping.put(Value.kOff,      0.0);
+        solenoidMapping.put(Value.kReverse, -1.0);
+
+        booleanMapping = new BiHashMap<>();
+        booleanMapping.put(true,  1.0);
+        booleanMapping.put(false, 0.0);
+    }
 
     public RobotState() {
         this(new Hashtable<>());
@@ -36,10 +49,6 @@ public class RobotState {
 
     public RobotState(Hashtable<SD, Double> data) {
         this.data = data;
-        this.solenoidMapping = new BiHashMap<>();
-        this.solenoidMapping.put(Value.kForward,  1.0);
-        this.solenoidMapping.put(Value.kOff,      0.0);
-        this.solenoidMapping.put(Value.kReverse, -1.0);
     }
 
     public double get(SD sd)      {return this.data.get(sd);}
