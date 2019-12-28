@@ -33,7 +33,7 @@ public class Robot extends TimedRobot {
     public static Model     positionModel = new EncoderLocalization();
     public static OI oi = new OI();
 
-    private List<SD> dataToLog = new ArrayList<>();
+    private List<Pair<SD, DefaultValue>> dataToLog = new ArrayList<>();
 
     public static RobotStateHistory stateHistory = new RobotStateHistory();
 
@@ -62,13 +62,12 @@ public class Robot extends TimedRobot {
         pneumaticsSubsystem.updateRobotState();
     }
 
-    public void addSDToLog(SD sd) { this.dataToLog.add(sd); }
+    public void addSDToLog(SD sd, DefaultValue val) { this.dataToLog.add(new Pair<>(sd, val)); }
+    public void addSDToLog(SD sd)                   { addSDToLog(sd, DefaultValue.Empty); }
 
-    public void logData() { logData(DefaultValue.Empty); }
-    
-    public void logData(DefaultValue val) {
-        for (SD sd : this.dataToLog) {
-            Robot.logger.addData(FILENAME, sd.name(), get(sd), val);
+    public void logData() {
+        for (Pair<SD, DefaultValue> pair : this.dataToLog) {
+            Robot.logger.addData(FILENAME, pair.first.name(), get(pair.first), pair.second);
         }
     }
 
