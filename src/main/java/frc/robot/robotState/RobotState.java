@@ -29,18 +29,18 @@ public class RobotState {
     
     private Hashtable<SD, Double> data;
 
-    private final static BiHashMap<Value,   Double> solenoidMapping;
-    private final static BiHashMap<Boolean, Double> booleanMapping;
+    public final static BiHashMap<Value,   Double> SOLENOID_MAPPING;
+    public final static BiHashMap<Boolean, Double> BOOLEAN_MAPPING;
 
     static {
-        solenoidMapping = new BiHashMap<>();
-        solenoidMapping.put(Value.kForward,  1.0);
-        solenoidMapping.put(Value.kOff,      0.0);
-        solenoidMapping.put(Value.kReverse, -1.0);
+        SOLENOID_MAPPING = new BiHashMap<>();
+        SOLENOID_MAPPING.put(Value.kForward,  1.0);
+        SOLENOID_MAPPING.put(Value.kOff,      0.0);
+        SOLENOID_MAPPING.put(Value.kReverse, -1.0);
 
-        booleanMapping = new BiHashMap<>();
-        booleanMapping.put(true,  1.0);
-        booleanMapping.put(false, 0.0);
+        BOOLEAN_MAPPING = new BiHashMap<>();
+        BOOLEAN_MAPPING.put(true,  1.0);
+        BOOLEAN_MAPPING.put(false, 0.0);
     }
 
     public RobotState() {
