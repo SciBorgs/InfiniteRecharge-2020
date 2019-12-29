@@ -48,6 +48,13 @@ public class StateInfo{
         return (state.get(SD.LeftSparkVal) + state.get(SD.RightSparkVal)) / 2;
     }
 
+    public static double getDifference(SD sd, int ticksBack1, int ticksBack2) {
+        return getDifference(Robot.stateHistory, sd, ticksBack1, ticksBack2);
+    }
+    public static double getDifference(SD sd, int ticksBack) {
+        return getDifference(Robot.stateHistory, sd, ticksBack);
+    }
+
     public static double getAngularVelocity() {return getAngularVelocity(Robot.stateHistory);}
     public static double getXVelocity()       {return getXVelocity(      Robot.stateHistory);}
     public static double getYVelocity()       {return getYVelocity(      Robot.stateHistory);}

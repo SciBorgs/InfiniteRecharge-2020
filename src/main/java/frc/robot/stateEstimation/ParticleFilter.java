@@ -34,6 +34,10 @@ class Particle {
         newParticle.stateHistory.addState(state);
         return newParticle;
     }
+
+    public RobotState currentState(){
+        return this.stateHistory.currentState();
+    }
 }
 
 public class ParticleFilter implements Model{
@@ -83,14 +87,18 @@ public class ParticleFilter implements Model{
         return Utils.toArrayList(this.particles.stream().map(particle -> particle.weight));
     }
 
-    private Particle updateParticle(Particle particle){ 
-        // Updates a particle factoring in noise
-        RobotState updatedState = updater.updateState(particle.stateHistory);
+    private Particle updateParticle(Particle particle) {
+        // Starts by creating current state, with every SD from the global robot state
+        // except for the ones
+        // the particle filter is using
+        RobotState currentState = Robot.getState().incorporateIntoNew(particle.currentState(), getSDs());
+        Particle newParticle = particle.addStateIntoNew(currentState);
+        updater.updateState(newParticle.stateHistory);
         Hashtable<SD, Double> stdDevs = updater.getStdDevs();
-        Utils.addNoise(updatedState, stdDevs);
-        // incorporates state from Robot.java except for SD values being updated by updater
-        RobotState nextState = Robot.getState().incorporateIntoNew(updatedState, stdDevs.keySet());
-        return particle.addStateIntoNew(nextState);
+        Utils.addNoise(newParticle.currentState(), stdDevs);
+        // incorporates state from Robot.java except for SD values being updated by
+        // updater
+        return newParticle;
     }
 
     private void updateParticles(){
@@ -149,8 +157,8 @@ public class ParticleFilter implements Model{
         return this.updater.getStdDevs().keySet();
     }
     @Override
-    public RobotState updatedRobotState(){
+    public void updateRobotState(){
         nextGeneration();
-        return currentStates().currentState();
+        Robot.getState().incorporateOtherState(currentStates().currentState(), getSDs());
     }
 }

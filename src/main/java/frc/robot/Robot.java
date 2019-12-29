@@ -2,6 +2,8 @@ package frc.robot;
 
 import java.io.IOException;
 
+import com.revrobotics.CANSparkMax;
+
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import frc.robot.subsystems.*;
 import frc.robot.commands.*;
@@ -37,10 +39,28 @@ public class Robot extends TimedRobot {
     public static OI oi = new OI();
 
     public static RobotState getState(){ return stateHistory.currentState(); }
+    public static RobotState statesAgo(int numTicks){return stateHistory.statesAgo(numTicks);}
 
     public static double get(SD sd)            {return getState().get(sd);}
     public static void   set(SD sd, double val){       getState().set(sd, val);}
     public static Value getSolenoidValue(SD sd){return getState().getSolenoidValue(sd);}
+
+    public static double getDifference(SD sd, int ticksBack1, int ticksBack2) {
+        return StateInfo.getDifference(Robot.stateHistory, sd, ticksBack1, ticksBack2);
+    }
+    public static double getDifference(SD sd, int ticksBack) {
+        return StateInfo.getDifference(Robot.stateHistory, sd, ticksBack);
+    }
+
+    public static double getAngularVelocity() {return StateInfo.getAngularVelocity(Robot.stateHistory);}
+    public static double getXVelocity()       {return StateInfo.getXVelocity(      Robot.stateHistory);}
+    public static double getYVelocity()       {return StateInfo.getYVelocity(      Robot.stateHistory);}
+    public static double getSpeedSquared()    {return StateInfo.getSpeedSquared(   Robot.stateHistory);}
+    public static double getSpeed()           {return StateInfo.getSpeed(          Robot.stateHistory);}
+
+    public static double getAvgWheelInput() {return StateInfo.getAvgWheelInput(getState());}
+
+    public static double getWheelSpeed(CANSparkMax wheel){return StateInfo.getWheelSpeed(Robot.stateHistory, wheel);}
 
     // testing
     public static Point  getPos() {return new Point(get(SD.X),get(SD.Y));}
@@ -67,12 +87,6 @@ public class Robot extends TimedRobot {
         pneumaticsSubsystem.updateRobotState();
     }
 
-    public void useModel(Model model){
-        stateHistory.currentState().incorporateOtherState(model.updatedRobotState(), model.getSDs());
-    }
-
-
-
     public void robotInit() {
         timer.start();
         // attemptsSinceLastLog = 0;
@@ -80,7 +94,7 @@ public class Robot extends TimedRobot {
         set(SD.Y, ORIGINAL_POINT.y);
         set(SD.Angle, ORIGINAL_ANGLE);
         allUpdateRobotStates();
-        useModel(positionModel);
+        positionModel.updateRobotState();
         pneumaticsSubsystem.stopCompressor();
         //logger.incrementPrevious("robot.java", "deploy", DefaultValue.Previous);
 
@@ -112,7 +126,7 @@ public class Robot extends TimedRobot {
         allUpdateRobotStates();
         Scheduler.getInstance().run();
         stateHistory.addState(getState().copy());
-        useModel(positionModel);
+        positionModel.updateRobotState();
     }
         
     public void autonomousInit() {
