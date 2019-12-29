@@ -3,6 +3,8 @@ package frc.robot;
 import java.io.IOException;
 
 import com.revrobotics.CANSparkMax;
+import java.util.ArrayList;
+import java.util.List;
 
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import frc.robot.subsystems.*;
@@ -23,6 +25,8 @@ import frc.robot.robotState.*;
 
 public class Robot extends TimedRobot {
     private Timer timer = new Timer();
+    private final String FILENAME = "Robot.java";
+
     public static Logger logger = new Logger();
 
     public static RobotStateHistory stateHistory = new RobotStateHistory();
@@ -40,6 +44,7 @@ public class Robot extends TimedRobot {
 
     public static RobotState getState(){ return stateHistory.currentState(); }
     public static RobotState statesAgo(int numTicks){return stateHistory.statesAgo(numTicks);}
+    private List<Pair<SD, DefaultValue>> dataToLog = new ArrayList<>();
 
     public static double get(SD sd)            {return getState().get(sd);}
     public static void   set(SD sd, double val){       getState().set(sd, val);}
@@ -80,11 +85,23 @@ public class Robot extends TimedRobot {
         limelightSubsystem.periodicLog();
         pneumaticsSubsystem.periodicLog();
         following.periodicLog();
+        logState();
     }
+    
     private void allUpdateRobotStates() {
         driveSubsystem.updateRobotState();
         gearShiftSubsystem.updateRobotState();
         pneumaticsSubsystem.updateRobotState();
+    }
+
+    public void addSDToLog(SD sd, DefaultValue val) { this.dataToLog.add(new Pair<>(sd, val)); }
+    public void addSDToLog(SD sd)                   { addSDToLog(sd, DefaultValue.Empty); }
+
+    public void logState() {
+        for (Pair<SD, DefaultValue> pair : this.dataToLog) {
+            SD sd = pair.first;
+            Robot.logger.addData(FILENAME, sd.name(), get(sd), pair.second);
+        }
     }
 
     public void robotInit() {
