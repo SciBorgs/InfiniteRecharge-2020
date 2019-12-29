@@ -27,14 +27,6 @@ public class EncoderLocalization implements Updater, Model {
     private SciPigeon pigeon;
     private TalonSRX pigeonTalon;
 
-    private class WheelChangeInfo{
-        public double rotationChange, angle;
-        public WheelChangeInfo(double rotationChange, double angle){
-            this.rotationChange = rotationChange;
-            this.angle = angle;
-        }
-    }
-
     public EncoderLocalization(){
         this.pigeonTalon = new TalonSRX(PortMap.PIGEON_TALON);
         this.pigeon      = new SciPigeon(pigeonTalon);
@@ -55,10 +47,6 @@ public class EncoderLocalization implements Updater, Model {
     
     public double wheelRotationChange(SD wheelAngleSD, RobotStateHistory stateHistory){
         return StateInfo.getDifference(stateHistory, wheelAngleSD, 1) * DriveSubsystem.WHEEL_RADIUS;
-    }
-
-    public WheelChangeInfo newWheelChangeInfo(double rotationChange, double angle){
-        return new WheelChangeInfo(rotationChange, angle);
     }
 
     public RobotState nextPosition(double x, double y, double theta, ArrayList<Double> wheelDistances, double deltaTheta){

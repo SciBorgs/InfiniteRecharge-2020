@@ -33,8 +33,8 @@ public class Robot extends TimedRobot {
     public static LimelightSubsystem  limelightSubsystem  = new LimelightSubsystem();
     public static PneumaticsSubsystem pneumaticsSubsystem = new PneumaticsSubsystem();
     
-    public static Following following     = new Following();
-    public static EncoderLocalization positionModel = new EncoderLocalization();
+    public static Following following = new Following();
+    public static Model positionModel = new EncoderLocalization();
     public static CircleController circleController = new CircleController();
     public static OI oi = new OI();
 
