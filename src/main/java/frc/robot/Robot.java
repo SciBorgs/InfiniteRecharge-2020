@@ -68,7 +68,8 @@ public class Robot extends TimedRobot {
 
     public void logState() {
         for (Pair<SD, DefaultValue> pair : this.dataToLog) {
-            Robot.logger.addData(FILENAME, pair.first.name(), get(pair.first), pair.second);
+            SD sd = pair.first;
+            Robot.logger.addData(FILENAME, sd.name(), get(sd), pair.second);
         }
     }
 
