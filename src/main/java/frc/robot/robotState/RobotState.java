@@ -7,6 +7,7 @@ import java.util.Set;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 
 public class RobotState {
+    private final String FILENAME = "RobotState.java";
     
     // SD = State Dimension
     public enum SD {
@@ -27,7 +28,7 @@ public class RobotState {
     }
 
     private Hashtable<SD, Double> data;
-
+    
     public RobotState() {
         this.data = new Hashtable<>();
     }
@@ -98,5 +99,4 @@ public class RobotState {
             if (!sdToInclude.contains(sd)){remove(sd);}
         }
     }
-
 }

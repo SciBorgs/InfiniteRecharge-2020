@@ -1,5 +1,8 @@
 package frc.robot;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import frc.robot.subsystems.*;
 import frc.robot.commands.*;
@@ -17,6 +20,8 @@ import frc.robot.controllers.*;
 import frc.robot.robotState.*;
 
 public class Robot extends TimedRobot {
+    private final String FILENAME = "Robot.java";
+
     public static Logger logger = new Logger();
     
     public static DriveSubsystem      driveSubsystem      = new DriveSubsystem();
@@ -27,6 +32,8 @@ public class Robot extends TimedRobot {
     public static Following following     = new Following();
     public static Model     positionModel = new EncoderLocalization();
     public static OI oi = new OI();
+
+    private List<Pair<SD, DefaultValue>> dataToLog = new ArrayList<>();
 
     public static RobotStateHistory stateHistory = new RobotStateHistory();
 
@@ -47,11 +54,23 @@ public class Robot extends TimedRobot {
         limelightSubsystem.periodicLog();
         pneumaticsSubsystem.periodicLog();
         following.periodicLog();
+        logState();
     }
+    
     private void allUpdateRobotStates() {
         driveSubsystem.updateRobotState();
         gearShiftSubsystem.updateRobotState();
         pneumaticsSubsystem.updateRobotState();
+    }
+
+    public void addSDToLog(SD sd, DefaultValue val) { this.dataToLog.add(new Pair<>(sd, val)); }
+    public void addSDToLog(SD sd)                   { addSDToLog(sd, DefaultValue.Empty); }
+
+    public void logState() {
+        for (Pair<SD, DefaultValue> pair : this.dataToLog) {
+            SD sd = pair.first;
+            Robot.logger.addData(FILENAME, sd.name(), get(sd), pair.second);
+        }
     }
 
     public void useModel(Model model){
