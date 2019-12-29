@@ -54,6 +54,7 @@ public class Robot extends TimedRobot {
         limelightSubsystem.periodicLog();
         pneumaticsSubsystem.periodicLog();
         following.periodicLog();
+        logState();
     }
     
     private void allUpdateRobotStates() {
@@ -65,7 +66,7 @@ public class Robot extends TimedRobot {
     public void addSDToLog(SD sd, DefaultValue val) { this.dataToLog.add(new Pair<>(sd, val)); }
     public void addSDToLog(SD sd)                   { addSDToLog(sd, DefaultValue.Empty); }
 
-    public void logData() {
+    public void logState() {
         for (Pair<SD, DefaultValue> pair : this.dataToLog) {
             Robot.logger.addData(FILENAME, pair.first.name(), get(pair.first), pair.second);
         }
