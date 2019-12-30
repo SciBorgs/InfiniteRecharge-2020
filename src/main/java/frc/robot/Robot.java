@@ -41,7 +41,6 @@ public class Robot extends TimedRobot {
 
     public static double get(SD sd)            {return getState().get(sd);}
     public static void   set(SD sd, double val){       getState().set(sd, val);}
-    public static Value getSolenoidValue(SD sd){return getState().getSolenoidValue(sd);}
 
     public static Point getPos() {return new Point(get(SD.X),get(SD.Y));}
 
