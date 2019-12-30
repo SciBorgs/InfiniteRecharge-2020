@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import frc.robot.helpers.BiHashMap;
 
 public class RobotState {
+    private final String FILENAME = "RobotState.java";
     
     // SD = State Dimension
     public enum SD {
@@ -97,5 +98,5 @@ public class RobotState {
             if (!sdToInclude.contains(sd)){remove(sd);}
         }
     }
-
+  
 }
