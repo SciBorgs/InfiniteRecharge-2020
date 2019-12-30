@@ -34,7 +34,7 @@ public class GearShiftSubsystem extends Subsystem {
         Robot.logger.addData(FILENAME, "gear", gear, DefaultValue.Previous);
     }
     public void updateRobotState(){
-        Robot.getState().setMapped(RobotState.SOLENOID_MAPPING, this.gearShiftSolenoid.get(), GEAR_SHIFT_SD);
+        Robot.getState().setMapped(RobotState.SOLENOID_MAPPING, GEAR_SHIFT_SD, this.gearShiftSolenoid.get());
     }
     
     public void autoShift(){

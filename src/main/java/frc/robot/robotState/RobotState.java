@@ -56,7 +56,7 @@ public class RobotState {
     public void   remove(SD sd)          {this.data.remove(sd);}
     public Set<SD> getKeys(){return data.keySet();}
 
-    public<K> void setMapped(BiHashMap<K, Double> biMap, K key, SD sd) {
+    public<K> void setMapped(BiHashMap<K, Double> biMap, SD sd, K key) {
         this.data.put(sd, biMap.getForward(key));
     }
 
