@@ -5,6 +5,7 @@ import java.util.Hashtable;
 import java.util.Set;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
+import frc.robot.helpers.BiHashMap;
 
 public class RobotState {
     private final String FILENAME = "RobotState.java";
@@ -26,12 +27,27 @@ public class RobotState {
         // Pneumatics
         PressureSensorVoltage,
     }
-
-    private Hashtable<SD, Double> data;
     
-    public RobotState() {
-        this.data = new Hashtable<>();
+    private Hashtable<SD, Double> data;
+
+    public final static BiHashMap<Value,   Double> SOLENOID_MAPPING;
+    public final static BiHashMap<Boolean, Double> BOOLEAN_MAPPING;
+
+    static {
+        SOLENOID_MAPPING = new BiHashMap<>();
+        SOLENOID_MAPPING.put(Value.kForward,  1.0);
+        SOLENOID_MAPPING.put(Value.kOff,      0.0);
+        SOLENOID_MAPPING.put(Value.kReverse, -1.0);
+
+        BOOLEAN_MAPPING = new BiHashMap<>();
+        BOOLEAN_MAPPING.put(true,  1.0);
+        BOOLEAN_MAPPING.put(false, 0.0);
     }
+
+    public RobotState() {
+        this(new Hashtable<>());
+    }
+
     public RobotState(Hashtable<SD, Double> data) {
         this.data = data;
     }
@@ -41,29 +57,12 @@ public class RobotState {
     public void   remove(SD sd)          {this.data.remove(sd);}
     public Set<SD> getKeys(){return data.keySet();}
 
-    public static Value intToSolenoidValue(int i){
-        switch (i){
-            case 1:  return Value.kForward;
-            case 0:  return Value.kReverse;
-            case -1: return Value.kOff;
-        }
-        throw new IllegalArgumentException("attempted to convert" + i + " to solenoid value, but v is not -1, 1 or 0");
-    }
-    public static int solenoidValueToInt(Value v){
-        switch (v){
-            case kForward: return 1;
-            case kOff:     return 0;
-            case kReverse: return -1;
-            default:       return 0;
-        }
+    public<K> void setMapped(BiHashMap<K, Double> biMap, SD sd, K key) {
+        this.data.put(sd, biMap.getForward(key));
     }
 
-    public Value getSolenoidValue(SD sd){
-        // if ((int) get(sd) == get(sd)){
-            return intToSolenoidValue((int) get(sd));
-        //} else {
-        //    throw new IllegalArgumentException("getSolenoidValue requires an SD bound to an int, but given " + sd + " which is bound to " + get(sd));
-        //}
+    public<K> K getMapped(BiHashMap<K, Double> biMap, SD sd) {
+        return biMap.getBackward(get(sd));
     }
 
     public RobotState copy(){
@@ -99,4 +98,5 @@ public class RobotState {
             if (!sdToInclude.contains(sd)){remove(sd);}
         }
     }
+  
 }

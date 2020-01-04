@@ -6,7 +6,6 @@ import frc.robot.Utils;
 import frc.robot.robotState.RobotState.SD;
 import frc.robot.robotState.StateInfo;
 import frc.robot.logging.Logger.DefaultValue;
-import frc.robot.PortMap;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
@@ -37,7 +36,7 @@ public class GearShiftSubsystem extends Subsystem {
         Robot.logger.addData(FILENAME, "gear", gear, DefaultValue.Previous);
     }
     public void updateRobotState(){
-        Robot.getState().set(GEAR_SHIFT_SD, RobotState.solenoidValueToInt(this.gearShiftSolenoid.get()));
+        Robot.getState().setMapped(RobotState.SOLENOID_MAPPING, GEAR_SHIFT_SD, this.gearShiftSolenoid.get());
     }
     
     public void autoShift(){
@@ -46,8 +45,8 @@ public class GearShiftSubsystem extends Subsystem {
         if(speed < LOWER_LOW_GEAR_THRESHOLD) {shiftUp();}
     }
 
-    public boolean currentlyInHighGear(){return Robot.getSolenoidValue(GEAR_SHIFT_SD) == HIGH_GEAR_VALUE;}
-    public boolean currentlyInLowGear() {return Robot.getSolenoidValue(GEAR_SHIFT_SD) == LOW_GEAR_VALUE;}
+    public boolean currentlyInHighGear(){return Robot.getState().getMapped(RobotState.SOLENOID_MAPPING, GEAR_SHIFT_SD) == HIGH_GEAR_VALUE;}
+    public boolean currentlyInLowGear() {return Robot.getState().getMapped(RobotState.SOLENOID_MAPPING, GEAR_SHIFT_SD) == LOW_GEAR_VALUE;}
 
     public void shiftUp()  {this.gearShiftSolenoid.set(HIGH_GEAR_VALUE);}
     public void shiftDown(){this.gearShiftSolenoid.set(LOW_GEAR_VALUE);}
