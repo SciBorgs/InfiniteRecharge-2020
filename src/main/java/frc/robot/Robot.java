@@ -30,9 +30,9 @@ public class Robot extends TimedRobot {
     public static Logger logger = new Logger();
 
     public static RobotStateHistory stateHistory = new RobotStateHistory();
-    
-    public static PigeonSubsystem     pigeonSubsystem     = new PigeonSubsystem();
     public static DriveSubsystem      driveSubsystem      = new DriveSubsystem();
+
+    public static PigeonSubsystem     pigeonSubsystem     = new PigeonSubsystem();
     public static GearShiftSubsystem  gearShiftSubsystem  = new GearShiftSubsystem();
     public static LimelightSubsystem  limelightSubsystem  = new LimelightSubsystem();
     public static PneumaticsSubsystem pneumaticsSubsystem = new PneumaticsSubsystem();
@@ -69,7 +69,7 @@ public class Robot extends TimedRobot {
 
     // testing
     public static Point  getPos() {return new Point(get(SD.X),get(SD.Y));}
-    public static double getHeading() {return get(SD.Angle);}
+    public static double getHeading() {return get(SD.PigeonAngle);}
     public static final Point TEST_POINT = new Point (3, 4);
     public static final double TEST_HEADING = Math.PI * .1;
     public static final Point ORIGINAL_POINT = new Point(0,0);
@@ -92,6 +92,8 @@ public class Robot extends TimedRobot {
         driveSubsystem.updateRobotState();
         gearShiftSubsystem.updateRobotState();
         pneumaticsSubsystem.updateRobotState();
+        pigeonSubsystem.updateRobotState();
+        positionModel.updateRobotState();
     }
 
     public void addSDToLog(SD sd, DefaultValue val) { this.dataToLog.add(new Pair<>(sd, val)); }
@@ -109,23 +111,11 @@ public class Robot extends TimedRobot {
         // attemptsSinceLastLog = 0;
         set(SD.X, ORIGINAL_POINT.x);
         set(SD.Y, ORIGINAL_POINT.y);
-        set(SD.Angle, ORIGINAL_ANGLE);
+        set(SD.PigeonAngle, ORIGINAL_ANGLE);
         allUpdateRobotStates();
         positionModel.updateRobotState();
         pneumaticsSubsystem.stopCompressor();
         //logger.incrementPrevious("robot.java", "deploy", DefaultValue.Previous);
-
-        /* STARTS THE LIDAR     
-        try {
-            System.out.println("LIDAR status: starting");
-            boolean started = LidarServer.getInstance().start();
-            System.out.println("LIDAR status" + (started ? "started" : "failed to start"));
-        } catch (Throwable t) {
-            System.out.println("LIDAR status: crashed -" + t);
-            t.printStackTrace();
-            throw t;
-        }*/
-
         //logger.logData();
     }
 
@@ -144,14 +134,13 @@ public class Robot extends TimedRobot {
         Scheduler.getInstance().run();
         stateHistory.addState(getState().copy());
         positionModel.updateRobotState();
+        DelayedPrinter.print("X: " + get(SD.X) +"\tY: " + get(SD.Y) +" Theta: " + get(SD.PigeonAngle));
     }
         
     public void autonomousInit() {
     }
 
     public void autonomousPeriodic() {
-        // new SwerveTankDriveCommand().start();
-        // circleController.update(getPos(), getHeading(), TEST_POINT, TEST_HEADING);
         pneumaticsSubsystem.startCompressor();
         enabledPeriodic();
     }

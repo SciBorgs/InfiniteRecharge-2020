@@ -27,7 +27,7 @@ public class StateInfo{
     }
 
     public static double getAngularVelocity(RobotStateHistory stateHistory){
-        return getRateOfChange(stateHistory, SD.Angle, ANGULAR_VELOCITY_PRECISION);
+        return getRateOfChange(stateHistory, SD.PigeonAngle, ANGULAR_VELOCITY_PRECISION);
     }
     public static double getXVelocity(RobotStateHistory stateHistory){
         return getRateOfChange(stateHistory, SD.X, X_VELOCITY_PRECISION);

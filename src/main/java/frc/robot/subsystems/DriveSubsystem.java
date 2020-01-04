@@ -38,7 +38,11 @@ public class DriveSubsystem extends Subsystem {
     public PID getTankAnglePID()   {return this.tankAnglePID;}
     public double getMaxOmegaGoal(){return MAX_OMEGA_GOAL;}
 
-    public DriveSubsystem(){
+    public DriveSubsystem() {
+        this.sparkToWheelAngleSD = new Hashtable<>();
+        this.sparkToValueSD = new Hashtable<>();
+        this.sparkToVoltageSD = new Hashtable<>();
+        this.sparkToCurrentSD = new Hashtable<>();
 
 		this.l  = new SciSpark(PortMap.LEFT_FRONT_SPARK);
 		this.l1 = new SciSpark(PortMap.LEFT_MIDDLE_SPARK);
