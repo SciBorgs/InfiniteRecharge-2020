@@ -71,22 +71,13 @@ public class Robot extends TimedRobot {
     public static Point  getPos() {return new Point(get(SD.X),get(SD.Y));}
     public static double getHeading() {return get(SD.PigeonAngle);}
     public static final Point TEST_POINT = new Point (3, 4);
-    public static final double TEST_HEADING = Math.PI * .1;
+    public static final double TEST_HEADING = 0;
     public static final Point ORIGINAL_POINT = new Point(0,0);
     public static final double ORIGINAL_ANGLE = Geo.HORIZONTAL_ANGLE;
     
 
     private int attemptsSinceLastLog;
     public static final int LOG_PERIOD = 5;
-
-    private void allPeriodicLogs() {
-        driveSubsystem.periodicLog();
-        gearShiftSubsystem.periodicLog();
-        limelightSubsystem.periodicLog();
-        pneumaticsSubsystem.periodicLog();
-        following.periodicLog();
-        logState();
-    }
     
     private void allUpdateRobotStates() {
         driveSubsystem.updateRobotState();
@@ -116,17 +107,12 @@ public class Robot extends TimedRobot {
         positionModel.updateRobotState();
         pneumaticsSubsystem.stopCompressor();
         //logger.incrementPrevious("robot.java", "deploy", DefaultValue.Previous);
-        //logger.logData();
     }
 
     public void logDataPeriodic() {
-        // if (LOG_PERIOD == attemptsSinceLastLog) {
-        //     attemptsSinceLastLog = 0;
-        //     allPeriodicLogs();
-        //     logger.logData();
-        // } else {
-        //     attemptsSinceLastLog++;
-        // }
+        logState();
+        logger.logData();
+        logger.writeLoggedData();
     }
  
     public void robotPeriodic() {
@@ -135,14 +121,15 @@ public class Robot extends TimedRobot {
         stateHistory.addState(getState().copy());
         positionModel.updateRobotState();
         DelayedPrinter.print("X: " + get(SD.X) +"\tY: " + get(SD.Y) +" Theta: " + get(SD.PigeonAngle));
+        logDataPeriodic();
     }
         
     public void autonomousInit() {
     }
 
     public void autonomousPeriodic() {
+        circleController.update(getPos(), getHeading(), TEST_POINT, TEST_HEADING);
         pneumaticsSubsystem.startCompressor();
-        enabledPeriodic();
     }
     
     @Override
@@ -152,14 +139,10 @@ public class Robot extends TimedRobot {
     public void teleopPeriodic() {
         new TankDriveCommand().start();
         pneumaticsSubsystem.startCompressor();
-        enabledPeriodic();
     }
 
     public void testPeriodic() {
-        enabledPeriodic();
     }
-
-    public void enabledPeriodic() {logDataPeriodic();}
 
     public void disabledInit() {
         // allPeriodicLogs();

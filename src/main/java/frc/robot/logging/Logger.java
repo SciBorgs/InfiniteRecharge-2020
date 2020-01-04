@@ -22,7 +22,7 @@ public class Logger{
     // TODO: make default values not reset every deploy
     private CSVHelper csvHelper;
     private Calendar calendar;
-    private boolean loggingDisabled = true;
+    private boolean loggingDisabled = false;
 
     // Universal naming conventions
     public String commandStatusName = "status";
@@ -184,7 +184,7 @@ public class Logger{
 
     public void logData(){
         if (this.loggingDisabled){return;}
-        System.out.println("attempting to log data...");
+        //System.out.println("attempting to log data...");
         // adds a new data record to the file and resets our current data
         this.csvHelper.addRow(createFullCurrentData());
         resetCurrentData();
