@@ -60,6 +60,10 @@ public class Utils{
         trimIf(arr, maxSize);
     }
 
+    public static int bringInRange(int val, int min, int max) {
+        return ((val - min) % (max - min)) + min;
+    }
+
     public static double limitOutput(double output, double max){
         if (output > max) {
             return max;

@@ -21,9 +21,9 @@ public class GaussianWeighter implements Weighter {
     
     public double weight(RobotStateHistory stateHistory){
         RobotState state = stateHistory.currentState();
-        RobotStateHistory pastStates = stateHistory.copy();
-        pastStates.dropFirstState();
-        RobotState expectedState = updater.updateState(pastStates);
+        RobotStateHistory statesCopy = stateHistory.copy();
+        updater.updateState(statesCopy);
+        RobotState expectedState = statesCopy.currentState();
         double weight = 1;
         for(Map.Entry<SD, Double> sdVariance : updater.getStdDevs().entrySet()){
             weight *= computeGaussian(expectedState.get(sdVariance.getKey()), 

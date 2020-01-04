@@ -27,7 +27,7 @@ public class StateInfo{
     }
 
     public static double getAngularVelocity(RobotStateHistory stateHistory){
-        return getRateOfChange(stateHistory, SD.Angle, ANGULAR_VELOCITY_PRECISION);
+        return getRateOfChange(stateHistory, SD.PigeonAngle, ANGULAR_VELOCITY_PRECISION);
     }
     public static double getXVelocity(RobotStateHistory stateHistory){
         return getRateOfChange(stateHistory, SD.X, X_VELOCITY_PRECISION);
@@ -46,6 +46,13 @@ public class StateInfo{
     }
     public static double getAvgWheelInput(RobotState state){
         return (state.get(SD.LeftSparkVal) + state.get(SD.RightSparkVal)) / 2;
+    }
+
+    public static double getDifference(SD sd, int ticksBack1, int ticksBack2) {
+        return getDifference(Robot.stateHistory, sd, ticksBack1, ticksBack2);
+    }
+    public static double getDifference(SD sd, int ticksBack) {
+        return getDifference(Robot.stateHistory, sd, ticksBack);
     }
 
     public static double getAngularVelocity() {return getAngularVelocity(Robot.stateHistory);}

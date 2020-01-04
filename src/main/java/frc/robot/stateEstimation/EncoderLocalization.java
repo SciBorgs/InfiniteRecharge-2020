@@ -8,7 +8,6 @@ import java.util.Hashtable;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 import frc.robot.PortMap;
-import frc.robot.Utils;
 import frc.robot.robotState.*;
 import frc.robot.robotState.RobotState.SD;
 import frc.robot.sciSensorsActuators.SciPigeon;
@@ -28,14 +27,6 @@ public class EncoderLocalization implements Updater, Model {
     private SciPigeon pigeon;
     private TalonSRX pigeonTalon;
 
-    private class WheelChangeInfo{
-        public double rotationChange, angle;
-        public WheelChangeInfo(double rotationChange, double angle){
-            this.rotationChange = rotationChange;
-            this.angle = angle;
-        }
-    }
-
     public EncoderLocalization(){
         this.pigeonTalon = new TalonSRX(PortMap.PIGEON_TALON);
         this.pigeon      = new SciPigeon(pigeonTalon);
@@ -43,7 +34,10 @@ public class EncoderLocalization implements Updater, Model {
         this.stdDevs = new Hashtable<>();
         this.stdDevs.put(SD.X,     X_STD_DEV);
         this.stdDevs.put(SD.Y,     Y_STD_DEV);
-        this.stdDevs.put(SD.Angle, ANGLE_STD_DEV);
+        this.stdDevs.put(SD.PigeonAngle, ANGLE_STD_DEV);
+        this.stdDevs.put(SD.GearShiftSolenoid, 0.0);
+        this.stdDevs.put(SD.LeftWheelAngle, 0.0);
+        this.stdDevs.put(SD.RightWheelAngle, 0.0);
     }
 
     public SciPigeon getPigeon() {return this.pigeon;}
@@ -55,48 +49,47 @@ public class EncoderLocalization implements Updater, Model {
         return StateInfo.getDifference(stateHistory, wheelAngleSD, 1) * DriveSubsystem.WHEEL_RADIUS;
     }
 
-    public WheelChangeInfo newWheelChangeInfo(double rotationChange, double angle){
-        return new WheelChangeInfo(rotationChange, angle);
-    }
-
-    public RobotState nextPosition(double x, double y, double theta, ArrayList<WheelChangeInfo> allChangeInfo){
+    public RobotState nextPosition(double x, double y, double theta, ArrayList<Double> wheelDistances, double deltaTheta){
         // Works for all forms of drive where the displacement is the average of the movement vectors over the wheels
-        double newTheta = pigeon.getAngle();
+        double newTheta = theta + deltaTheta;
+        RobotState robotState = new RobotState();
+        
         double avgTheta = (theta + newTheta)/2;
-        int wheelAmount = allChangeInfo.size();
-        for(WheelChangeInfo wheelChangeInfo : allChangeInfo){
-            x += wheelChangeInfo.rotationChange * Math.cos(avgTheta + wheelChangeInfo.angle) / wheelAmount;
-            y += wheelChangeInfo.rotationChange * Math.sin(avgTheta + wheelChangeInfo.angle) / wheelAmount;
+        for(double wheelDistance : wheelDistances){
+            if (wheelDistance != 0){
+                ////system.out.println("x change: " + wheelChangeInfo.rotationChange * Math.cos(avgTheta + wheelChangeInfo.angle) / wheelAmount);
+            }
+            x += wheelDistance * Math.cos(avgTheta) / wheelDistances.size();
+            y += wheelDistance * Math.sin(avgTheta) / wheelDistances.size();
         }
-        RobotState state = new RobotState();
-        state.set(SD.X, x);
-        state.set(SD.Y, y);
-        state.set(SD.Angle, newTheta);
-        return state;
-    }
- 
-    public RobotState nextPosTankPigeon(double x, double y, double theta, double leftChange, double rightChange) {
-        // This assumes tank drive and you want to use the pigeon for calculating your angle
-        // Takes a pos (x,y,theta), a left side Δx and a right side Δx and returns an x,y,theta array
-        ArrayList<WheelChangeInfo> allChangeInfo = new ArrayList<>();
-        allChangeInfo.add(new WheelChangeInfo(leftChange,  0));
-        allChangeInfo.add(new WheelChangeInfo(rightChange, 0)); // the zeros represent that they aren't turned
-        return nextPosition(x,y,theta,allChangeInfo);
+        robotState.set(SD.X, -x);
+        robotState.set(SD.Y, y);
+        robotState.set(SD.PigeonAngle, newTheta);
+        robotState.set(SD.GearShiftSolenoid, 0.0);
+        return robotState;
     }
 
     @Override
-    public RobotState updateState(RobotStateHistory pastStates){
-        RobotState state = pastStates.currentState();
+    public void updateState(RobotStateHistory stateHistory){
+        RobotState state = stateHistory.statesAgo(1);
+        // Robot.delayedPrint("left wheel angle: " + Robot.get(SD.LeftWheelAngle));
+        // Robot.delayedPrint("" + wheelRotationChange(SD.LeftWheelAngle, pastStates));
+        if (Robot.get(SD.X) != 0){
+            //system.out.println("robot: " + Robot.get(SD.X));
+            //system.out.println("state: " + state.get(SD.X));
+        }
+        ArrayList<Double> wheelChanges = new ArrayList<>();
+        wheelChanges.add(wheelRotationChange(SD.LeftWheelAngle,  stateHistory));
+        wheelChanges.add(wheelRotationChange(SD.RightWheelAngle, stateHistory));
+        double thetaChange = StateInfo.getDifference(stateHistory, SD.PigeonAngle, 1);
         RobotState newPosition = 
-            nextPosTankPigeon(state.get(SD.X), state.get(SD.Y), state.get(SD.Angle), 
-                wheelRotationChange(SD.LeftWheelAngle,  pastStates), 
-                wheelRotationChange(SD.RightWheelAngle, pastStates));
-        return pastStates.currentState().incorporateIntoNew(newPosition); 
+            nextPosition(state.get(SD.X), state.get(SD.Y), state.get(SD.PigeonAngle), wheelChanges, thetaChange);
+        stateHistory.currentState().incorporateOtherState(newPosition); 
     }
 
     @Override
-    public RobotState updatedRobotState(){
-        return updateState(Robot.stateHistory);
+    public void updateRobotState(){
+        updateState(Robot.stateHistory);
     }
 
     @Override
@@ -105,12 +98,12 @@ public class EncoderLocalization implements Updater, Model {
 	public void periodicLog(){
         Robot.logger.addData(FILENAME, "robot X",     Robot.get(SD.X),     DefaultValue.Previous);
         Robot.logger.addData(FILENAME, "robot y",     Robot.get(SD.Y),     DefaultValue.Previous);
-        Robot.logger.addData(FILENAME, "robot angle", Robot.get(SD.Angle), DefaultValue.Previous);
+        Robot.logger.addData(FILENAME, "robot angle", Robot.get(SD.PigeonAngle), DefaultValue.Previous);
 	}
 
     public void printPosition(){
-        System.out.println("X: " + Robot.get(SD.X));
-        System.out.println("Y: " + Robot.get(SD.Y));
-        System.out.println("Angle: " + Math.toDegrees(Robot.get(SD.Angle)));
+        //system.out.println("X: " + Robot.get(SD.X));
+        //system.out.println("Y: " + Robot.get(SD.Y));
+        //system.out.println("Angle: " + Math.toDegrees(Robot.get(SD.PigeonAngle)));
     }
 }
