@@ -37,18 +37,17 @@ public class Deque<T> {
         throw new IndexOutOfBoundsException("Index: " + index + ", Size: " + this.list.size());
     }
 
+    public T last() {return get(this.list.size() - 1);}
+    public T first(){return get(0);}
+
     public void remove(int index) {
         this.list.remove(index);
         this.head = Math.floorMod(this.head - 1, this.list.size());
     }
 
-    public List<T> getArrayList() {
-        return this.list;
-    }
-
-    public int getSize() {
-        return this.list.size();
-    }
+    public List<T> getArrayList() {return this.list;}
+    public int     getSize()      {return this.list.size();}
+    public boolean isEmpty()      {return this.list.isEmpty();}
 
     @Override
     public Deque<T> clone() {

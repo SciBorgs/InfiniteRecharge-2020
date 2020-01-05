@@ -109,7 +109,7 @@ public class Geo {
     }
 
     public static boolean arePointsCollinear(Point p1, Point p2, Point p3) {
-        return arePointsCollinear(p1, p2, p3, Utils.getEpsilon());
+        return arePointsCollinear(p1, p2, p3, Utils.EPSILON);
     }
 
     public static boolean arePointsExactlyCollinear(Point p1, Point p2, Point p3) {

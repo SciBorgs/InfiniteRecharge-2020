@@ -1,5 +1,6 @@
 package frc.robot.subsystems;
 
+import frc.robot.PortMap;
 import frc.robot.Robot;
 import frc.robot.robotState.RobotState;
 import frc.robot.Utils;
@@ -25,7 +26,7 @@ public class GearShiftSubsystem extends Subsystem {
 	public static final DoubleSolenoid.Value LOW_GEAR_VALUE = Utils.oppositeDoubleSolenoidValue(HIGH_GEAR_VALUE);
     public static final SD GEAR_SHIFT_SD = SD.GearShiftSolenoid;
 
-    public GearShiftSubsystem() {
+    public GearShiftSubsystem(){
         this.gearShiftSolenoid = Utils.newDoubleSolenoid(PortMap.GEAR_SHIFTER_SOLENOID_PDP, PortMap.GEAR_SHIFTER_SOLENOID);
         Robot.set(GEAR_SHIFT_SD, 0.0); 
         shiftDown();
