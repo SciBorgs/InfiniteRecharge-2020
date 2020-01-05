@@ -45,13 +45,13 @@ public class DriveSubsystem extends Subsystem {
         this.sparkToVoltageSD = new Hashtable<>();
         this.sparkToCurrentSD = new Hashtable<>();
 
-		this.l  = new SciSpark(PortMap.LEFT_FRONT_SPARK);
-		this.l1 = new SciSpark(PortMap.LEFT_MIDDLE_SPARK);
-        this.l2 = new SciSpark(PortMap.LEFT_BACK_SPARK);
+		this.l  = new SciSpark(PortMap.LEFT_FRONT_SPARK,  GEAR_RATIO);
+		this.l1 = new SciSpark(PortMap.LEFT_MIDDLE_SPARK, GEAR_RATIO);
+        this.l2 = new SciSpark(PortMap.LEFT_BACK_SPARK,   GEAR_RATIO);
         
-		this.r  = new SciSpark(PortMap.RIGHT_FRONT_SPARK);
-		this.r1 = new SciSpark(PortMap.RIGHT_MIDDLE_SPARK);
-        this.r2 = new SciSpark(PortMap.RIGHT_BACK_SPARK);
+		this.r  = new SciSpark(PortMap.RIGHT_FRONT_SPARK,  GEAR_RATIO);
+		this.r1 = new SciSpark(PortMap.RIGHT_MIDDLE_SPARK, GEAR_RATIO);
+        this.r2 = new SciSpark(PortMap.RIGHT_BACK_SPARK,   GEAR_RATIO);
 
         this.l .setInverted(true);
         this.l1.setInverted(true);
@@ -85,7 +85,7 @@ public class DriveSubsystem extends Subsystem {
     }
     
     public void updateSparkState(SciSpark spark){
-        Robot.set(this.sparkToWheelAngleSD.get(spark), spark.getWheelAngle(GEAR_RATIO));
+        Robot.set(this.sparkToWheelAngleSD.get(spark), spark.getWheelAngle());
         Robot.set(this.sparkToValueSD.get(spark),   spark.get());
         Robot.set(this.sparkToVoltageSD.get(spark), spark.getBusVoltage());
         Robot.set(this.sparkToCurrentSD.get(spark), spark.getOutputCurrent());
