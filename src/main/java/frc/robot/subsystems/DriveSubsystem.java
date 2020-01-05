@@ -27,6 +27,7 @@ public class DriveSubsystem extends Subsystem {
     private static final double INPUT_DEADZONE = 0.11; // deadzone because the joysticks are bad and they detect input when there is none
     private static final double STRAIGHT_DEADZONE = 0.15;
     private static final double STRAIGHT_EQUAL_INPUT_DEADZONE = 0; // If goal Omega is 0 and our regular input diff magnitude is less than this, the input diff goes to 0
+    public static final double GEAR_RATIO = 1 / 9.0;
     private PID tankAnglePID;
     public boolean assisted = false;
     public double driveMultiplier = 1;
@@ -88,7 +89,7 @@ public class DriveSubsystem extends Subsystem {
         for(SciSpark spark : getSparks()){updateSparkState(spark);}
     }
     public void updateSparkState(SciSpark spark){
-        Robot.getState().set(this.sparkToWheelAngleSD.get(spark), spark.getOutputAngle(Robot.gearShiftSubsystem.getCurrentGearRatio()));
+        Robot.getState().set(this.sparkToWheelAngleSD.get(spark), spark.getOutputAngle(GEAR_RATIO));
         Robot.getState().set(this.sparkToValueSD.get(spark),   spark.get());
         Robot.getState().set(this.sparkToVoltageSD.get(spark), spark.getBusVoltage());
         Robot.getState().set(this.sparkToCurrentSD.get(spark), spark.getOutputCurrent());

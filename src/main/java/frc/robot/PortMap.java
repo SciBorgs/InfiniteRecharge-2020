@@ -52,36 +52,9 @@ public class PortMap {
     public static final int RIGHT_MIDDLE_SPARK = 2;
     public static final int RIGHT_BACK_SPARK = 1;
 
-    public static final int LIFT_SPARK = 7;
-
     //*******************TALONS******************//
 
     public static final int PIGEON_TALON = 9;
-
-    public static final int ARM_TILT_TALON = 10; // CHANGE TO 10 FOR COMP, 12 FOR PRACTICE
-    public static final int INTAKE_TALON = 11; // CHANGE TO 11 FOR COMP, 10 FOR PRACTICE
-
-    public static final int LEFT_ZLIFT = 9;
-    public static final int RIGHT_ZLIFT = 8;
-
-    //***************LIMIT*SWITCHES**************//
-
-    public static final int CASCADE_AT_BOTTOM_LIMIT_SWITCH = 1;
-    public static final int ARM_AT_TOP_LIMIT_SWITCH = 3;
-
-    //***************DOUBLE*SOLENOIDS*************//
-
-    public static final int[] GEAR_SHIFTER_SOLENOID = {0, 1};
-    public static final int[] SECURE_HATCH_SOLENOID = {0, 1};
-    public static final int[] ARM_SOLENOID = {4, 5};
-    public static final int[] POP_HATCH_SOLENOID = {6, 7};
-
-    public static final int GEAR_SHIFTER_SOLENOID_PDP = 0;
-    public static final int SECURE_HATCH_SOLENOID_PDP = 1;
-    public static final int ARM_SOLENOID_PDP = 0;
-    public static final int POP_HATCH_SOLENOID_PDP = 0;
-
-    // public static final int[] ZLIFT_SOLENOID = {2,3};
 
     //*******************MISC********************//
 
