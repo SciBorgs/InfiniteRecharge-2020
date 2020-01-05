@@ -1,4 +1,4 @@
-package frc.robot.helpers;
+package frc.robot.dataTypes;
 
 public class Pair<First, Second> {
 
