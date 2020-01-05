@@ -37,7 +37,7 @@ public class PointFollower {
 
     public void update() {
         if (isDone()){return;}
-        double heading = Robot.get(SD.PigeonAngle);
+        double heading = Robot.get(SD.Angle);
         Point currPos  = Robot.getPos(); // create weights based on those distances
         checkIfHitPoint(currPos); // will remove points you are close enough to as you have "hit" them
         double error = Geo.subtractAngles(heading, getDesiredHeading(currPos, heading));

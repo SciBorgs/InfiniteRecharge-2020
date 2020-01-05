@@ -56,6 +56,11 @@ public class PortMap {
 
     public static final int PIGEON_TALON = 9;
 
+    public static final int TILT_PIGEON = 11;      // CHANGE TO ACTUAL INPUT
+    public static final int SHIFTING_TALON = 10;   // CHANGE TO ACTUAL INPUT
+    public static final int LIFT_LEFT_TALON = 12;  // CHANGE TO ACTUAL INPUT
+    public static final int LIFT_RIGHT_TALON = 13; // CHANGE TO ACTUAL INPUT
+
     //*******************MISC********************//
 
     public static final int PRESSURE_SENSOR = 0;
