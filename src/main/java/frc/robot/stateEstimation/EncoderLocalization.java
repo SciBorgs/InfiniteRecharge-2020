@@ -45,6 +45,7 @@ public class EncoderLocalization implements Updater, Model {
     @Override
     public Hashtable<SD, Double> getStdDevs(){return this.stdDevs;}
     
+    // Just multiplies the difference in angle by the wheel radius
     public double wheelRotationChange(SD wheelAngleSD, RobotStateHistory stateHistory){
         return StateInfo.getDifference(stateHistory, wheelAngleSD, 1) * DriveSubsystem.WHEEL_RADIUS;
     }
@@ -54,15 +55,12 @@ public class EncoderLocalization implements Updater, Model {
         double newTheta = theta + deltaTheta;
         RobotState robotState = new RobotState();
         
-        double avgTheta = (theta + newTheta)/2;
+        double avgTheta = (theta + newTheta)/2; // we use the avgtheta, as it reduces error tremendously
         for(double wheelDistance : wheelDistances){
-            if (wheelDistance != 0){
-                ////system.out.println("x change: " + wheelChangeInfo.rotationChange * Math.cos(avgTheta + wheelChangeInfo.angle) / wheelAmount);
-            }
             x += wheelDistance * Math.cos(avgTheta) / wheelDistances.size();
             y += wheelDistance * Math.sin(avgTheta) / wheelDistances.size();
         }
-        robotState.set(SD.X, -x);
+        robotState.set(SD.X, x);
         robotState.set(SD.Y, y);
         robotState.set(SD.PigeonAngle, newTheta);
         robotState.set(SD.GearShiftSolenoid, 0.0);
@@ -72,12 +70,6 @@ public class EncoderLocalization implements Updater, Model {
     @Override
     public void updateState(RobotStateHistory stateHistory){
         RobotState state = stateHistory.statesAgo(1);
-        // Robot.delayedPrint("left wheel angle: " + Robot.get(SD.LeftWheelAngle));
-        // Robot.delayedPrint("" + wheelRotationChange(SD.LeftWheelAngle, pastStates));
-        if (Robot.get(SD.X) != 0){
-            //system.out.println("robot: " + Robot.get(SD.X));
-            //system.out.println("state: " + state.get(SD.X));
-        }
         ArrayList<Double> wheelChanges = new ArrayList<>();
         wheelChanges.add(wheelRotationChange(SD.LeftWheelAngle,  stateHistory));
         wheelChanges.add(wheelRotationChange(SD.RightWheelAngle, stateHistory));
@@ -102,8 +94,8 @@ public class EncoderLocalization implements Updater, Model {
 	}
 
     public void printPosition(){
-        //system.out.println("X: " + Robot.get(SD.X));
-        //system.out.println("Y: " + Robot.get(SD.Y));
-        //system.out.println("Angle: " + Math.toDegrees(Robot.get(SD.PigeonAngle)));
+        System.out.println("X: " + Robot.get(SD.X));
+        System.out.println("Y: " + Robot.get(SD.Y));
+        System.out.println("Angle: " + Math.toDegrees(Robot.get(SD.PigeonAngle)));
     }
 }

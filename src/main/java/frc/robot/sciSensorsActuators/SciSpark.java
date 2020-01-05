@@ -3,6 +3,7 @@ package frc.robot.sciSensorsActuators;
 import com.revrobotics.CANSparkMax;
 
 import frc.robot.Utils;
+import frc.robot.tests.Tester;
 
 public class SciSpark extends CANSparkMax{
 
@@ -25,10 +26,14 @@ public class SciSpark extends CANSparkMax{
         return super.getEncoder().getPosition() * 2 * Math.PI;
     }
 
-    public double getOutputAngle(){
-        return getOutputAngle(this.gearRatio);
+    public double getWheelAngle(){
+        try {
+            return getWheelAngle(this.gearRatio);
+        } catch (Exception _e) {
+            throw new RuntimeException("getWheelAngle called with no gear ratio, and SciSpark not initialized with gear ratio");
+        }
     }
-    public double getOutputAngle(double gearRatio){
+    public double getWheelAngle(double gearRatio){
         return getAngle() * gearRatio;
     }
 

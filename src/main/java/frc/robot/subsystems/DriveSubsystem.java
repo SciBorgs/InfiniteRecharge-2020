@@ -85,7 +85,7 @@ public class DriveSubsystem extends Subsystem {
     }
     
     public void updateSparkState(SciSpark spark){
-        Robot.set(this.sparkToWheelAngleSD.get(spark), spark.getOutputAngle(GEAR_RATIO));
+        Robot.set(this.sparkToWheelAngleSD.get(spark), spark.getWheelAngle(GEAR_RATIO));
         Robot.set(this.sparkToValueSD.get(spark),   spark.get());
         Robot.set(this.sparkToVoltageSD.get(spark), spark.getBusVoltage());
         Robot.set(this.sparkToCurrentSD.get(spark), spark.getOutputCurrent());

@@ -24,10 +24,14 @@ public class SciTalon extends TalonSRX{
         return super.getSensorCollection().getQuadraturePosition() / ENC_TICKS_PER_REV * 2 * Math.PI;
     }
 
-    public double getOutputAngle(){
-        return getOutputAngle(this.gearRatio);
+    public double getWheelAngle(){
+        try {
+            return getWheelAngle(this.gearRatio);
+        } catch (Exception _e) {
+            throw new RuntimeException("getWheelAngle called with no gear ratio, and SciTalon not initialized with gear ratio");
+        }
     }
-    public double getOutputAngle(double gearRatio){
+    public double getWheelAngle(double gearRatio){
         return getAngle() * gearRatio;
     }
 
