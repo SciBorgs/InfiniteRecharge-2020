@@ -5,7 +5,7 @@ import java.util.Hashtable;
 import java.util.Set;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
-import frc.robot.helpers.BiHashMap;
+import frc.robot.dataTypes.BiHashMap;
 
 public class RobotState {
     private final String FILENAME = "RobotState.java";

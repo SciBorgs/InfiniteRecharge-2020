@@ -1,9 +1,12 @@
-package frc.robot.helpers;
+package frc.robot.dataTypes;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class Deque<T> {
+    // For us, if you add an element to a deque, and do .get(0) you will get that
+    // Once you hit the maximum length, you will effectively also remove the last element (the element that's been in the deque for the longest)
+    // To make adding O(1), when it is the max length, we shift our "starting point", and just set an element of the arraylist
     private List<T> list;
     public int maxLength, head;
 

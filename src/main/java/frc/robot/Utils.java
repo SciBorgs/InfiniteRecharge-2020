@@ -9,7 +9,7 @@ import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.DigitalOutput;
 import frc.robot.robotState.RobotState.SD;
 import frc.robot.robotState.*;
-import frc.robot.helpers.Pair;
+import frc.robot.dataTypes.Pair;
 
 import java.util.*;
 import java.util.Collections;

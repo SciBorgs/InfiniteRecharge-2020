@@ -7,6 +7,7 @@ import java.util.List;
 import frc.robot.subsystems.*;
 import frc.robot.commands.*;
 import frc.robot.helpers.*;
+import frc.robot.dataTypes.*;
 import frc.robot.stateEstimation.*;
 import frc.robot.logging.*;
 import frc.robot.shapes.*;

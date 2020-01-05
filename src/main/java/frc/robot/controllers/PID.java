@@ -2,7 +2,7 @@ package frc.robot.controllers;
 
 import edu.wpi.first.wpilibj.Timer;
 import frc.robot.Utils;
-import frc.robot.helpers.Deque;
+import frc.robot.dataTypes.Deque;
 
 import java.util.ArrayList;
 
@@ -80,7 +80,7 @@ public class PID {
 	public double getOutput() {return this.output;}
 	public double getLimitedOutput(double limit) {return Utils.limitOutput(this.output,limit);}
 	public void setNegligibleOutput(double negligibleOutput){this.negligibleOutput = negligibleOutput;}
-	public boolean outputIsNegligible(){
+	public boolean isOutputNegligible(){
 		return Math.abs(getOutput()) < this.negligibleOutput;
 	}
 }
