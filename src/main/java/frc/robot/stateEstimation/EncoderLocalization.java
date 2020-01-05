@@ -34,7 +34,7 @@ public class EncoderLocalization implements Updater, Model {
         this.stdDevs = new Hashtable<>();
         this.stdDevs.put(SD.X,     X_STD_DEV);
         this.stdDevs.put(SD.Y,     Y_STD_DEV);
-        this.stdDevs.put(SD.PigeonAngle, ANGLE_STD_DEV);
+        this.stdDevs.put(SD.Angle, ANGLE_STD_DEV);
         this.stdDevs.put(SD.GearShiftSolenoid, 0.0);
         this.stdDevs.put(SD.LeftWheelAngle, 0.0);
         this.stdDevs.put(SD.RightWheelAngle, 0.0);
@@ -62,7 +62,7 @@ public class EncoderLocalization implements Updater, Model {
         }
         robotState.set(SD.X, x);
         robotState.set(SD.Y, y);
-        robotState.set(SD.PigeonAngle, newTheta);
+        robotState.set(SD.Angle, newTheta);
         robotState.set(SD.GearShiftSolenoid, 0.0);
         return robotState;
     }
@@ -75,7 +75,7 @@ public class EncoderLocalization implements Updater, Model {
         wheelChanges.add(wheelRotationChange(SD.RightWheelAngle, stateHistory));
         double thetaChange = StateInfo.getDifference(stateHistory, SD.PigeonAngle, 1);
         RobotState newPosition = 
-            nextPosition(state.get(SD.X), state.get(SD.Y), state.get(SD.PigeonAngle), wheelChanges, thetaChange);
+            nextPosition(state.get(SD.X), state.get(SD.Y), state.get(SD.Angle), wheelChanges, thetaChange);
         stateHistory.currentState().incorporateOtherState(newPosition); 
     }
 
@@ -88,14 +88,11 @@ public class EncoderLocalization implements Updater, Model {
     public Iterable<SD> getSDs(){return this.stdDevs.keySet();}
     
 	public void periodicLog(){
-        Robot.logger.addData(FILENAME, "robot X",     Robot.get(SD.X),     DefaultValue.Previous);
-        Robot.logger.addData(FILENAME, "robot y",     Robot.get(SD.Y),     DefaultValue.Previous);
-        Robot.logger.addData(FILENAME, "robot angle", Robot.get(SD.PigeonAngle), DefaultValue.Previous);
 	}
 
     public void printPosition(){
         System.out.println("X: " + Robot.get(SD.X));
         System.out.println("Y: " + Robot.get(SD.Y));
-        System.out.println("Angle: " + Math.toDegrees(Robot.get(SD.PigeonAngle)));
+        System.out.println("Angle: " + Math.toDegrees(Robot.get(SD.Angle)));
     }
 }

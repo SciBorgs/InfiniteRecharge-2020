@@ -13,7 +13,7 @@ public class RobotState {
     // SD = State Dimension
     public enum SD {
         // Position
-        X, Y, PigeonAngle,
+        X, Y, PigeonAngle, Angle,
 
         // Chassis motor values
         LeftWheelAngle, RightWheelAngle, L1WheelAngle, R1WheelAngle, L2WheelAngle, R2WheelAngle,

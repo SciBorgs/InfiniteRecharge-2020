@@ -39,7 +39,7 @@ public class Robot extends TimedRobot {
 
     public static RobotState getState(){ return stateHistory.currentState(); }
     public static RobotState statesAgo(int numTicks){return stateHistory.statesAgo(numTicks);}
-    private List<Pair<SD, DefaultValue>> dataToLog = new ArrayList<>();
+    private static List<Pair<SD, DefaultValue>> dataToLog = new ArrayList<>();
 
     public static double get(SD sd)            {return getState().get(sd);}
     public static void   set(SD sd, double val){       getState().set(sd, val);}
@@ -88,11 +88,11 @@ public class Robot extends TimedRobot {
         positionModel.updateRobotState();
     }
 
-    public void addSDToLog(SD sd, DefaultValue val) { this.dataToLog.add(new Pair<>(sd, val)); }
-    public void addSDToLog(SD sd)                   { addSDToLog(sd, DefaultValue.Empty); }
+    public static void addSDToLog(SD sd, DefaultValue val) { Robot.dataToLog.add(new Pair<>(sd, val)); }
+    public static void addSDToLog(SD sd)                   { addSDToLog(sd, DefaultValue.Empty); }
 
     public void logState() {
-        for (Pair<SD, DefaultValue> pair : this.dataToLog) {
+        for (Pair<SD, DefaultValue> pair : Robot.dataToLog) {
             SD sd = pair.first;
             Robot.logger.addData(FILENAME, sd.name(), get(sd), pair.second);
         }
@@ -109,6 +109,9 @@ public class Robot extends TimedRobot {
         pneumaticsSubsystem.stopCompressor();
         //logger.incrementPrevious("robot.java", "deploy", DefaultValue.Previous);
         //logger.logData();
+        addSDToLog(SD.X);
+        addSDToLog(SD.Y);
+        addSDToLog(SD.Angle);
     }
 
     public void logDataPeriodic() {
