@@ -11,7 +11,7 @@ public class CircleController {
 
     private static final double ERROR = 0.02;
     private static final double FINAL_HEADING_P = .8;
-    private static final double DESIRED_HEADING_P = .8;
+    private static final double DESIRED_HEADING_P = .4;
     private PID finalHeadingPID   = new PID(FINAL_HEADING_P, 0, 0);
     private PID desiredHeadingPID = new PID(DESIRED_HEADING_P, 0, 0);
 
@@ -20,12 +20,15 @@ public class CircleController {
         Circle currCircle  = Circle.twoPointTangentAngleForm(currPos, currHeading, finalPos);
         double expectedFinalHeading = Geo.thetaOf(Geo.getTangentToCircle(currCircle, finalPos));
 
+        //if (Utils.inRange(currPos.y, finalPos.y, ERROR)){
+        //    currPos.y += ERROR;
+        //}
         // We don't need Geo.subtractAngles b/c we expect this to be 90 or -90. 
         double angle1 = Geo.normalizeAngle(currHeading)  - Geo.angleBetween(currPos,  currCircle.center);
         double angle2 = Geo.normalizeAngle(finalHeading) - Geo.angleBetween(finalPos, currCircle.center);
 
         if (!Utils.inRange(angle1, angle2, ERROR)) { 
-            DelayedPrinter.print("negating expected final heading");
+            //DelayedPrinter.print("negating expected final heading");
             expectedFinalHeading *= -1; 
         }
 
@@ -35,11 +38,12 @@ public class CircleController {
         double desiredHeadingError = Geo.subtractAngles(Geo.angleBetween(currPos, finalPos), currHeading);
         desiredHeadingPID.addMeasurement(desiredHeadingError);
         DelayedPrinter.print("expectedFinalHeading: " + expectedFinalHeading);
-        DelayedPrinter.print("center: (" + currCircle.center.x +", " + currCircle.center.y + ")\t radius: "
-                                                                                      + currCircle.radius);
+        //DelayedPrinter.print("center: (" + currCircle.center.x +", " + currCircle.center.y + ")\t radius: " + currCircle.radius);
         DelayedPrinter.print("finalHeadingError: " + Math.toDegrees(finalHeadingError) + "\tdesiredHeadingError: " + Math.toDegrees(desiredHeadingError));
 
         double turnMagnitude = desiredHeadingPID.getOutput() + finalHeadingPID.getOutput();  
-        Robot.driveSubsystem.setSpeedTankTurningPercentage(turnMagnitude);
+        DelayedPrinter.print("turnMagnitude: "+turnMagnitude);
+        Robot.driveSubsystem.setSpeedTankTurningPercentage(turnMagnitude * -.2);
+        //Robot.driveSubsystem.setSpeedTank((.5 + .2* turnMagnitude)*-1,( .5- .1* turnMagnitude)*-1);
     }
 }
