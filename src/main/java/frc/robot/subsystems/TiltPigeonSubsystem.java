@@ -7,9 +7,12 @@ import frc.robot.robotState.RobotState.SD;
 import edu.wpi.first.wpilibj.command.Subsystem;
 
 public class TiltPigeonSubsystem extends Subsystem {
-    SciPigeon tiltPigeon;
+    private SciPigeon tiltPigeon;
+    private final String FILENAME = "TiltPigeonSubsystem.java";
+
     public TiltPigeonSubsystem() {
         tiltPigeon = new SciPigeon(new SciTalon(PortMap.TILT_PIGEON));
+        Robot.addSDToLog(SD.TiltAngle);
     }
 
     public void updateRobotState(){
