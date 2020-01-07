@@ -1,7 +1,7 @@
 package frc.robot.robotState;
 
 import java.util.List;
-import frc.robot.helpers.Deque;
+import frc.robot.dataTypes.Deque;
 
 public class RobotStateHistory{
 

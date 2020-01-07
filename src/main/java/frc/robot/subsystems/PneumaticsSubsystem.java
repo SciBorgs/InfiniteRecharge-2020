@@ -21,15 +21,16 @@ public class PneumaticsSubsystem extends Subsystem {
 
   public PneumaticsSubsystem() {
     this.pressureSensor = new AnalogInput(PortMap.PRESSURE_SENSOR);
-    Robot.set(VOLTAGE_SD, 0.0);
+    Robot.set(SD.PressureSensorVoltage, 0.0);
     this.compressor = new Compressor();
+    Robot.addSDToLog(SD.PressureSensorVoltage);
   }
     
 	public void periodicLog(){
     Robot.logger.addData(FILENAME, "pressure", getPressure(), DefaultValue.Previous);
   }
   public void updateRobotState(){
-    Robot.getState().set(VOLTAGE_SD, pressureSensor.getVoltage());
+    Robot.getState().set(SD.PressureSensorVoltage, pressureSensor.getVoltage());
   }
 
   public double getPressure() {
@@ -39,5 +40,5 @@ public class PneumaticsSubsystem extends Subsystem {
 
   public void startCompressor(){this.compressor.start();}
   public void stopCompressor() {this.compressor.stop();}
-  public double getRawVoltage(){return Robot.get(VOLTAGE_SD);}
+  public double getRawVoltage(){return Robot.get(SD.PressureSensorVoltage);}
 }

@@ -21,7 +21,7 @@ public class Line extends LineLike{
         if (o.getClass() != Line.class) {return false;}
         Line line = (Line) o;
 
-        return Geo.thetaOf(this) - Geo.thetaOf(line) <= Utils.getEpsilon() && this.contains(line.p2);
+        return Geo.thetaOf(this) - Geo.thetaOf(line) <= Utils.EPSILON && this.contains(line.p2);
     }
 
     @Override

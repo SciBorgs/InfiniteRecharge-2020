@@ -5,7 +5,7 @@ import java.util.Hashtable;
 import java.util.Set;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
-import frc.robot.helpers.BiHashMap;
+import frc.robot.dataTypes.BiHashMap;
 
 public class RobotState {
     private final String FILENAME = "RobotState.java";
@@ -13,7 +13,7 @@ public class RobotState {
     // SD = State Dimension
     public enum SD {
         // Position
-        X, Y, PigeonAngle,
+        X, Y, PigeonAngle, Angle,
 
         // Chassis motor values
         LeftWheelAngle, RightWheelAngle, L1WheelAngle, R1WheelAngle, L2WheelAngle, R2WheelAngle,

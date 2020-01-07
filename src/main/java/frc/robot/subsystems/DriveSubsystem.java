@@ -27,6 +27,7 @@ public class DriveSubsystem extends Subsystem {
     private static final double INPUT_DEADZONE = 0.11; // deadzone because the joysticks are bad and they detect input when there is none
     private static final double STRAIGHT_DEADZONE = 0.15;
     private static final double STRAIGHT_EQUAL_INPUT_DEADZONE = 0; // If goal Omega is 0 and our regular input diff magnitude is less than this, the input diff goes to 0
+    public static final double GEAR_RATIO = 1 / 9.0;
     private PID tankAnglePID;
     public boolean assisted = false;
     public double driveMultiplier = 1;
@@ -44,13 +45,13 @@ public class DriveSubsystem extends Subsystem {
         this.sparkToVoltageSD = new Hashtable<>();
         this.sparkToCurrentSD = new Hashtable<>();
 
-		this.l  = new SciSpark(PortMap.LEFT_FRONT_SPARK);
-		this.l1 = new SciSpark(PortMap.LEFT_MIDDLE_SPARK);
-        this.l2 = new SciSpark(PortMap.LEFT_BACK_SPARK);
+		this.l  = new SciSpark(PortMap.LEFT_FRONT_SPARK,  GEAR_RATIO);
+		this.l1 = new SciSpark(PortMap.LEFT_MIDDLE_SPARK, GEAR_RATIO);
+        this.l2 = new SciSpark(PortMap.LEFT_BACK_SPARK,   GEAR_RATIO);
         
-		this.r  = new SciSpark(PortMap.RIGHT_FRONT_SPARK);
-		this.r1 = new SciSpark(PortMap.RIGHT_MIDDLE_SPARK);
-        this.r2 = new SciSpark(PortMap.RIGHT_BACK_SPARK);
+		this.r  = new SciSpark(PortMap.RIGHT_FRONT_SPARK,  GEAR_RATIO);
+		this.r1 = new SciSpark(PortMap.RIGHT_MIDDLE_SPARK, GEAR_RATIO);
+        this.r2 = new SciSpark(PortMap.RIGHT_BACK_SPARK,   GEAR_RATIO);
 
         this.l .setInverted(true);
         this.l1.setInverted(true);
@@ -62,6 +63,7 @@ public class DriveSubsystem extends Subsystem {
         this.r1.follow(this.r);
         this.r2.follow(this.r);
 
+        // Mappings for logging
         setSDMappings(this.l, SD.LeftWheelAngle,  SD.LeftSparkVal,  SD.LeftSparkVoltage,  SD.LeftSparkCurrent);
         setSDMappings(this.r, SD.RightWheelAngle, SD.RightSparkVal, SD.RightSparkVoltage, SD.RightSparkCurrent);
         
@@ -82,58 +84,44 @@ public class DriveSubsystem extends Subsystem {
         this.sparkToCurrentSD   .put(spark, currentSd);
     }
     
-	public void periodicLog(){
-    }
-    public void updateRobotState(){
-        for(SciSpark spark : getSparks()){updateSparkState(spark);}
-    }
     public void updateSparkState(SciSpark spark){
-        Robot.getState().set(this.sparkToWheelAngleSD.get(spark), spark.getOutputAngle(Robot.gearShiftSubsystem.getCurrentGearRatio()));
-        Robot.getState().set(this.sparkToValueSD.get(spark),   spark.get());
-        Robot.getState().set(this.sparkToVoltageSD.get(spark), spark.getBusVoltage());
-        Robot.getState().set(this.sparkToCurrentSD.get(spark), spark.getOutputCurrent());
+        Robot.set(this.sparkToWheelAngleSD.get(spark), spark.getWheelAngle());
+        Robot.set(this.sparkToValueSD.get(spark),   spark.get());
+        Robot.set(this.sparkToVoltageSD.get(spark), spark.getBusVoltage());
+        Robot.set(this.sparkToCurrentSD.get(spark), spark.getOutputCurrent());
     }
 
 	public SciSpark[] getSparks() {
         return new SciSpark[]{this.l, this.l1, this.l2, this.r, this.r1, this.r2};
     }
+	public void periodicLog(){
+    }
+    public void updateRobotState(){
+        for(SciSpark spark : getSparks()){updateSparkState(spark);}
+    }
 
     public double deadzone(double output){
-        if (Math.abs(output) < INPUT_DEADZONE){
-            return 0;
-        } else {
-            return output;
-        }
+        return Math.abs(output) < INPUT_DEADZONE ? 0 : output;
     }
     
     public double processStick(Joystick stick){
-        return deadzone(-stick.getY());
+        return deadzone(stick.getY());
     }
 
+    // If something is assiting, we don't want to drive using setSpeed
     public void assistedDriveMode(){this.assisted = true;}
     public void manualDriveMode()  {this.assisted = false;}
 
     public void setSpeed(Joystick leftStick, Joystick rightStick) {
         if (!this.assisted) {
-            double leftInput  = -processStick(leftStick);
-            double rightInput = -processStick(rightStick);
+            double leftInput  = processStick(leftStick);
+            double rightInput = processStick(rightStick);
             setSpeedTankAngularControl(leftInput, rightInput);
         }
     }
 	
 	public void setSpeedRaw(Joystick leftStick, Joystick rightStick){
 		setSpeedTank(processStick(leftStick),processStick(rightStick));
-    }
-
-    public double limitJerk(double oldSpeed, double newSpeed, double maxJerk){
-        // Makes sure that the change in input for a motor is not more than maxJerk
-        if (oldSpeed - newSpeed > maxJerk){
-            return oldSpeed - maxJerk;
-        } else if (newSpeed - oldSpeed > maxJerk){
-            return oldSpeed + maxJerk;
-        } else {
-            return newSpeed;
-        }
     }
 
     public void defaultDriveMultilpier(){this.driveMultiplier = 1;}
@@ -180,6 +168,7 @@ public class DriveSubsystem extends Subsystem {
 	}
 
     public void setSpeedTankForwardTurningMagnitude(double forward, double turnMagnitude) {
+        // Note: this controls dtheta/dt rather than dtheta/dx
         setSpeedTank(forward + turnMagnitude, forward - turnMagnitude);
     }
 

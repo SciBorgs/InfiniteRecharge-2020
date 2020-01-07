@@ -1,7 +1,7 @@
 package frc.robot.shapes;
 
 import frc.robot.Utils;
-import frc.robot.helpers.*;
+import frc.robot.dataTypes.Pair;
 
 public class LineSegment extends LineLike implements AlmostLine {
     public LineSegment(Point p1, Point p2){

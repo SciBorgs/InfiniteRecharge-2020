@@ -8,6 +8,7 @@ import edu.wpi.first.wpilibj.command.Subsystem;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 public class PigeonSubsystem extends Subsystem {
+  // for the main pigeon on the robot
     public  SciPigeon pigeon;
     private TalonSRX pigeonTalon;
     

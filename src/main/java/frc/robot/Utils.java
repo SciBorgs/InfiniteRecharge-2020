@@ -9,7 +9,7 @@ import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.DigitalOutput;
 import frc.robot.robotState.RobotState.SD;
 import frc.robot.robotState.*;
-import frc.robot.helpers.Pair;
+import frc.robot.dataTypes.Pair;
 
 import java.util.*;
 import java.util.Collections;
@@ -21,8 +21,9 @@ public class Utils{
 
     private static Random r = new Random();
 
-    public static double METERS_TO_INCHES = 39.37;
-    private static final double EPSILON = 1e-9;
+    public static final double METERS_TO_INCHES = 39.37;
+    // essnetially an error that we're willing to have, probably due to floating point rounding
+    public static final double EPSILON = 1e-6;
 
     public static double metersToInches(double meters){return meters * METERS_TO_INCHES;}
     public static double inchesToMeters(double inches){return inches / METERS_TO_INCHES;}
@@ -37,11 +38,6 @@ public class Utils{
         }
     }
 
-    public static void trimIf(ArrayList<Double> arr, int maxSize) {
-        // Trims an array down to a max size, starting from the start
-        while (maxSize < arr.size()){arr.remove(0);}
-    }
-
     public static boolean inRange(double n1, double n2, double error){
         return Math.abs(n1 - n2) < error;
     }
@@ -54,28 +50,19 @@ public class Utils{
         return (last(arr) - arr.get(0)) / arr.size();
     }
 
-    public static void trimAdd(ArrayList<Double> arr, double val, int maxSize) {
-        // Adds a value to the array and then trims it to a max size
-        arr.add(val);
-        trimIf(arr, maxSize);
-    }
-
-    public static int bringInRange(int val, int min, int max) {
+    // if a number isn't in the range, you keep on adding the difference (max - min) until it is in the range
+    // for example, you can use it to find an angle that is overlapping within a range, such as -180 and 180
+    public static double bringInRange(double val, double min, double max) {
         return ((val - min) % (max - min)) + min;
     }
 
-    public static double limitOutput(double output, double max){
-        if (output > max) {
-            return max;
-        } else if (output < - max) {
-            return -max;
-        } else {
-            return output;
-        }
+    // if it isn't between max or min, it will bring it down to max, or up to min
+    public static double limitOutput(double output, double max, double min){
+        return Math.min(Math.max(output, min), max);
     }
 
-    public static void setTalon(TalonSRX talon, double speed){
-        talon.set(ControlMode.PercentOutput, speed);
+    public static double limitOutput(double output, double max){
+        return limitOutput(output, max, 0 - max);
     }
 
     public static int boolToInt(boolean b){
@@ -129,10 +116,8 @@ public class Utils{
         doubleSolenoid.set(oppositeDoubleSolenoidValue(doubleSolenoid.get()));
     }
 
-    public static boolean oppositeDigitalOutput(boolean bool){return !bool;}
-
     public static void toggleDigitalOutput(DigitalOutput digitalOutput){
-        oppositeDigitalOutput(digitalOutput.get());
+        digitalOutput.set(!digitalOutput.get());
     }
 
     public static DoubleSolenoid newDoubleSolenoid(int[] ports){
@@ -142,10 +127,13 @@ public class Utils{
         return new DoubleSolenoid(pdpPort, ports[0], ports[1]);
     }
 
+    // given a mean and a stddev, generates a random number
     public static double generateGaussian(double mean, double stdDev){
         return r.nextGaussian() * stdDev + mean;
     }
 
+    // get's all the cummulative summs of an arraylist
+    // for example: [1,3,5,2] -> [1,1+3,1+3+5,1+3+5+2] -> [1,4,9,11]
     public static ArrayList<Double> cummSums(ArrayList<Double> arr){
         ArrayList<Double> ans = new ArrayList<>();
         double sum = 0;
@@ -156,6 +144,7 @@ public class Utils{
         return ans;
     }
 
+    // Generates an arraylist given a length, with random numbers between min and max
     public static ArrayList<Double> randomArrayList(int length, double min, double max){
         ArrayList<Double> arr = new ArrayList<>();
         for(int _i = 0; _i < length; _i++){
@@ -164,6 +153,7 @@ public class Utils{
         return arr;
     }
 
+    // Just so that we get the ascencion vs descnsion correctly
     public static Comparator<Double> ascendingDoubleComparator = Comparator.comparingDouble(d -> d);
 
     public static boolean inBounds(double v, Pair<Double,Double> bounds){
@@ -173,14 +163,8 @@ public class Utils{
     }
 
     public static boolean impreciseEquals(double d1, double d2) {
-        return impreciseEquals(d1, d2, EPSILON);
+        return inRange(d1, d2, EPSILON);
     }
-
-    public static boolean impreciseEquals(double d1, double d2, double precision) {
-        return Math.abs(d1 - d2) <= precision;
-    }
-
-    public static double getEpsilon() {return EPSILON;}
 
     public static<T> ArrayList<T> toArrayList(Iterable<T> iterable){
         ArrayList<T> arrayList = new ArrayList<>();
@@ -204,24 +188,14 @@ public class Utils{
 
     public static void addNoise(RobotState state, Hashtable<SD, Double> stdDevs){
         for (SD sd : stdDevs.keySet()) {
-            // generate gaussian creates noise
+            // generate gaussian to creates noise
             state.set(sd, Utils.generateGaussian(state.get(sd), stdDevs.get(sd)));
         }
     }
 
-    public static double bringInRange(double val, double min, double max) {
-        return ((val - min) % (max - min)) + min;
-    }
-
     public static double limitChange(double oldN, double newN, double maxChange) {
         // Makes sure that the change in input for a motor is not more than maxJerk
-        if (oldN - newN > maxChange) {
-            return oldN - maxChange;
-        } else if (newN - oldN > maxChange) {
-            return oldN + maxChange;
-        } else {
-            return newN;
-        }
+        return limitOutput(newN, oldN + maxChange, oldN - maxChange);
     }
 
 }

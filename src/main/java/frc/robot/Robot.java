@@ -1,15 +1,13 @@
 package frc.robot;
 
-import java.io.IOException;
-
 import com.revrobotics.CANSparkMax;
 import java.util.ArrayList;
 import java.util.List;
 
-import edu.wpi.first.wpilibj.PowerDistributionPanel;
 import frc.robot.subsystems.*;
 import frc.robot.commands.*;
 import frc.robot.helpers.*;
+import frc.robot.dataTypes.*;
 import frc.robot.stateEstimation.*;
 import frc.robot.logging.*;
 import frc.robot.shapes.*;
@@ -18,10 +16,8 @@ import frc.robot.robotState.*;
 import frc.robot.robotState.RobotState.SD;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import frc.robot.controllers.*;
-import frc.robot.robotState.*;
 
 public class Robot extends TimedRobot {
     private Timer timer = new Timer();
@@ -33,7 +29,6 @@ public class Robot extends TimedRobot {
     public static DriveSubsystem      driveSubsystem      = new DriveSubsystem();
 
     public static PigeonSubsystem     pigeonSubsystem     = new PigeonSubsystem();
-    public static GearShiftSubsystem  gearShiftSubsystem  = new GearShiftSubsystem();
     public static LimelightSubsystem  limelightSubsystem  = new LimelightSubsystem();
     public static PneumaticsSubsystem pneumaticsSubsystem = new PneumaticsSubsystem();
     
@@ -44,7 +39,7 @@ public class Robot extends TimedRobot {
 
     public static RobotState getState(){ return stateHistory.currentState(); }
     public static RobotState statesAgo(int numTicks){return stateHistory.statesAgo(numTicks);}
-    private List<Pair<SD, DefaultValue>> dataToLog = new ArrayList<>();
+    private static List<Pair<SD, DefaultValue>> dataToLog = new ArrayList<>();
 
     public static double get(SD sd)            {return getState().get(sd);}
     public static void   set(SD sd, double val){       getState().set(sd, val);}
@@ -77,20 +72,27 @@ public class Robot extends TimedRobot {
 
     private int attemptsSinceLastLog;
     public static final int LOG_PERIOD = 5;
+
+    private void allPeriodicLogs() {
+        driveSubsystem.periodicLog();
+        limelightSubsystem.periodicLog();
+        pneumaticsSubsystem.periodicLog();
+        following.periodicLog();
+        logState();
+    }
     
     private void allUpdateRobotStates() {
         driveSubsystem.updateRobotState();
-        gearShiftSubsystem.updateRobotState();
         pneumaticsSubsystem.updateRobotState();
         pigeonSubsystem.updateRobotState();
         positionModel.updateRobotState();
     }
 
-    public void addSDToLog(SD sd, DefaultValue val) { this.dataToLog.add(new Pair<>(sd, val)); }
-    public void addSDToLog(SD sd)                   { addSDToLog(sd, DefaultValue.Empty); }
+    public static void addSDToLog(SD sd, DefaultValue val) { Robot.dataToLog.add(new Pair<>(sd, val)); }
+    public static void addSDToLog(SD sd)                   { addSDToLog(sd, DefaultValue.Empty); }
 
     public void logState() {
-        for (Pair<SD, DefaultValue> pair : this.dataToLog) {
+        for (Pair<SD, DefaultValue> pair : Robot.dataToLog) {
             SD sd = pair.first;
             Robot.logger.addData(FILENAME, sd.name(), get(sd), pair.second);
         }
@@ -106,6 +108,10 @@ public class Robot extends TimedRobot {
         positionModel.updateRobotState();
         pneumaticsSubsystem.stopCompressor();
         //logger.incrementPrevious("robot.java", "deploy", DefaultValue.Previous);
+        //logger.logData();
+        addSDToLog(SD.X);
+        addSDToLog(SD.Y);
+        addSDToLog(SD.Angle);
     }
 
     public void logDataPeriodic() {

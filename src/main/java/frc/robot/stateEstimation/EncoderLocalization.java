@@ -34,7 +34,7 @@ public class EncoderLocalization implements Updater, Model {
         this.stdDevs = new Hashtable<>();
         this.stdDevs.put(SD.X,     X_STD_DEV);
         this.stdDevs.put(SD.Y,     Y_STD_DEV);
-        this.stdDevs.put(SD.PigeonAngle, ANGLE_STD_DEV);
+        this.stdDevs.put(SD.Angle, ANGLE_STD_DEV);
         this.stdDevs.put(SD.GearShiftSolenoid, 0.0);
         this.stdDevs.put(SD.LeftWheelAngle, 0.0);
         this.stdDevs.put(SD.RightWheelAngle, 0.0);
@@ -45,6 +45,7 @@ public class EncoderLocalization implements Updater, Model {
     @Override
     public Hashtable<SD, Double> getStdDevs(){return this.stdDevs;}
     
+    // Just multiplies the difference in angle by the wheel radius
     public double wheelRotationChange(SD wheelAngleSD, RobotStateHistory stateHistory){
         return StateInfo.getDifference(stateHistory, wheelAngleSD, 1) * DriveSubsystem.WHEEL_RADIUS;
     }
@@ -54,17 +55,14 @@ public class EncoderLocalization implements Updater, Model {
         double newTheta = theta + deltaTheta;
         RobotState robotState = new RobotState();
         
-        double avgTheta = (theta + newTheta)/2;
+        double avgTheta = (theta + newTheta)/2; // we use the avgtheta, as it reduces error tremendously
         for(double wheelDistance : wheelDistances){
-            if (wheelDistance != 0){
-                ////system.out.println("x change: " + wheelChangeInfo.rotationChange * Math.cos(avgTheta + wheelChangeInfo.angle) / wheelAmount);
-            }
             x += wheelDistance * Math.cos(avgTheta) / wheelDistances.size();
             y += wheelDistance * Math.sin(avgTheta) / wheelDistances.size();
         }
-        robotState.set(SD.X, -x);
+        robotState.set(SD.X, x);
         robotState.set(SD.Y, y);
-        robotState.set(SD.PigeonAngle, newTheta);
+        robotState.set(SD.Angle, newTheta);
         robotState.set(SD.GearShiftSolenoid, 0.0);
         return robotState;
     }
@@ -72,18 +70,12 @@ public class EncoderLocalization implements Updater, Model {
     @Override
     public void updateState(RobotStateHistory stateHistory){
         RobotState state = stateHistory.statesAgo(1);
-        // Robot.delayedPrint("left wheel angle: " + Robot.get(SD.LeftWheelAngle));
-        // Robot.delayedPrint("" + wheelRotationChange(SD.LeftWheelAngle, pastStates));
-        if (Robot.get(SD.X) != 0){
-            //system.out.println("robot: " + Robot.get(SD.X));
-            //system.out.println("state: " + state.get(SD.X));
-        }
         ArrayList<Double> wheelChanges = new ArrayList<>();
         wheelChanges.add(wheelRotationChange(SD.LeftWheelAngle,  stateHistory));
         wheelChanges.add(wheelRotationChange(SD.RightWheelAngle, stateHistory));
         double thetaChange = StateInfo.getDifference(stateHistory, SD.PigeonAngle, 1);
         RobotState newPosition = 
-            nextPosition(state.get(SD.X), state.get(SD.Y), state.get(SD.PigeonAngle), wheelChanges, thetaChange);
+            nextPosition(state.get(SD.X), state.get(SD.Y), state.get(SD.Angle), wheelChanges, thetaChange);
         stateHistory.currentState().incorporateOtherState(newPosition); 
     }
 
@@ -96,14 +88,11 @@ public class EncoderLocalization implements Updater, Model {
     public Iterable<SD> getSDs(){return this.stdDevs.keySet();}
     
 	public void periodicLog(){
-        Robot.logger.addData(FILENAME, "robot X",     Robot.get(SD.X),     DefaultValue.Previous);
-        Robot.logger.addData(FILENAME, "robot y",     Robot.get(SD.Y),     DefaultValue.Previous);
-        Robot.logger.addData(FILENAME, "robot angle", Robot.get(SD.PigeonAngle), DefaultValue.Previous);
 	}
 
     public void printPosition(){
-        //system.out.println("X: " + Robot.get(SD.X));
-        //system.out.println("Y: " + Robot.get(SD.Y));
-        //system.out.println("Angle: " + Math.toDegrees(Robot.get(SD.PigeonAngle)));
+        System.out.println("X: " + Robot.get(SD.X));
+        System.out.println("Y: " + Robot.get(SD.Y));
+        System.out.println("Angle: " + Math.toDegrees(Robot.get(SD.Angle)));
     }
 }
