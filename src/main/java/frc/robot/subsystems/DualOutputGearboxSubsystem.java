@@ -1,11 +1,7 @@
 package frc.robot.subsystems;
 
-import java.util.Hashtable;
-
-import frc.robot.Robot;
 import frc.robot.PortMap;
 import frc.robot.Utils;
-import frc.robot.robotState.RobotState.SD;
 import frc.robot.sciSensorsActuators.SciSpark;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
@@ -14,41 +10,29 @@ import edu.wpi.first.wpilibj.command.Subsystem;
 public class DualOutputGearboxSubsystem extends Subsystem { // Set ratio, motor, change shaft
     private final String FILENAME = "DualOutputGearboxSubsystem.java";
     
-    public final DoubleSolenoid.Value OPEN_VALUE = Value.kForward;
-    public final DoubleSolenoid.Value CLOSE_VALUE = Utils.oppositeDoubleSolenoidValue(OPEN_VALUE);
+    public final DoubleSolenoid.Value SHIFT_GEAR_UP_VALUE = Value.kForward; // Place values plz
+    public final DoubleSolenoid.Value SHIFT_GEAR_DOWN_VALUE = Utils.oppositeDoubleSolenoidValue(SHIFT_GEAR_UP_VALUE);
+
+    public final DoubleSolenoid.Value SHIFT_CLIMBER_OUTPUT_VALUE = Value.kForward; // Place values plz
+    public final DoubleSolenoid.Value SHIFT_DRIVE_OUTPUT_VALUE = Utils.oppositeDoubleSolenoidValue(SHIFT_CLIMBER_OUTPUT_VALUE);
 
     private DoubleSolenoid GEAR_SHIFT_SOLENOID;
     private DoubleSolenoid OUTPUT_SHIFT_SOLENOID;
 
+    private double driveGearRatio = 0;
+    private double climbGearRatio = 0;
+
+    private double shiftUpGearRatio = 0;
+    private double shiftDownGearRatio = 0;
+
     public SciSpark l, l1, l2, r, r1, r2;
-    public Hashtable<SciSpark, SD> sparkToWheelAngleSD;
-    public Hashtable<SciSpark, SD> sparkToValueSD;
-    public Hashtable<SciSpark, SD> sparkToVoltageSD;
-    public Hashtable<SciSpark, SD> sparkToCurrentSD;
 
-    enum Gearbox {
-        Climber(2),
-        Drive(0);
-        
-        private double gearRatio;
-
-        Gearbox(double gearRatio) {
-            this.gearRatio = gearRatio;
-        }
-
-        public double getGearRatio() {
-            return gearRatio;
-        }
-    }
+    public double shiftGearRatio;
+    public double outputGearRatio;
 
     public DualOutputGearboxSubsystem() {
         GEAR_SHIFT_SOLENOID   = Utils.newDoubleSolenoid(PortMap.GEAR_RATIO_SOLENOID_PDP, PortMap.GEAR_RATIO_SOLENOID);
         OUTPUT_SHIFT_SOLENOID = Utils.newDoubleSolenoid(PortMap.OUTPUT_SOLENOID_PDP, PortMap.OUTPUT_SOLENOID);
-        
-        this.sparkToWheelAngleSD = new Hashtable<>();
-        this.sparkToValueSD = new Hashtable<>();
-        this.sparkToVoltageSD = new Hashtable<>();
-        this.sparkToCurrentSD = new Hashtable<>();
         
         this.l  = new SciSpark(PortMap.LEFT_FRONT_SPARK);
 		this.l1 = new SciSpark(PortMap.LEFT_MIDDLE_SPARK);
@@ -67,45 +51,29 @@ public class DualOutputGearboxSubsystem extends Subsystem { // Set ratio, motor,
 
         this.r1.follow(this.r);
         this.r2.follow(this.r);
-
-        // Mappings for logging
-        setSDMappings(this.l, SD.LeftWheelAngle,  SD.LeftSparkVal,  SD.LeftSparkVoltage,  SD.LeftSparkCurrent);
-        setSDMappings(this.r, SD.RightWheelAngle, SD.RightSparkVal, SD.RightSparkVoltage, SD.RightSparkCurrent);
-        
-        setSDMappings(this.l1, SD.L1WheelAngle, SD.L1SparkVal, SD.L1SparkVoltage, SD.L1SparkCurrent);
-        setSDMappings(this.r1, SD.R1WheelAngle, SD.R1SparkVal, SD.R1SparkVoltage, SD.R1SparkCurrent);
-        setSDMappings(this.l2, SD.L2WheelAngle, SD.L2SparkVal, SD.L2SparkVoltage, SD.L2SparkCurrent);
-        setSDMappings(this.r2, SD.R2WheelAngle, SD.R2SparkVal, SD.R2SparkVoltage, SD.R2SparkCurrent);
     }
     
-    public void shiftGearsPush()     { GEAR_SHIFT_SOLENOID.set(OPEN_VALUE); }
-
-    public void shiftGearRetract()   { GEAR_SHIFT_SOLENOID.set(CLOSE_VALUE); }
-
-    public void shiftOutputPush()    { OUTPUT_SHIFT_SOLENOID.set(OPEN_VALUE); }
+    public void shiftGearsUp() { 
+        GEAR_SHIFT_SOLENOID.set(SHIFT_GEAR_UP_VALUE);
+        shiftGearRatio = shiftUpGearRatio;
+    } 
+    public void shiftGearDown() { 
+        GEAR_SHIFT_SOLENOID.set(SHIFT_GEAR_DOWN_VALUE); 
+        shiftGearRatio = shiftDownGearRatio;
+    }
     
-    public void shiftOutputRetract() { OUTPUT_SHIFT_SOLENOID.set(CLOSE_VALUE); }
-    
-    public void setSDMappings(SciSpark spark, SD wheelAngleSD, SD valueSD, SD volatageSD, SD currentSd){
-        this.sparkToWheelAngleSD.put(spark, wheelAngleSD);
-        this.sparkToValueSD     .put(spark, valueSD);
-        this.sparkToVoltageSD   .put(spark, volatageSD);
-        this.sparkToCurrentSD   .put(spark, currentSd);
+    public void shiftClimberOutput() { 
+        OUTPUT_SHIFT_SOLENOID.set(SHIFT_CLIMBER_OUTPUT_VALUE); 
+        outputGearRatio = climbGearRatio;
+    }
+
+    public void shiftDriveOutput() { 
+        OUTPUT_SHIFT_SOLENOID.set(SHIFT_DRIVE_OUTPUT_VALUE); 
+        outputGearRatio = driveGearRatio;
     }
     
     public SciSpark[] getSparks() {
         return new SciSpark[]{this.l, this.l1, this.l2, this.r, this.r1, this.r2};
-    }
-    
-    public void updateRobotState(){
-        for(SciSpark spark : getSparks()){updateSparkState(spark);}
-    }
-    
-    public void updateSparkState(SciSpark spark){
-        Robot.set(this.sparkToWheelAngleSD.get(spark), spark.getWheelAngle());
-        Robot.set(this.sparkToValueSD.get(spark),   spark.get());
-        Robot.set(this.sparkToVoltageSD.get(spark), spark.getBusVoltage());
-        Robot.set(this.sparkToCurrentSD.get(spark), spark.getOutputCurrent());
     }
     
     public void initDefaultCommand() {
