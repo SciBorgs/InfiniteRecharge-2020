@@ -31,6 +31,7 @@ public class Robot extends TimedRobot {
     public static PigeonSubsystem     pigeonSubsystem     = new PigeonSubsystem();
     public static LimelightSubsystem  limelightSubsystem  = new LimelightSubsystem();
     public static PneumaticsSubsystem pneumaticsSubsystem = new PneumaticsSubsystem();
+    public static IntakeSubsystem     intakeSubsystem     = new IntakeSubsystem();
     
     public static Following following = new Following();
     public static Model positionModel = new EncoderLocalization();
@@ -133,6 +134,7 @@ public class Robot extends TimedRobot {
     }
         
     public void autonomousInit() {
+        intakeSubsystem.openIntake();
     }
 
     public void autonomousPeriodic() {
@@ -142,6 +144,7 @@ public class Robot extends TimedRobot {
     
     @Override
     public void teleopInit() {
+        intakeSubsystem.openIntake();
     }
 
     public void teleopPeriodic() {
@@ -157,6 +160,7 @@ public class Robot extends TimedRobot {
     public void enabledPeriodic() {logDataPeriodic();}
 
     public void disabledInit() {
+        intakeSubsystem.closeIntake();
         // allPeriodicLogs();
         // logger.logData();
         // logger.writeLoggedData();
