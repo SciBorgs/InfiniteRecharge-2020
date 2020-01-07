@@ -42,7 +42,7 @@ public class StateInfo{
         return Math.sqrt(getSpeedSquared(stateHistory));
     }
     public static double getWheelSpeed(RobotStateHistory stateHistory, CANSparkMax wheel){
-        return getRateOfChange(stateHistory, Robot.driveSubsystem.sparkToWheelAngleSD.get(wheel), WHEEL_SPEED_PRECISION);
+        return getRateOfChange(stateHistory, Robot.gearBoxSubsystem.sparkToWheelAngleSD.get(wheel), WHEEL_SPEED_PRECISION);
     }
     public static double getAvgWheelInput(RobotState state){
         return (state.get(SD.LeftSparkVal) + state.get(SD.RightSparkVal)) / 2;

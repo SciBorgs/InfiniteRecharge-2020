@@ -31,6 +31,7 @@ public class Robot extends TimedRobot {
     public static PigeonSubsystem     pigeonSubsystem     = new PigeonSubsystem();
     public static LimelightSubsystem  limelightSubsystem  = new LimelightSubsystem();
     public static PneumaticsSubsystem pneumaticsSubsystem = new PneumaticsSubsystem();
+    public static DualOutputGearboxSubsystem gearBoxSubsystem = new DualOutputGearboxSubsystem();
     
     public static Following following = new Following();
     public static Model positionModel = new EncoderLocalization();
@@ -82,7 +83,7 @@ public class Robot extends TimedRobot {
     }
     
     private void allUpdateRobotStates() {
-        driveSubsystem.updateRobotState();
+        gearBoxSubsystem.updateRobotState();
         pneumaticsSubsystem.updateRobotState();
         pigeonSubsystem.updateRobotState();
         positionModel.updateRobotState();

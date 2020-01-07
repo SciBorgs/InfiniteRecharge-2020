@@ -60,4 +60,11 @@ public class PortMap {
 
     public static final int PRESSURE_SENSOR = 0;
     public static final int TARGETING_LIGHT_DIGITAL_OUTPUT = 5;
+
+    //*******************DOUBLE_SOLENOID********************//
+    public static final int GEAR_RATIO_SOLENOID_PDP = -1;
+    public static final int[] GEAR_RATIO_SOLENOID = {0,-1};
+
+    public static final int OUTPUT_SOLENOID_PDP = -2;
+    public static final int[] OUTPUT_SOLENOID = {0,-2};
 }
