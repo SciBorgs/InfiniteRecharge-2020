@@ -17,14 +17,14 @@ public class ClimberSubsystem extends Subsystem {
 
     private final double CASCADE_GEAR_RATIO = 1; // CHANGE
     private final double CASCADE_WHEEL_RADIUS = 3; //CHANGE
-    private final DoubleSolenoid.Value OPEN_VALUE = kForward;
+    private final DoubleSolenoid.Value OPEN_VALUE = Value.kForward;
     private final DoubleSolenoid.Value CLOSED_VALUE = Utils.oppositeDoubleSolenoidValue(OPEN_VALUE);
 
     public ClimberSubsystem() {
         this.liftRight  = new SciSpark(PortMap.LIFT_RIGHT_TALON, CASCADE_GEAR_RATIO);
         this.liftLeft   = new SciSpark(PortMap.LIFT_LEFT_TALON,  CASCADE_GEAR_RATIO);
         this.shiftMotor = new SciSpark(PortMap.SHIFTING_TALON,   CASCADE_GEAR_RATIO);
-        this.attachSolenoid = new Utils.newDoubleSolenoid(PortMap.CLIMBER_SOLENOID);
+        this.attachSolenoid = Utils.newDoubleSolenoid(PortMap.CLIMBER_SOLENOID);
 
         Robot.addSDToLog(SD.ClimberHeight);
     }
