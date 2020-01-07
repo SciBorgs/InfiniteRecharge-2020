@@ -11,6 +11,11 @@ import frc.robot.logging.Logger.DefaultValue;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.command.Subsystem;
 
+import com.revrobotics.CANSparkMax;
+import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+
 import java.util.Hashtable;
 
 public class DriveSubsystem extends Subsystem {
@@ -28,6 +33,8 @@ public class DriveSubsystem extends Subsystem {
     private static final double STRAIGHT_DEADZONE = 0.15;
     private static final double STRAIGHT_EQUAL_INPUT_DEADZONE = 0; // If goal Omega is 0 and our regular input diff magnitude is less than this, the input diff goes to 0
     public static final double GEAR_RATIO = 1 / 9.0;
+    private static final double DEFAULT_MAX_JERK = 0.1;
+
     private PID tankAnglePID;
     public boolean assisted = false;
     public double driveMultiplier = 1;
@@ -170,6 +177,28 @@ public class DriveSubsystem extends Subsystem {
     public void setSpeedTankForwardTurningMagnitude(double forward, double turnMagnitude) {
         // Note: this controls dtheta/dt rather than dtheta/dx
         setSpeedTank(forward + turnMagnitude, forward - turnMagnitude);
+    }
+
+    public double limitJerk(double oldSpeed, double newSpeed, double maxJerk){
+        // Makes sure that the change in input for a motor is not more than maxJerk
+        if (oldSpeed - newSpeed > maxJerk){
+            return oldSpeed - maxJerk;
+        } else if (newSpeed - oldSpeed > maxJerk){
+            return oldSpeed + maxJerk;
+        } else {
+            return newSpeed;
+        }
+    }
+
+    public void setMotorSpeed(TalonSRX motor, double speed)   {setMotorSpeed(motor, speed, DEFAULT_MAX_JERK);}
+
+    public void setMotorSpeed(TalonSRX motor, double speed, double maxJerk){
+        speed = limitJerk(motor.getMotorOutputPercent(), speed, maxJerk);
+        motor.set(ControlMode.PercentOutput, speed);
+        if (motor.getDeviceID() != 10) {
+            System.out.println("setting talon to: " + speed);
+            System.out.println("talon is set to: " + motor.getMotorOutputPercent());
+        }
     }
 
     @Override
