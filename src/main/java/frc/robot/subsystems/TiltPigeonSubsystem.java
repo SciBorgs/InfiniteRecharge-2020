@@ -11,12 +11,16 @@ public class TiltPigeonSubsystem extends Subsystem {
     private final String FILENAME = "TiltPigeonSubsystem.java";
 
     public TiltPigeonSubsystem() {
-        tiltPigeon = new SciPigeon(new SciTalon(PortMap.TILT_PIGEON));
+        this.tiltPigeon = new SciPigeon(new SciTalon(PortMap.TILT_PIGEON));
         Robot.addSDToLog(SD.TiltAngle);
     }
 
+    public void setAngle(double angle) {
+        this.tiltPigeon.setAngle(angle);
+    }
+
     public void updateRobotState(){
-        Robot.set(SD.TiltAngle, tiltPigeon.getAngle());
+        Robot.set(SD.TiltAngle, this.tiltPigeon.getAngle());
     }
 
     @Override

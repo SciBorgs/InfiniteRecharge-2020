@@ -13,7 +13,8 @@ public class ClimberSubsystem extends Subsystem {
     private SciSpark liftLeft;
     private SciSpark shiftMotor;
     private final double CASCADE_GEAR_RATIO = 1; // CHANGE
-    private final double CASCADE_WHEEL_RADIUS = 3; //CHANGE
+    private final double CASCADE_THREAD_SPACING = 3; //CHANGE
+    private final double CASCADE_STARTING_HEIGHT = 2; //CHANGE
     public ClimberSubsystem() {
         this.liftRight  = new SciSpark(PortMap.LIFT_RIGHT_TALON, CASCADE_GEAR_RATIO);
         this.liftLeft   = new SciSpark(PortMap.LIFT_LEFT_TALON,  CASCADE_GEAR_RATIO);
@@ -30,7 +31,7 @@ public class ClimberSubsystem extends Subsystem {
     }
 
     public double getCascadeHeight(){
-        return Robot.get(SD.ClimberSparkAngle) * CASCADE_WHEEL_RADIUS;
+        return Robot.get(SD.ClimberSparkAngle) / (2*Math.PI) * CASCADE_THREAD_SPACING + CASCADE_STARTING_HEIGHT;
     }
 
     public void updateRobotState(){
