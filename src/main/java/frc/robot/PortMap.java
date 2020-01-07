@@ -41,6 +41,10 @@ public class PortMap {
   
     public static final int XBOX_RIGHT_JOY_X = 4;
     public static final int XBOX_RIGHT_JOY_Y = 5;
+
+    //*******************SOLENOID****************//
+
+    public static final int[] CLIMBER_SOLENOID = {14, 15}; // CHANGE TO ACTUAL INPUT
     
     //*******************SPARKS******************//
 
