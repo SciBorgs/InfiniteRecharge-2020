@@ -21,9 +21,9 @@ public class PneumaticsSubsystem extends Subsystem {
 
   public PneumaticsSubsystem() {
     this.pressureSensor = new AnalogInput(PortMap.PRESSURE_SENSOR);
-    Robot.set(SD.PressureSensorVoltage, 0.0);
+    //Robot.set(SD.PressureSensorVoltage, 0.0);
     this.compressor = new Compressor();
-    Robot.addSDToLog(SD.PressureSensorVoltage);
+    //Robot.addSDToLog(SD.PressureSensorVoltage);
   }
     
 	public void periodicLog(){

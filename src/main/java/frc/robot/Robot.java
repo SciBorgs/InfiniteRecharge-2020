@@ -26,6 +26,9 @@ public class Robot extends TimedRobot {
     public static Logger logger = new Logger();
 
     public static RobotStateHistory stateHistory = new RobotStateHistory();
+    static {
+        stateHistory.addState(new RobotState());
+    }
     public static DriveSubsystem      driveSubsystem      = new DriveSubsystem();
 
     public static PigeonSubsystem     pigeonSubsystem     = new PigeonSubsystem();
@@ -64,8 +67,8 @@ public class Robot extends TimedRobot {
     // testing
     public static Point  getPos() {return new Point(get(SD.X),get(SD.Y));}
     public static double getHeading() {return get(SD.PigeonAngle);}
-    public static final Point TEST_POINT = new Point (3, 4);
-    public static final double TEST_HEADING = 0;
+    public static final Point TEST_POINT = new Point (1, 3);
+    public static final double TEST_HEADING = Geo.HORIZONTAL_ANGLE;
     public static final Point ORIGINAL_POINT = new Point(0,0);
     public static final double ORIGINAL_ANGLE = Geo.HORIZONTAL_ANGLE;
     
@@ -85,7 +88,6 @@ public class Robot extends TimedRobot {
         driveSubsystem.updateRobotState();
         pneumaticsSubsystem.updateRobotState();
         pigeonSubsystem.updateRobotState();
-        positionModel.updateRobotState();
     }
 
     public static void addSDToLog(SD sd, DefaultValue val) { Robot.dataToLog.add(new Pair<>(sd, val)); }
@@ -103,9 +105,8 @@ public class Robot extends TimedRobot {
         // attemptsSinceLastLog = 0;
         set(SD.X, ORIGINAL_POINT.x);
         set(SD.Y, ORIGINAL_POINT.y);
-        set(SD.PigeonAngle, ORIGINAL_ANGLE);
+        set(SD.Angle, ORIGINAL_ANGLE);
         allUpdateRobotStates();
-        positionModel.updateRobotState();
         pneumaticsSubsystem.stopCompressor();
         //logger.incrementPrevious("robot.java", "deploy", DefaultValue.Previous);
         //logger.logData();
@@ -130,9 +131,13 @@ public class Robot extends TimedRobot {
     }
         
     public void autonomousInit() {
+        set(SD.X, ORIGINAL_POINT.x);
+        set(SD.Y, ORIGINAL_POINT.y);
+        set(SD.PigeonAngle, ORIGINAL_ANGLE);
     }
 
     public void autonomousPeriodic() {
+        positionModel.updateRobotState();
         circleController.update(getPos(), getHeading(), TEST_POINT, TEST_HEADING);
         pneumaticsSubsystem.startCompressor();
     }
@@ -142,6 +147,7 @@ public class Robot extends TimedRobot {
     }
 
     public void teleopPeriodic() {
+        positionModel.updateRobotState();
         new TankDriveCommand().start();
         pneumaticsSubsystem.startCompressor();
     }
