@@ -10,6 +10,8 @@ public class LimelightLocalization {
     public double radialDistanceFromInnerPort = 5;
 
     public static final double CAMERA_ABOVE_GROUND_HEIGHT = 5;
+    public static final double CAMERA_HORIZONTAL_POV = 54 * Math.PI/180;;
+    public static final double CAMERA_VERTICAL_POV = 41 * Math.PI/180;
     public static final double CAMERA_MOUNTING_ANGLE = 5;
     public static final double INNER_PORT_HEIGHT = Utils.inchesToMeters(98.25);
     public static final double LOADING_BAY_HEIGHT = Utils.inchesToMeters(11);
@@ -18,14 +20,27 @@ public class LimelightLocalization {
         this.limeLight = limeLight;
     }
 
-    public static double calculateDistance(double heightOne, double heightTwo, double angleOne, double angleTwo) {
+    public double calculateDistance(double heightOne, double heightTwo, double angleOne, double angleTwo) {
         return (heightTwo - heightOne)/Math.tan(angleOne + angleTwo);
     }
 
-    public boolean isInRange() {
-        double angleToTarget = limeLight.getTableData(limeLight.getCameraTable(), variable);
-        if (limelight.getTableData(limeLight.getCameraTable(), "getpipe") == 1) {
-            if (calculateDistance(CAMERA_ABOVE_GROUND_HEIGHT, heightTwo, CAMERA_MOUNTING_ANGLE, angleTwo))
+    public double getYAngleToTarget(double pixelY) {
+        double normalizedY = (1/120) * (119.5 - pixelY);
+        double viewPlaneHeight = 2 * Math.tan(CAMERA_VERTICAL_POV/2);
+        double y = viewPlaneHeight/2 * normalizedY;
+        double yAngle =  Math.atan2(1,y);
+        return yAngle;
+    }
+
+    public boolean isInRange() { // for now, for simplicity, we will be assuming that the targets we find belong to the inner port
+        if (limeLight.getTableData(limeLight.getCameraTable(), "getpipe") == 1) {
+            if (limeLight.getTableData(limeLight.getCameraTable(), "tv") == 1) {
+                double pixelY = limeLight.getTableData(limeLight.getCameraTable(), "ty");
+                double yAngle = getYAngleToTarget(pixelY); 
+                double distance = calculateDistance(CAMERA_ABOVE_GROUND_HEIGHT, INNER_PORT_HEIGHT, CAMERA_MOUNTING_ANGLE, yAngle);
+                return (distance <= radialDistanceFromInnerPort);           
+            }
         }
+        return false;
     }
 }
