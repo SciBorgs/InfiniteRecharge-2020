@@ -26,8 +26,8 @@ public class IntakeSubsystem extends Subsystem {
         Robot.driveSubsystem.setMotorSpeed(this.intakeMotor, speed);
     }
 
-    public void closeIntake() {this.upDownSolenoid.set(CLOSED_VALUE);}
-    public void openIntake() {this.upDownSolenoid.set(OPEN_VALUE);}
+    public void forwardIntake() {this.upDownSolenoid.set(CLOSED_VALUE);}
+    public void reverseIntake() {this.upDownSolenoid.set(OPEN_VALUE);}
 
     public void suck() {
         if (this.acceptingCell) {setIntakeSpeed(INTAKE_SPEED);} 
@@ -40,7 +40,8 @@ public class IntakeSubsystem extends Subsystem {
 
     @Override 
     protected void initDefaultCommand() {
-        // not needed
+
     }
 
+}
 }
