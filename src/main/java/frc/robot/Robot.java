@@ -24,6 +24,7 @@ public class Robot extends TimedRobot {
     private final String FILENAME = "Robot.java";
 
     public static Logger logger = new Logger();
+    private static List<Pair<SD, DefaultValue>> dataToLog = new ArrayList<>();
 
     public static RobotStateHistory stateHistory = new RobotStateHistory();
     static {
@@ -42,7 +43,6 @@ public class Robot extends TimedRobot {
 
     public static RobotState getState(){ return stateHistory.currentState(); }
     public static RobotState statesAgo(int numTicks){return stateHistory.statesAgo(numTicks);}
-    private static List<Pair<SD, DefaultValue>> dataToLog = new ArrayList<>();
 
     public static double get(SD sd)            {return getState().get(sd);}
     public static void   set(SD sd, double val){       getState().set(sd, val);}
@@ -66,8 +66,8 @@ public class Robot extends TimedRobot {
 
     // testing
     public static Point  getPos() {return new Point(get(SD.X),get(SD.Y));}
-    public static double getHeading() {return get(SD.PigeonAngle);}
-    public static final Point TEST_POINT = new Point (1, 3);
+    public static double getHeading() {return get(SD.Angle);}
+    public static final Point TEST_POINT = new Point (3, 1);
     public static final double TEST_HEADING = Geo.HORIZONTAL_ANGLE;
     public static final Point ORIGINAL_POINT = new Point(0,0);
     public static final double ORIGINAL_ANGLE = Geo.HORIZONTAL_ANGLE;
@@ -96,7 +96,9 @@ public class Robot extends TimedRobot {
     public void logState() {
         for (Pair<SD, DefaultValue> pair : Robot.dataToLog) {
             SD sd = pair.first;
-            Robot.logger.addData(FILENAME, sd.name(), get(sd), pair.second);
+            if (getState().contains(sd)){
+                Robot.logger.addData(FILENAME, sd.name(), get(sd), pair.second);
+            }
         }
     }
 
@@ -116,40 +118,43 @@ public class Robot extends TimedRobot {
     }
 
     public void logDataPeriodic() {
-        logState();
         logger.logData();
         logger.writeLoggedData();
     }
  
     public void robotPeriodic() {
+        stateHistory.addState(getState().copy());
         allUpdateRobotStates();
         Scheduler.getInstance().run();
-        stateHistory.addState(getState().copy());
+        DelayedPrinter.incTicks();
         positionModel.updateRobotState();
-        DelayedPrinter.print("X: " + get(SD.X) +"\tY: " + get(SD.Y) +" Theta: " + get(SD.PigeonAngle));
+        allPeriodicLogs();
+        DelayedPrinter.print("X: " + get(SD.X) +"\tY: " + get(SD.Y) +"\tPigeonAngle: " + get(SD.PigeonAngle)+"\tTheta: " + get(SD.Angle));
         logDataPeriodic();
     }
-        
+
+
     public void autonomousInit() {
+        Robot.driveSubsystem.assistedDriveMode();
         set(SD.X, ORIGINAL_POINT.x);
         set(SD.Y, ORIGINAL_POINT.y);
-        set(SD.PigeonAngle, ORIGINAL_ANGLE);
+        set(SD.Angle, ORIGINAL_ANGLE);
     }
 
+    @Override
     public void autonomousPeriodic() {
-        positionModel.updateRobotState();
         circleController.update(getPos(), getHeading(), TEST_POINT, TEST_HEADING);
-        pneumaticsSubsystem.startCompressor();
+        //pneumaticsSubsystem.startCompressor();
     }
     
     @Override
     public void teleopInit() {
-    }
+        Robot.driveSubsystem.manualDriveMode();
+        }
 
     public void teleopPeriodic() {
-        positionModel.updateRobotState();
         new TankDriveCommand().start();
-        pneumaticsSubsystem.startCompressor();
+        //pneumaticsSubsystem.startCompressor();
     }
 
     public void testPeriodic() {

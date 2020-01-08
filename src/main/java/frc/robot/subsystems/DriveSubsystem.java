@@ -5,6 +5,7 @@ import frc.robot.Robot;
 import frc.robot.Utils;
 import frc.robot.robotState.RobotState.SD;
 import frc.robot.controllers.PID;
+import frc.robot.helpers.DelayedPrinter;
 import frc.robot.robotState.StateInfo;
 import frc.robot.sciSensorsActuators.*;
 import frc.robot.logging.Logger.DefaultValue;
@@ -53,9 +54,9 @@ public class DriveSubsystem extends Subsystem {
 		this.r1 = new SciSpark(PortMap.RIGHT_MIDDLE_SPARK, GEAR_RATIO);
         this.r2 = new SciSpark(PortMap.RIGHT_BACK_SPARK,   GEAR_RATIO);
 
-        this.l .setInverted(true);
-        this.l1.setInverted(true);
-        this.l2.setInverted(true);
+        this.r .setInverted(true);
+        this.r1.setInverted(true);
+        this.r2.setInverted(true);
 
         this.l1.follow(this.l);
         this.l2.follow(this.l);
@@ -71,6 +72,8 @@ public class DriveSubsystem extends Subsystem {
         setSDMappings(this.r1, SD.R1WheelAngle, SD.R1SparkVal, SD.R1SparkVoltage, SD.R1SparkCurrent);
         setSDMappings(this.l2, SD.L2WheelAngle, SD.L2SparkVal, SD.L2SparkVoltage, SD.L2SparkCurrent);
         setSDMappings(this.r2, SD.R2WheelAngle, SD.R2SparkVal, SD.R2SparkVoltage, SD.R2SparkCurrent);
+
+        Robot.addSDToLog(SD.LeftWheelAngle);
 
         this.tankAnglePID = new PID(TANK_ANGLE_P, TANK_ANGLE_I, TANK_ANGLE_D);
         Robot.logger.logFinalPIDConstants(FILENAME, "tank angle PID", this.tankAnglePID);
@@ -105,7 +108,8 @@ public class DriveSubsystem extends Subsystem {
     }
     
     public double processStick(Joystick stick){
-        return deadzone(stick.getY());
+        return stick.getY();
+        // return deadzone(stick.getY());
     }
 
     // If something is assiting, we don't want to drive using setSpeed
@@ -132,6 +136,8 @@ public class DriveSubsystem extends Subsystem {
 	public void setSpeedTank(double leftSpeed, double rightSpeed) {
         this.l.set(leftSpeed  * this.driveMultiplier);
         this.r.set(rightSpeed * this.driveMultiplier);
+        // DelayedPrinter.print("leftspeed: "+leftSpeed);
+        // DelayedPrinter.print("rightspeed: "+rightSpeed);
     }
 	
 	public void setSpeedTankAngularControl(double leftSpeed, double rightSpeed) {
@@ -163,7 +169,10 @@ public class DriveSubsystem extends Subsystem {
     }
     
     public void setSpeedTankTurningPercentage(double turnMagnitude){
-        double forward = (processStick(Robot.oi.leftStick) + processStick(Robot.oi.rightStick)) / 2;
+        // double forward = (processStick(Robot.oi.leftStick) + processStick(Robot.oi.rightStick)) / 2;
+        double forward = (Robot.oi.leftStick.getY() + Robot.oi.rightStick.getY()) / 2;
+        DelayedPrinter.print("Forward: "+ forward);
+        DelayedPrinter.print("LeftStick: "+Robot.oi.leftStick.getY() +"\tRightStick: "+ Robot.oi.rightStick.getY());
         setSpeedTankForwardTurningPercentage(forward, turnMagnitude);
 	}
 

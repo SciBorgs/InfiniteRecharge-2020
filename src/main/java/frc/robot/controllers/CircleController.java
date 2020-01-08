@@ -10,27 +10,31 @@ import frc.robot.logging.Logger.DefaultValue;
 public class CircleController {
 
     private static final double ERROR = 0.02;
-    private static final double FINAL_HEADING_P = .8;
-    private static final double DESIRED_HEADING_P = .4;
+    private static final double FINAL_HEADING_P = .4;
+    private static final double DESIRED_HEADING_P = .2;
     private PID finalHeadingPID = new PID(FINAL_HEADING_P, 0, 0);
     private PID desiredHeadingPID = new PID(DESIRED_HEADING_P, 0, 0);
 
     public void update(Point currPos, double currHeading, Point finalPos, double finalHeading) {
+        Robot.driveSubsystem.assistedDriveMode();
         Line sightLine = Geo.pointAngleForm(currPos, currHeading);
         if (sightLine.contains(finalPos)) {
-            Robot.driveSubsystem.setSpeedTank(.5, .5);
+            Robot.driveSubsystem.setSpeedTankTurningPercentage(0);
+            DelayedPrinter.print("sameLine");
         } else {
-
             Circle currCircle = Circle.twoPointTangentAngleForm(currPos, currHeading, finalPos);
             double expectedFinalHeading = Geo.thetaOf(Geo.getTangentToCircle(currCircle, finalPos));
-
+            double expectedCurrentHeading = Geo.thetaOf(Geo.getTangentToCircle(currCircle, currPos));
+            DelayedPrinter.print("expectedCurrentHeading: " + expectedCurrentHeading);
             // We don't need Geo.subtractAngles b/c we expect this to be 90 or -90.
-            double angle1 = Geo.normalizeAngle(currHeading) - Geo.angleBetween(currPos, currCircle.center);
-            double angle2 = Geo.normalizeAngle(expectedFinalHeading) - Geo.angleBetween(finalPos, currCircle.center);
+            double angle1 = Geo.subtractAngles(currHeading, Geo.angleBetween(currPos, currCircle.center));
+            double angle2 = Geo.subtractAngles(expectedFinalHeading, Geo.angleBetween(finalPos, currCircle.center));
+            DelayedPrinter.print("angle1: " + angle1);
+            DelayedPrinter.print("angle2: " + angle2);
 
-            if (!Utils.inRange(angle1, angle2, ERROR)) {
+            if (Utils.signOf(angle1) != Utils.signOf(angle2)) {
                 // DelayedPrinter.print("negating expected final heading");
-                expectedFinalHeading *= -1;
+                expectedFinalHeading = Geo.normalizeAngle(expectedFinalHeading + Geo.ANGLE_RANGE / 2);
             }
 
             double finalHeadingError = Geo.subtractAngles(expectedFinalHeading, finalHeading);
@@ -46,8 +50,7 @@ public class CircleController {
 
             double turnMagnitude = desiredHeadingPID.getOutput() + finalHeadingPID.getOutput();
             DelayedPrinter.print("turnMagnitude: " + turnMagnitude);
-            Robot.driveSubsystem.setSpeedTankTurningPercentage(turnMagnitude * -.2);
-            // Robot.driveSubsystem.setSpeedTank((.5 + .2* turnMagnitude)*-1,( .5- .1*
+            Robot.driveSubsystem.setSpeedTankForwardTurningPercentage(0.5, -1*turnMagnitude);
             // turnMagnitude)*-1);
         }
     }
