@@ -11,7 +11,6 @@ public class ClimberController {
     private PID reachPID;
     private double tiltP = 1/MAXIMUM_TILT_ANGLE;
     private PID tiltPID;
-    private double tiltOffset = 0;
 
     public ClimberController() {
         this.turnPID  = new PID(this.turnP,  0, 0);
@@ -19,16 +18,14 @@ public class ClimberController {
         this.tiltPID  = new PID(this.tiltP,  0, 0);
     }
 
-    public void adjustBeforeReach() { // for better lining up with the bar
+    public void adjustAngle() { // for better lining up with the bar
         double angleGoal = Math.toRadians(67.5); // turing towards red trench
-        if (Math.abs(angleGoal - Robot.get(SD.Angle)) > Math.PI/2) { // if the robot is angled closer to the blue trench then the red trench for grabbing the bar
+        double angleCurrent = Robot.get(SD.Angle) % (2 * Math.PI);
+        if ( angleCurrent > 7/8 * Math.PI || angleCurrent < 3/8 * Math.PI ) { // if the robot is angled closer to the blue trench then the red trench for grabbing the bar
             angleGoal -= Math.PI; // set the angle goal towards the blue trench
         }
         this.turnPID.addMeasurement(angleGoal - Robot.get(SD.Angle));
-    }
-
-    public void beforeReach() { // for the sensors to be adjusted/ offset to be measured
-        this.tiltOffset = Robot.get(SD.TiltAngle);
+        Robot.driveSubsystem.setSpeedTankTurningPercentage(this.turnPID.getOutput());
     }
 
     public void moveToHeight(double height) {

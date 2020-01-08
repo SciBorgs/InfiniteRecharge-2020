@@ -16,8 +16,14 @@ public class ClimberSubsystem extends Subsystem {
     private DoubleSolenoid attachSolenoid;
 
     private final double CASCADE_GEAR_RATIO = 1; // CHANGE
+<<<<<<< HEAD
     private final double CASCADE_WHEEL_RADIUS = 3; //CHANGE
     private final DoubleSolenoid.Value OPEN_VALUE = Value.kForward;
+=======
+    private final double CASCADE_THREAD_SPACING = 3; //CHANGE
+    private final double CASCADE_STARTING_HEIGHT = 2; //CHANGE
+    private final DoubleSolenoid.Value OPEN_VALUE = DoubleSolenoid.Value.kForward;
+>>>>>>> 94d60f066a06ee998a47c5e325eb5b6e690a2bbc
     private final DoubleSolenoid.Value CLOSED_VALUE = Utils.oppositeDoubleSolenoidValue(OPEN_VALUE);
 
     public ClimberSubsystem() {
@@ -40,7 +46,7 @@ public class ClimberSubsystem extends Subsystem {
     }
 
     public double getCascadeHeight(){
-        return Robot.get(SD.ClimberSparkAngle) * CASCADE_WHEEL_RADIUS;
+        return Robot.get(SD.ClimberSparkAngle) / (2*Math.PI) * CASCADE_THREAD_SPACING + CASCADE_STARTING_HEIGHT;
     }
 
     public void updateRobotState(){
