@@ -22,4 +22,9 @@ public class PullUpCommand extends Command {
     protected boolean isFinished() {
         return Math.abs(ENDING_GOAL - Robot.get(SD.ClimberHeight)) < ERROR;
     }
+
+    @Override
+    protected void end() {
+        Robot.climberSubsystem.setLiftSpeed(0);
+    }
 }
