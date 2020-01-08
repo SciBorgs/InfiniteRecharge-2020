@@ -40,7 +40,7 @@ public class ShooterSubsystem extends Subsystem {
 
   // [-1,1]
   public void setSpeed(double speed) {
-    this.shooterMotor.set(speed);
+    this.rotateTalon.set(speed);
   }
 
   public void updateRobotState() {
