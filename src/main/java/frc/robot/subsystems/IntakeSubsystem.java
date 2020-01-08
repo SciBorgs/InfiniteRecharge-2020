@@ -1,16 +1,15 @@
 package frc.robot.subsystems;
 
-import frc.robot.*;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import frc.robot.PortMap;
 import frc.robot.Utils;
+import frc.robot.sciSensorsActuators.SciTalon;
 
 public class IntakeSubsystem extends Subsystem {
     DoubleSolenoid upDownSolenoid;
-    TalonSRX intakeMotor;
+    SciTalon intakeMotor;
 
     private static final DoubleSolenoid.Value OPEN_VALUE   = Value.kForward;
     private static final DoubleSolenoid.Value CLOSED_VALUE = Utils.oppositeDoubleSolenoidValue(OPEN_VALUE);
@@ -19,11 +18,11 @@ public class IntakeSubsystem extends Subsystem {
 
     public IntakeSubsystem() {
         this.upDownSolenoid = new DoubleSolenoid(PortMap.INTAKE_SOLENOID_FORWARD, PortMap.INTAKE_SOLENOID_REVERSE);
-        this.intakeMotor = new TalonSRX(PortMap.INTAKE_TALON);
+        this.intakeMotor = new SciTalon(PortMap.INTAKE_TALON);
         this.acceptingCell = true;
     }
     public void setIntakeSpeed(final double speed) {
-        Robot.driveSubsystem.setMotorSpeed(this.intakeMotor, speed);
+        this.intakeMotor.set(speed);
     }
 
     public void forwardIntake() {this.upDownSolenoid.set(CLOSED_VALUE);}
@@ -40,8 +39,7 @@ public class IntakeSubsystem extends Subsystem {
 
     @Override 
     protected void initDefaultCommand() {
-
+        // Useless
     }
 
-}
 }
