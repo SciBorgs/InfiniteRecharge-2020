@@ -16,28 +16,18 @@ public class DualOutputGearboxSubsystem extends Subsystem { // Set ratio, motor,
     public final DoubleSolenoid.Value SHIFT_CLIMBER_OUTPUT_VALUE = Value.kForward; // Place values plz
     public final DoubleSolenoid.Value SHIFT_DRIVE_OUTPUT_VALUE = Utils.oppositeDoubleSolenoidValue(SHIFT_CLIMBER_OUTPUT_VALUE);
 
-    public final DoubleSolenoid.Value ALLOW_CLIMB_VALUE = Value.kForward; // Place values plz
-    public final DoubleSolenoid.Value ALLOW_DRIVE_VALUE = Utils.oppositeDoubleSolenoidValue(ALLOW_CLIMB_VALUE);
-
     private DoubleSolenoid GEAR_SHIFT_SOLENOID;
     private DoubleSolenoid OUTPUT_SHIFT_SOLENOID;
-    private DoubleSolenoid SHIFT_OUTPUT;
 
-    private double driveGearRatio = 0;
-    private double climbGearRatio = 0;
-
-    private double shiftUpGearRatio = 0;
-    private double shiftDownGearRatio = 0;
+    // Need actual gear ratios.
+    private final double shiftUpGearRatio = 0;
+    private final double shiftDownGearRatio = 0;
 
     public SciSpark l, l1, l2, r, r1, r2;
-
-    public double shiftGearRatio;
-    public double outputGearRatio;
 
     public DualOutputGearboxSubsystem() {
         GEAR_SHIFT_SOLENOID   = Utils.newDoubleSolenoid(PortMap.GEAR_RATIO_SOLENOID_PDP, PortMap.GEAR_RATIO_SOLENOID);
         OUTPUT_SHIFT_SOLENOID = Utils.newDoubleSolenoid(PortMap.OUTPUT_SOLENOID_PDP, PortMap.OUTPUT_SOLENOID);
-        SHIFT_OUTPUT          = Utils.newDoubleSolenoid(PortMap.ALLOW_OUTPUTS_PDP, PortMap.ALLOW_OUTPUTS);
         
         this.l  = new SciSpark(PortMap.LEFT_FRONT_SPARK);
 		this.l1 = new SciSpark(PortMap.LEFT_MIDDLE_SPARK);
@@ -60,27 +50,27 @@ public class DualOutputGearboxSubsystem extends Subsystem { // Set ratio, motor,
     
     public void shiftGearsUp() { 
         GEAR_SHIFT_SOLENOID.set(SHIFT_GEAR_UP_VALUE);
-        shiftGearRatio = shiftUpGearRatio;
+        setGearRatio(shiftUpGearRatio);
     } 
     public void shiftGearDown() { 
         GEAR_SHIFT_SOLENOID.set(SHIFT_GEAR_DOWN_VALUE); 
-        shiftGearRatio = shiftDownGearRatio;
+        setGearRatio(shiftDownGearRatio);
     }
     
     public void shiftClimberOutput() { 
-        SHIFT_OUTPUT.set(ALLOW_CLIMB_VALUE);
         OUTPUT_SHIFT_SOLENOID.set(SHIFT_CLIMBER_OUTPUT_VALUE); 
-        outputGearRatio = climbGearRatio;
     }
 
     public void shiftDriveOutput() { 
-        SHIFT_OUTPUT.set(ALLOW_DRIVE_VALUE);
         OUTPUT_SHIFT_SOLENOID.set(SHIFT_DRIVE_OUTPUT_VALUE); 
-        outputGearRatio = driveGearRatio;
     }
     
     public SciSpark[] getSparks() {
         return new SciSpark[]{this.l, this.l1, this.l2, this.r, this.r1, this.r2};
+    }
+
+    private void setGearRatio(double gearRatio) {
+        for (SciSpark spark : getSparks()){spark.setGearRatio(gearRatio);}
     }
     
     public void initDefaultCommand() {

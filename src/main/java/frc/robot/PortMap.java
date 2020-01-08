@@ -67,7 +67,4 @@ public class PortMap {
 
     public static final int OUTPUT_SOLENOID_PDP = -2;
     public static final int[] OUTPUT_SOLENOID = {0,-2};
-
-    public static final int ALLOW_OUTPUTS_PDP = -3;
-    public static final int[] ALLOW_OUTPUTS = {0, -3};
 }

@@ -61,7 +61,6 @@ public class DriveSubsystem extends Subsystem {
 
     public void setSDMappings(SciSpark spark, SD wheelAngleSD, SD valueSD, SD volatageSD, SD currentSd){
         this.sparkToWheelAngleSD.put(spark, wheelAngleSD);
-        
         this.sparkToValueSD     .put(spark, valueSD);
         this.sparkToVoltageSD   .put(spark, volatageSD);
         this.sparkToCurrentSD   .put(spark, currentSd);
@@ -69,9 +68,9 @@ public class DriveSubsystem extends Subsystem {
 
     public void updateSparkState(SciSpark spark){
         Robot.set(this.sparkToWheelAngleSD.get(spark), spark.getWheelAngle());
-        Robot.set(this.sparkToValueSD.get(spark),   spark.get());
-        Robot.set(this.sparkToVoltageSD.get(spark), spark.getBusVoltage());
-        Robot.set(this.sparkToCurrentSD.get(spark), spark.getOutputCurrent());
+        Robot.set(this.sparkToValueSD.get(spark),      spark.get());
+        Robot.set(this.sparkToVoltageSD.get(spark),    spark.getBusVoltage());
+        Robot.set(this.sparkToCurrentSD.get(spark),    spark.getOutputCurrent());
     }
 
     public void updateRobotState(){
