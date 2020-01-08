@@ -31,7 +31,9 @@ public class Robot extends TimedRobot {
     public static PigeonSubsystem     pigeonSubsystem     = new PigeonSubsystem();
     public static LimelightSubsystem  limelightSubsystem  = new LimelightSubsystem();
     public static PneumaticsSubsystem pneumaticsSubsystem = new PneumaticsSubsystem();
-    
+    public static TiltPigeonSubsystem tiltPigeonSubsystem = new TiltPigeonSubsystem();
+    public static ShooterSubsystem    shooterSubsystem    = new ShooterSubsystem();
+
     public static Following following = new Following();
     public static Model positionModel = new EncoderLocalization();
     public static CircleController circleController = new CircleController();
@@ -63,7 +65,7 @@ public class Robot extends TimedRobot {
 
     // testing
     public static Point  getPos() {return new Point(get(SD.X),get(SD.Y));}
-    public static double getHeading() {return get(SD.PigeonAngle);}
+    public static double getHeading() {return get(SD.MainPigeonAngle);}
     public static final Point TEST_POINT = new Point (3, 4);
     public static final double TEST_HEADING = Math.PI * .1;
     public static final Point ORIGINAL_POINT = new Point(0,0);
@@ -86,6 +88,8 @@ public class Robot extends TimedRobot {
         pneumaticsSubsystem.updateRobotState();
         pigeonSubsystem.updateRobotState();
         positionModel.updateRobotState();
+        tiltPigeonSubsystem.updateRobotState();
+        shooterSubsystem.updateRobotState();
     }
 
     public static void addSDToLog(SD sd, DefaultValue val) { Robot.dataToLog.add(new Pair<>(sd, val)); }
@@ -103,7 +107,7 @@ public class Robot extends TimedRobot {
         // attemptsSinceLastLog = 0;
         set(SD.X, ORIGINAL_POINT.x);
         set(SD.Y, ORIGINAL_POINT.y);
-        set(SD.PigeonAngle, ORIGINAL_ANGLE);
+        set(SD.MainPigeonAngle, ORIGINAL_ANGLE);
         allUpdateRobotStates();
         positionModel.updateRobotState();
         pneumaticsSubsystem.stopCompressor();
@@ -129,7 +133,8 @@ public class Robot extends TimedRobot {
         Scheduler.getInstance().run();
         stateHistory.addState(getState().copy());
         positionModel.updateRobotState();
-        DelayedPrinter.print("X: " + get(SD.X) +"\tY: " + get(SD.Y) +" Theta: " + get(SD.PigeonAngle));
+        new ShooterCommand().start();
+        DelayedPrinter.print("X: " + get(SD.X) +"\tY: " + get(SD.Y) +" Theta: " + get(SD.MainPigeonAngle));
     }
         
     public void autonomousInit() {

@@ -13,7 +13,8 @@ public class RobotState {
     // SD = State Dimension
     public enum SD {
         // Position
-        X, Y, PigeonAngle, Angle,
+        X, Y, Angle, 
+        MainPigeonAngle, TiltAngle,
 
         // Chassis motor values
         LeftWheelAngle, RightWheelAngle, L1WheelAngle, R1WheelAngle, L2WheelAngle, R2WheelAngle,
@@ -26,6 +27,9 @@ public class RobotState {
 
         // Pneumatics
         PressureSensorVoltage,
+
+        // Shooter
+        ShooterAngle
     }
     
     private Hashtable<SD, Double> data;

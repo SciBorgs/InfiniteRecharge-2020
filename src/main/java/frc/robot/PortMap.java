@@ -2,7 +2,7 @@ package frc.robot;
 
 public class PortMap {
 
-  	//*****************JOYSTICKS*****************//
+    //*****************JOYSTICKS*****************//
 
     public static final int JOYSTICK_LEFT = 1;
     public static final int JOYSTICK_RIGHT = 0;
@@ -44,6 +44,9 @@ public class PortMap {
     
     //*******************SPARKS******************//
 
+    public static final int SHOOTER_MOTOR = 69;
+    public static final int SHOOTER_ROTATE_SPARK = 7;
+  
     public static final int LEFT_FRONT_SPARK = 6; 
     public static final int LEFT_MIDDLE_SPARK = 5; 
     public static final int LEFT_BACK_SPARK = 4;
@@ -56,8 +59,14 @@ public class PortMap {
 
     public static final int PIGEON_TALON = 9;
 
-    //*******************MISC********************//
+    public static final int TILT_PIGEON = 11;      // CHANGE TO ACTUAL INPUT
+    public static final int SHIFTING_TALON = 10;   // CHANGE TO ACTUAL INPUT
+    public static final int LIFT_LEFT_TALON = 12;  // CHANGE TO ACTUAL INPUT
+    public static final int LIFT_RIGHT_TALON = 13; // CHANGE TO ACTUAL INPUT
 
+    //*******************MISC********************//
     public static final int PRESSURE_SENSOR = 0;
     public static final int TARGETING_LIGHT_DIGITAL_OUTPUT = 5;
+    public static final int SHOOTER_LEFT_DIGITAL_INPUT = 6;  
+    public static final int SHOOTER_RIGHT_DIGITAL_INPUT = 7;  
 }
