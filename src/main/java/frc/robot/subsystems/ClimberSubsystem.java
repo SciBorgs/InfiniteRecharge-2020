@@ -15,7 +15,6 @@ public class ClimberSubsystem extends Subsystem {
     private DoubleSolenoid attachSolenoid;
 
     private final double CASCADE_GEAR_RATIO = 1; // CHANGE
-    private final double CASCADE_WHEEL_RADIUS = 3; //CHANGE
     private final double CASCADE_THREAD_SPACING = 3; //CHANGE
     private final double CASCADE_STARTING_HEIGHT = 2; //CHANGE
 

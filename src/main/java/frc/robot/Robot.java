@@ -38,6 +38,7 @@ public class Robot extends TimedRobot {
     public static Model positionModel = new EncoderLocalization();
     public static CircleController  circleController  = new CircleController();
     public static ClimberController climberController = new ClimberController();
+    public static AngleController   angleController   = new AngleController();
     public static OI oi = new OI();
 
     public static RobotState getState(){ return stateHistory.currentState(); }
@@ -72,7 +73,6 @@ public class Robot extends TimedRobot {
     public static final Point ORIGINAL_POINT = new Point(0,0);
     public static final double ORIGINAL_ANGLE = Geo.HORIZONTAL_ANGLE;
     
-
     private int attemptsSinceLastLog;
     public static final int LOG_PERIOD = 5;
 
