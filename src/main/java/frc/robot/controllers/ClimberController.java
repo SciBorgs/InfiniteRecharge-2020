@@ -1,6 +1,7 @@
 package frc.robot.controllers;
 
 import frc.robot.controllers.PID;
+import frc.robot.helpers.Geo;
 import frc.robot.robotState.RobotState.SD;
 import frc.robot.Robot;
 public class ClimberController {
@@ -17,16 +18,6 @@ public class ClimberController {
         this.turnPID  = new PID(this.turnP,  0, 0);
         this.reachPID = new PID(this.reachP, 0, 0);
         this.tiltPID  = new PID(this.tiltP,  0, 0);
-    }
-
-    public void adjustAngle() { // for better lining up with the bar
-        double angleGoal = Math.toRadians(67.5); // turing towards red trench
-        double angleCurrent = Robot.get(SD.Angle) % (2 * Math.PI);
-        if ( angleCurrent > 7/8 * Math.PI || angleCurrent < 3/8 * Math.PI ) { // if the robot is angled closer to the blue trench then the red trench for grabbing the bar
-            angleGoal -= Math.PI; // set the angle goal towards the blue trench
-        }
-        this.turnPID.addMeasurement(angleGoal - Robot.get(SD.Angle));
-        Robot.driveSubsystem.setSpeedTankTurningPercentage(this.turnPID.getOutput());
     }
 
     public void moveToHeight(double height) {
