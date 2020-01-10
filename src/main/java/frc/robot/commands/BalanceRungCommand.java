@@ -17,6 +17,6 @@ public class BalanceRungCommand extends Command {
 
     @Override
     protected void isFinished() {
-        return Math.abs(Robot.get(ShiftSparkAngle)) < 8;
+        return Math.abs(Robot.get(SD.ShiftSparkAngle)) < Math.toRadians(8);
     }
 }

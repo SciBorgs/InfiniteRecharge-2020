@@ -28,4 +28,9 @@ public class PullUpCommand extends Command {
     protected void end() {
         Robot.climberSubsystem.setLiftSpeed(0);
     }
+
+    @Override
+    protected void end() {
+        Robot.climberSubsystem.setLiftSpeed(0);
+    }
 }
