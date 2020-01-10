@@ -36,7 +36,8 @@ public class Robot extends TimedRobot {
 
     public static Following following = new Following();
     public static Model positionModel = new EncoderLocalization();
-    public static CircleController circleController = new CircleController();
+    public static CircleController  circleController  = new CircleController();
+    public static ClimberController climberController = new ClimberController();
     public static OI oi = new OI();
 
     public static RobotState getState(){ return stateHistory.currentState(); }
