@@ -11,7 +11,4 @@ public class PositionUnderRungCommand extends CommandGroup {
         addSequential(new AdjustAngleCommand());
         addSequential(new ReachForBarCommand());
     }
-
-    @Override
-    protected void execute() {}
 }
