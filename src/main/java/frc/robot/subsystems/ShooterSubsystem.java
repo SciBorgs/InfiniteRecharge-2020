@@ -12,7 +12,8 @@ import edu.wpi.first.wpilibj.command.Subsystem;
 
 public class ShooterSubsystem extends Subsystem {
   private SciTalon rotateTalon;
-  private SciSpark shooterMotor;
+  private SciSpark shooterMotorTop;
+  private SciSpark shooterMotorBottom;
   
   private final int LEFT_EXTREME_ANGLE = -90;
   private final int RIGHT_EXTREME_ANGLE = 90;
@@ -27,7 +28,8 @@ public class ShooterSubsystem extends Subsystem {
 
   public ShooterSubsystem() {
     this.rotateTalon  = new SciTalon(PortMap.SHOOTER_ROTATE_SPARK);
-    this.shooterMotor = new SciSpark(PortMap.SHOOTER_MOTOR);
+    this.shooterMotorTop = new SciSpark(PortMap.SHOOTER_MOTOR_TOP);
+    this.shooterMotorBottom = new SciSpark(PortMap.SHOOTER_MOTOR_BOTTOM);
     this.limitSwitchLeft  = new DigitalInput(PortMap.SHOOTER_LEFT_DIGITAL_INPUT);
     this.limitSwitchRight = new DigitalInput(PortMap.SHOOTER_RIGHT_DIGITAL_INPUT);
     this.shooterPID = new PID(SHOOTER_P, SHOOTER_I, SHOOTER_D);
@@ -50,6 +52,14 @@ public class ShooterSubsystem extends Subsystem {
     else {angle = this.rotateTalon.getWheelAngle();}
     this.rotateTalon.setWheelAngle(angle);
     Robot.set(SD.ShooterAngle, angle);
+  }
+
+  public void setSpeedTop(double value) {
+    this.shooterMotorTop.set(value);
+  }
+
+  public void setSpeedBottom(double value) {
+    this.shooterMotorBottom.set(value);
   }
 
   @Override

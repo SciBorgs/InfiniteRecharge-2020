@@ -44,7 +44,8 @@ public class PortMap {
     
     //*******************SPARKS******************//
 
-    public static final int SHOOTER_MOTOR = 69;
+    public static final int SHOOTER_MOTOR_TOP = 9;
+    public static final int SHOOTER_MOTOR_BOTTOM = 8;
     public static final int SHOOTER_ROTATE_SPARK = 7;
   
     public static final int LEFT_FRONT_SPARK = 6; 
