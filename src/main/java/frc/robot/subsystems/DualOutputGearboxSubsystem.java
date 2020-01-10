@@ -15,19 +15,19 @@ public class DualOutputGearboxSubsystem extends Subsystem { // Set ratio, motor,
 
     public final DoubleSolenoid.Value SHIFT_CLIMBER_OUTPUT_VALUE = Value.kForward; // Place values plz
     public final DoubleSolenoid.Value SHIFT_DRIVE_OUTPUT_VALUE = Utils.oppositeDoubleSolenoidValue(SHIFT_CLIMBER_OUTPUT_VALUE);
-
-    private DoubleSolenoid GEAR_SHIFT_SOLENOID;
-    private DoubleSolenoid OUTPUT_SHIFT_SOLENOID;
-
+    
     // Need actual gear ratios.
-    private final double shiftUpGearRatio = 0;
-    private final double shiftDownGearRatio = 0;
+    private final double SHIFT_UP_GEAR_RATIO = 0;
+    private final double SHIFT_DOWN_GEAR_RATIO = 0;
+
+    private DoubleSolenoid gearShiftSolenoid;
+    private DoubleSolenoid outputShiftSolenoid;
 
     public SciSpark l, l1, l2, r, r1, r2;
 
     public DualOutputGearboxSubsystem() {
-        GEAR_SHIFT_SOLENOID   = Utils.newDoubleSolenoid(PortMap.GEAR_RATIO_SOLENOID_PDP, PortMap.GEAR_RATIO_SOLENOID);
-        OUTPUT_SHIFT_SOLENOID = Utils.newDoubleSolenoid(PortMap.OUTPUT_SOLENOID_PDP, PortMap.OUTPUT_SOLENOID);
+        gearShiftSolenoid   = Utils.newDoubleSolenoid(PortMap.GEAR_RATIO_SOLENOID_PDP, PortMap.GEAR_RATIO_SOLENOID);
+        outputShiftSolenoid = Utils.newDoubleSolenoid(PortMap.OUTPUT_SOLENOID_PDP, PortMap.OUTPUT_SOLENOID);
         
         this.l  = new SciSpark(PortMap.LEFT_FRONT_SPARK);
 		this.l1 = new SciSpark(PortMap.LEFT_MIDDLE_SPARK);
@@ -49,20 +49,20 @@ public class DualOutputGearboxSubsystem extends Subsystem { // Set ratio, motor,
     }
     
     public void shiftGearsUp() { 
-        GEAR_SHIFT_SOLENOID.set(SHIFT_GEAR_UP_VALUE);
-        setGearRatio(shiftUpGearRatio);
+        gearShiftSolenoid.set(SHIFT_GEAR_UP_VALUE);
+        setGearRatio(SHIFT_UP_GEAR_RATIO);
     } 
     public void shiftGearDown() { 
-        GEAR_SHIFT_SOLENOID.set(SHIFT_GEAR_DOWN_VALUE); 
-        setGearRatio(shiftDownGearRatio);
+        gearShiftSolenoid.set(SHIFT_GEAR_DOWN_VALUE); 
+        setGearRatio(SHIFT_DOWN_GEAR_RATIO);
     }
     
     public void shiftClimberOutput() { 
-        OUTPUT_SHIFT_SOLENOID.set(SHIFT_CLIMBER_OUTPUT_VALUE); 
+        outputShiftSolenoid.set(SHIFT_CLIMBER_OUTPUT_VALUE); 
     }
 
     public void shiftDriveOutput() { 
-        OUTPUT_SHIFT_SOLENOID.set(SHIFT_DRIVE_OUTPUT_VALUE); 
+        outputShiftSolenoid.set(SHIFT_DRIVE_OUTPUT_VALUE); 
     }
     
     public SciSpark[] getSparks() {
