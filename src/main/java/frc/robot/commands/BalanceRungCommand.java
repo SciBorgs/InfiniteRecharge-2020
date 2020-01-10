@@ -1,9 +1,8 @@
 package frc.robot.commands;
 
 import frc.robot.Robot;
-import frc.robot.controllers.ClimberController;
-import frc.robot.robotState.SD;
-import edu.wpi.first.wpilibj.command.InstantCommand;
+import frc.robot.robotState.RobotState.SD;
+import edu.wpi.first.wpilibj.command.Command;
 
 public class BalanceRungCommand extends Command {
     private final String FILENAME = "BalanceRungCommand";
@@ -12,11 +11,11 @@ public class BalanceRungCommand extends Command {
 
     @Override
     protected void execute() {
-        ClimberController.moveToBalance();
+        Robot.climberController.moveToBalance();
     }
 
     @Override
-    protected void isFinished() {
+    protected boolean isFinished() {
         return Math.abs(Robot.get(SD.ShiftSparkAngle)) < Math.toRadians(8);
     }
 }
