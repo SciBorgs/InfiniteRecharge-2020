@@ -46,12 +46,9 @@ public class ShooterSubsystem extends Subsystem {
   }
 
   public void updateRobotState() {
-    double angle = 0.0;
-    if      (limitSwitchLeft.get()) {angle = LEFT_EXTREME_ANGLE;}
-    else if (limitSwitchRight.get()){angle = RIGHT_EXTREME_ANGLE;}
-    else {angle = this.rotateTalon.getWheelAngle();}
-    this.rotateTalon.setWheelAngle(angle);
-    Robot.set(SD.ShooterAngle, angle);
+    if      (limitSwitchLeft.get()) { this.rotateTalon.setWheelAngle(LEFT_EXTREME_ANGLE);}
+    else if (limitSwitchRight.get()){ this.rotateTalon.setWheelAngle(RIGHT_EXTREME_ANGLE);}
+    Robot.set(SD.ShooterAngle, this.rotateTalon.getWheelAngle());
   }
 
   public void setSpeedTop(double value) {
