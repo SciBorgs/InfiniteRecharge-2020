@@ -28,6 +28,7 @@ public class Robot extends TimedRobot {
     public static RobotStateHistory stateHistory = new RobotStateHistory();
     public static DriveSubsystem      driveSubsystem      = new DriveSubsystem();
 
+
     public static PigeonSubsystem     pigeonSubsystem     = new PigeonSubsystem();
     public static LimelightSubsystem  limelightSubsystem  = new LimelightSubsystem();
     public static PneumaticsSubsystem pneumaticsSubsystem = new PneumaticsSubsystem();
@@ -36,6 +37,8 @@ public class Robot extends TimedRobot {
     public static Model positionModel = new EncoderLocalization();
     public static CircleController circleController = new CircleController();
     public static OI oi = new OI();
+
+    public static LimelightLocalization limelight = new LimelightLocalization(limelightSubsystem);
 
     public static RobotState getState(){ return stateHistory.currentState(); }
     public static RobotState statesAgo(int numTicks){return stateHistory.statesAgo(numTicks);}
@@ -101,7 +104,7 @@ public class Robot extends TimedRobot {
     public void robotInit() {
         timer.start();
         // attemptsSinceLastLog = 0;
-        set(SD.X, ORIGINAL_POINT.x);
+      /*   set(SD.X, ORIGINAL_POINT.x);
         set(SD.Y, ORIGINAL_POINT.y);
         set(SD.PigeonAngle, ORIGINAL_ANGLE);
         allUpdateRobotStates();
@@ -111,7 +114,7 @@ public class Robot extends TimedRobot {
         //logger.logData();
         addSDToLog(SD.X);
         addSDToLog(SD.Y);
-        addSDToLog(SD.Angle);
+        addSDToLog(SD.Angle); */
     }
 
     public void logDataPeriodic() {
@@ -125,19 +128,20 @@ public class Robot extends TimedRobot {
     }
  
     public void robotPeriodic() {
-        allUpdateRobotStates();
+        limelight.isInRange();
+       /*  allUpdateRobotStates();
         Scheduler.getInstance().run();
         stateHistory.addState(getState().copy());
         positionModel.updateRobotState();
-        DelayedPrinter.print("X: " + get(SD.X) +"\tY: " + get(SD.Y) +" Theta: " + get(SD.PigeonAngle));
+        DelayedPrinter.print("X: " + get(SD.X) +"\tY: " + get(SD.Y) +" Theta: " + get(SD.PigeonAngle)); */
     }
         
     public void autonomousInit() {
     }
 
     public void autonomousPeriodic() {
-        pneumaticsSubsystem.startCompressor();
-        enabledPeriodic();
+       /*  pneumaticsSubsystem.startCompressor();
+        enabledPeriodic(); */
     }
     
     @Override
@@ -145,9 +149,9 @@ public class Robot extends TimedRobot {
     }
 
     public void teleopPeriodic() {
-        new TankDriveCommand().start();
+        /* new TankDriveCommand().start();
         pneumaticsSubsystem.startCompressor();
-        enabledPeriodic();
+        enabledPeriodic(); */
     }
 
     public void testPeriodic() {

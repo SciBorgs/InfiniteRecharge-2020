@@ -3,7 +3,7 @@ package frc.robot.stateEstimation;
 import frc.robot.Robot;
 import frc.robot.Utils;
 import frc.robot.subsystems.LimelightSubsystem;
-
+import frc.robot.shapes.Point;
 public class LimelightLocalization {
     public LimelightSubsystem limeLight;
     public double radialDistanceFromLoadingBay = 5;
@@ -24,6 +24,20 @@ public class LimelightLocalization {
         return (heightTwo - heightOne)/Math.tan(angleOne + angleTwo);
     }
 
+    public Point convertToCartesian(double r, double theta) {
+        double x = r * Math.cos(theta);
+        double y = r * Math.sin(theta);
+        return new Point(x,y);
+    }
+
+    public Point returnRobotPosition(double r, double theta, Point landmarkLocation) {
+        double xRelative = r * Math.cos(theta);
+        double yRelative = r * Math.sin(theta);
+        double xAbsolute = xRelative + landmarkLocation.x;
+        double yAbsolute = yRelative + landmarkLocation.y;
+        return new Point(xAbsolute,yAbsolute);
+    }
+
     public double getYAngleToTarget(double pixelY) {
         double normalizedY = (1/120) * (119.5 - pixelY);
         double viewPlaneHeight = 2 * Math.tan(CAMERA_VERTICAL_POV/2);
@@ -36,8 +50,9 @@ public class LimelightLocalization {
         if (limeLight.getTableData(limeLight.getCameraTable(), "getpipe") == 1) {
             if (limeLight.getTableData(limeLight.getCameraTable(), "tv") == 1) {
                 double pixelY = limeLight.getTableData(limeLight.getCameraTable(), "ty");
-                double yAngle = getYAngleToTarget(pixelY); 
+                double yAngle = getYAngleToTarget(pixelY);                                   
                 double distance = calculateDistance(CAMERA_ABOVE_GROUND_HEIGHT, INNER_PORT_HEIGHT, CAMERA_MOUNTING_ANGLE, yAngle);
+                System.out.println("Target found");
                 return (distance <= radialDistanceFromInnerPort);           
             }
         }
