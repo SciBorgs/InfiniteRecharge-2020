@@ -17,8 +17,6 @@ import frc.robot.logging.Logger.DefaultValue;
 
 public class EncoderLocalization implements Updater, Model {
 
-    public static final double ORIGINAL_ANGLE = Math.PI/2, ORIGINAL_X = 0, ORIGINAL_Y = 0;
-    public static final double INTERVAL_LENGTH = .02; // Seconds between each tick for commands
     private final String FILENAME = "RobotPosition.java";
     private static final double X_STD_DEV     = 0; // These are meant to be estimates
     private static final double Y_STD_DEV     = 0;

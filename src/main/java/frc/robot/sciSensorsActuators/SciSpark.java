@@ -10,13 +10,13 @@ public class SciSpark extends CANSparkMax {
     private double gearRatio;
 
     public SciSpark(int port) {
-        super(port, MotorType.kBrushless);
-        this.gearRatio = 1;
+        this(port, 1);
     }
 
     public SciSpark(int port, double gearRatio) {
         super(port, MotorType.kBrushless);
-        this.gearRatio = gearRatio;
+        setWheelAngle(0);
+        setGearRatio(gearRatio);
     }
 
     public double getGearRatio() {
@@ -34,7 +34,7 @@ public class SciSpark extends CANSparkMax {
     }
 
     public void setWheelAngle(double angle) {
-        super.getEncoder().setPosition(angle);
+        super.getEncoder().setPosition(angle / super.getEncoder().getPositionConversionFactor());
     }
 
     public double getWheelAngle() {

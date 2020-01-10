@@ -125,12 +125,11 @@ public class Robot extends TimedRobot {
     public void robotPeriodic() {
         stateHistory.addState(getState().copy());
         allUpdateRobotStates();
-        Scheduler.getInstance().run();
-        DelayedPrinter.incTicks();
         positionModel.updateRobotState();
         allPeriodicLogs();
-        DelayedPrinter.print("X: " + get(SD.X) +"\tY: " + get(SD.Y) +"\tPigeonAngle: " + get(SD.PigeonAngle)+"\tTheta: " + get(SD.Angle));
         logDataPeriodic();
+        Scheduler.getInstance().run();
+        DelayedPrinter.incTicks();
     }
 
 
@@ -143,16 +142,19 @@ public class Robot extends TimedRobot {
 
     @Override
     public void autonomousPeriodic() {
-        circleController.update(getPos(), getHeading(), TEST_POINT, TEST_HEADING);
         //pneumaticsSubsystem.startCompressor();
     }
     
     @Override
     public void teleopInit() {
         Robot.driveSubsystem.manualDriveMode();
+        set(SD.X, ORIGINAL_POINT.x);
+        set(SD.Y, ORIGINAL_POINT.y);
+        set(SD.Angle, ORIGINAL_ANGLE);
         }
 
     public void teleopPeriodic() {
+        driveSubsystem.manualDriveMode();
         new TankDriveCommand().start();
         //pneumaticsSubsystem.startCompressor();
     }

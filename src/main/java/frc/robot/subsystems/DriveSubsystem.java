@@ -28,7 +28,7 @@ public class DriveSubsystem extends Subsystem {
     private static final double INPUT_DEADZONE = 0.11; // deadzone because the joysticks are bad and they detect input when there is none
     private static final double STRAIGHT_DEADZONE = 0.15;
     private static final double STRAIGHT_EQUAL_INPUT_DEADZONE = 0; // If goal Omega is 0 and our regular input diff magnitude is less than this, the input diff goes to 0
-    public static final double GEAR_RATIO = 1 / 9.0;
+    public static final double GEAR_RATIO = 1 / 19.16;
     private PID tankAnglePID;
     public boolean assisted = false;
     public double driveMultiplier = 1;
@@ -108,8 +108,8 @@ public class DriveSubsystem extends Subsystem {
     }
     
     public double processStick(Joystick stick){
-        return stick.getY();
-        // return deadzone(stick.getY());
+        //return -stick.getY();
+        return -deadzone(stick.getY());
     }
 
     // If something is assiting, we don't want to drive using setSpeed
@@ -169,8 +169,8 @@ public class DriveSubsystem extends Subsystem {
     }
     
     public void setSpeedTankTurningPercentage(double turnMagnitude){
-        // double forward = (processStick(Robot.oi.leftStick) + processStick(Robot.oi.rightStick)) / 2;
-        double forward = (Robot.oi.leftStick.getY() + Robot.oi.rightStick.getY()) / 2;
+        double forward = (processStick(Robot.oi.leftStick) + processStick(Robot.oi.rightStick)) / 2;
+        // double forward = (Robot.oi.leftStick.getY() + Robot.oi.rightStick.getY()) / 2;
         DelayedPrinter.print("Forward: "+ forward);
         DelayedPrinter.print("LeftStick: "+Robot.oi.leftStick.getY() +"\tRightStick: "+ Robot.oi.rightStick.getY());
         setSpeedTankForwardTurningPercentage(forward, turnMagnitude);
