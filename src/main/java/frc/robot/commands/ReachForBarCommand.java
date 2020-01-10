@@ -18,7 +18,7 @@ public class ReachForBarCommand extends Command {
 
     @Override
     protected boolean isFinished() {
-        return Math.abs(Robot.get(SD.ClimberHeight) - BAR_HEIGHT) < ERROR;
+        return Utils.inRange(Robot.get(SD.ClimberHeight), BAR_HEIGHT, ERROR);
     }
 
     @Override

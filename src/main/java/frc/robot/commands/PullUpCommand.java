@@ -1,6 +1,7 @@
 package frc.robot.commands;
 
 import frc.robot.Robot;
+import frc.robot.Utils;
 import frc.robot.robotState.RobotState.SD;
 import edu.wpi.first.wpilibj.command.Command;
 
@@ -20,6 +21,11 @@ public class PullUpCommand extends Command {
 
     @Override
     protected boolean isFinished() {
-        return Math.abs(ENDING_GOAL - Robot.get(SD.ClimberHeight)) < ERROR;
+        return Utils.inRange(ENDING_GOAL, Robot.get(SD.ClimberHeight), ERROR);
+    }
+
+    @Override
+    protected void end() {
+        Robot.climberSubsystem.setLiftSpeed(0);
     }
 }

@@ -3,7 +3,6 @@ package frc.robot.subsystems;
 import frc.robot.PortMap;
 import frc.robot.Utils;
 import frc.robot.Robot;
-import frc.robot.controllers.PID;
 import frc.robot.robotState.RobotState.SD;
 import frc.robot.sciSensorsActuators.*;
 import edu.wpi.first.wpilibj.command.Subsystem;
@@ -20,7 +19,7 @@ public class ClimberSubsystem extends Subsystem {
     private final double CASCADE_THREAD_SPACING = 3; //CHANGE
     private final double CASCADE_STARTING_HEIGHT = 2; //CHANGE
 
-    private final DoubleSolenoid.Value OPEN_VALUE = Value.kForward;
+    private final DoubleSolenoid.Value OPEN_VALUE = DoubleSolenoid.Value.kForward;
     private final DoubleSolenoid.Value CLOSED_VALUE = Utils.oppositeDoubleSolenoidValue(OPEN_VALUE);
 
     public ClimberSubsystem() {
