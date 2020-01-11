@@ -35,9 +35,8 @@ public class Robot extends TimedRobot {
     public static PigeonSubsystem     pigeonSubsystem     = new PigeonSubsystem();
     public static LimelightSubsystem  limelightSubsystem  = new LimelightSubsystem();
     public static PneumaticsSubsystem pneumaticsSubsystem = new PneumaticsSubsystem();
-    public static TiltPigeonSubsystem tiltPigeonSubsystem = new TiltPigeonSubsystem();
     public static ShooterSubsystem    shooterSubsystem    = new ShooterSubsystem();
-
+    
     public static Following following = new Following();
     public static Model positionModel = new EncoderLocalization();
     public static CircleController circleController = new CircleController();
@@ -133,6 +132,7 @@ public class Robot extends TimedRobot {
         logDataPeriodic();
         Scheduler.getInstance().run();
         DelayedPrinter.incTicks();
+        new ShooterCommand().start();
     }
 
 
@@ -154,12 +154,11 @@ public class Robot extends TimedRobot {
         set(SD.X, ORIGINAL_POINT.x);
         set(SD.Y, ORIGINAL_POINT.y);
         set(SD.Angle, ORIGINAL_ANGLE);
-        }
+    }
 
     public void teleopPeriodic() {
         driveSubsystem.manualDriveMode();
         new TankDriveCommand().start();
-        new ShooterCommand().start();
         //pneumaticsSubsystem.startCompressor();
     }
 
