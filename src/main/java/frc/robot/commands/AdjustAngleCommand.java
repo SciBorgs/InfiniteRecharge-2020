@@ -11,7 +11,7 @@ public class AdjustAngleCommand extends Command {
     public AdjustAngleCommand() {}
 
     protected void execute() {
-        Robot.angleController.goToAngle(-62.5);
+        Robot.angleController.goToAngle(Math.toRadians(-62.5));
     }
 
     protected boolean isFinished() {
