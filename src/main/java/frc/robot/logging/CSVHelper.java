@@ -13,7 +13,7 @@ import java.io.*;
 public class CSVHelper {
 
     private String filename;
-    private ArrayList<String> topics;
+    public ArrayList<String> topics;
     private ArrayList<Hashtable<String, String>> rowsToAdd;
     private HashSet<String> topicLookup;
     private String lastLine;
