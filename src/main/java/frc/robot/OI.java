@@ -8,11 +8,18 @@ import frc.robot.commands.*;
 // FILE HAS NOT BEEN CLEANED UP //
 public class OI {
     public Joystick leftStick, rightStick;
+    public JoystickButton toggleClawButton, adjustTiltButton;
     public XboxController xboxController;
     
     public OI() {
         leftStick = new Joystick(PortMap.JOYSTICK_LEFT);
         rightStick = new Joystick(PortMap.JOYSTICK_RIGHT);
         xboxController = new XboxController(PortMap.XBOX_CONTROLLER);
+
+        toggleClawButton = new JoystickButton(leftStick, PortMap.JOYSTICK_TRIGGER);
+        toggleClawButton.whenPressed(new ToggleClawCommand());
+
+        adjustTiltButton = new JoystickButton(rightStick, PortMap.JOYSTICK_TRIGGER);
+        adjustTiltButton.whileHeld(new JoystickShiftCommand());
     }
 }
