@@ -30,7 +30,7 @@ public class LimelightLocalization {
         return new Point(x,y);
     }
 
-    public Point returnRobotPosition(double r, double theta, Point landmarkLocation) {
+    public Point getRobotPosition(double r, double theta, Point landmarkLocation) {
         Point relativePoint = convertToCartesian(r, theta);
         double xAbsolute = relativePoint.x + landmarkLocation.x;
         double yAbsolute = relativePoint.y + landmarkLocation.y;
