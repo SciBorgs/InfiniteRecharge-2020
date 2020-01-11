@@ -11,14 +11,11 @@ public class DualOutputGearboxSubsystem extends Subsystem { // Set ratio, motor,
     private final String FILENAME = "DualOutputGearboxSubsystem.java";
     
     public final DoubleSolenoid.Value SHIFT_GEAR_UP_VALUE = Value.kForward; // Place values plz
-    public final DoubleSolenoid.Value SHIFT_GEAR_DOWN_VALUE = Utils.oppositeDoubleSolenoidValue(SHIFT_GEAR_UP_VALUE);
 
-    public final DoubleSolenoid.Value SHIFT_CLIMBER_OUTPUT_VALUE = Value.kForward; // Place values plz
-    public final DoubleSolenoid.Value SHIFT_DRIVE_OUTPUT_VALUE = Utils.oppositeDoubleSolenoidValue(SHIFT_CLIMBER_OUTPUT_VALUE);
+    public final DoubleSolenoid.Value SHIFT_DRIVE_OUTPUT_VALUE = Value.kForward;
     
     // Need actual gear ratios.
     private final double SHIFT_UP_GEAR_RATIO = 0;
-    private final double SHIFT_DOWN_GEAR_RATIO = 0;
 
     private DoubleSolenoid gearShiftSolenoid;
     private DoubleSolenoid outputShiftSolenoid;
@@ -46,21 +43,24 @@ public class DualOutputGearboxSubsystem extends Subsystem { // Set ratio, motor,
 
         this.r1.follow(this.r);
         this.r2.follow(this.r);
+
+        shiftGearsUp();
+        shiftDriveOutput();
     }
     
+    public void toggleGears() {
+        Utils.toggleDoubleSolenoid(gearShiftSolenoid);
+    }
+
+    public void toggleOutput() {
+        Utils.toggleDoubleSolenoid(outputShiftSolenoid);
+    }
+
     public void shiftGearsUp() { 
         gearShiftSolenoid.set(SHIFT_GEAR_UP_VALUE);
         setGearRatio(SHIFT_UP_GEAR_RATIO);
-    } 
-    public void shiftGearDown() { 
-        gearShiftSolenoid.set(SHIFT_GEAR_DOWN_VALUE); 
-        setGearRatio(SHIFT_DOWN_GEAR_RATIO);
     }
     
-    public void shiftClimberOutput() { 
-        outputShiftSolenoid.set(SHIFT_CLIMBER_OUTPUT_VALUE); 
-    }
-
     public void shiftDriveOutput() { 
         outputShiftSolenoid.set(SHIFT_DRIVE_OUTPUT_VALUE); 
     }
