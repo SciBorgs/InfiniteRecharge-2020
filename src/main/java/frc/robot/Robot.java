@@ -36,6 +36,8 @@ public class Robot extends TimedRobot {
     public static PigeonSubsystem     pigeonSubsystem     = new PigeonSubsystem();
     public static LimelightSubsystem  limelightSubsystem  = new LimelightSubsystem();
     public static PneumaticsSubsystem pneumaticsSubsystem = new PneumaticsSubsystem();
+
+    public static LimelightLocalization limelightLocalizer = new LimelightLocalization(limelightSubsystem);
     
     public static Following following = new Following();
     public static Model positionModel = new EncoderLocalization();
@@ -138,7 +140,7 @@ public class Robot extends TimedRobot {
 
     public void autonomousInit() {
         Robot.driveSubsystem.assistedDriveMode();
-        set(SD.X, ORIGINAL_POINT.x);
+        set(SD.X, ORIGINAL_POINT .x);
         set(SD.Y, ORIGINAL_POINT.y);
         set(SD.Angle, ORIGINAL_ANGLE);
     }
@@ -159,6 +161,8 @@ public class Robot extends TimedRobot {
     public void teleopPeriodic() {
         driveSubsystem.manualDriveMode();
         new TankDriveCommand().start();
+
+        limelightLocalizer.isInRange();
         //pneumaticsSubsystem.startCompressor();
     }
 

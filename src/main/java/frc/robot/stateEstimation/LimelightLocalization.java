@@ -9,8 +9,8 @@ import frc.robot.helpers.Geo;
 
 public class LimelightLocalization {
     public LimelightSubsystem limeLight;
-    public double radialDistanceFromLoadingBay = 5;
-    public double radialDistanceFromInnerPort = 5;
+    public double radialDistanceFromLoadingBay = 5; // To be tuned
+    public double radialDistanceFromInnerPort = 5; // To be tuned
 
     private static final double CAMERA_ABOVE_GROUND_HEIGHT = 5;
     private static final double CAMERA_HORIZONTAL_POV = 54 * Math.PI/180;;
