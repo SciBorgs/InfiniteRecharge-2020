@@ -17,7 +17,7 @@ public class Geo {
     public static final double VERTICAL_ANGLE = normalizeAngle(HORIZONTAL_ANGLE + ANGLE_RANGE / 4);
 
     public static double subtractAngles(double a1, double a2){
-        return normalizeAngle(Utils.bringInRange(a1 - a2, -VERTICAL_ANGLE, VERTICAL_ANGLE));
+        return normalizeAngle(a1 - a2);
     }
 
     public static Point rotatePoint(Point point, double theta, Point rotateAround) {
