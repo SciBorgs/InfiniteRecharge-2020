@@ -14,7 +14,7 @@ public class RobotState {
     public enum SD {
         // Position
         X, Y, Angle, 
-        MainPigeonAngle, TiltAngle,
+        PigeonAngle, TiltAngle,
 
         // Chassis motor values
         LeftWheelAngle, RightWheelAngle, L1WheelAngle, R1WheelAngle, L2WheelAngle, R2WheelAngle,
@@ -56,6 +56,7 @@ public class RobotState {
         this.data = data;
     }
 
+    public boolean contains(SD sd) {return this.data.containsKey(sd);}
     public double get(SD sd)      {return this.data.get(sd);}
     public void   set(SD sd, double val) {this.data.put(sd, val);}
     public void   remove(SD sd)          {this.data.remove(sd);}

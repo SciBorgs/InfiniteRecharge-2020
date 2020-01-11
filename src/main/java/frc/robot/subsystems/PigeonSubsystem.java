@@ -18,7 +18,7 @@ public class PigeonSubsystem extends Subsystem {
     }
 
     public SciPigeon getPigeon() {return this.pigeon;}
-    public void   setAngle()  {Robot.set(SD.MainPigeonAngle, getPigeon().getAngle());}
+    public void   setAngle()  {Robot.set(SD.PigeonAngle, 1*getPigeon().getAngle());}
     public void   updateRobotState () { setAngle(); }
 
     @Override

@@ -16,13 +16,13 @@ public class Logger{
 
     public enum DefaultValue {Previous, Empty} // If in a given cycle a value isn't set, what should that value be in the next row? Empty : "", Previous : the same as the previous value
     public enum CommandStatus {Initializing, Executing, Ending, Interrupted}
-    public final static String LOGGING_FILE_PATH = "/home/lvuser/Logs/MainLog.csv"; // Path to file where data is logged
+    public final static String LOGGING_FILE_PATH = "/home/lvuser/MainLog.csv"; // Path to file where data is logged
     private Hashtable<String,Object> currentData; // Data of the current cycle
     private Hashtable<String,DefaultValue> defaultValues; // Data of the current default values for each column
     // TODO: make default values not reset every deploy
     private CSVHelper csvHelper;
     private Calendar calendar;
-    private boolean loggingDisabled = true;
+    private boolean loggingDisabled = false;
 
     // Universal naming conventions
     public String commandStatusName = "status";
@@ -57,7 +57,8 @@ public class Logger{
     }
 
     public ArrayList<String> getColumns(){
-        return this.csvHelper.getTopics();
+        //return this.csvHelper.getTopics();
+        return new ArrayList<String>();
     }
 
     private void addNewColumn(String columnName){
@@ -75,7 +76,7 @@ public class Logger{
         if (this.loggingDisabled){return;}
         String columnName = getColumnName(filename, valueName);
         if (!columnExists(columnName)) { 
-            System.out.println("adding column " + columnName);
+            //System.out.println("adding column " + columnName);
             addNewColumn(columnName);
         }
         this.defaultValues.put(columnName, defaultValue);
@@ -184,7 +185,7 @@ public class Logger{
 
     public void logData(){
         if (this.loggingDisabled){return;}
-        System.out.println("attempting to log data...");
+        //System.out.println("attempting to log data...");
         // adds a new data record to the file and resets our current data
         this.csvHelper.addRow(createFullCurrentData());
         resetCurrentData();
