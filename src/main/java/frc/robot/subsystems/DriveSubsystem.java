@@ -9,7 +9,6 @@ import frc.robot.helpers.DelayedPrinter;
 import frc.robot.robotState.StateInfo;
 import frc.robot.sciSensorsActuators.*;
 import frc.robot.logging.Logger.DefaultValue;
-import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.command.Subsystem;
 
 import java.util.Hashtable;
@@ -106,26 +105,19 @@ public class DriveSubsystem extends Subsystem {
     public double deadzone(double output){
         return Math.abs(output) < INPUT_DEADZONE ? 0 : output;
     }
-    
-    public double processStick(Joystick stick){
-        //return -stick.getY();
-        return -deadzone(stick.getY());
-    }
 
     // If something is assiting, we don't want to drive using setSpeed
     public void assistedDriveMode(){this.assisted = true;}
     public void manualDriveMode()  {this.assisted = false;}
 
-    public void setSpeed(Joystick leftStick, Joystick rightStick) {
+    public void setSpeed(SciJoystick leftStick, SciJoystick rightStick) {
         if (!this.assisted) {
-            double leftInput  = processStick(leftStick);
-            double rightInput = processStick(rightStick);
-            setSpeedTankAngularControl(leftInput, rightInput);
+            setSpeedTankAngularControl(leftStick.getProcessedY(), rightStick.getProcessedY());
         }
     }
 	
-	public void setSpeedRaw(Joystick leftStick, Joystick rightStick){
-		setSpeedTank(processStick(leftStick),processStick(rightStick));
+	public void setSpeedRaw(SciJoystick leftStick, SciJoystick rightStick){
+		setSpeedTank(leftStick.getProcessedY(),rightStick.getProcessedY());
     }
 
     public void defaultDriveMultilpier(){this.driveMultiplier = 1;}
@@ -169,10 +161,7 @@ public class DriveSubsystem extends Subsystem {
     }
     
     public void setSpeedTankTurningPercentage(double turnMagnitude){
-        double forward = (processStick(Robot.oi.leftStick) + processStick(Robot.oi.rightStick)) / 2;
-        // double forward = (Robot.oi.leftStick.getY() + Robot.oi.rightStick.getY()) / 2;
-        DelayedPrinter.print("Forward: "+ forward);
-        DelayedPrinter.print("LeftStick: "+Robot.oi.leftStick.getY() +"\tRightStick: "+ Robot.oi.rightStick.getY());
+        double forward = (Robot.oi.leftStick.getProcessedY() + Robot.oi.rightStick.getProcessedY()) / 2;
         setSpeedTankForwardTurningPercentage(forward, turnMagnitude);
 	}
 
