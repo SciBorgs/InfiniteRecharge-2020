@@ -32,6 +32,9 @@ public class ClimberSubsystem extends Subsystem {
 
     public void open()  {this.attachSolenoid.set(OPEN_VALUE);}
     public void close() {this.attachSolenoid.set(CLOSED_VALUE);}
+    public void toggleClaw() {
+        Utils.toggleDoubleSolenoid(this.attachSolenoid);
+    }
 
     public void setShiftMotorSpeed(double speed) {this.shiftMotor.set(speed);}
 
@@ -53,4 +56,5 @@ public class ClimberSubsystem extends Subsystem {
     protected void initDefaultCommand() {
 		//IGNORE THIS METHOD
     }
+
 }
