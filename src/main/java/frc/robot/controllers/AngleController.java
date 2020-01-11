@@ -14,11 +14,7 @@ public class AngleController {
     public void goToAngle(double desiredAngle) {
         desiredAngle = Geo.normalizeAngle(desiredAngle);
         double currentAngle = Geo.normalizeAngle(Robot.get(SD.Angle));
-        if (desiredAngle- currentAngle > Math.PI){
-            pid.addMeasurement(desiredAngle-currentAngle);
-        } else {
-            pid.addMeasurement(Math.PI -desiredAngle -( -Math.PI - currentAngle));
-        }
+        pid.addMeasurement(Geo.subtractAngles(desiredAngle, currentAngle));
         Robot.driveSubsystem.setSpeedTankTurningPercentage(pid.getOutput());
     }
 
