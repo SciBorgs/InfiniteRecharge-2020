@@ -3,6 +3,7 @@ package frc.robot.subsystems;
 import frc.robot.Robot;
 import frc.robot.Utils;
 import frc.robot.controllers.PID;
+import frc.robot.helpers.DelayedPrinter;
 import frc.robot.robotState.StateInfo;
 import frc.robot.robotState.RobotState.SD;
 import frc.robot.sciSensorsActuators.SciSpark;
@@ -26,7 +27,8 @@ public class DriveSubsystem extends Subsystem {
     private static final double INPUT_DEADZONE = 0.11; // deadzone because the joysticks are bad and they detect input when there is none
     private static final double STRAIGHT_DEADZONE = 0.15;
     private static final double STRAIGHT_EQUAL_INPUT_DEADZONE = 0; // If goal Omega is 0 and our regular input diff magnitude is less than this, the input diff goes to 0
-    //public static final double GEAR_RATIO = 1 / 9.0;
+    public static final double GEAR_RATIO = 1 / 19.16;
+
     private PID tankAnglePID;
     public boolean assisted = false;
     public double driveMultiplier = 1;
@@ -53,6 +55,8 @@ public class DriveSubsystem extends Subsystem {
         setSDMappings(Robot.gearBoxSubsystem.r1, SD.R1WheelAngle, SD.R1SparkVal, SD.R1SparkVoltage, SD.R1SparkCurrent); // Change wheelAngle, access in DriveSubsystem
         setSDMappings(Robot.gearBoxSubsystem.l2, SD.L2WheelAngle, SD.L2SparkVal, SD.L2SparkVoltage, SD.L2SparkCurrent);
         setSDMappings(Robot.gearBoxSubsystem.r2, SD.R2WheelAngle, SD.R2SparkVal, SD.R2SparkVoltage, SD.R2SparkCurrent);
+
+        Robot.addSDToLog(SD.LeftWheelAngle);
 
         this.tankAnglePID = new PID(TANK_ANGLE_P, TANK_ANGLE_I, TANK_ANGLE_D);
         Robot.logger.logFinalPIDConstants(FILENAME, "tank angle PID", this.tankAnglePID);
@@ -85,7 +89,8 @@ public class DriveSubsystem extends Subsystem {
     }
     
     public double processStick(Joystick stick){
-        return deadzone(stick.getY());
+        //return -stick.getY();
+        return -deadzone(stick.getY());
     }
 
     // If something is assiting, we don't want to drive using setSpeed
@@ -139,17 +144,20 @@ public class DriveSubsystem extends Subsystem {
 	
 	public void setSpeedTankForwardTurningPercentage(double forward, double turnMagnitude) {
         // Note: this controls dtheta/dx rather than dtheta/dt
-		setSpeedTank(forward * (1 + turnMagnitude), forward * (1 - turnMagnitude));
+		setSpeedTank(forward * (1 -  turnMagnitude), forward * (1 + turnMagnitude));
     }
     
     public void setSpeedTankTurningPercentage(double turnMagnitude){
         double forward = (processStick(Robot.oi.leftStick) + processStick(Robot.oi.rightStick)) / 2;
+        // double forward = (Robot.oi.leftStick.getY() + Robot.oi.rightStick.getY()) / 2;
+        DelayedPrinter.print("Forward: "+ forward);
+        DelayedPrinter.print("LeftStick: "+Robot.oi.leftStick.getY() +"\tRightStick: "+ Robot.oi.rightStick.getY());
         setSpeedTankForwardTurningPercentage(forward, turnMagnitude);
 	}
 
     public void setSpeedTankForwardTurningMagnitude(double forward, double turnMagnitude) {
         // Note: this controls dtheta/dt rather than dtheta/dx
-        setSpeedTank(forward + turnMagnitude, forward - turnMagnitude);
+        setSpeedTank(forward - turnMagnitude, forward + turnMagnitude);
     }
 
     @Override

@@ -1,6 +1,7 @@
 package frc.robot.stateEstimation;
 
 import frc.robot.Robot;
+import frc.robot.helpers.DelayedPrinter;
 
 import java.util.ArrayList;
 import java.util.Hashtable;
@@ -16,8 +17,6 @@ import frc.robot.logging.Logger.DefaultValue;
 
 public class EncoderLocalization implements Updater, Model {
 
-    public static final double ORIGINAL_ANGLE = Math.PI/2, ORIGINAL_X = 0, ORIGINAL_Y = 0;
-    public static final double INTERVAL_LENGTH = .02; // Seconds between each tick for commands
     private final String FILENAME = "RobotPosition.java";
     private static final double X_STD_DEV     = 0; // These are meant to be estimates
     private static final double Y_STD_DEV     = 0;
@@ -63,7 +62,6 @@ public class EncoderLocalization implements Updater, Model {
         robotState.set(SD.X, x);
         robotState.set(SD.Y, y);
         robotState.set(SD.Angle, newTheta);
-        robotState.set(SD.GearShiftSolenoid, 0.0);
         return robotState;
     }
 
@@ -73,14 +71,17 @@ public class EncoderLocalization implements Updater, Model {
         ArrayList<Double> wheelChanges = new ArrayList<>();
         wheelChanges.add(wheelRotationChange(SD.LeftWheelAngle,  stateHistory));
         wheelChanges.add(wheelRotationChange(SD.RightWheelAngle, stateHistory));
+        DelayedPrinter.print("wheel change left: " + wheelChanges.get(0));
         double thetaChange = StateInfo.getDifference(stateHistory, SD.PigeonAngle, 1);
         RobotState newPosition = 
             nextPosition(state.get(SD.X), state.get(SD.Y), state.get(SD.Angle), wheelChanges, thetaChange);
+        DelayedPrinter.print("new x: " + newPosition.get(SD.X));
         stateHistory.currentState().incorporateOtherState(newPosition); 
     }
 
     @Override
     public void updateRobotState(){
+        DelayedPrinter.print("encoder localization running...");
         updateState(Robot.stateHistory);
     }
 

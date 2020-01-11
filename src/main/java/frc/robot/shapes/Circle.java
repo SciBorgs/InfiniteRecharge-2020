@@ -13,15 +13,16 @@ public class Circle {
     }
 
     public static Circle twoPointTangentAngleForm (Point currPos, double currHeading, Point finalPos) {
+        double kRotated, hRotated, radius;
         // rotate currPos so that currHeading becomes 0
         Point currPosRotated  = Geo.rotatePoint(currPos,  -1 * currHeading);
         Point finalPosRotated = Geo.rotatePoint(finalPos, -1 * currHeading);
 
-        double kRotated = calculateK(currPosRotated, finalPosRotated);
-        double hRotated = currPosRotated.x;
-        double radius   = Math.abs(currPosRotated.y - kRotated);
+        kRotated = calculateK(currPosRotated, finalPosRotated);
+        hRotated = currPosRotated.x;
+        radius   = Math.abs(currPosRotated.y - kRotated);
 
-        Point center = Geo.rotatePoint(new Point(hRotated, kRotated), -currHeading);
+        Point center = Geo.rotatePoint(new Point(hRotated, kRotated), currHeading);
         return new Circle(center, radius);
     }
 

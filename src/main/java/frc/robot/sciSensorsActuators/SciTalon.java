@@ -14,13 +14,13 @@ public class SciTalon extends TalonSRX {
     public double gearRatio;
 
     public SciTalon(int port) {
-        super(port);
-        this.gearRatio = 1;
+        this(port, 1);
     }
 
     public SciTalon(int port, double gearRatio) {
         super(port);
-        this.gearRatio = gearRatio;
+        setWheelAngle(0);
+        setGearRatio(gearRatio);
     }
 
     public double getGearRatio() {
