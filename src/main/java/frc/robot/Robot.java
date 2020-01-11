@@ -67,7 +67,7 @@ public class Robot extends TimedRobot {
     // testing
     public static Point  getPos() {return new Point(get(SD.X),get(SD.Y));}
     public static double getHeading() {return get(SD.Angle);}
-    public static final Point TEST_POINT = new Point (3, 1);
+    public static final Point TEST_POINT = new Point (Utils.inchesToMeters(144), Utils.inchesToMeters(24));
     public static final double TEST_HEADING = Geo.HORIZONTAL_ANGLE;
     public static final Point ORIGINAL_POINT = new Point(0,0);
     public static final double ORIGINAL_ANGLE = Geo.HORIZONTAL_ANGLE;
@@ -154,12 +154,15 @@ public class Robot extends TimedRobot {
         }
 
     public void teleopPeriodic() {
-        driveSubsystem.manualDriveMode();
-        new TankDriveCommand().start();
-        //pneumaticsSubsystem.startCompressor();
+        circleController.update(getPos(), getHeading(), TEST_POINT, TEST_HEADING);
+        // new TankDriveCommand().start();
+        // pneumaticsSubsystem.startCompressor();
     }
 
     public void testPeriodic() {
+        new TankDriveCommand().start();
+        //Robot.driveSubsystem.setSpeedTank(0.6, .6);
+        DelayedPrinter.print("right: " + get(SD.RightSparkVal));
     }
 
     public void disabledInit() {

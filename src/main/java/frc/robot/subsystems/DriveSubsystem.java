@@ -136,7 +136,7 @@ public class DriveSubsystem extends Subsystem {
 	public void setSpeedTank(double leftSpeed, double rightSpeed) {
         this.l.set(leftSpeed  * this.driveMultiplier);
         this.r.set(rightSpeed * this.driveMultiplier);
-        // DelayedPrinter.print("leftspeed: "+leftSpeed);
+        //DelayedPrinter.print("right speed" + this.r.get());
         // DelayedPrinter.print("rightspeed: "+rightSpeed);
     }
 	
@@ -171,8 +171,6 @@ public class DriveSubsystem extends Subsystem {
     public void setSpeedTankTurningPercentage(double turnMagnitude){
         double forward = (processStick(Robot.oi.leftStick) + processStick(Robot.oi.rightStick)) / 2;
         // double forward = (Robot.oi.leftStick.getY() + Robot.oi.rightStick.getY()) / 2;
-        DelayedPrinter.print("Forward: "+ forward);
-        DelayedPrinter.print("LeftStick: "+Robot.oi.leftStick.getY() +"\tRightStick: "+ Robot.oi.rightStick.getY());
         setSpeedTankForwardTurningPercentage(forward, turnMagnitude);
 	}
 

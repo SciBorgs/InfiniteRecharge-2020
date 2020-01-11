@@ -48,7 +48,8 @@ public class CircleController {
 
             double turnMagnitude = desiredHeadingPID.getOutput() + finalHeadingPID.getOutput();
             // DelayedPrinter.print("turnMagnitude: " + turnMagnitude);
-            Robot.driveSubsystem.setSpeedTankTurningPercentage(.3*turnMagnitude);
+            // Robot.driveSubsystem.setSpeedTankTurningPercentage(turnMagnitude);
+            Robot.driveSubsystem.setSpeedTankForwardTurningMagnitude(.3,turnMagnitude);
         }
     }
 }
