@@ -4,6 +4,9 @@ import frc.robot.Robot;
 import frc.robot.Utils;
 import frc.robot.subsystems.LimelightSubsystem;
 import frc.robot.shapes.Point;
+import frc.robot.shapes.PolarPoint;
+import frc.robot.helpers.Geo;
+
 public class LimelightLocalization {
     public LimelightSubsystem limeLight;
     public double radialDistanceFromLoadingBay = 5;
@@ -13,7 +16,7 @@ public class LimelightLocalization {
     private static final double CAMERA_HORIZONTAL_POV = 54 * Math.PI/180;;
     private static final double CAMERA_VERTICAL_POV = 41 * Math.PI/180;
     private static final double CAMERA_MOUNTING_ANGLE = 5;
-    private static final double INNER_PORT_HEIGHT = Utils.inchesToMeters(98.25);
+    private static final double OUTER_PORT_HEIGHT = Utils.inchesToMeters(98.25);
     private static final double LOADING_BAY_HEIGHT = Utils.inchesToMeters(11);
 
     public LimelightLocalization(LimelightSubsystem limeLight) {
@@ -24,14 +27,8 @@ public class LimelightLocalization {
         return (heightTwo - heightOne)/Math.tan(angleOne + angleTwo);
     }
 
-    public Point convertToCartesian(double r, double theta) {
-        double x = r * Math.cos(theta);
-        double y = r * Math.sin(theta);
-        return new Point(x,y);
-    }
-
-    public Point getRobotPosition(double r, double theta, Point landmarkLocation) {
-        Point relativePoint = convertToCartesian(r, theta);
+    public Point getRobotPosition(PolarPoint polarP, Point landmarkLocation) {
+        Point relativePoint = Geo.convertPolarToCartesian(polarP);
         double xAbsolute = relativePoint.x + landmarkLocation.x;
         double yAbsolute = relativePoint.y + landmarkLocation.y;
         return new Point(xAbsolute,yAbsolute);
@@ -49,7 +46,7 @@ public class LimelightLocalization {
         if (limeLight.getTableData(limeLight.getCameraTable(), "getpipe") == 1) {
             if (limeLight.getTableData(limeLight.getCameraTable(), "tv") == 1) {
                 double yAngle = limeLight.getTableData(limeLight.getCameraTable(), "ty");
-                double distance = calculateDistance(CAMERA_ABOVE_GROUND_HEIGHT, INNER_PORT_HEIGHT, CAMERA_MOUNTING_ANGLE, yAngle);
+                double distance = calculateDistance(CAMERA_ABOVE_GROUND_HEIGHT, OUTER_PORT_HEIGHT, CAMERA_MOUNTING_ANGLE, yAngle);
                 System.out.println("Target found");
                 return (distance <= radialDistanceFromInnerPort);           
             }

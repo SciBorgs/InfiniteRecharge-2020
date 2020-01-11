@@ -17,7 +17,7 @@ public class Geo {
     public static final double VERTICAL_ANGLE = normalizeAngle(HORIZONTAL_ANGLE + ANGLE_RANGE / 4);
 
     public static double subtractAngles(double a1, double a2){
-        return normalizeAngle(Utils.bringInRange(a1 - a2, -VERTICAL_ANGLE, VERTICAL_ANGLE));
+        return normalizeAngle(a1 - a2);
     }
 
     public static Point rotatePoint(Point point, double theta, Point rotateAround) {
@@ -45,6 +45,12 @@ public class Geo {
     public static double thetaOf(LineLike lLike) {
         double theta = angleBetween(lLike.p1, lLike.p2);
         return normalizeAngle(Utils.bringInRange(theta, -VERTICAL_ANGLE, VERTICAL_ANGLE));
+    }
+
+    public static Point convertPolarToCartesian(PolarPoint p) {
+        double x = p.r * Math.cos(p.theta);
+        double y = p.r * Math.sin(p.theta);
+        return new Point(x,y);
     }
 
     public static double mOf(LineLike lLike) { // Slope (Something is broken)
