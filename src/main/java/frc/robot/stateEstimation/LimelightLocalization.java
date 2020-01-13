@@ -6,8 +6,12 @@ import frc.robot.subsystems.LimelightSubsystem;
 import frc.robot.shapes.Point;
 import frc.robot.shapes.PolarPoint;
 import frc.robot.helpers.Geo;
+import frc.robot.stateEstimation.*;
+import frc.robot.robotState.*;
+import frc.robot.robotState.RobotState.SD;
+import java.util.Hashtable;
 
-public class LimelightLocalization {
+public class LimelightLocalization implements MaybeUpdater {
     public LimelightSubsystem limeLight;
     public double radialDistanceFromLoadingBay = 5; // To be tuned
     public double radialDistanceFromInnerPort  = 5; // To be tuned
@@ -20,8 +24,16 @@ public class LimelightLocalization {
     private static final double CAMERA_HORIZONTAL_POV = Math.toRadians(54);
     private static final double CAMERA_VERTICAL_POV   = Math.toRadians(41);
 
+    private static final double LANDMARK_X = -10;
+    private static final double LANDMARK_Y =  2;
+
+    private Hashtable<SD, Double> stdDevs;
+
     public LimelightLocalization(LimelightSubsystem limeLight) {
         this.limeLight = limeLight;
+        this.stdDevs = new Hashtable<>();
+        this.stdDevs.put(SD.X,     0.0);
+        this.stdDevs.put(SD.Y,     0.0);
     }
 
     public double calculateDistance(double heightOne, double heightTwo, double angleOne, double angleTwo) {
@@ -33,6 +45,21 @@ public class LimelightLocalization {
         double xAbsolute = relativePoint.x + landmarkLocation.x;
         double yAbsolute = relativePoint.y + landmarkLocation.y;
         return new Point(xAbsolute,yAbsolute);
+    }
+
+    @Override
+    public void updateState(RobotStateHistory pastRobotStates) {
+        double xAngle = getXAngleToPixel(limeLight.getTableData(limeLight.getCameraTable(), "tx"));
+        double distance = calculateDistance(CAMERA_ABOVE_GROUND_HEIGHT, OUTER_PORT_HEIGHT, CAMERA_MOUNTING_ANGLE, yAngle);
+        PolarPoint relativePosition = new PolarPoint(distance, xAngle);
+        Point absolutePosition = getRobotPosition(relativePosition, new Point(LANDMARK_X, LANDMARK_Y));
+        Robot.set(SD.X, absolutePosition.x);
+        Robot.set(SD.Y, absolutePosition.y);
+    }
+
+    @Override
+    public Hashtable<SD, Double> getStdDevs() {
+        return this.stdDevs;
     }
 
     public double getYAngleToPixel(double pixelY) {
@@ -51,12 +78,12 @@ public class LimelightLocalization {
         return xAngle;
     }
 
-    public boolean isInRange() { // for now, for simplicity, we will be assuming that the targets we find belong to the inner port
+    @Override
+    public boolean canUpdate() { // for now, for simplicity, we will be assuming that the targets we find belong to the inner port
         if (limeLight.getTableData(limeLight.getCameraTable(), "getpipe") == 1) {
             if (limeLight.getTableData(limeLight.getCameraTable(), "tv") == 1) {
                 double yAngle = getYAngleToPixel(limeLight.getTableData(limeLight.getCameraTable(), "ty"));
                 double distance = calculateDistance(CAMERA_ABOVE_GROUND_HEIGHT, OUTER_PORT_HEIGHT, CAMERA_MOUNTING_ANGLE, yAngle);
-                System.out.println("Target found: " + distance);
                 return (distance <= radialDistanceFromInnerPort);           
             }
         }

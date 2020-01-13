@@ -162,7 +162,6 @@ public class Robot extends TimedRobot {
         driveSubsystem.manualDriveMode();
         new TankDriveCommand().start();
 
-        limelightLocalizer.isInRange();
         //pneumaticsSubsystem.startCompressor();
     }
 
