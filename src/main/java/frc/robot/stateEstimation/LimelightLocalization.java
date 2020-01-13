@@ -29,8 +29,8 @@ public class LimelightLocalization implements MaybeUpdater {
 
     private Hashtable<SD, Double> stdDevs;
 
-    public LimelightLocalization(LimelightSubsystem limeLight) {
-        this.limeLight = limeLight;
+    public LimelightLocalization() {
+        this.limeLight = Robot.limelightSubsystem;
         this.stdDevs = new Hashtable<>();
         this.stdDevs.put(SD.X,     0.0);
         this.stdDevs.put(SD.Y,     0.0);

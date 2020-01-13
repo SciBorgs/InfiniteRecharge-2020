@@ -36,18 +36,14 @@ public class Robot extends TimedRobot {
     public static PigeonSubsystem     pigeonSubsystem     = new PigeonSubsystem();
     public static LimelightSubsystem  limelightSubsystem  = new LimelightSubsystem();
     public static PneumaticsSubsystem pneumaticsSubsystem = new PneumaticsSubsystem();
-
-    public static LimelightLocalization limelightLocalizer = new LimelightLocalization(limelightSubsystem);
     
     public static Following following = new Following();
     public static CircleController circleController = new CircleController();
     public static OI oi = new OI();
 
-    public static MaybeUpdater limelight = new LimelightLocalization(limelightSubsystem);
-
     public static Updater positionUpdater = new EncoderLocalization();
 
-    public static MaybeDefaultUpdater maybeDefaultUpdater = new MaybeDefaultUpdater(limelight, positionUpdater);
+    public static Model positionModel = new MaybeDefaultUpdater(new LimelightLocalization(), positionUpdater);
 
     public static RobotState getState(){ return stateHistory.currentState(); }
     public static RobotState statesAgo(int numTicks){return stateHistory.statesAgo(numTicks);}
