@@ -10,14 +10,15 @@ import frc.robot.helpers.Geo;
 public class LimelightLocalization {
     public LimelightSubsystem limeLight;
     public double radialDistanceFromLoadingBay = 5; // To be tuned
-    public double radialDistanceFromInnerPort = 5; // To be tuned
+    public double radialDistanceFromInnerPort  = 5; // To be tuned
 
-    private static final double CAMERA_ABOVE_GROUND_HEIGHT = 5;
-    private static final double CAMERA_HORIZONTAL_POV = 54 * Math.PI/180;;
-    private static final double CAMERA_VERTICAL_POV = 41 * Math.PI/180;
-    private static final double CAMERA_MOUNTING_ANGLE = 5;
-    private static final double OUTER_PORT_HEIGHT = Utils.inchesToMeters(98.25);
-    private static final double LOADING_BAY_HEIGHT = Utils.inchesToMeters(11);
+    private static final double CAMERA_ABOVE_GROUND_HEIGHT = Utils.inchesToMeters(5);
+    private static final double CAMERA_MOUNTING_ANGLE      = Utils.inchesToMeters(5);
+    private static final double OUTER_PORT_HEIGHT          = Utils.inchesToMeters(98.25);
+    private static final double LOADING_BAY_HEIGHT         = Utils.inchesToMeters(11);
+
+    private static final double CAMERA_HORIZONTAL_POV = Math.toRadians(54);
+    private static final double CAMERA_VERTICAL_POV   = Math.toRadians(41);
 
     public LimelightLocalization(LimelightSubsystem limeLight) {
         this.limeLight = limeLight;
@@ -42,12 +43,20 @@ public class LimelightLocalization {
         return yAngle;
     }
 
+    public double getXAngleToPixel(double pixelX) {
+        double normalizedX =  (1/160) * (pixelX - 159.5);
+        double viewPlaneWidth = 2 * Math.tan(CAMERA_HORIZONTAL_POV/2);
+        double x = viewPlaneWidth/2 * normalizedX;
+        double xAngle = Math.atan2(1,x);
+        return xAngle;
+    }
+
     public boolean isInRange() { // for now, for simplicity, we will be assuming that the targets we find belong to the inner port
         if (limeLight.getTableData(limeLight.getCameraTable(), "getpipe") == 1) {
             if (limeLight.getTableData(limeLight.getCameraTable(), "tv") == 1) {
-                double yAngle = limeLight.getTableData(limeLight.getCameraTable(), "ty");
+                double yAngle = getYAngleToPixel(limeLight.getTableData(limeLight.getCameraTable(), "ty"));
                 double distance = calculateDistance(CAMERA_ABOVE_GROUND_HEIGHT, OUTER_PORT_HEIGHT, CAMERA_MOUNTING_ANGLE, yAngle);
-                System.out.println("Target found");
+                System.out.println("Target found: " + distance);
                 return (distance <= radialDistanceFromInnerPort);           
             }
         }
