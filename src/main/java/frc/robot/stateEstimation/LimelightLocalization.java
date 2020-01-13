@@ -49,12 +49,15 @@ public class LimelightLocalization implements MaybeUpdater {
 
     @Override
     public void updateState(RobotStateHistory pastRobotStates) {
+        double yAngle = getYAngleToPixel(limeLight.getTableData(limeLight.getCameraTable(), "ty"));
         double xAngle = getXAngleToPixel(limeLight.getTableData(limeLight.getCameraTable(), "tx"));
         double distance = calculateDistance(CAMERA_ABOVE_GROUND_HEIGHT, OUTER_PORT_HEIGHT, CAMERA_MOUNTING_ANGLE, yAngle);
         PolarPoint relativePosition = new PolarPoint(distance, xAngle);
         Point absolutePosition = getRobotPosition(relativePosition, new Point(LANDMARK_X, LANDMARK_Y));
-        Robot.set(SD.X, absolutePosition.x);
-        Robot.set(SD.Y, absolutePosition.y);
+        RobotState updatedState = new RobotState();
+        updatedState.set(SD.X, absolutePosition.x);
+        updatedState.set(SD.Y, absolutePosition.y);
+        pastRobotStates.setCurrentState(updatedState);
     }
 
     @Override

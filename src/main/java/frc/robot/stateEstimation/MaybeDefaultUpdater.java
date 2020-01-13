@@ -20,7 +20,8 @@ public class MaybeDefaultUpdater implements Model, Updater {
         return this.maybeUpdater.canUpdate() ? this.maybeUpdater :  this.defaultUpdater;
     }
 
-    @Override public Hashtable<SD, Double> getStdDevs(){
+    @Override
+    public Hashtable<SD, Double> getStdDevs(){
         return getCurrentUpdater().getStdDevs();
     }
 
@@ -29,7 +30,7 @@ public class MaybeDefaultUpdater implements Model, Updater {
         return getStdDevs().keySet();
     }
 
-    @Override 
+    @Override
     public void updateState(RobotStateHistory stateHistory){
         getCurrentUpdater().updateState(stateHistory);
     }
