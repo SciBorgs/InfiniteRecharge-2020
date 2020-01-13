@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.StringTokenizer;
 
 import frc.robot.Utils;
+import frc.robot.helpers.DelayedPrinter;
 
 import java.util.ArrayList;
 import java.io.*;
@@ -146,6 +147,7 @@ public class CSVHelper {
 
     public void writeRows(){
         PrintWriter writer = newPrintWriter(filename, true);
+        //DelayedPrinter.print("opening writer");
         for (Hashtable<String, String> row : this.rowsToAdd){
             String content = rowToContent(row);
             writer.println(content);

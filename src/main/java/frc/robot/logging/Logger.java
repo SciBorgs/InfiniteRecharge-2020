@@ -11,14 +11,16 @@ import java.io.*;
 import frc.robot.Utils;
 import frc.robot.controllers.PID;
 
+import frc.robot.helpers.DelayedPrinter;
+
 // FILE HAS NOT BEEN CLEANED UP //
 public class Logger{
 
     public enum DefaultValue {Previous, Empty} // If in a given cycle a value isn't set, what should that value be in the next row? Empty : "", Previous : the same as the previous value
     public enum CommandStatus {Initializing, Executing, Ending, Interrupted}
     public final static String LOGGING_FILE_PATH = "/home/lvuser/MainLog.csv"; // Path to file where data is logged
-    private Hashtable<String,Object> currentData; // Data of the current cycle
-    private Hashtable<String,DefaultValue> defaultValues; // Data of the current default values for each column
+    public Hashtable<String,Object> currentData; // Data of the current cycle
+    public Hashtable<String,DefaultValue> defaultValues; // Data of the current default values for each column
     // TODO: make default values not reset every deploy
     private CSVHelper csvHelper;
     private Calendar calendar;
@@ -57,8 +59,8 @@ public class Logger{
     }
 
     public ArrayList<String> getColumns(){
-        //return this.csvHelper.getTopics();
-        return new ArrayList<String>();
+        return this.csvHelper.getTopics();
+        // return new ArrayList<String>();
     }
 
     private void addNewColumn(String columnName){
@@ -149,14 +151,14 @@ public class Logger{
 
     private void addDefaultData(){
         // All this data will be done automatically
-        double year   = this.calendar.get(Calendar.YEAR);
-        double month  = this.calendar.get(Calendar.MONTH);
-        double day    = this.calendar.get(Calendar.DAY_OF_MONTH);
-        double hour   = this.calendar.get(Calendar.HOUR_OF_DAY);
-        double minute = this.calendar.get(Calendar.MINUTE);
-        double second = this.calendar.get(Calendar.SECOND);
-        double matchTime = Timer.getMatchTime();
-        double batteryVoltage = RobotController.getBatteryVoltage();
+        Double year   = (double) this.calendar.get(Calendar.YEAR);
+        Double month  = (double) this.calendar.get(Calendar.MONTH);
+        Double day    = (double) this.calendar.get(Calendar.DAY_OF_MONTH);
+        Double hour   = (double) this.calendar.get(Calendar.HOUR_OF_DAY);
+        Double minute = (double) this.calendar.get(Calendar.MINUTE);
+        Double second = (double) this.calendar.get(Calendar.SECOND);
+        Double matchTime = Timer.getMatchTime();
+        Double batteryVoltage = RobotController.getBatteryVoltage();
         String prefix = "default";
         addData(prefix, "year",year,                      DefaultValue.Previous);
         addData(prefix, "month",month,                    DefaultValue.Previous);
@@ -185,12 +187,14 @@ public class Logger{
 
     public void logData(){
         if (this.loggingDisabled){return;}
-        //System.out.println("attempting to log data...");
         // adds a new data record to the file and resets our current data
         this.csvHelper.addRow(createFullCurrentData());
-        resetCurrentData();
+        DelayedPrinter.print("fullCurrData: " + createFullCurrentData());
     }
 
-    public void writeLoggedData(){this.csvHelper.writeRows();}
+    public void writeLoggedData(){
+        this.csvHelper.writeRows();
+        resetCurrentData();
+    }
 
 }

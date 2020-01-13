@@ -118,6 +118,7 @@ public class Robot extends TimedRobot {
     }
 
     public void logDataPeriodic() {
+        // DelayedPrinter.print("Before: " + logger.currentData.toString());
         logger.logData();
         logger.writeLoggedData();
     }
@@ -142,7 +143,6 @@ public class Robot extends TimedRobot {
 
     @Override
     public void autonomousPeriodic() {
-        // Robot.driveSubsystem.setSpeedTankForwardTurningPercentage(1, 0);
         // pneumaticsSubsystem.startCompressor();
     }
     
@@ -152,20 +152,16 @@ public class Robot extends TimedRobot {
         set(SD.X, ORIGINAL_POINT.x);
         set(SD.Y, ORIGINAL_POINT.y);
         set(SD.Angle, ORIGINAL_ANGLE);
-        }
+    }
 
     public void teleopPeriodic() {
-        circleController.update(getPos(), getHeading(), TEST_POINT, TEST_HEADING);
-        DelayedPrinter.print("distance error: " + Geo.getDistance(getPos(), TEST_POINT));
-        DelayedPrinter.print(getPos() + "heading: " + getHeading() + "pigeon angle: " + Robot.get(SD.PigeonAngle));
-        // new TankDriveCommand().start();
+        new TankDriveCommand().start();
+        //circleController.update(getPos(), getHeading(), TEST_POINT, TEST_HEADING);
+        DelayedPrinter.print("x: " + getPos().x + "y: " + getPos().y + "heading: " + getHeading() + "pigeon angle: " + Robot.get(SD.PigeonAngle));
         // pneumaticsSubsystem.startCompressor();
     }
 
     public void testPeriodic() {
-        new TankDriveCommand().start();
-        //Robot.driveSubsystem.setSpeedTank(0.6, .6);
-        DelayedPrinter.print("right: " + get(SD.RightSparkVal));
     }
 
     public void disabledInit() {
