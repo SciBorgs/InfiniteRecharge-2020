@@ -21,6 +21,12 @@ public class LimelightLocalization implements MaybeUpdater {
     private static final double OUTER_PORT_HEIGHT          = Utils.inchesToMeters(98.25);
     private static final double LOADING_BAY_HEIGHT         = Utils.inchesToMeters(11);
 
+    private static final double PIXEL_TO_NORMALIZED_X_RATIO  = 1/160;
+    private static final double PIXEL_TO_NORMALIZED_Y_RATIO  = 1/120;
+
+    private static final double PIXEL_TO_NORMALIZED_X_OFFSET  = 159.5;
+    private static final double PIXEL_TO_NORMALIZED_Y_OFFSET  = 119.5;
+
     private static final double CAMERA_HORIZONTAL_POV = Math.toRadians(54);
     private static final double CAMERA_VERTICAL_POV   = Math.toRadians(41);
 
@@ -37,7 +43,7 @@ public class LimelightLocalization implements MaybeUpdater {
     }
 
     public double calculateDistance(double heightOne, double heightTwo, double angleOne, double angleTwo) {
-        return (heightTwo - heightOne)/Math.tan(angleOne + angleTwo);
+        return (heightTwo - heightOne)/Math.tan(angleOne + angleTwo); 
     }
 
     public Point getRobotPosition(PolarPoint polarP, Point landmarkLocation) {
@@ -66,18 +72,18 @@ public class LimelightLocalization implements MaybeUpdater {
     }
 
     public double getYAngleToPixel(double pixelY) {
-        double normalizedY = (1/120) * (119.5 - pixelY);
-        double viewPlaneHeight = 2 * Math.tan(CAMERA_VERTICAL_POV/2);
-        double y = viewPlaneHeight/2 * normalizedY;
-        double yAngle =  Math.atan2(1,y);
+        double normalizedY = (PIXEL_TO_NORMALIZED_Y_RATIO) * (PIXEL_TO_NORMALIZED_Y_OFFSET - pixelY); // Converts from pixel 2d y value to "normal" y value
+        double viewPlaneHeight = 2 * Math.tan(CAMERA_VERTICAL_POV/2); // gets height of imaginary view plane
+        double y = viewPlaneHeight/2 * normalizedY; // gets cartesian y coordinate
+        double yAngle =  Math.atan2(1,y); // gets angle to pixel using cartesian coordinate
         return yAngle;
     }
 
     public double getXAngleToPixel(double pixelX) {
-        double normalizedX =  (1/160) * (pixelX - 159.5);
-        double viewPlaneWidth = 2 * Math.tan(CAMERA_HORIZONTAL_POV/2);
-        double x = viewPlaneWidth/2 * normalizedX;
-        double xAngle = Math.atan2(1,x);
+        double normalizedX =  (PIXEL_TO_NORMALIZED_X_RATIO) * (pixelX - PIXEL_TO_NORMALIZED_X_OFFSET); // Converts from pixel 2d x value to "normal" x value
+        double viewPlaneWidth = 2 * Math.tan(CAMERA_HORIZONTAL_POV/2); // gets width of imaginary view plane
+        double x = viewPlaneWidth/2 * normalizedX; // gets cartesian x coordinate
+        double xAngle = Math.atan2(1,x); // gets angle to pixel using cartesian x coordinate
         return xAngle;
     }
 
