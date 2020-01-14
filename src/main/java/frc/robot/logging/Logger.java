@@ -25,7 +25,8 @@ public class Logger{
     private CSVHelper csvHelper;
     private Calendar calendar;
     private boolean loggingDisabled = false;
-
+    private Timer timer;
+    private double matchStartTime;
     // Universal naming conventions
     public String commandStatusName = "status";
 
@@ -43,6 +44,8 @@ public class Logger{
         }
         resetCurrentData();
         this.defaultValues = new Hashtable<String,DefaultValue>();
+        this.timer = new Timer();
+        this.timer.start();
     }
 
     private void fileNotFound(){
@@ -197,4 +200,15 @@ public class Logger{
         resetCurrentData();
     }
 
+    public double getTimeSinceStartup(){
+        return this.timer.get();
+    }
+
+    public void startMatchTimer(){
+        this.matchStartTime = this.timer.get();
+    }
+
+    public double getTimeSinceMatchStart(){
+        return this.timer.get() - this.matchStartTime;
+    }
 }
