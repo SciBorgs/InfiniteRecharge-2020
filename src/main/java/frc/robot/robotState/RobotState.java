@@ -29,7 +29,7 @@ public class RobotState {
         PressureSensorVoltage,
 
         // Climber
-        ClimberSparkAngle, ClimberHeight, ShiftSparkAngle,
+        ShiftSparkAngle,
     }
     
     private Hashtable<SD, Double> data;

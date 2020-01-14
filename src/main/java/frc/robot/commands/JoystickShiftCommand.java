@@ -10,6 +10,6 @@ public class JoystickShiftCommand extends InstantCommand {
     
     @Override
     protected void execute() {
-        Robot.climberSubsystem.setLiftSpeed(Robot.driveSubsystem.processStick(Robot.oi.rightStick));
+        Robot.climberSubsystem.setShiftMotorSpeed(Robot.driveSubsystem.processStick(Robot.oi.rightStick));
     }
 }

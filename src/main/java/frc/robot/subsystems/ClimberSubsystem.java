@@ -9,37 +9,47 @@ import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 
 public class ClimberSubsystem extends Subsystem {
-    private SciSpark liftRight;
-    private SciSpark liftLeft;
+    private SciSpark telescopeSpark;
+    private SciSpark stringSpark;
     private SciSpark shiftMotor;
 
-    private final double CASCADE_GEAR_RATIO = 1; // CHANGE
-    private final double CASCADE_THREAD_SPACING = 3; //CHANGE
-    private final double CASCADE_STARTING_HEIGHT = 2; //CHANGE
+    private final double CASCADE_GEAR_RATIO = 1; // 
+
+    private final double TELESCOPING_GEAR_RATIO = 5;
+    private final double TELESCOPING_UP_SPEED   = 3;
+    private final double TELESCOPING_DOWN_SPEED = 7;
+
+    private final double STRING_GEAR_RATIO = 4;
+    private final double STRING_PULL_SPEED = 3;
 
     public ClimberSubsystem() {
-        this.liftRight  = new SciSpark(PortMap.LIFT_RIGHT_TALON, CASCADE_GEAR_RATIO);
-        this.liftLeft   = new SciSpark(PortMap.LIFT_LEFT_TALON,  CASCADE_GEAR_RATIO);
-        this.shiftMotor = new SciSpark(PortMap.SHIFTING_TALON,   CASCADE_GEAR_RATIO);
+        this.telescopeSpark = new SciSpark(PortMap.TELESCOPING_SPARK, TELESCOPING_GEAR_RATIO);
+        this.stringSpark    = new SciSpark(PortMap.STRING_SPARK,      STRING_GEAR_RATIO);
+        this.shiftMotor     = new SciSpark(PortMap.SHIFTING_TALON,    CASCADE_GEAR_RATIO);
 
-        Robot.addSDToLog(SD.ClimberHeight);
     }
 
     public void setShiftMotorSpeed(double speed) {this.shiftMotor.set(speed);}
 
-    public void setLiftSpeed(double speed){ 
-        this.liftRight.set(speed);
-        this.liftLeft.set(speed);
+    public void setTelescopingSpeed(double speed){ 
+        this.telescopeSpark.set(speed);
+    }
+    public void moveTelescopeUp(){
+        this.setTelescopingSpeed(TELESCOPING_UP_SPEED);
+    }
+    public void moveTelescopeDown(){
+        this.setTelescopingSpeed(TELESCOPING_DOWN_SPEED);
     }
 
-    public double getCascadeHeight(){
-        return Robot.get(SD.ClimberSparkAngle) / (2*Math.PI) * CASCADE_THREAD_SPACING + CASCADE_STARTING_HEIGHT;
+    public void setStringPullSpeed(double speed){
+        this.stringSpark.set(speed);
+    }
+    public void pullString(){
+        this.setStringPullSpeed(STRING_PULL_SPEED);
     }
 
     public void updateRobotState(){
-        Robot.set(SD.ClimberSparkAngle,  this.liftLeft.getWheelAngle());
-        Robot.set(SD.ShiftSparkAngle,    this.shiftMotor.getWheelAngle());
-        Robot.set(SD.ClimberHeight, getCascadeHeight());
+        Robot.set(SD.ShiftSparkAngle, this.shiftMotor.getWheelAngle());
     }
     @Override
     protected void initDefaultCommand() {
