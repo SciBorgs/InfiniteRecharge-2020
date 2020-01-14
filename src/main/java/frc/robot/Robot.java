@@ -97,7 +97,7 @@ public class Robot extends TimedRobot {
         for (Pair<SD, DefaultValue> pair : Robot.dataToLog) {
             SD sd = pair.first;
             if (getState().contains(sd)){
-                Robot.logger.addData(FILENAME, sd.name(), get(sd), pair.second);
+                Robot.logger.addData("State", sd.name(), get(sd), pair.second);
             }
         }
     }
@@ -118,7 +118,6 @@ public class Robot extends TimedRobot {
     }
 
     public void logDataPeriodic() {
-        // DelayedPrinter.print("Before: " + logger.currentData.toString());
         logger.logData();
         logger.writeLoggedData();
     }

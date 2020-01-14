@@ -11,8 +11,6 @@ import java.io.*;
 import frc.robot.Utils;
 import frc.robot.controllers.PID;
 
-import frc.robot.helpers.DelayedPrinter;
-
 // FILE HAS NOT BEEN CLEANED UP //
 public class Logger{
 
@@ -46,6 +44,7 @@ public class Logger{
         this.defaultValues = new Hashtable<String,DefaultValue>();
         this.timer = new Timer();
         this.timer.start();
+        this.startMatchTimer();
     }
 
     private void fileNotFound(){
@@ -160,6 +159,7 @@ public class Logger{
         Double hour   = (double) this.calendar.get(Calendar.HOUR_OF_DAY);
         Double minute = (double) this.calendar.get(Calendar.MINUTE);
         Double second = (double) this.calendar.get(Calendar.SECOND);
+        double timeSinceStartup = getTimeSinceStartup();
         Double matchTime = Timer.getMatchTime();
         Double batteryVoltage = RobotController.getBatteryVoltage();
         String prefix = "default";
@@ -169,6 +169,7 @@ public class Logger{
         addData(prefix, "hour",hour,                      DefaultValue.Previous);
         addData(prefix, "minute",minute,                  DefaultValue.Previous);
         addData(prefix, "second",second,                  DefaultValue.Previous);
+        addData(prefix, "sec startup",timeSinceStartup,   DefaultValue.Previous);
         addData(prefix, "match time",matchTime,           DefaultValue.Previous);
         addData(prefix, "battery voltage",batteryVoltage, DefaultValue.Previous);
     }
@@ -192,7 +193,6 @@ public class Logger{
         if (this.loggingDisabled){return;}
         // adds a new data record to the file and resets our current data
         this.csvHelper.addRow(createFullCurrentData());
-        DelayedPrinter.print("fullCurrData: " + createFullCurrentData());
     }
 
     public void writeLoggedData(){

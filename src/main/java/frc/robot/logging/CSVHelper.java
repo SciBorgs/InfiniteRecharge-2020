@@ -3,12 +3,12 @@ package frc.robot.logging;
 import java.util.Hashtable;
 import java.util.HashSet;
 import java.util.StringTokenizer;
-
-import frc.robot.Utils;
-import frc.robot.helpers.DelayedPrinter;
-
 import java.util.ArrayList;
 import java.io.*;
+
+import frc.robot.Utils;
+
+
 
 // FILE HAS NOT BEEN CLEANED UP //
 public class CSVHelper {
@@ -147,7 +147,6 @@ public class CSVHelper {
 
     public void writeRows(){
         PrintWriter writer = newPrintWriter(filename, true);
-        //DelayedPrinter.print("opening writer");
         for (Hashtable<String, String> row : this.rowsToAdd){
             String content = rowToContent(row);
             writer.println(content);
