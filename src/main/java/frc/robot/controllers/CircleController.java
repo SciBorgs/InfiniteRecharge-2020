@@ -11,10 +11,11 @@ import frc.robot.robotState.StateInfo;
 public class CircleController {
 
     private static final double ERROR = 0.02;
-    private static final double FINAL_HEADING_P = .4;
-    private static final double DESIRED_HEADING_P = .2;
-    private static final double ENDING_TURN_P = .6;
-    private PID finalHeadingPID = new PID(FINAL_HEADING_P, 0, 0);
+    private static final double FINAL_HEADING_P = .20;
+    private static final double FINAL_HEADING_D = .11;
+    private static final double DESIRED_HEADING_P = 0;
+    private static final double ENDING_TURN_P = .4;
+    private PID finalHeadingPID = new PID(FINAL_HEADING_P, 0, FINAL_HEADING_D);
     private PID desiredHeadingPID = new PID(DESIRED_HEADING_P, 0, 0);
     private PID endingTurnPID = new PID(ENDING_TURN_P, 0, 0);
 
@@ -66,7 +67,6 @@ public class CircleController {
                 Robot.driveSubsystem.setSpeedTankTurningPercentage(turnMagnitude);
             }
             DelayedPrinter.print("turnMagnitude: " + turnMagnitude);
-            // DelayedPrinter.print("turnMagnitude: " + turnMagnitude);
             // Robot.driveSubsystem.setSpeedTankForwardTurningMagnitude(.3,turnMagnitude);
         }
     }

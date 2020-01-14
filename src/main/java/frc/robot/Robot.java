@@ -128,6 +128,9 @@ public class Robot extends TimedRobot {
         positionModel.updateRobotState();
         allPeriodicLogs();
         logDataPeriodic();
+        DelayedPrinter.print("x: " + getPos().x + "\ty: " + getPos().y + 
+                             "\nheading: " + getHeading() + 
+                             "\npigeon angle: " + Robot.get(SD.PigeonAngle));
         Scheduler.getInstance().run();
         DelayedPrinter.incTicks();
     }
@@ -147,16 +150,14 @@ public class Robot extends TimedRobot {
     
     @Override
     public void teleopInit() {
-        Robot.driveSubsystem.manualDriveMode();
         set(SD.X, ORIGINAL_POINT.x);
         set(SD.Y, ORIGINAL_POINT.y);
         set(SD.Angle, ORIGINAL_ANGLE);
     }
 
     public void teleopPeriodic() {
-        new TankDriveCommand().start();
-        //circleController.update(getPos(), getHeading(), TEST_POINT, TEST_HEADING);
-        DelayedPrinter.print("x: " + getPos().x + "y: " + getPos().y + "heading: " + getHeading() + "pigeon angle: " + Robot.get(SD.PigeonAngle));
+        // new TankDriveCommand().start();
+        circleController.update(getPos(), getHeading(), TEST_POINT, TEST_HEADING);
         // pneumaticsSubsystem.startCompressor();
     }
 
