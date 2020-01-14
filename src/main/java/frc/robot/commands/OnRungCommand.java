@@ -4,7 +4,7 @@ import edu.wpi.first.wpilibj.command.CommandGroup;
 
 public class OnRungCommand extends CommandGroup {
     public OnRungCommand() {
-        addSequential(new PullUpCommand());
+        addSequential(new PullStringCommand());
         addSequential(new BalanceRungCommand());
     }
 }
