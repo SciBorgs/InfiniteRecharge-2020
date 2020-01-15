@@ -5,6 +5,7 @@ import frc.robot.Robot;
 import frc.robot.Utils;
 import frc.robot.robotState.RobotState.SD;
 import frc.robot.controllers.PID;
+import frc.robot.helpers.DelayedPrinter;
 import frc.robot.robotState.StateInfo;
 import frc.robot.sciSensorsActuators.*;
 import frc.robot.logging.Logger.DefaultValue;
@@ -113,7 +114,7 @@ public class DriveSubsystem extends Subsystem {
     }
     
     public double processStick(Joystick stick){
-        // return -stick.getY();
+        //return -stick.getY();
         return -deadzone(stick.getY());
     }
 
@@ -141,6 +142,8 @@ public class DriveSubsystem extends Subsystem {
 	public void setTank(double leftSpeed, double rightSpeed) {
         this.l.set(leftSpeed  * this.driveMultiplier);
         this.r.set(rightSpeed * this.driveMultiplier);
+        //DelayedPrinter.print("right speed" + this.r.get());
+        // DelayedPrinter.print("rightspeed: "+rightSpeed);
     }
 
     public void setSpeedTank(double leftGoalSpeed, double rightGoalSpeed){
