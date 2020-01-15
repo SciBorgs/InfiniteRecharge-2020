@@ -5,16 +5,14 @@ import frc.robot.Utils;
 import frc.robot.shapes.*;
 import frc.robot.helpers.DelayedPrinter;
 import frc.robot.helpers.Geo;
-import frc.robot.logging.Logger.DefaultValue;
-import frc.robot.robotState.StateInfo;
 
 public class CircleController {
 
     private static final double ERROR = 0.02;
-    private static final double FINAL_HEADING_P = .20;
-    private static final double FINAL_HEADING_D = .11;
-    private static final double DESIRED_HEADING_P = 0;
-    private static final double ENDING_TURN_P = .4;
+    private static final double FINAL_HEADING_P = .4;
+    private static final double FINAL_HEADING_D = 0;
+    private static final double DESIRED_HEADING_P = .2;
+    private static final double ENDING_TURN_P = .2;
     private PID finalHeadingPID = new PID(FINAL_HEADING_P, 0, FINAL_HEADING_D);
     private PID desiredHeadingPID = new PID(DESIRED_HEADING_P, 0, 0);
     private PID endingTurnPID = new PID(ENDING_TURN_P, 0, 0);
@@ -56,13 +54,13 @@ public class CircleController {
                 turnMagnitude = endingTurnPID.getOutput();
                 Robot.driveSubsystem.setSpeedTankForwardTurningMagnitude(0, turnMagnitude);
 
-            } /*else if(Geo.getDistance(currPos, finalPos) < .4){
+            } else if(Geo.getDistance(currPos, finalPos) < .4){
                 DelayedPrinter.print("within .4");
                 double endingError = finalHeading - currHeading;
                 endingTurnPID.addMeasurement(endingError);
                 turnMagnitude = endingTurnPID.getOutput();
                 Robot.driveSubsystem.setSpeedTankTurningPercentage(turnMagnitude);
-            }*/ else {
+            } else {
                 turnMagnitude = desiredHeadingPID.getOutput() + finalHeadingPID.getOutput();
                 Robot.driveSubsystem.setSpeedTankTurningPercentage(turnMagnitude);
             }

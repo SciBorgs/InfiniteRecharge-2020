@@ -16,7 +16,7 @@ import java.util.Hashtable;
 public class DriveSubsystem extends Subsystem {
     // Define tested error values here
     double TANK_ANGLE_P = .075, TANK_ANGLE_D = 0.0, TANK_ANGLE_I = 0;
-    double TANK_SPEED_LEFT_P  = .5, TANK_SPEED_LEFT_D  = 0.0, TANK_SPEED_LEFT_I  = 0;
+    double TANK_SPEED_LEFT_P  = .1, TANK_SPEED_LEFT_D  = 0.0, TANK_SPEED_LEFT_I  = 0;
     double TANK_SPEED_RIGHT_P = TANK_SPEED_LEFT_P, TANK_SPEED_RIGHT_D = TANK_SPEED_LEFT_D, TANK_SPEED_RIGHT_I = TANK_SPEED_LEFT_I;
     double GOAL_OMEGA_CONSTANT = 8; // Change this to change angle
     private double MAX_OMEGA_GOAL = 1 * GOAL_OMEGA_CONSTANT;
@@ -176,7 +176,7 @@ public class DriveSubsystem extends Subsystem {
 	
 	public void setSpeedTankForwardTurningPercentage(double forward, double turnMagnitude) {
         // Note: this controls dtheta/dx rather than dtheta/dt
-		setTank((forward / TANK_SPEED_LEFT_P) * (1 -  turnMagnitude), (forward / TANK_SPEED_RIGHT_P) * (1 + turnMagnitude));
+		setSpeedTank((forward / TANK_SPEED_LEFT_P) * (1 -  turnMagnitude), (forward / TANK_SPEED_RIGHT_P) * (1 + turnMagnitude));
     }
     
     public void setSpeedTankTurningPercentage(double turnMagnitude){
