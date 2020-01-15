@@ -5,6 +5,7 @@ import frc.robot.Robot;
 import frc.robot.Utils;
 import frc.robot.robotState.RobotState.SD;
 import frc.robot.controllers.PID;
+import frc.robot.helpers.DelayedPrinter;
 import frc.robot.robotState.StateInfo;
 import frc.robot.sciSensorsActuators.*;
 import frc.robot.logging.Logger.DefaultValue;
@@ -16,7 +17,7 @@ import java.util.Hashtable;
 public class DriveSubsystem extends Subsystem {
     // Define tested error values here
     double TANK_ANGLE_P = .075, TANK_ANGLE_D = 0.0, TANK_ANGLE_I = 0;
-    double TANK_SPEED_LEFT_P  = .5, TANK_SPEED_LEFT_D  = 0.0, TANK_SPEED_LEFT_I  = 0;
+    double TANK_SPEED_LEFT_P  = .1, TANK_SPEED_LEFT_D  = 0.0, TANK_SPEED_LEFT_I  = 0;
     double TANK_SPEED_RIGHT_P = TANK_SPEED_LEFT_P, TANK_SPEED_RIGHT_D = TANK_SPEED_LEFT_D, TANK_SPEED_RIGHT_I = TANK_SPEED_LEFT_I;
     double GOAL_OMEGA_CONSTANT = 8; // Change this to change angle
     private double MAX_OMEGA_GOAL = 1 * GOAL_OMEGA_CONSTANT;
@@ -113,7 +114,7 @@ public class DriveSubsystem extends Subsystem {
     }
     
     public double processStick(Joystick stick){
-        // return -stick.getY();
+        //return -stick.getY();
         return -deadzone(stick.getY());
     }
 
@@ -141,6 +142,8 @@ public class DriveSubsystem extends Subsystem {
 	public void setTank(double leftSpeed, double rightSpeed) {
         this.l.set(leftSpeed  * this.driveMultiplier);
         this.r.set(rightSpeed * this.driveMultiplier);
+        //DelayedPrinter.print("right speed" + this.r.get());
+        // DelayedPrinter.print("rightspeed: "+rightSpeed);
     }
 
     public void setSpeedTank(double leftGoalSpeed, double rightGoalSpeed){
@@ -176,7 +179,7 @@ public class DriveSubsystem extends Subsystem {
 	
 	public void setSpeedTankForwardTurningPercentage(double forward, double turnMagnitude) {
         // Note: this controls dtheta/dx rather than dtheta/dt
-		setTank((forward / TANK_SPEED_LEFT_P) * (1 -  turnMagnitude), (forward / TANK_SPEED_RIGHT_P) * (1 + turnMagnitude));
+		setSpeedTank((forward / TANK_SPEED_LEFT_P) * (1 -  turnMagnitude), (forward / TANK_SPEED_RIGHT_P) * (1 + turnMagnitude));
     }
     
     public void setSpeedTankTurningPercentage(double turnMagnitude){

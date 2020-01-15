@@ -11,11 +11,11 @@ import frc.robot.robotState.StateInfo;
 public class CircleController {
 
     private static final double ERROR = 0.02;
-    private static final double FINAL_HEADING_P = .20;
-    private static final double FINAL_HEADING_D = .11;
-    private static final double DESIRED_HEADING_P = 0;
-    private static final double ENDING_TURN_P = .4;
-    private PID finalHeadingPID = new PID(FINAL_HEADING_P, 0, FINAL_HEADING_D);
+    private static final double PROXIMITY_DAMPENER = .65;
+    private static final double FINAL_HEADING_P = .4;
+    private static final double DESIRED_HEADING_P = .2;
+    private static final double ENDING_TURN_P = .2;
+    private PID finalHeadingPID = new PID(FINAL_HEADING_P, 0, 0);
     private PID desiredHeadingPID = new PID(DESIRED_HEADING_P, 0, 0);
     private PID endingTurnPID = new PID(ENDING_TURN_P, 0, 0);
 
@@ -27,46 +27,38 @@ public class CircleController {
         } else {
             Circle currCircle = Circle.twoPointTangentAngleForm(currPos, currHeading, finalPos);
             double expectedFinalHeading = Geo.thetaOf(Geo.getTangentToCircle(currCircle, finalPos));
-            DelayedPrinter.print("expectedFinalHeading: " + Math.toDegrees(expectedFinalHeading));
             double expectedCurrentHeading = Geo.thetaOf(Geo.getTangentToCircle(currCircle, currPos));
-            DelayedPrinter.print("expectedCurrentHeading: " + Math.toDegrees(expectedCurrentHeading));
             // We don't need Geo.subtractAngles b/c we expect this to be 90 or -90.
             double angle1 = Geo.subtractAngles(currHeading, Geo.angleBetween(currPos, currCircle.center));
             double angle2 = Geo.subtractAngles(expectedFinalHeading, Geo.angleBetween(finalPos, currCircle.center));
-            DelayedPrinter.print("angle1: " + Math.toDegrees(angle1));
-            DelayedPrinter.print("angle2: " + Math.toDegrees(angle2));
 
-            if (!Utils.inRange(angle1, angle2, ERROR)) {
-                DelayedPrinter.print("negating...");
+            if (Utils.signOf(angle1) != Utils.signOf(angle2)) {
                 expectedFinalHeading = Geo.normalizeAngle(expectedFinalHeading + Geo.ANGLE_RANGE / 2);
             }
 
             double finalHeadingError = Geo.subtractAngles(expectedFinalHeading, finalHeading);
-            DelayedPrinter.print("finalHeadingError: " + Math.toDegrees(finalHeadingError));
             finalHeadingPID.addMeasurement(finalHeadingError);
 
             double desiredHeadingError = Geo.subtractAngles(Geo.angleBetween(currPos, finalPos), currHeading);
-            DelayedPrinter.print("desiredHeadingError: " + Math.toDegrees(desiredHeadingError));
             desiredHeadingPID.addMeasurement(desiredHeadingError);
             double turnMagnitude;
             if(Geo.getDistance(currPos, finalPos) < .2) {
-                DelayedPrinter.print("within .2");
                 double endingError = finalHeading - currHeading;
                 endingTurnPID.addMeasurement(endingError);
                 turnMagnitude = endingTurnPID.getOutput();
                 Robot.driveSubsystem.setSpeedTankForwardTurningMagnitude(0, turnMagnitude);
 
-            } /*else if(Geo.getDistance(currPos, finalPos) < .4){
-                DelayedPrinter.print("within .4");
+            } else if(Geo.getDistance(currPos, finalPos) < .4){
                 double endingError = finalHeading - currHeading;
                 endingTurnPID.addMeasurement(endingError);
                 turnMagnitude = endingTurnPID.getOutput();
                 Robot.driveSubsystem.setSpeedTankTurningPercentage(turnMagnitude);
-            }*/ else {
+            } else {
                 turnMagnitude = desiredHeadingPID.getOutput() + finalHeadingPID.getOutput();
                 Robot.driveSubsystem.setSpeedTankTurningPercentage(turnMagnitude);
             }
-            DelayedPrinter.print("turnMagnitude: " + turnMagnitude);
+            
+            // DelayedPrinter.print("turnMagnitude: " + turnMagnitude);
             // Robot.driveSubsystem.setSpeedTankForwardTurningMagnitude(.3,turnMagnitude);
         }
     }
