@@ -67,8 +67,8 @@ public class Robot extends TimedRobot {
     // testing
     public static Point  getPos() {return new Point(get(SD.X),get(SD.Y));}
     public static double getHeading() {return get(SD.Angle);}
-    public static final Point TEST_POINT = new Point (3, 1);
-    public static final double TEST_HEADING = Geo.HORIZONTAL_ANGLE;
+    public static final Point TEST_POINT = new Point (-3, 1);
+    public static final double TEST_HEADING = Geo.HORIZONTAL_ANGLE + Math.PI;
     public static final Point ORIGINAL_POINT = new Point(0,0);
     public static final double ORIGINAL_ANGLE = Geo.HORIZONTAL_ANGLE;
     
