@@ -89,7 +89,6 @@ public class Robot extends TimedRobot {
         driveSubsystem.updateRobotState();
         pneumaticsSubsystem.updateRobotState();
         pigeonSubsystem.updateRobotState();
-        shooterSubsystem.updateRobotState();
     }
 
     public static void addSDToLog(SD sd, DefaultValue val) { Robot.dataToLog.add(new Pair<>(sd, val)); }
@@ -132,7 +131,6 @@ public class Robot extends TimedRobot {
         logDataPeriodic();
         Scheduler.getInstance().run();
         DelayedPrinter.incTicks();
-        new ShooterCommand().start();
     }
 
 
