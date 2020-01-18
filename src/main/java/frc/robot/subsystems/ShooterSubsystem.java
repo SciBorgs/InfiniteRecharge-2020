@@ -1,22 +1,25 @@
 package frc.robot.subsystems;
 
-import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import edu.wpi.first.wpilibj.command.Subsystem;
+import frc.robot.Utils;
+import frc.robot.helpers.DelayedPrinter;
+import frc.robot.sciSensorsActuators.SciSpark;
 
 public class ShooterSubsystem extends Subsystem {
-  private TalonSRX topTalon, bottomTalon;
-  public double topOutput, bottomOutput;
+  private SciSpark spark;
+  private final double WHEEL_RADIUS = Utils.inchesToMeters(3);
 
   public ShooterSubsystem() {
-    this.topTalon    = new TalonSRX(4);
-    this.bottomTalon = new TalonSRX(8);
-    this.topOutput = bottomOutput = 0; 
+    this.spark = new SciSpark(-1);
   }
 
-  public void setSpeed() {
-    this.topTalon.set(ControlMode.PercentOutput, topOutput);
-    this.bottomTalon.set(ControlMode.PercentOutput, bottomOutput);
+  public void setSpeed(double speed) {
+    this.spark.set(speed);
+  }
+
+  public void logSpeed() {
+    double rpm = this.spark.getEncoder().getVelocity();
+    DelayedPrinter.print("RPM: " + rpm + "\t m/s: " + WHEEL_RADIUS * 2 * Math.PI * rpm / 60);
   }
 
   @Override
