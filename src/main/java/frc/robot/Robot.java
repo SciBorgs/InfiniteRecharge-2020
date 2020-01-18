@@ -116,6 +116,7 @@ public class Robot extends TimedRobot {
         addSDToLog(SD.X);
         addSDToLog(SD.Y);
         addSDToLog(SD.Angle);
+        this.shooterSubsystem.setSpeed(0.5);
     }
 
     public void logDataPeriodic() {

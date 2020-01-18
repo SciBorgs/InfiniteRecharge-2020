@@ -41,6 +41,10 @@ public class SciSpark extends CANSparkMax {
         return super.getEncoder().getPosition();
     }
 
+    public void updateSpeed(double speed) {
+        this.set(get() + speed);
+    }
+
     public void set(double speed, double maxJerk) {
         super.set(Utils.limitChange(super.get(), speed, maxJerk));
     }

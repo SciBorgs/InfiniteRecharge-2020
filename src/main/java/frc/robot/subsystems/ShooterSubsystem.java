@@ -8,10 +8,14 @@ import frc.robot.sciSensorsActuators.SciSpark;
 public class ShooterSubsystem extends Subsystem {
   private SciSpark spark;
   private final double WHEEL_RADIUS = Utils.inchesToMeters(3);
+  private final double INCREMENT = 0.5;
 
   public ShooterSubsystem() {
     this.spark = new SciSpark(-1);
   }
+
+  public void incrementSpeed(){this.spark.updateSpeed(INCREMENT);}
+  public void decrementSpeed(){this.spark.updateSpeed(-INCREMENT);}
 
   public void setSpeed(double speed) {
     this.spark.set(speed);
