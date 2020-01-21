@@ -158,6 +158,7 @@ public class Robot extends TimedRobot {
     public void teleopPeriodic() {
         driveSubsystem.manualDriveMode();
         new TankDriveCommand().start();
+        shooterSubsystem.logSpeed();
         //pneumaticsSubsystem.startCompressor();
     }
 

@@ -13,8 +13,8 @@ public class ShooterSubsystem extends Subsystem {
   private final double INCREMENT = 0.5;
 
   public ShooterSubsystem() {
-    this.spark = new SciSpark(-1);
-    this.hoodSolenoid = Utils.newDoubleSolenoid(new int[]{-1,-1});
+    this.spark = new SciSpark(3);
+    //this.hoodSolenoid = Utils.newDoubleSolenoid(new int[]{-1,-1});
   }
 
   public void incrementSpeed(){this.spark.updateSpeed(INCREMENT);}
