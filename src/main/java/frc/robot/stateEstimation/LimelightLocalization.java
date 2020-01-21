@@ -6,7 +6,6 @@ import frc.robot.subsystems.LimelightSubsystem;
 import frc.robot.shapes.Point;
 import frc.robot.shapes.PolarPoint;
 import frc.robot.helpers.Geo;
-import frc.robot.stateEstimation.*;
 import frc.robot.robotState.*;
 import frc.robot.robotState.RobotState.SD;
 import java.util.Hashtable;
@@ -55,8 +54,8 @@ public class LimelightLocalization implements MaybeUpdater {
 
     @Override
     public void updateState(RobotStateHistory pastRobotStates) {
-        double yAngle = getYAngleToPixel(limeLight.getTableData(limeLight.getCameraTable(), "ty"));
-        double xAngle = getXAngleToPixel(limeLight.getTableData(limeLight.getCameraTable(), "tx"));
+        double yAngle = getYAngle(limeLight.getTableData(limeLight.getCameraTable(), "ty"));
+        double xAngle = getXAngle(limeLight.getTableData(limeLight.getCameraTable(), "tx"));
         double distance = calculateDistance(CAMERA_ABOVE_GROUND_HEIGHT, OUTER_PORT_HEIGHT, CAMERA_MOUNTING_ANGLE, yAngle);
         PolarPoint relativePosition = new PolarPoint(distance, xAngle);
         Point absolutePosition = getRobotPosition(relativePosition, new Point(LANDMARK_X, LANDMARK_Y));
@@ -71,7 +70,7 @@ public class LimelightLocalization implements MaybeUpdater {
         return this.stdDevs;
     }
 
-    public double getYAngleToPixel(double pixelY) {
+    public double getYAngle(double pixelY) {
         double normalizedY = (PIXEL_TO_NORMALIZED_Y_RATIO) * (PIXEL_TO_NORMALIZED_Y_OFFSET - pixelY); // Converts from pixel 2d y value to "normal" y value
         double viewPlaneHeight = 2 * Math.tan(CAMERA_VERTICAL_POV/2); // gets height of imaginary view plane
         double y = viewPlaneHeight/2 * normalizedY; // gets cartesian y coordinate
@@ -79,7 +78,7 @@ public class LimelightLocalization implements MaybeUpdater {
         return yAngle;
     }
 
-    public double getXAngleToPixel(double pixelX) {
+    public double getXAngle(double pixelX) {
         double normalizedX =  (PIXEL_TO_NORMALIZED_X_RATIO) * (pixelX - PIXEL_TO_NORMALIZED_X_OFFSET); // Converts from pixel 2d x value to "normal" x value
         double viewPlaneWidth = 2 * Math.tan(CAMERA_HORIZONTAL_POV/2); // gets width of imaginary view plane
         double x = viewPlaneWidth/2 * normalizedX; // gets cartesian x coordinate
@@ -91,7 +90,7 @@ public class LimelightLocalization implements MaybeUpdater {
     public boolean canUpdate() { // for now, for simplicity, we will be assuming that the targets we find belong to the inner port
         if (limeLight.getTableData(limeLight.getCameraTable(), "getpipe") == 1) {
             if (limeLight.getTableData(limeLight.getCameraTable(), "tv") == 1) {
-                double yAngle = getYAngleToPixel(limeLight.getTableData(limeLight.getCameraTable(), "ty"));
+                double yAngle = getYAngle(limeLight.getTableData(limeLight.getCameraTable(), "ty"));
                 double distance = calculateDistance(CAMERA_ABOVE_GROUND_HEIGHT, OUTER_PORT_HEIGHT, CAMERA_MOUNTING_ANGLE, yAngle);
                 return (distance <= radialDistanceFromInnerPort);           
             }
