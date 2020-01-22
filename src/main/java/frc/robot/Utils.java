@@ -200,8 +200,8 @@ public class Utils{
 
     public static double max(double... numbers) {
         double max = numbers[0];
-        for (int i = 1; i < numbers.length; i++) {
-            if (numbers[i] > max) {
+        for (int i : numbers) {
+            if (i > max) {
                 max = numbers[i];
             }
         }
@@ -210,8 +210,8 @@ public class Utils{
 
     public static double min(double... numbers) {
         double min = numbers[0];
-        for (int i = 1; i < numbers.length; i++) {
-            if (numbers[i] < min) {
+        for (int i : numbers) {
+            if (i < min) {
                 min = numbers[i];
             }
         }
