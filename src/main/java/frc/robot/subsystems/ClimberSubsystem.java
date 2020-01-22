@@ -9,10 +9,8 @@ import edu.wpi.first.wpilibj.command.Subsystem;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 
 public class ClimberSubsystem extends Subsystem {
-    private SciSpark telescopeSpark;
-    private SciSpark shiftMotor;
-    private SciTalon lStringTalon;
-    private SciTalon rStringTalon;
+    private SciSpark telescopeSpark, shiftMotor;
+    private SciTalon stringTalon1, stringTalon2;
 
     private final double CASCADE_GEAR_RATIO = 1; // 
 
@@ -24,11 +22,10 @@ public class ClimberSubsystem extends Subsystem {
     private final double STRING_PULL_SPEED = 3;
 
     public ClimberSubsystem() {
-        this.telescopeSpark = new SciSpark(PortMap.TELESCOPING_SPARK, TELESCOPING_GEAR_RATIO);
+        this.telescopeSpark = new SciSpark(PortMap.TELESCOPING_SPARK, TELESCOPING_GEAR_RATIO); 
         this.shiftMotor     = new SciSpark(PortMap.SHIFTING_TALON,    CASCADE_GEAR_RATIO);
-
-        this.lStringTalon = new SciTalon(PortMap.LEFT_STRING_TALON,  STRING_GEAR_RATIO);
-        this.rStringTalon = new SciTalon(PortMap.RIGHT_STRING_TALON, STRING_GEAR_RATIO);
+        this.stringTalon1   = new SciTalon(PortMap.STRING_TALON_1,    STRING_GEAR_RATIO);
+        this.stringTalon2   = new SciTalon(PortMap.STRING_TALON_2,    STRING_GEAR_RATIO);
     }
 
     public void setShiftMotorSpeed(double speed) {this.shiftMotor.set(speed);}
@@ -44,8 +41,8 @@ public class ClimberSubsystem extends Subsystem {
     }
 
     public void setStringPullSpeed(double speed){
-        this.lStringTalon.set(speed);
-        this.rStringTalon.set(speed);
+        this.stringTalon1.set(speed);
+        this.stringTalon2.set(speed);
     }
     public void pullString(){
         this.setStringPullSpeed(STRING_PULL_SPEED);
