@@ -57,13 +57,14 @@ public class PortMap {
     public static final int RIGHT_BACK_SPARK = 1;
 
     public static final int TELESCOPING_SPARK = 13; //CHANGE TO ACTUAL INPUT
-    public static final int STRING_SPARK = 14;
     //*******************TALONS******************//
 
     public static final int PIGEON_TALON = 9;
 
     public static final int TILT_PIGEON = 11;      // CHANGE TO ACTUAL INPUT
     public static final int SHIFTING_TALON = 10;   // CHANGE TO ACTUAL INPUT
+    public static final int LEFT_STRING_TALON = 15; // CHANGE
+    public static final int RIGHT_STRING_TALON = 16; // CHANGE
 
     //*******************MISC********************//
 
