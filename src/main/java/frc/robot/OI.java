@@ -17,10 +17,10 @@ public class OI {
         rightStick = new Joystick(PortMap.JOYSTICK_RIGHT);
         xboxController = new XboxController(PortMap.XBOX_CONTROLLER);
 
-        toggleGears  = new JoystickButton(rightStick, PortMap.JOYSTICK_RIGHT_BUTTON);
+        toggleGears  = new JoystickButton(leftStick, PortMap.JOYSTICK_RIGHT_BUTTON);
         toggleGears.whenPressed(new ToggleGearsCommand());
         
-        toggleOutput = new JoystickButton(leftStick , PortMap.JOYSTICK_LEFT_BUTTON);
-        toggleGears.whenPressed(new ToggleOutputCommand());
+        toggleOutput = new JoystickButton(leftStick, PortMap.JOYSTICK_LEFT_BUTTON);
+        toggleOutput.whenPressed(new ToggleOutputCommand());
     }
 }

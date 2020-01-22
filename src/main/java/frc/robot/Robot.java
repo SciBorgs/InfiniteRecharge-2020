@@ -30,12 +30,13 @@ public class Robot extends TimedRobot {
     static {
         stateHistory.addState(new RobotState());
     }
+    public static DualOutputGearboxSubsystem gearBoxSubsystem = new DualOutputGearboxSubsystem();
+
     public static DriveSubsystem      driveSubsystem      = new DriveSubsystem();
 
     public static PigeonSubsystem     pigeonSubsystem     = new PigeonSubsystem();
     public static LimelightSubsystem  limelightSubsystem  = new LimelightSubsystem();
     public static PneumaticsSubsystem pneumaticsSubsystem = new PneumaticsSubsystem();
-    public static DualOutputGearboxSubsystem gearBoxSubsystem = new DualOutputGearboxSubsystem();
     
     public static Following following = new Following();
     public static Model positionModel = new EncoderLocalization();
@@ -148,6 +149,9 @@ public class Robot extends TimedRobot {
     
     @Override
     public void teleopInit() {
+        pneumaticsSubsystem.stopCompressor();
+        gearBoxSubsystem.shiftGearsUp();
+        gearBoxSubsystem.shiftDriveOutput();
         Robot.driveSubsystem.manualDriveMode();
         set(SD.X, ORIGINAL_POINT.x);
         set(SD.Y, ORIGINAL_POINT.y);
@@ -156,11 +160,12 @@ public class Robot extends TimedRobot {
 
     public void teleopPeriodic() {
         driveSubsystem.manualDriveMode();
-        new TankDriveCommand().start();
-        //pneumaticsSubsystem.startCompressor();
+        // new TankDriveCommand().start();
+        Robot.gearBoxSubsystem.r.set(.4 * Robot.oi.rightStick.getY());
     }
 
     public void testPeriodic() {
+        pneumaticsSubsystem.startCompressor();
     }
 
     public void disabledInit() {

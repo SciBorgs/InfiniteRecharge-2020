@@ -23,8 +23,8 @@ public class DualOutputGearboxSubsystem extends Subsystem { // Set ratio, motor,
     public SciSpark l, l1, l2, r, r1, r2;
 
     public DualOutputGearboxSubsystem() {
-        gearShiftSolenoid   = Utils.newDoubleSolenoid(PortMap.GEAR_RATIO_SOLENOID_PDP, PortMap.GEAR_RATIO_SOLENOID);
-        outputShiftSolenoid = Utils.newDoubleSolenoid(PortMap.OUTPUT_SOLENOID_PDP, PortMap.OUTPUT_SOLENOID);
+        gearShiftSolenoid   = Utils.newDoubleSolenoid(PortMap.GEAR_RATIO_SOLENOID);
+        outputShiftSolenoid = Utils.newDoubleSolenoid(PortMap.OUTPUT_SOLENOID);
         
         this.l  = new SciSpark(PortMap.LEFT_FRONT_SPARK);
 		this.l1 = new SciSpark(PortMap.LEFT_MIDDLE_SPARK);
@@ -49,11 +49,11 @@ public class DualOutputGearboxSubsystem extends Subsystem { // Set ratio, motor,
     }
     
     public void toggleGears() {
-        Utils.toggleDoubleSolenoid(gearShiftSolenoid);
+        Utils.toggleDoubleSolenoid(this.gearShiftSolenoid);
     }
 
     public void toggleOutput() {
-        Utils.toggleDoubleSolenoid(outputShiftSolenoid);
+        Utils.toggleDoubleSolenoid(this.outputShiftSolenoid);
     }
 
     public void shiftGearsUp() { 
