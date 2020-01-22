@@ -1,4 +1,4 @@
-package frc.robot;
+ package frc.robot;
 
 import com.revrobotics.CANSparkMax;
 import java.util.ArrayList;
@@ -99,7 +99,7 @@ public class Robot extends TimedRobot {
         for (Pair<SD, DefaultValue> pair : Robot.dataToLog) {
             SD sd = pair.first;
             if (getState().contains(sd)){
-                Robot.logger.addData(FILENAME, sd.name(), get(sd), pair.second);
+                Robot.logger.addData("State", sd.name(), get(sd), pair.second);
             }
         }
     }
@@ -121,7 +121,6 @@ public class Robot extends TimedRobot {
 
     public void logDataPeriodic() {
         logger.logData();
-        logger.writeLoggedData();
     }
  
     public void robotPeriodic() {
@@ -130,6 +129,9 @@ public class Robot extends TimedRobot {
         positionModel.updateRobotState();
         allPeriodicLogs();
         logDataPeriodic();
+        DelayedPrinter.print("x: " + getPos().x + "\ty: " + getPos().y + 
+                             "\nheading: " + getHeading() + 
+                             "\npigeon angle: " + Robot.get(SD.PigeonAngle));
         Scheduler.getInstance().run();
         DelayedPrinter.incTicks();
     }
@@ -144,7 +146,7 @@ public class Robot extends TimedRobot {
 
     @Override
     public void autonomousPeriodic() {
-        //pneumaticsSubsystem.startCompressor();
+        // pneumaticsSubsystem.startCompressor();
     }
     
     @Override
@@ -156,12 +158,14 @@ public class Robot extends TimedRobot {
         set(SD.X, ORIGINAL_POINT.x);
         set(SD.Y, ORIGINAL_POINT.y);
         set(SD.Angle, ORIGINAL_ANGLE);
-        }
+    }
 
     public void teleopPeriodic() {
         driveSubsystem.manualDriveMode();
-        // new TankDriveCommand().start();
+        // new TankDriveCommand().start();  
         Robot.gearBoxSubsystem.r.set(.4 * Robot.oi.rightStick.getY());
+        circleController.update(getPos(), getHeading(), TEST_POINT, TEST_HEADING);
+        // pneumaticsSubsystem.startCompressor();
     }
 
     public void testPeriodic() {
@@ -169,8 +173,8 @@ public class Robot extends TimedRobot {
     }
 
     public void disabledInit() {
-        // allPeriodicLogs();
-        // logger.logData();
-        // logger.writeLoggedData();
+        allPeriodicLogs();
+        logger.logData();
+        logger.writeLoggedData();
     }
 }

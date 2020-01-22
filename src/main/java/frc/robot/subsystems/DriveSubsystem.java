@@ -17,9 +17,13 @@ import edu.wpi.first.wpilibj.command.Subsystem;
 public class DriveSubsystem extends Subsystem {
     // Define tested error values here
     double TANK_ANGLE_P = .075, TANK_ANGLE_D = 0.0, TANK_ANGLE_I = 0;
+    double TANK_SPEED_LEFT_P  = .1, TANK_SPEED_LEFT_D  = 0.0, TANK_SPEED_LEFT_I  = 0;
+    double TANK_SPEED_RIGHT_P = TANK_SPEED_LEFT_P, TANK_SPEED_RIGHT_D = TANK_SPEED_LEFT_D, TANK_SPEED_RIGHT_I = TANK_SPEED_LEFT_I;
     double GOAL_OMEGA_CONSTANT = 8; // Change this to change angle
     private double MAX_OMEGA_GOAL = 1 * GOAL_OMEGA_CONSTANT;
-	private final String FILENAME = "DriveSubsystem.java";
+    public SciSpark l, l1, l2, r, r1, r2;
+    private final String FILENAME = "DriveSubsystem.java";
+
     public static final double WHEEL_RADIUS = Utils.inchesToMeters(3);
 
     // deadzones by Alejandro at Chris' request. Graph them with the joystick function to understand the math.
@@ -30,6 +34,8 @@ public class DriveSubsystem extends Subsystem {
     public static final double GEAR_RATIO = 1 / 19.16;
 
     private PID tankAnglePID;
+    private PID tankSpeedLeftPID;
+    private PID tankSpeedRightPID;
     public boolean assisted = false;
     public double driveMultiplier = 1;
 
@@ -59,6 +65,8 @@ public class DriveSubsystem extends Subsystem {
         Robot.addSDToLog(SD.LeftWheelAngle);
 
         this.tankAnglePID = new PID(TANK_ANGLE_P, TANK_ANGLE_I, TANK_ANGLE_D);
+        this.tankSpeedRightPID = new PID(TANK_SPEED_LEFT_P, TANK_SPEED_LEFT_I, TANK_SPEED_LEFT_D);
+        this.tankSpeedLeftPID = new PID(TANK_SPEED_RIGHT_P, TANK_SPEED_RIGHT_I, TANK_SPEED_RIGHT_D);
         Robot.logger.logFinalPIDConstants(FILENAME, "tank angle PID", this.tankAnglePID);
         Robot.logger.logFinalField(FILENAME, "input deadzone", INPUT_DEADZONE);
     }
@@ -106,7 +114,7 @@ public class DriveSubsystem extends Subsystem {
     }
 	
 	public void setSpeedRaw(Joystick leftStick, Joystick rightStick){
-		setSpeedTank(processStick(leftStick),processStick(rightStick));
+		setTank(processStick(leftStick),processStick(rightStick));
     }
 
     public void defaultDriveMultilpier(){this.driveMultiplier = 1;}
@@ -114,9 +122,17 @@ public class DriveSubsystem extends Subsystem {
         this.driveMultiplier = driveMultiplier;
     }
         	
-	public void setSpeedTank(double leftSpeed, double rightSpeed) {
+	public void setTank(double leftSpeed, double rightSpeed) {
         Robot.gearBoxSubsystem.l.set(leftSpeed  * this.driveMultiplier);
         Robot.gearBoxSubsystem.r.set(rightSpeed * this.driveMultiplier);
+    }
+
+    public void setSpeedTank(double leftGoalSpeed, double rightGoalSpeed){
+        double currentLeft  = StateInfo.getWheelSpeed(this.l);
+        double currentRight = StateInfo.getWheelSpeed(this.r);
+        this.tankSpeedLeftPID.addMeasurement(leftGoalSpeed - currentLeft);
+        this.tankSpeedRightPID.addMeasurement(rightGoalSpeed - currentRight);
+        setTank(tankSpeedLeftPID.getOutput(), tankSpeedRightPID.getOutput());
     }
 	
 	public void setSpeedTankAngularControl(double leftSpeed, double rightSpeed) {
@@ -144,14 +160,12 @@ public class DriveSubsystem extends Subsystem {
 	
 	public void setSpeedTankForwardTurningPercentage(double forward, double turnMagnitude) {
         // Note: this controls dtheta/dx rather than dtheta/dt
-		setSpeedTank(forward * (1 -  turnMagnitude), forward * (1 + turnMagnitude));
+		setSpeedTank((forward / TANK_SPEED_LEFT_P) * (1 -  turnMagnitude), (forward / TANK_SPEED_RIGHT_P) * (1 + turnMagnitude));
     }
     
     public void setSpeedTankTurningPercentage(double turnMagnitude){
         double forward = (processStick(Robot.oi.leftStick) + processStick(Robot.oi.rightStick)) / 2;
         // double forward = (Robot.oi.leftStick.getY() + Robot.oi.rightStick.getY()) / 2;
-        DelayedPrinter.print("Forward: "+ forward);
-        DelayedPrinter.print("LeftStick: "+Robot.oi.leftStick.getY() +"\tRightStick: "+ Robot.oi.rightStick.getY());
         setSpeedTankForwardTurningPercentage(forward, turnMagnitude);
 	}
 
