@@ -10,7 +10,7 @@ import edu.wpi.first.wpilibj.DoubleSolenoid;
 
 public class ClimberSubsystem extends Subsystem {
     private SciSpark telescopeSpark;
-    private SciSpark stringSpark;
+    private SciTalon stringTalon1, stringTalon2;
     private SciSpark shiftMotor;
 
     private final double CASCADE_GEAR_RATIO = 1; // 
@@ -24,7 +24,8 @@ public class ClimberSubsystem extends Subsystem {
 
     public ClimberSubsystem() {
         this.telescopeSpark = new SciSpark(PortMap.TELESCOPING_SPARK, TELESCOPING_GEAR_RATIO);
-        this.stringSpark    = new SciSpark(PortMap.STRING_SPARK,      STRING_GEAR_RATIO);
+        this.stringTalon1   = new SciTalon(PortMap.STRING_TALON_1,    STRING_GEAR_RATIO);
+        this.stringTalon2   = new SciTalon(PortMap.STRING_TALON_2,    STRING_GEAR_RATIO); 
         this.shiftMotor     = new SciSpark(PortMap.SHIFTING_TALON,    CASCADE_GEAR_RATIO);
 
     }
@@ -42,7 +43,8 @@ public class ClimberSubsystem extends Subsystem {
     }
 
     public void setStringPullSpeed(double speed){
-        this.stringSpark.set(speed);
+        this.stringTalon1.set(speed);
+        this.setTelescopingSpeed(TELESCOPING_UP_SPEED);
     }
     public void pullString(){
         this.setStringPullSpeed(STRING_PULL_SPEED);
