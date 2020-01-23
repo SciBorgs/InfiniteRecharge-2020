@@ -16,7 +16,7 @@ public class OI {
         rightStick = new Joystick(PortMap.JOYSTICK_RIGHT);
         xboxController = new XboxController(PortMap.XBOX_CONTROLLER);
 
-        adjustTiltButton     = new JoystickButton(rightStick, PortMap.JOYSTICK_TRIGGER);
+        adjustTiltButton     = new JoystickButton(rightStick, PortMap.JOYSTICK_LEFT_BUTTON);
         adjustTiltButton.whileHeld(new JoystickShiftCommand());
 
         raiseTelescopeButton = new JoystickButton(rightStick, PortMap.JOYSTICK_CENTER_BUTTON); // change
@@ -28,6 +28,7 @@ public class OI {
         lowerTelescopeButton.whenReleased(new StopTelescopeCommand());
 
         pullStringButton     = new JoystickButton(rightStick, PortMap.JOYSTICK_RIGHT_BUTTON); // change
-        pullStringButton.whenPressed(new OnRungCommand());
+        pullStringButton.whenPressed(new PullStringCommand());
+        pullStringButton.whenReleased(new StopStringCommand());
     }
 }

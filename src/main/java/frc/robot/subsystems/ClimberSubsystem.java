@@ -47,11 +47,14 @@ public class ClimberSubsystem extends Subsystem {
 
     public void setStringPullSpeed(double speed){
         this.stringTalon1.set(speed);
-        this.stringTalon2.set(speed);
     }
     public void pullString(){
         this.setStringPullSpeed(STRING_PULL_SPEED);
     }
+    public void stopPullingString(){
+        this.setStringPullSpeed(0);
+    }
+
 
     public void updateRobotState(){
         Robot.set(SD.ShiftSparkAngle, this.shiftMotor.getWheelAngle());
