@@ -26,6 +26,8 @@ public class ClimberSubsystem extends Subsystem {
         this.shiftMotor     = new SciSpark(PortMap.SHIFTING_TALON,    CASCADE_GEAR_RATIO);
         this.stringTalon1   = new SciTalon(PortMap.STRING_TALON_1,    STRING_GEAR_RATIO);
         this.stringTalon2   = new SciTalon(PortMap.STRING_TALON_2,    STRING_GEAR_RATIO);
+
+        this.stringTalon2.follow(this.stringTalon1);
     }
 
     public void setShiftMotorSpeed(double speed) {this.shiftMotor.set(speed);}
@@ -33,11 +35,14 @@ public class ClimberSubsystem extends Subsystem {
     public void setTelescopingSpeed(double speed){ 
         this.telescopeSpark.set(speed);
     }
-    public void moveTelescopeUp(){
+    public void moveTelescopeUp() {
         this.setTelescopingSpeed(TELESCOPING_UP_SPEED);
     }
-    public void moveTelescopeDown(){
+    public void moveTelescopeDown() {
         this.setTelescopingSpeed(TELESCOPING_DOWN_SPEED);
+    }
+    public void stopTelescope() {
+        this.setTelescopingSpeed(0);
     }
 
     public void setStringPullSpeed(double speed){
