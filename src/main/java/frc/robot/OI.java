@@ -8,7 +8,7 @@ import frc.robot.commands.*;
 // FILE HAS NOT BEEN CLEANED UP //
 public class OI {
     public Joystick leftStick, rightStick;
-    public JoystickButton toggleClawButton, adjustTiltButton, raiseTelescopeButton, pullStringButton;
+    public JoystickButton toggleClawButton, adjustTiltButton, raiseTelescopeButton, lowerTelescopeButton, pullStringButton;
     public XboxController xboxController;
     
     public OI() {
@@ -19,8 +19,13 @@ public class OI {
         adjustTiltButton     = new JoystickButton(rightStick, PortMap.JOYSTICK_TRIGGER);
         adjustTiltButton.whileHeld(new JoystickShiftCommand());
 
-        raiseTelescopeButton = new JoystickButton(rightStick, PortMap.JOYSTICK_LEFT_BUTTON); // change
+        raiseTelescopeButton = new JoystickButton(rightStick, PortMap.JOYSTICK_CENTER_BUTTON); // change
         raiseTelescopeButton.whenPressed(new RaiseTelescopeCommand());
+        raiseTelescopeButton.whenReleased(new StopTelescopeCommand());
+
+        lowerTelescopeButton = new JoystickButton(rightStick, PortMap.JOYSTICK_TRIGGER);
+        lowerTelescopeButton.whenPressed(new DropTelescopeCommand());
+        lowerTelescopeButton.whenReleased(new StopTelescopeCommand());
 
         pullStringButton     = new JoystickButton(rightStick, PortMap.JOYSTICK_RIGHT_BUTTON); // change
         pullStringButton.whenPressed(new OnRungCommand());
