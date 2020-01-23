@@ -14,12 +14,13 @@ public class ClimberSubsystem extends Subsystem {
 
     private final double CASCADE_GEAR_RATIO = 1; // 
 
-    private final double TELESCOPING_GEAR_RATIO = 5;
-    private final double TELESCOPING_UP_SPEED   = 3;
-    private final double TELESCOPING_DOWN_SPEED = 7;
+    private final double TELESCOPING_GEAR_RATIO = 90;
+    private final double TELESCOPING_UP_SPEED   = 1;
+    private final double TELESCOPING_DOWN_SPEED = -1;
 
-    private final double STRING_GEAR_RATIO = 4;
-    private final double STRING_PULL_SPEED = 3;
+    private final double STRING_GEAR_RATIO = 90;
+    private final double STRING_PULL_SPEED = 1;
+    private final double STRING_PUSH_SPEED = -1;
 
     public ClimberSubsystem() {
         this.telescopeSpark = new SciSpark(PortMap.TELESCOPING_SPARK, TELESCOPING_GEAR_RATIO); 
@@ -50,6 +51,9 @@ public class ClimberSubsystem extends Subsystem {
     }
     public void pullString(){
         this.setStringPullSpeed(STRING_PULL_SPEED);
+    }
+    public void reverseString(){
+        this.setStringPullSpeed(STRING_PUSH_SPEED);
     }
     public void stopPullingString(){
         this.setStringPullSpeed(0);

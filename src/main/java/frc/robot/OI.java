@@ -8,7 +8,7 @@ import frc.robot.commands.*;
 // FILE HAS NOT BEEN CLEANED UP //
 public class OI {
     public Joystick leftStick, rightStick;
-    public JoystickButton toggleClawButton, adjustTiltButton, raiseTelescopeButton, lowerTelescopeButton, pullStringButton;
+    public JoystickButton toggleClawButton, adjustTiltButton, raiseTelescopeButton, lowerTelescopeButton, pullStringButton, reverseStringButton;
     public XboxController xboxController;
     
     public OI() {
@@ -16,8 +16,8 @@ public class OI {
         rightStick = new Joystick(PortMap.JOYSTICK_RIGHT);
         xboxController = new XboxController(PortMap.XBOX_CONTROLLER);
 
-        adjustTiltButton     = new JoystickButton(rightStick, PortMap.JOYSTICK_LEFT_BUTTON);
-        adjustTiltButton.whileHeld(new JoystickShiftCommand());
+        //adjustTiltButton     = new JoystickButton(rightStick, PortMap.JOYSTICK_LEFT_BUTTON);
+        //adjustTiltButton.whileHeld(new JoystickShiftCommand());
 
         raiseTelescopeButton = new JoystickButton(rightStick, PortMap.JOYSTICK_CENTER_BUTTON); // change
         raiseTelescopeButton.whenPressed(new RaiseTelescopeCommand());
@@ -29,6 +29,10 @@ public class OI {
 
         pullStringButton     = new JoystickButton(rightStick, PortMap.JOYSTICK_RIGHT_BUTTON); // change
         pullStringButton.whenPressed(new PullStringCommand());
+        pullStringButton.whenReleased(new StopStringCommand());
+
+        reverseStringButton  = new JoystickButton(rightStick, PortMap.JOYSTICK_LEFT_BUTTON);
+        pullStringButton.whenPressed(new ReverseStringCommand());
         pullStringButton.whenReleased(new StopStringCommand());
     }
 }
