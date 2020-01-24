@@ -163,8 +163,8 @@ public class Robot extends TimedRobot {
         driveSubsystem.manualDriveMode();
         new TankDriveCommand().start();
         //pneumaticsSubsystem.startCompressor();
-        this.climberSubsystem.setStringPullSpeed(driveSubsystem.processStick(oi.rightStick) * 0.7);
-
+        //this.climberSubsystem.setStringPullSpeed(driveSubsystem.processStick(oi.rightStick) * 0.7);
+        this.climberSubsystem.setStringPullSpeed(0.3); //test
     }
 
     public void testPeriodic() {
