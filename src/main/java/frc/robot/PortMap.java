@@ -63,8 +63,8 @@ public class PortMap {
 
     public static final int TILT_PIGEON = 11;      // CHANGE TO ACTUAL INPUT
     public static final int SHIFTING_TALON = 10;   // CHANGE TO ACTUAL INPUT
-    public static final int STRING_TALON_1 = 14;   // CHANGE TO ACTUAL INPUT
-    public static final int STRING_TALON_2 = 15;   // CHANGE TO ACTUAL INPUT
+    public static final int STRING_TALON_1 = 4;   // CHANGE TO ACTUAL INPUT
+    public static final int STRING_TALON_2 = 8;   // CHANGE TO ACTUAL INPUT
 
     //*******************MISC********************//
 
