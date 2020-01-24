@@ -5,6 +5,7 @@ import frc.robot.Robot;
 import frc.robot.Utils;
 import frc.robot.robotState.RobotState.SD;
 import frc.robot.controllers.PID;
+import frc.robot.helpers.DelayedPrinter;
 import frc.robot.robotState.StateInfo;
 import frc.robot.sciSensorsActuators.*;
 import frc.robot.logging.Logger.DefaultValue;
@@ -21,10 +22,12 @@ import java.util.Hashtable;
 public class DriveSubsystem extends Subsystem {
     // Define tested error values here
     double TANK_ANGLE_P = .075, TANK_ANGLE_D = 0.0, TANK_ANGLE_I = 0;
+    double TANK_SPEED_LEFT_P  = .1, TANK_SPEED_LEFT_D  = 0.0, TANK_SPEED_LEFT_I  = 0;
+    double TANK_SPEED_RIGHT_P = TANK_SPEED_LEFT_P, TANK_SPEED_RIGHT_D = TANK_SPEED_LEFT_D, TANK_SPEED_RIGHT_I = TANK_SPEED_LEFT_I;
     double GOAL_OMEGA_CONSTANT = 8; // Change this to change angle
     private double MAX_OMEGA_GOAL = 1 * GOAL_OMEGA_CONSTANT;
     public SciSpark l, l1, l2, r, r1, r2;
-	private final String FILENAME = "DriveSubsystem.java";
+    private final String FILENAME = "DriveSubsystem.java";
     public static final double WHEEL_RADIUS = Utils.inchesToMeters(3);
 
     // deadzones by Alejandro at Chris' request. Graph them with the joystick function to understand the math.
@@ -32,10 +35,10 @@ public class DriveSubsystem extends Subsystem {
     private static final double INPUT_DEADZONE = 0.11; // deadzone because the joysticks are bad and they detect input when there is none
     private static final double STRAIGHT_DEADZONE = 0.15;
     private static final double STRAIGHT_EQUAL_INPUT_DEADZONE = 0; // If goal Omega is 0 and our regular input diff magnitude is less than this, the input diff goes to 0
-    public static final double GEAR_RATIO = 1 / 9.0;
-    private static final double DEFAULT_MAX_JERK = 0.1;
-
+    public static final double GEAR_RATIO = 1 / 19.16;
     private PID tankAnglePID;
+    private PID tankSpeedLeftPID;
+    private PID tankSpeedRightPID;
     public boolean assisted = false;
     public double driveMultiplier = 1;
     public Hashtable<SciSpark, SD> sparkToWheelAngleSD;
@@ -60,9 +63,9 @@ public class DriveSubsystem extends Subsystem {
 		this.r1 = new SciSpark(PortMap.RIGHT_MIDDLE_SPARK, GEAR_RATIO);
         this.r2 = new SciSpark(PortMap.RIGHT_BACK_SPARK,   GEAR_RATIO);
 
-        this.l .setInverted(true);
-        this.l1.setInverted(true);
-        this.l2.setInverted(true);
+        this.r .setInverted(true);
+        this.r1.setInverted(true);
+        this.r2.setInverted(true);
 
         this.l1.follow(this.l);
         this.l2.follow(this.l);
@@ -79,7 +82,11 @@ public class DriveSubsystem extends Subsystem {
         setSDMappings(this.l2, SD.L2WheelAngle, SD.L2SparkVal, SD.L2SparkVoltage, SD.L2SparkCurrent);
         setSDMappings(this.r2, SD.R2WheelAngle, SD.R2SparkVal, SD.R2SparkVoltage, SD.R2SparkCurrent);
 
+        Robot.addSDToLog(SD.LeftWheelAngle);
+
         this.tankAnglePID = new PID(TANK_ANGLE_P, TANK_ANGLE_I, TANK_ANGLE_D);
+        this.tankSpeedRightPID = new PID(TANK_SPEED_LEFT_P, TANK_SPEED_LEFT_I, TANK_SPEED_LEFT_D);
+        this.tankSpeedLeftPID = new PID(TANK_SPEED_RIGHT_P, TANK_SPEED_RIGHT_I, TANK_SPEED_RIGHT_D);
         Robot.logger.logFinalPIDConstants(FILENAME, "tank angle PID", this.tankAnglePID);
         Robot.logger.logFinalField(FILENAME, "input deadzone", INPUT_DEADZONE);
     }
@@ -112,7 +119,8 @@ public class DriveSubsystem extends Subsystem {
     }
     
     public double processStick(Joystick stick){
-        return deadzone(stick.getY());
+        //return -stick.getY();
+        return -deadzone(stick.getY());
     }
 
     // If something is assiting, we don't want to drive using setSpeed
@@ -128,7 +136,7 @@ public class DriveSubsystem extends Subsystem {
     }
 	
 	public void setSpeedRaw(Joystick leftStick, Joystick rightStick){
-		setSpeedTank(processStick(leftStick),processStick(rightStick));
+		setTank(processStick(leftStick),processStick(rightStick));
     }
 
     public void defaultDriveMultilpier(){this.driveMultiplier = 1;}
@@ -136,9 +144,19 @@ public class DriveSubsystem extends Subsystem {
         this.driveMultiplier = driveMultiplier;
     }
         	
-	public void setSpeedTank(double leftSpeed, double rightSpeed) {
+	public void setTank(double leftSpeed, double rightSpeed) {
         this.l.set(leftSpeed  * this.driveMultiplier);
         this.r.set(rightSpeed * this.driveMultiplier);
+        //DelayedPrinter.print("right speed" + this.r.get());
+        // DelayedPrinter.print("rightspeed: "+rightSpeed);
+    }
+
+    public void setSpeedTank(double leftGoalSpeed, double rightGoalSpeed){
+        double currentLeft  = StateInfo.getWheelSpeed(this.l);
+        double currentRight = StateInfo.getWheelSpeed(this.r);
+        this.tankSpeedLeftPID.addMeasurement(leftGoalSpeed - currentLeft);
+        this.tankSpeedRightPID.addMeasurement(rightGoalSpeed - currentRight);
+        setTank(tankSpeedLeftPID.getOutput(), tankSpeedRightPID.getOutput());
     }
 	
 	public void setSpeedTankAngularControl(double leftSpeed, double rightSpeed) {
@@ -166,17 +184,18 @@ public class DriveSubsystem extends Subsystem {
 	
 	public void setSpeedTankForwardTurningPercentage(double forward, double turnMagnitude) {
         // Note: this controls dtheta/dx rather than dtheta/dt
-		setSpeedTank(forward * (1 + turnMagnitude), forward * (1 - turnMagnitude));
+		setSpeedTank((forward / TANK_SPEED_LEFT_P) * (1 -  turnMagnitude), (forward / TANK_SPEED_RIGHT_P) * (1 + turnMagnitude));
     }
     
     public void setSpeedTankTurningPercentage(double turnMagnitude){
         double forward = (processStick(Robot.oi.leftStick) + processStick(Robot.oi.rightStick)) / 2;
+        // double forward = (Robot.oi.leftStick.getY() + Robot.oi.rightStick.getY()) / 2;
         setSpeedTankForwardTurningPercentage(forward, turnMagnitude);
 	}
 
     public void setSpeedTankForwardTurningMagnitude(double forward, double turnMagnitude) {
         // Note: this controls dtheta/dt rather than dtheta/dx
-        setSpeedTank(forward + turnMagnitude, forward - turnMagnitude);
+        setSpeedTank(forward - turnMagnitude, forward + turnMagnitude);
     }
 
     public double limitJerk(double oldSpeed, double newSpeed, double maxJerk){

@@ -24,8 +24,12 @@ public class Robot extends TimedRobot {
     private final String FILENAME = "Robot.java";
 
     public static Logger logger = new Logger();
+    private static List<Pair<SD, DefaultValue>> dataToLog = new ArrayList<>();
 
     public static RobotStateHistory stateHistory = new RobotStateHistory();
+    static {
+        stateHistory.addState(new RobotState());
+    }
     public static DriveSubsystem      driveSubsystem      = new DriveSubsystem();
 
     public static PigeonSubsystem     pigeonSubsystem     = new PigeonSubsystem();
@@ -40,7 +44,6 @@ public class Robot extends TimedRobot {
 
     public static RobotState getState(){ return stateHistory.currentState(); }
     public static RobotState statesAgo(int numTicks){return stateHistory.statesAgo(numTicks);}
-    private static List<Pair<SD, DefaultValue>> dataToLog = new ArrayList<>();
 
     public static double get(SD sd)            {return getState().get(sd);}
     public static void   set(SD sd, double val){       getState().set(sd, val);}
@@ -64,9 +67,9 @@ public class Robot extends TimedRobot {
 
     // testing
     public static Point  getPos() {return new Point(get(SD.X),get(SD.Y));}
-    public static double getHeading() {return get(SD.PigeonAngle);}
-    public static final Point TEST_POINT = new Point (3, 4);
-    public static final double TEST_HEADING = Math.PI * .1;
+    public static double getHeading() {return get(SD.Angle);}
+    public static final Point TEST_POINT = new Point (3, 1);
+    public static final double TEST_HEADING = Geo.HORIZONTAL_ANGLE;
     public static final Point ORIGINAL_POINT = new Point(0,0);
     public static final double ORIGINAL_ANGLE = Geo.HORIZONTAL_ANGLE;
     
@@ -86,7 +89,6 @@ public class Robot extends TimedRobot {
         driveSubsystem.updateRobotState();
         pneumaticsSubsystem.updateRobotState();
         pigeonSubsystem.updateRobotState();
-        positionModel.updateRobotState();
     }
 
     public static void addSDToLog(SD sd, DefaultValue val) { Robot.dataToLog.add(new Pair<>(sd, val)); }
@@ -95,7 +97,9 @@ public class Robot extends TimedRobot {
     public void logState() {
         for (Pair<SD, DefaultValue> pair : Robot.dataToLog) {
             SD sd = pair.first;
-            Robot.logger.addData(FILENAME, sd.name(), get(sd), pair.second);
+            if (getState().contains(sd)){
+                Robot.logger.addData("State", sd.name(), get(sd), pair.second);
+            }
         }
     }
 
@@ -104,9 +108,8 @@ public class Robot extends TimedRobot {
         // attemptsSinceLastLog = 0;
         set(SD.X, ORIGINAL_POINT.x);
         set(SD.Y, ORIGINAL_POINT.y);
-        set(SD.PigeonAngle, ORIGINAL_ANGLE);
+        set(SD.Angle, ORIGINAL_ANGLE);
         allUpdateRobotStates();
-        positionModel.updateRobotState();
         pneumaticsSubsystem.stopCompressor();
         //logger.incrementPrevious("robot.java", "deploy", DefaultValue.Previous);
         //logger.logData();
@@ -116,30 +119,30 @@ public class Robot extends TimedRobot {
     }
 
     public void logDataPeriodic() {
-        // if (LOG_PERIOD == attemptsSinceLastLog) {
-        //     attemptsSinceLastLog = 0;
-        //     allPeriodicLogs();
-        //     logger.logData();
-        // } else {
-        //     attemptsSinceLastLog++;
-        // }
+        logger.logData();
     }
  
     public void robotPeriodic() {
-        allUpdateRobotStates();
-        Scheduler.getInstance().run();
         stateHistory.addState(getState().copy());
+        allUpdateRobotStates();
         positionModel.updateRobotState();
-        DelayedPrinter.print("X: " + get(SD.X) +"\tY: " + get(SD.Y) +" Theta: " + get(SD.PigeonAngle));
+        allPeriodicLogs();
+        logDataPeriodic();
+        DelayedPrinter.print("x: " + getPos().x + "\ty: " + getPos().y + 
+                             "\nheading: " + getHeading() + 
+                             "\npigeon angle: " + Robot.get(SD.PigeonAngle));
+        Scheduler.getInstance().run();
+        DelayedPrinter.incTicks();
     }
-        
+
+
     public void autonomousInit() {
         intakeSubsystem.reverseIntake();
     }
 
+    @Override
     public void autonomousPeriodic() {
-        pneumaticsSubsystem.startCompressor();
-        enabledPeriodic();
+        // pneumaticsSubsystem.startCompressor();
     }
     
     @Override
@@ -148,19 +151,16 @@ public class Robot extends TimedRobot {
     }
 
     public void teleopPeriodic() {
-        new TankDriveCommand().start();
-        pneumaticsSubsystem.startCompressor();
-        enabledPeriodic();
+        // new TankDriveCommand().start();
+        circleController.update(getPos(), getHeading(), TEST_POINT, TEST_HEADING);
+        // pneumaticsSubsystem.startCompressor();
     }
 
     public void testPeriodic() {
-        enabledPeriodic();
     }
 
-    public void enabledPeriodic() {logDataPeriodic();}
-
     public void disabledInit() {
-        intakeSubsystem.stop();
+        //intakeSubsystem.stop();
         // allPeriodicLogs();
         // logger.logData();
         // logger.writeLoggedData();

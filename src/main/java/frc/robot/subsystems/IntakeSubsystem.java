@@ -14,14 +14,14 @@ public class IntakeSubsystem extends Subsystem {
     private static final DoubleSolenoid.Value OPEN_VALUE   = Value.kForward;
     private static final DoubleSolenoid.Value CLOSED_VALUE = Utils.oppositeDoubleSolenoidValue(OPEN_VALUE);
     public  boolean acceptingCell;
-    public static final double INTAKE_SPEED = 0.01; //Temporary
+    public static final double INTAKE_SPEED = 1; //Temporary
 
     public IntakeSubsystem() {
         this.upDownSolenoid = new DoubleSolenoid(PortMap.INTAKE_SOLENOID_FORWARD, PortMap.INTAKE_SOLENOID_REVERSE);
         this.intakeMotor = new SciTalon(PortMap.INTAKE_TALON);
         this.acceptingCell = true;
     }
-    public void setIntakeSpeed(final double speed) {
+    public void setIntakeSpeed(double speed) {
         this.intakeMotor.set(speed);
     }
 
@@ -29,12 +29,13 @@ public class IntakeSubsystem extends Subsystem {
     public void reverseIntake() {this.upDownSolenoid.set(OPEN_VALUE);}
 
     public void suck() {
+        //setIntakeSpeed(INTAKE_SPEED);
         if (this.acceptingCell) {setIntakeSpeed(INTAKE_SPEED);} 
         else {stop();}
     }
 
     public void stop() {
-        setIntakeSpeed(0.0);
+        setIntakeSpeed(0);
     }
 
     @Override 

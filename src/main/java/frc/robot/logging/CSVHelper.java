@@ -3,17 +3,18 @@ package frc.robot.logging;
 import java.util.Hashtable;
 import java.util.HashSet;
 import java.util.StringTokenizer;
+import java.util.ArrayList;
+import java.io.*;
 
 import frc.robot.Utils;
 
-import java.util.ArrayList;
-import java.io.*;
+
 
 // FILE HAS NOT BEEN CLEANED UP //
 public class CSVHelper {
 
     private String filename;
-    private ArrayList<String> topics;
+    public ArrayList<String> topics;
     private ArrayList<Hashtable<String, String>> rowsToAdd;
     private HashSet<String> topicLookup;
     private String lastLine;

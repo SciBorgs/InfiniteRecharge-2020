@@ -52,6 +52,7 @@ public class RobotState {
         this.data = data;
     }
 
+    public boolean contains(SD sd) {return this.data.containsKey(sd);}
     public double get(SD sd)      {return this.data.get(sd);}
     public void   set(SD sd, double val) {this.data.put(sd, val);}
     public void   remove(SD sd)          {this.data.remove(sd);}
