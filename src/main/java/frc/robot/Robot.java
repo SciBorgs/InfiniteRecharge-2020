@@ -134,7 +134,7 @@ public class Robot extends TimedRobot {
     }
         
     public void autonomousInit() {
-        intakeSubsystem.openIntake();
+        intakeSubsystem.reverseIntake();
     }
 
     public void autonomousPeriodic() {
@@ -144,7 +144,7 @@ public class Robot extends TimedRobot {
     
     @Override
     public void teleopInit() {
-        intakeSubsystem.openIntake();
+        intakeSubsystem.reverseIntake();
     }
 
     public void teleopPeriodic() {
@@ -160,7 +160,7 @@ public class Robot extends TimedRobot {
     public void enabledPeriodic() {logDataPeriodic();}
 
     public void disabledInit() {
-        intakeSubsystem.closeIntake();
+        intakeSubsystem.stop();
         // allPeriodicLogs();
         // logger.logData();
         // logger.writeLoggedData();
