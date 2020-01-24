@@ -28,6 +28,7 @@ public class Robot extends TimedRobot {
 
     public static RobotStateHistory stateHistory = new RobotStateHistory();
     static {
+        //stateHistory.clear();
         stateHistory.addState(new RobotState());
     }
     public static DriveSubsystem      driveSubsystem      = new DriveSubsystem();
@@ -91,9 +92,12 @@ public class Robot extends TimedRobot {
         driveSubsystem.updateRobotState();
         pneumaticsSubsystem.updateRobotState();
         pigeonSubsystem.updateRobotState();
-        positionModel.updateRobotState();
         climberSubsystem.updateRobotState();
         tiltPigeonSubsystem.updateRobotState();
+        //sDelayedPrinter.print("wheel current: " + get(SD.LeftWheelAngle),10);
+        //DelayedPrinter.print("last state: " + statesAgo(1), 10);
+        //DelayedPrinter.print("wheel diff: " + StateInfo.getDifference(stateHistory, SD.LeftWheelAngle, 5));
+        //positionModel.updateRobotState();
     }
 
     public static void addSDToLog(SD sd, DefaultValue val) { Robot.dataToLog.add(new Pair<>(sd, val)); }
@@ -103,7 +107,7 @@ public class Robot extends TimedRobot {
         for (Pair<SD, DefaultValue> pair : Robot.dataToLog) {
             SD sd = pair.first;
             if (getState().contains(sd)){
-                Robot.logger.addData(FILENAME, sd.name(), get(sd), pair.second);
+                Robot.logger.addData("State", sd.name(), get(sd), pair.second);
             }
         }
     }
@@ -114,6 +118,11 @@ public class Robot extends TimedRobot {
         set(SD.X, ORIGINAL_POINT.x);
         set(SD.Y, ORIGINAL_POINT.y);
         set(SD.Angle, ORIGINAL_ANGLE);
+        System.out.println("length: " + stateHistory.numberOfStates());
+        System.out.println("length: " + stateHistory.numberOfStates());
+        System.out.println("length: " + stateHistory.numberOfStates());
+        System.out.println("length: " + stateHistory.numberOfStates());
+        System.out.println("length: " + stateHistory.numberOfStates());
         allUpdateRobotStates();
         pneumaticsSubsystem.stopCompressor();
         //logger.incrementPrevious("robot.java", "deploy", DefaultValue.Previous);
@@ -125,15 +134,16 @@ public class Robot extends TimedRobot {
 
     public void logDataPeriodic() {
         logger.logData();
-        logger.writeLoggedData();
     }
  
     public void robotPeriodic() {
         stateHistory.addState(getState().copy());
         allUpdateRobotStates();
-        positionModel.updateRobotState();
         allPeriodicLogs();
         logDataPeriodic();
+        DelayedPrinter.print("x: " + getPos().x + "\ty: " + getPos().y + 
+                             "\nheading: " + getHeading() + 
+                             "\npigeon angle: " + Robot.get(SD.PigeonAngle));
         Scheduler.getInstance().run();
         DelayedPrinter.incTicks();
     }
@@ -148,31 +158,32 @@ public class Robot extends TimedRobot {
 
     @Override
     public void autonomousPeriodic() {
-        //pneumaticsSubsystem.startCompressor();
+        // pneumaticsSubsystem.startCompressor();
     }
     
     @Override
     public void teleopInit() {
-        Robot.driveSubsystem.manualDriveMode();
         set(SD.X, ORIGINAL_POINT.x);
         set(SD.Y, ORIGINAL_POINT.y);
         set(SD.Angle, ORIGINAL_ANGLE);
-        }
+    }
 
     public void teleopPeriodic() {
         driveSubsystem.manualDriveMode();
         new TankDriveCommand().start();
         //pneumaticsSubsystem.startCompressor();
         //this.climberSubsystem.setStringPullSpeed(driveSubsystem.processStick(oi.rightStick) * 0.7);
-        this.climberSubsystem.setStringPullSpeed(0.3); //test
+        this.climberSubsystem.setStringPullSpeed(0.6); //test
+        // new TankDriveCommand().start();
+        // pneumaticsSubsystem.startCompressor();
     }
 
     public void testPeriodic() {
     }
 
     public void disabledInit() {
-        // allPeriodicLogs();
-        // logger.logData();
-        // logger.writeLoggedData();
+        allPeriodicLogs();
+        logger.logData();
+        logger.writeLoggedData();
     }
 }

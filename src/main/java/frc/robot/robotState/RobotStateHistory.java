@@ -1,5 +1,6 @@
 package frc.robot.robotState;
 
+import java.util.Hashtable;
 import java.util.List;
 import frc.robot.dataTypes.Deque;
 
@@ -27,6 +28,11 @@ public class RobotStateHistory{
     }
     public RobotStateHistory(Iterable<RobotState> robotStates, int maxLength){
         this.robotStates = new Deque<>(robotStates, maxLength);
+    }
+
+    public void clear(){
+        int maxSize = this.robotStates.maxLength;
+        this.robotStates = new Deque<RobotState>(maxSize);
     }
 
     public RobotState currentState(){return statesAgo(0);}
