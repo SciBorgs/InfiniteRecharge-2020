@@ -10,10 +10,10 @@ import frc.robot.robotState.StateInfo;
 
 public class CircleController {
 
-    private static final double ERROR = 0.02;
     private static final double FINAL_HEADING_P = .4;
     private static final double DESIRED_HEADING_P = .2;
     private static final double ENDING_TURN_P = .1;
+    public boolean isFinished = false;
     private PID finalHeadingPID = new PID(FINAL_HEADING_P, 0, 0);
     private PID desiredHeadingPID = new PID(DESIRED_HEADING_P, 0, 0);
     private PID endingTurnPID = new PID(ENDING_TURN_P, 0, 0);
@@ -47,7 +47,7 @@ public class CircleController {
                 endingTurnPID.addMeasurement(endingError);
                 turnMagnitude = endingTurnPID.getOutput();
                 Robot.driveSubsystem.setSpeedTankForwardTurningMagnitude(0, turnMagnitude);
-
+                isFinished = true;
             } else if(Geo.getDistance(currPos, finalPos) < .4){
                 double endingError = finalHeading - currHeading;
                 endingTurnPID.addMeasurement(endingError);
@@ -59,14 +59,15 @@ public class CircleController {
                 DelayedPrinter.print("turnMagnitude: " + turnMagnitude);
                 DelayedPrinter.print("expectedFinalHeading: " + Math.toDegrees(expectedFinalHeading));
                 DelayedPrinter.print("expectedCurrentHeading: " + Math.toDegrees(expectedCurrentHeading));
-                Robot.logger.logFinalPIDConstants(FILENAME, "final heading PID", this.finalHeadingPID);
+                /*Robot.logger.logFinalPIDConstants(FILENAME, "final heading PID", this.finalHeadingPID);
                 Robot.logger.addData(FILENAME, "expectedFinalHeading", expectedFinalHeading, DefaultValue.Previous);
                 Robot.logger.addData(FILENAME, "angle1", angle1, DefaultValue.Previous);
                 Robot.logger.addData(FILENAME, "angle2", angle2, DefaultValue.Previous);
                 Robot.logger.addData(FILENAME, "finalHeading", finalHeading, DefaultValue.Previous);
                 Robot.logger.addData(FILENAME, "desiredHeadingError", desiredHeadingError, DefaultValue.Previous);
                 Robot.logger.addData(FILENAME, "finalHeadingError", finalHeadingError, DefaultValue.Previous);
-                Robot.logger.addData(FILENAME, "turnMagnitude", turnMagnitude, DefaultValue.Previous);            
+                Robot.logger.addData(FILENAME, "turnMagnitude", turnMagnitude, DefaultValue.Previous);   
+                */         
             }
             
             // DelayedPrinter.print("turnMagnitude: " + turnMagnitude);
