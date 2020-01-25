@@ -69,9 +69,9 @@ public class Robot extends TimedRobot {
     public static double getHeading() {return get(SD.Angle);}
     public static final Point TEST_POINT_1 = new Point (6, 0);
     public static final double TEST_HEADING_1 = Geo.HORIZONTAL_ANGLE;
-    public static final Point TEST_POINT_2 = new Point (9.144, 0);
+    public static final Point TEST_POINT_2 = new Point (9.144,-2.6);
     public static final double TEST_HEADING_2 = Geo.HORIZONTAL_ANGLE - Math.PI / 2;
-    public static final Point TEST_POINT_3 = new Point (9.144, -5.1816);
+    public static final Point TEST_POINT_3 = new Point (6.144, -5.1816);
     public static final double TEST_HEADING_3 = Geo.HORIZONTAL_ANGLE + Math.PI;
     public static final Point TEST_POINT_4 = new Point (0, -5.1816);
     public static final double TEST_HEADING_4 = Geo.HORIZONTAL_ANGLE + Math.PI;
@@ -159,6 +159,7 @@ public class Robot extends TimedRobot {
         set(SD.X, ORIGINAL_POINT.x);
         set(SD.Y, ORIGINAL_POINT.y);
         set(SD.Angle, ORIGINAL_ANGLE);
+        lastPtHit = 0;
     }
 
     public void teleopPeriodic() {
