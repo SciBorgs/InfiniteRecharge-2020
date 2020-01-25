@@ -55,7 +55,7 @@ public class PortMap {
     //*******************TALONS******************//
 
     public static final int PIGEON_TALON = 9;
-    public static final int INTAKE_TALON = 16; // Temporary
+    public static final int INTAKE_TALON = 12; // Temporary
     
     //******************SOLENOIDS****************//
 

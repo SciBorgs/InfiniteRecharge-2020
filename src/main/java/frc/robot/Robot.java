@@ -152,7 +152,7 @@ public class Robot extends TimedRobot {
 
     public void teleopPeriodic() {
         // new TankDriveCommand().start();
-        circleController.update(getPos(), getHeading(), TEST_POINT, TEST_HEADING);
+        //circleController.update(getPos(), getHeading(), TEST_POINT, TEST_HEADING);
         // pneumaticsSubsystem.startCompressor();
     }
 

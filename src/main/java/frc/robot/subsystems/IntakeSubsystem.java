@@ -6,10 +6,12 @@ import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import frc.robot.PortMap;
 import frc.robot.Utils;
 import frc.robot.sciSensorsActuators.SciTalon;
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+
 
 public class IntakeSubsystem extends Subsystem {
     DoubleSolenoid upDownSolenoid;
-    SciTalon intakeMotor;
+    public SciTalon intakeMotor;
 
     private static final DoubleSolenoid.Value OPEN_VALUE   = Value.kForward;
     private static final DoubleSolenoid.Value CLOSED_VALUE = Utils.oppositeDoubleSolenoidValue(OPEN_VALUE);
@@ -20,6 +22,7 @@ public class IntakeSubsystem extends Subsystem {
         this.upDownSolenoid = new DoubleSolenoid(PortMap.INTAKE_SOLENOID_FORWARD, PortMap.INTAKE_SOLENOID_REVERSE);
         this.intakeMotor = new SciTalon(PortMap.INTAKE_TALON);
         this.acceptingCell = true;
+        this.intakeMotor.setInverted(false);
     }
     public void setIntakeSpeed(double speed) {
         this.intakeMotor.set(speed);
@@ -29,9 +32,9 @@ public class IntakeSubsystem extends Subsystem {
     public void reverseIntake() {this.upDownSolenoid.set(OPEN_VALUE);}
 
     public void suck() {
-        //setIntakeSpeed(INTAKE_SPEED);
-        if (this.acceptingCell) {setIntakeSpeed(INTAKE_SPEED);} 
-        else {stop();}
+        setIntakeSpeed(INTAKE_SPEED);
+        //if (this.acceptingCell) {setIntakeSpeed(INTAKE_SPEED);} 
+       // else {stop();}
     }
 
     public void stop() {
