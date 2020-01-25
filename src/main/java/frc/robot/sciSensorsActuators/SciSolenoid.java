@@ -5,22 +5,29 @@ import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import frc.robot.Utils;
 
 public class SciSolenoid <ValueType extends Enum> extends DoubleSolenoid {
-    private ValueType forwardValue, backwardValue, currentValue;
+    private ValueType forwardValue, backwardValue, offValue;
 
-    public SciSolenoid(int[] ports, ValueType forward, ValueType backward) {
-        super(ports[0], ports[1]);
-        setValues(forward, backward);
+    public SciSolenoid(int[] ports, ValueType forward, ValueType backward, ValueType off) {
+        this(1, ports, forward, backward, off);
     }
 
-    public SciSolenoid(int pdpPort, int[] ports, ValueType forward, ValueType backward) {
+    public SciSolenoid(int pdpPort, int[] ports, ValueType forwardValue, ValueType backwardValue, ValueType offValue) {
         super(pdpPort, ports[0], ports[1]);
-        setValues(forward, backward);
+        this.forwardValue  = forwardValue;
+        this.backwardValue = backwardValue;
+        this.offValue      = offValue;
     }
-
+    
     private Value enumToK(ValueType e) {
         if(e.equals(this.forwardValue))  {return Value.kForward;}
         if(e.equals(this.backwardValue)) {return Value.kReverse;}
         return Value.kOff;
+    }
+    public ValueType kToEnum(Value v){
+        if(v.equals(Value.kForward)) {return this.forwardValue;}
+        if(v.equals(Value.kReverse)) {return this.backwardValue;}
+        return this.offValue;
+
     }
 
     public ValueType oppositeSciSolenoidValue(ValueType e) {
@@ -30,7 +37,6 @@ public class SciSolenoid <ValueType extends Enum> extends DoubleSolenoid {
     }
 
     public void set(ValueType e) {
-        currentValue = e;
         super.set(enumToK(e));
     }
 
@@ -38,18 +44,5 @@ public class SciSolenoid <ValueType extends Enum> extends DoubleSolenoid {
         this.set(oppositeSciSolenoidValue(getValue()));
     }
 
-    public ValueType getValue() {return this.currentValue;}
-
-    public boolean isForward() {
-        return this.currentValue == this.forwardValue;
-    }
-
-    public boolean isBackward() {
-        return this.currentValue == this.backwardValue;
-    }
-
-    public void setValues(ValueType f, ValueType b) {
-        this.forwardValue = f;
-        this.backwardValue = b;
-    }
+    public ValueType getValue() {return kToEnum(super.get());}
 }
