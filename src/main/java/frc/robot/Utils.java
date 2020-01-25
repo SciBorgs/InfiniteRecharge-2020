@@ -188,9 +188,9 @@ public class Utils{
 
     public static double max(double... numbers) {
         double max = numbers[0];
-        for (int i : numbers) {
-            if (i > max) {
-                max = numbers[i];
+        for (double n : numbers) {
+            if (n > max) {
+                max = n;
             }
         }
         return max;
@@ -198,9 +198,9 @@ public class Utils{
 
     public static double min(double... numbers) {
         double min = numbers[0];
-        for (int i : numbers) {
-            if (i < min) {
-                min = numbers[i];
+        for (double n : numbers) {
+            if (n < min) {
+                min = n;
             }
         }
         return min;
