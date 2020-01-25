@@ -50,5 +50,5 @@ public class SciSolenoid <ValueType extends Enum> extends DoubleSolenoid {
         throw new RuntimeException("get() is deprecated for SciSolenoids. Use getValue() instead");
     }
 
-    public ValueType getValue() {get(); return toValueType(super.get());}
+    public ValueType getValue() {return toValueType(super.get());}
 }
