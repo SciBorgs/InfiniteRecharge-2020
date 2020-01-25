@@ -154,11 +154,13 @@ public class Robot extends TimedRobot {
         set(SD.X, ORIGINAL_POINT.x);
         set(SD.Y, ORIGINAL_POINT.y);
         set(SD.Angle, ORIGINAL_ANGLE);
+        
     }
 
     @Override
     public void autonomousPeriodic() {
         // pneumaticsSubsystem.startCompressor();
+        this.climberSubsystem.setStringPullSpeed(0.6); //test
     }
     
     @Override
@@ -171,9 +173,9 @@ public class Robot extends TimedRobot {
     public void teleopPeriodic() {
         driveSubsystem.manualDriveMode();
         new TankDriveCommand().start();
-        //pneumaticsSubsystem.startCompressor();
-        //this.climberSubsystem.setStringPullSpeed(driveSubsystem.processStick(oi.rightStick) * 0.7);
-        this.climberSubsystem.setStringPullSpeed(0.6); //test
+        // pneumaticsSubsystem.startCompressor();
+        // this.climberSubsystem.setStringPullSpeed(driveSubsystem.processStick(oi.rightStick) * 0.7);
+        this.climberSubsystem.setStringPullSpeed(-0.6); //test
         // new TankDriveCommand().start();
         // pneumaticsSubsystem.startCompressor();
     }
