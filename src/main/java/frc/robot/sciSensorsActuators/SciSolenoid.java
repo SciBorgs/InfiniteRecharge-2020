@@ -18,12 +18,12 @@ public class SciSolenoid <ValueType extends Enum> extends DoubleSolenoid {
         this.offValue      = offValue;
     }
     
-    private Value enumToK(ValueType e) {
+    private Value toDoubleSolenoidValue(ValueType e) {
         if(e.equals(this.forwardValue))  {return Value.kForward;}
         if(e.equals(this.backwardValue)) {return Value.kReverse;}
         return Value.kOff;
     }
-    public ValueType kToEnum(Value v){
+    private ValueType toValueType(Value v){
         if(v.equals(Value.kForward)) {return this.forwardValue;}
         if(v.equals(Value.kReverse)) {return this.backwardValue;}
         return this.offValue;
@@ -37,12 +37,12 @@ public class SciSolenoid <ValueType extends Enum> extends DoubleSolenoid {
     }
 
     public void set(ValueType e) {
-        super.set(enumToK(e));
+        super.set(toDoubleSolenoidValue(e));
     }
 
     public void toggle() {
         this.set(oppositeSciSolenoidValue(getValue()));
     }
 
-    public ValueType getValue() {return kToEnum(super.get());}
+    public ValueType getValue() {return toValueType(super.get());}
 }
