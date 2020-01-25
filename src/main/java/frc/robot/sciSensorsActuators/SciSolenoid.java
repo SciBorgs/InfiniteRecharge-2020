@@ -8,8 +8,8 @@ import frc.robot.dataTypes.BiHashMap;
 public class SciSolenoid <ValueType extends Enum> extends DoubleSolenoid {
     private BiHashMap<Value, ValueType> valueMap;
 
-    public SciSolenoid(int[] ports, ValueType forwardValue, ValueType backwardValue, ValueType off) {
-        this(1, ports, forwardValue, backwardValue, off);
+    public SciSolenoid(int[] ports, ValueType forwardValue, ValueType backwardValue, ValueType offValue) {
+        this(1, ports, forwardValue, backwardValue, offValue);
     }
 
     public SciSolenoid(int pdpPort, int[] ports, ValueType forwardValue, ValueType reverseValue, ValueType offValue) {
@@ -40,10 +40,15 @@ public class SciSolenoid <ValueType extends Enum> extends DoubleSolenoid {
         super.set(Utils.oppositeDoubleSolenoidValue(super.get()));
     }
 
+    
+    /**
+     * get() is deprecated for SciSolenoids. Use getValue() instead.
+     * @deprecated
+     */
     @Override @Deprecated
     public Value get(){
         throw new RuntimeException("get() is deprecated for SciSolenoids. Use getValue() instead");
     }
 
-    public ValueType getValue() {return toValueType(super.get());}
+    public ValueType getValue() {get(); return toValueType(super.get());}
 }
