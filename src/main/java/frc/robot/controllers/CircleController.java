@@ -42,20 +42,22 @@ public class CircleController {
             double desiredHeadingError = Geo.subtractAngles(Geo.angleBetween(currPos, finalPos), currHeading);
             desiredHeadingPID.addMeasurement(desiredHeadingError);
             double turnMagnitude;
-            if(Geo.getDistance(currPos, finalPos) < .2) {
+           /* if(Geo.getDistance(currPos, finalPos) < .2) {
                     double endingError = finalHeading - currHeading;
                 endingTurnPID.addMeasurement(endingError);
                 turnMagnitude = endingTurnPID.getOutput();
                 Robot.driveSubsystem.setSpeedTankForwardTurningMagnitude(0, turnMagnitude);
                 isFinished = true;
-            } else if(Geo.getDistance(currPos, finalPos) < .4){
+            } else*/ if(Geo.getDistance(currPos, finalPos) < .4){
                 double endingError = finalHeading - currHeading;
                 endingTurnPID.addMeasurement(endingError);
                 turnMagnitude = endingTurnPID.getOutput();
-                Robot.driveSubsystem.setSpeedTankTurningPercentage(turnMagnitude);
+                //Robot.driveSubsystem.setSpeedTankTurningPercentage(turnMagnitude);
+                Robot.driveSubsystem.setSpeedTankForwardTurningPercentage(.7, turnMagnitude);
             } else {
                 turnMagnitude = desiredHeadingPID.getOutput() + finalHeadingPID.getOutput();
-                Robot.driveSubsystem.setSpeedTankTurningPercentage(turnMagnitude);
+                //Robot.driveSubsystem.setSpeedTankTurningPercentage(turnMagnitude);
+                Robot.driveSubsystem.setSpeedTankForwardTurningPercentage(.7, turnMagnitude);
                 DelayedPrinter.print("turnMagnitude: " + turnMagnitude);
                 DelayedPrinter.print("expectedFinalHeading: " + Math.toDegrees(expectedFinalHeading));
                 DelayedPrinter.print("expectedCurrentHeading: " + Math.toDegrees(expectedCurrentHeading));

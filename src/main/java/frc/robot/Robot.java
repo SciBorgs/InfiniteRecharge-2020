@@ -67,9 +67,16 @@ public class Robot extends TimedRobot {
     // testing
     public static Point  getPos() {return new Point(get(SD.X),get(SD.Y));}
     public static double getHeading() {return get(SD.Angle);}
-    public static final Point TEST_POINT = new Point (-3, -1);
-    public static final double TEST_HEADING = Geo.HORIZONTAL_ANGLE + Math.PI;
+    public static final Point TEST_POINT_1 = new Point (6, 0);
+    public static final double TEST_HEADING_1 = Geo.HORIZONTAL_ANGLE;
+    public static final Point TEST_POINT_2 = new Point (9.144, 0);
+    public static final double TEST_HEADING_2 = Geo.HORIZONTAL_ANGLE - Math.PI / 2;
+    public static final Point TEST_POINT_3 = new Point (9.144, -5.1816);
+    public static final double TEST_HEADING_3 = Geo.HORIZONTAL_ANGLE + Math.PI;
+    public static final Point TEST_POINT_4 = new Point (0, -5.1816);
+    public static final double TEST_HEADING_4 = Geo.HORIZONTAL_ANGLE + Math.PI;
     public static final Point ORIGINAL_POINT = new Point(0,0);
+    public int lastPtHit = 0;
     public static final double ORIGINAL_ANGLE = Geo.HORIZONTAL_ANGLE;
     
 
@@ -156,9 +163,26 @@ public class Robot extends TimedRobot {
 
     public void teleopPeriodic() {
         // new TankDriveCommand().start();
-        circleController.update(getPos(), getHeading(), TEST_POINT, TEST_HEADING);
-        // pneumaticsSubsystem.startCompressor();
+        if(Geo.getDistance(TEST_POINT_1, getPos()) < .2) {
+            lastPtHit = 1;
+        } else if(Geo.getDistance(TEST_POINT_2, getPos()) < .2) {
+            lastPtHit = 2;
+        } else if(Geo.getDistance(TEST_POINT_3, getPos()) < .2) {
+            lastPtHit = 3;
+        }
+        
+        if(lastPtHit == 1) {
+            circleController.update(getPos(), getHeading(), TEST_POINT_2, TEST_HEADING_2);
+        } else if(lastPtHit == 2) {
+            circleController.update(getPos(), getHeading(), TEST_POINT_3, TEST_HEADING_3);
+        } else if(lastPtHit == 3) {
+            circleController.update(getPos(), getHeading(), TEST_POINT_4, TEST_HEADING_4);
+        } else {
+            circleController.update(getPos(), getHeading(), TEST_POINT_1, TEST_HEADING_1);
+        }
     }
+        // pneumaticsSubsystem.startCompressor();
+    
 
     public void testPeriodic() {
     }
