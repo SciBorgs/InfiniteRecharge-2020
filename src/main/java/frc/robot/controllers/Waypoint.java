@@ -8,7 +8,7 @@ public class Waypoint {
     public double heading;
 
     public Waypoint(Point point, double heading) {
-        this.point = new Point(point.x, point.y);
+        this.point   = new Point(point.x, point.y);
         this.heading = heading;
     }
 }

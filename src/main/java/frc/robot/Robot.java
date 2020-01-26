@@ -2,6 +2,7 @@ package frc.robot;
 
 import com.revrobotics.CANSparkMax;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import frc.robot.subsystems.*;
@@ -67,18 +68,18 @@ public class Robot extends TimedRobot {
     // testing
     public static Point  getPos() {return new Point(get(SD.X),get(SD.Y));}
     public static double getHeading() {return get(SD.Angle);}
-    public static final Point TEST_POINT_1 = new Point (6, 0);
-    public static final double TEST_HEADING_1 = Geo.HORIZONTAL_ANGLE;
-    public static final Point TEST_POINT_2 = new Point (9.144,-2.6);
-    public static final double TEST_HEADING_2 = Geo.HORIZONTAL_ANGLE - Math.PI / 2;
-    public static final Point TEST_POINT_3 = new Point (6.144, -5.1816);
-    public static final double TEST_HEADING_3 = Geo.HORIZONTAL_ANGLE + Math.PI;
-    public static final Point TEST_POINT_4 = new Point (0, -5.1816);
-    public static final double TEST_HEADING_4 = Geo.HORIZONTAL_ANGLE + Math.PI;
+    public static Waypoint currPos = new Waypoint(getPos(), getHeading());
+
+    public static final Waypoint TEST_POINT_1 = new Waypoint(new Point(6,0),            Geo.HORIZONTAL_ANGLE);
+    public static final Waypoint TEST_POINT_2 = new Waypoint(new Point(9.144,-2.6),     Geo.HORIZONTAL_ANGLE - Math.PI / 2);
+    public static final Waypoint TEST_POINT_3 = new Waypoint(new Point(6.144, -5.1816), Geo.HORIZONTAL_ANGLE + Math.PI);
+    public static final Waypoint TEST_POINT_4 = new Waypoint(new Point(0, -5.1816),     Geo.HORIZONTAL_ANGLE + Math.PI);
     public static final Point ORIGINAL_POINT = new Point(0,0);
-    public int lastPtHit = 0;
     public static final double ORIGINAL_ANGLE = Geo.HORIZONTAL_ANGLE;
-    
+    public Waypoint[] arr = new Waypoint[] {TEST_POINT_1, TEST_POINT_2, TEST_POINT_3, TEST_POINT_4};
+    public ArrayList <Waypoint> path = new ArrayList<Waypoint>(Arrays.asList(arr));
+
+    public Sequential sequential = new Sequential(path);
 
     private int attemptsSinceLastLog;
     public static final int LOG_PERIOD = 5;
@@ -159,30 +160,12 @@ public class Robot extends TimedRobot {
         set(SD.X, ORIGINAL_POINT.x);
         set(SD.Y, ORIGINAL_POINT.y);
         set(SD.Angle, ORIGINAL_ANGLE);
-        lastPtHit = 0;
     }
 
     public void teleopPeriodic() {
-        // new TankDriveCommand().start();
-        if(Geo.getDistance(TEST_POINT_1, getPos()) < .2) {
-            lastPtHit = 1;
-        } else if(Geo.getDistance(TEST_POINT_2, getPos()) < .2) {
-            lastPtHit = 2;
-        } else if(Geo.getDistance(TEST_POINT_3, getPos()) < .2) {
-            lastPtHit = 3;
-        }
-        
-        if(lastPtHit == 1) {
-            circleController.update(getPos(), getHeading(), TEST_POINT_2, TEST_HEADING_2);
-        } else if(lastPtHit == 2) {
-            circleController.update(getPos(), getHeading(), TEST_POINT_3, TEST_HEADING_3);
-        } else if(lastPtHit == 3) {
-            circleController.update(getPos(), getHeading(), TEST_POINT_4, TEST_HEADING_4);
-        } else {
-            circleController.update(getPos(), getHeading(), TEST_POINT_1, TEST_HEADING_1);
-        }
-    }
+        sequential.update(currPos);
         // pneumaticsSubsystem.startCompressor();
+    }
     
 
     public void testPeriodic() {
