@@ -9,10 +9,16 @@ import frc.robot.commands.*;
 public class OI {
     public Joystick leftStick, rightStick;
     public XboxController xboxController;
+
+    public JoystickButton circleControllerButton;
     
     public OI() {
         leftStick = new Joystick(PortMap.JOYSTICK_LEFT);
         rightStick = new Joystick(PortMap.JOYSTICK_RIGHT);
         xboxController = new XboxController(PortMap.XBOX_CONTROLLER);
+
+        circleControllerButton = new JoystickButton(leftStick, PortMap.JOYSTICK_TRIGGER);
+        circleControllerButton.whileHeld(new CircleControllerCommand());
+        
     }
 }
