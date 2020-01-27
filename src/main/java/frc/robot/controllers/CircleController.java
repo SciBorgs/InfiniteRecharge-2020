@@ -14,15 +14,18 @@ public class CircleController {
     private static final double DESIRED_HEADING_P = .2;
     private static final double ENDING_TURN_P     = .1;
     private PID finalHeadingPID   = new PID(FINAL_HEADING_P, 0, 0);
-    private PID desiredHeadingPID = new PID(DESIRED_HEADING_P, 0, 0);
+    private PID desiredHeadingPID = new PID(DESIRED_HEADING_P, 0, .02);
     private PID endingTurnPID     = new PID(ENDING_TURN_P, 0, 0);
 
     private static final double DISTANCE_TOLERANCE = .4;
 
+    public double turnMagnitude;
+
     private final String FILENAME = "CircleController.java";
 
-    public void update(Point currPos, double currHeading, Point finalPos, double finalHeading) {
-
+    public void update(Point finalPos, double finalHeading) {
+        Point currPos = Robot.getPos();
+        double currHeading = Robot.getHeading();
         Robot.driveSubsystem.assistedDriveMode();
         Line sightLine = Geo.pointAngleForm(currPos, currHeading);
 
@@ -45,28 +48,20 @@ public class CircleController {
 
             double desiredHeadingError = Geo.subtractAngles(Geo.angleBetween(currPos, finalPos), currHeading);
             desiredHeadingPID.addMeasurement(desiredHeadingError);
-            double turnMagnitude;
             
-            turnMagnitude = desiredHeadingPID.getOutput() + (1 / Geo.getDistance(currPos, finalPos)) * finalHeadingPID.getOutput();
-            Robot.driveSubsystem.setSpeedTankTurningPercentage(turnMagnitude);
-
-           /* if(Geo.getDistance(currPos, finalPos) < .2) {
-                double endingError = finalHeading - currHeading;
+            //Robot.driveSubsystem.setSpeedTankTurningPercentage(turnMagnitude);
+            
+           if(Geo.getDistance(currPos, finalPos) < DISTANCE_TOLERANCE){
+                double endingError = Geo.subtractAngles(finalHeading,currHeading);
                 endingTurnPID.addMeasurement(endingError);
                 turnMagnitude = endingTurnPID.getOutput();
                 Robot.driveSubsystem.setSpeedTankForwardTurningMagnitude(0, turnMagnitude);
-                isFinished = true;
-            } else if(Geo.getDistance(currPos, finalPos) < DISTANCE_TOLERANCE){
-                double endingError = finalHeading - currHeading;
-                endingTurnPID.addMeasurement(endingError);
-                turnMagnitude = endingTurnPID.getOutput();
-                //Robot.driveSubsystem.setSpeedTankTurningPercentage(turnMagnitude);
-                Robot.driveSubsystem.setSpeedTankForwardTurningPercentage(.7, turnMagnitude);
+                //Robot.driveSubsystem.setSpeedTankForwardTurningPercentage(.7, turnMagnitude);
             } else {
-                turnMagnitude = desiredHeadingPID.getOutput() + finalHeadingPID.getOutput();
-                //Robot.driveSubsystem.setSpeedTankTurningPercentage(turnMagnitude);
+                turnMagnitude = desiredHeadingPID.getOutput() + (1+Math.sqrt(Geo.getDistance(currPos, finalPos))) * finalHeadingPID.getOutput();
+                Robot.driveSubsystem.setSpeedTankTurningPercentage(turnMagnitude);
+                //Robot.driveSubsystem.setSpeedTankForwardTurningPercentage(.7, turnMagnitude);
                 
-                Robot.driveSubsystem.setSpeedTankForwardTurningPercentage(.7, turnMagnitude);
                 DelayedPrinter.print("turnMagnitude: " + turnMagnitude);
                 DelayedPrinter.print("expectedFinalHeading: " + Math.toDegrees(expectedFinalHeading));
                 DelayedPrinter.print("expectedCurrentHeading: " + Math.toDegrees(expectedCurrentHeading));
@@ -78,8 +73,8 @@ public class CircleController {
                 Robot.logger.addData(FILENAME, "desiredHeadingError", desiredHeadingError, DefaultValue.Previous);
                 Robot.logger.addData(FILENAME, "finalHeadingError", finalHeadingError, DefaultValue.Previous);
                 Robot.logger.addData(FILENAME, "turnMagnitude", turnMagnitude, DefaultValue.Previous);   
-                         
-            }*/
+                  */   
+            }
         }
     }
 }

@@ -188,7 +188,7 @@ public class DriveSubsystem extends Subsystem {
 
     public void setSpeedTankForwardTurningMagnitude(double forward, double turnMagnitude) {
         // Note: this controls dtheta/dt rather than dtheta/dx
-        setSpeedTank(forward - turnMagnitude, forward + turnMagnitude);
+        setTank(forward - turnMagnitude, forward + turnMagnitude);
     }
 
     @Override

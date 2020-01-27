@@ -2,6 +2,7 @@ package frc.robot.controllers;
 
 import java.util.ArrayList;
 
+import frc.robot.Robot;
 import frc.robot.controllers.CircleController;
 import frc.robot.helpers.Geo;
 import frc.robot.shapes.Point;
@@ -21,13 +22,14 @@ public class Sequential {
         circleController = new CircleController();
     }
 
-    public void update (Waypoint currPos) { 
+    public void update () { 
+        Waypoint currPos = new Waypoint(Robot.getPos(),Robot.getHeading());
         lastPointHitIndex      = getLastPointHitIndex(currPos.point);
         currDestinationIndex   = lastPointHitIndex + 1;
         currDestination        = path.get(currDestinationIndex).point;
         currDestinationHeading = path.get(currDestinationIndex).heading;
         if (!isFinished()) {
-            circleController.update(currPos.point, currPos.heading, currDestination, currDestinationHeading);
+            circleController.update(currDestination, currDestinationHeading);
         }
     }
 
