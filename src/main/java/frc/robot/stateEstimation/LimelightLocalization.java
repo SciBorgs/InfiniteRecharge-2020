@@ -18,16 +18,6 @@ public class LimelightLocalization implements MaybeUpdater {
     private static final double CAMERA_ABOVE_GROUND_HEIGHT = Utils.inchesToMeters(29);
     private static final double CAMERA_MOUNTING_ANGLE      = Math.toRadians(0);
     private static final double OUTER_PORT_HEIGHT          = Utils.inchesToMeters(90);
-    private static final double LOADING_BAY_HEIGHT         = Utils.inchesToMeters(11);
-
-    private static final double PIXEL_TO_NORMALIZED_X_RATIO  = 1/160;
-    private static final double PIXEL_TO_NORMALIZED_Y_RATIO  = 1/120;
-
-    private static final double PIXEL_TO_NORMALIZED_X_OFFSET  = 159.5;
-    private static final double PIXEL_TO_NORMALIZED_Y_OFFSET  = 119.5;
-
-    private static final double CAMERA_HORIZONTAL_POV = Math.toRadians(54);
-    private static final double CAMERA_VERTICAL_POV   = Math.toRadians(41);
 
     private static final double LANDMARK_X = -10;
     private static final double LANDMARK_Y =  2;
