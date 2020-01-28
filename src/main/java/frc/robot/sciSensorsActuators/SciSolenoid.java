@@ -5,7 +5,7 @@ import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import frc.robot.Utils;
 import frc.robot.dataTypes.BiHashMap;
 
-public class SciSolenoid <ValueType extends Enum> extends DoubleSolenoid {
+public class SciSolenoid <ValueType extends Enum<ValueType>> extends DoubleSolenoid {
     private BiHashMap<Value, ValueType> valueMap;
 
     public SciSolenoid(int[] ports, ValueType forwardValue, ValueType backwardValue, ValueType offValue) {
