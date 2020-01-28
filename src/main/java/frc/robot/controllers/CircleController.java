@@ -24,6 +24,7 @@ public class CircleController {
     private final String FILENAME = "CircleController.java";
 
     public void update(Point finalPos, double finalHeading) {
+        DelayedPrinter.print("finalPos: " + finalPos);
         Point currPos = Robot.getPos();
         double currHeading = Robot.getHeading();
         Robot.driveSubsystem.assistedDriveMode();

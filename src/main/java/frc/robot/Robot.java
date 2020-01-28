@@ -73,10 +73,10 @@ public class Robot extends TimedRobot {
     public static Point  getPos() {return new Point(get(SD.X),get(SD.Y));}
     public static double getHeading() {return get(SD.Angle);}
 
-    public static final Waypoint TEST_POINT_1 = new Waypoint(new Point(1,1),     Geo.HORIZONTAL_ANGLE + Math.PI / 4);
-    public static final Waypoint TEST_POINT_2 = new Waypoint(new Point(4.572,0),    Geo.HORIZONTAL_ANGLE);
-    public static final Waypoint TEST_POINT_3 = new Waypoint(new Point(2, 0),    Geo.HORIZONTAL_ANGLE);
-    public static final Waypoint TEST_POINT_4 = new Waypoint(new Point(0, -.25), Geo.HORIZONTAL_ANGLE);
+    public static final Waypoint TEST_POINT_1 = new Waypoint(new Point(Utils.inchesToMeters(36),0),     Geo.HORIZONTAL_ANGLE);
+    public static final Waypoint TEST_POINT_2 = new Waypoint(new Point(Utils.inchesToMeters(96),Utils.inchesToMeters(36)),    Geo.HORIZONTAL_ANGLE + Math.PI);
+    public static final Waypoint TEST_POINT_3 = new Waypoint(new Point(Utils.inchesToMeters(36),Utils.inchesToMeters(72)),     Geo.HORIZONTAL_ANGLE + Math.PI);
+    public static final Waypoint TEST_POINT_4 = new Waypoint(new Point(0, Utils.inchesToMeters(72)), Geo.HORIZONTAL_ANGLE + Math.PI);
     public static final Point ORIGINAL_POINT = new Point(0,0);
     public static final double ORIGINAL_ANGLE = Geo.HORIZONTAL_ANGLE;
     public Waypoint[] arr = new Waypoint[] {TEST_POINT_1, TEST_POINT_2, TEST_POINT_3, TEST_POINT_4};
@@ -87,6 +87,8 @@ public class Robot extends TimedRobot {
     public static Point CURRENT_DESTINATION = ORIGINAL_POINT;
     public static double CURRENT_DESTINATION_HEADING = Geo.HORIZONTAL_ANGLE;
 
+    public static Point newDestPoint = new Point(2.743, .9144);
+    public static double newDestHeading = Geo.HORIZONTAL_ANGLE;
     private int attemptsSinceLastLog;
     public static final int LOG_PERIOD = 5;
 
@@ -160,6 +162,7 @@ public class Robot extends TimedRobot {
 
     @Override
     public void autonomousPeriodic() {
+        sequential.update();
         // pneumaticsSubsystem.startCompressor();
     }
     
@@ -171,8 +174,6 @@ public class Robot extends TimedRobot {
     }
 
     public void teleopPeriodic() {
-       // Waypoint currPos = new Waypoint(getPos(), getHeading());
-        // sequential.update(currPos);
         (new TankDriveCommand()).start();
         // pneumaticsSubsystem.startCompressor();
     }

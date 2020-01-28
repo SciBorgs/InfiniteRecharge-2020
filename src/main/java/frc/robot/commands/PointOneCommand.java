@@ -6,6 +6,7 @@ import edu.wpi.first.wpilibj.command.InstantCommand;
 public class PointOneCommand extends InstantCommand {
     @Override
     protected void execute() {
-        Robot.CURRENT_DESTINATION = Robot.TEST_POINT_1.point;
+        Robot.CURRENT_DESTINATION = Robot.newDestPoint;
+        Robot.CURRENT_DESTINATION_HEADING = Robot.newDestHeading;
     }
 }

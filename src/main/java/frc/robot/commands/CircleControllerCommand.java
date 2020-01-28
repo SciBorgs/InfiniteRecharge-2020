@@ -13,8 +13,7 @@ public class CircleControllerCommand extends InstantCommand {
     @Override
     protected void execute() {
         Robot.logger.logCommandStatus(FILENAME, CommandStatus.Executing);
-        System.out.println("circle controller");
-        circleController.update(Robot.CURRENT_DESTINATION, Robot.CURRENT_DESTINATION_HEADING);
+        circleController.update(Robot.CURRENT_DESTINATION, Robot.ORIGINAL_ANGLE);
         System.out.println("currDestination: " + Robot.CURRENT_DESTINATION);
     }
 }
