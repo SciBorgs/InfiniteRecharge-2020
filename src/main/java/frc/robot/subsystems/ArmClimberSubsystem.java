@@ -17,10 +17,10 @@ import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 public class ArmClimberSubsystem extends Subsystem {
     private SciTalon armTalon;
     private SciTalon stringTalon1, stringTalon2;
-    private SciSolenoid armSolenoid;
+    private SciSolenoid<ArmValue> armSolenoid;
     private PID talonPID;
 
-    public enum Position {OPEN, CLOSED, OFF} // gets rid of fields
+    public enum ArmValue {OPEN, CLOSED, OFF} // gets rid of fields
 
     private final double TALON_GEAR_RATIO = 1;
     private final double SPARK_GEAR_RATIO = 1;
@@ -35,12 +35,12 @@ public class ArmClimberSubsystem extends Subsystem {
         this.stringTalon1 = new SciTalon(PortMap.STRING_SPARK_1, SPARK_GEAR_RATIO);
         this.stringTalon2 = new SciTalon(PortMap.STRING_SPARK_2, SPARK_GEAR_RATIO);
 
-        this.armSolenoid = new SciSolenoid(PortMap.ARM_SOLENOID_PDP, PortMap.ARM_SOLENOID, Position.OPEN, Position.CLOSED, Position.OFF);
+        this.armSolenoid = new SciSolenoid<>(PortMap.ARM_SOLENOID_PDP, PortMap.ARM_SOLENOID, ArmValue.OPEN, ArmValue.CLOSED, ArmValue.OFF);
         this.talonPID = new PID(1,0,0);
 
         this.stringTalon2.follow(stringTalon1);
 
-        closeSolenoidArm();
+        setSolenoidArm(ArmValue.CLOSED);
     }
 
     public void setHeight(double height) {
@@ -75,9 +75,8 @@ public class ArmClimberSubsystem extends Subsystem {
         setStringSpeed(this.stringTalon1.getMotorOutputPercent() + change);
     }
 
-    public void openSolenoidArm()  {this.armSolenoid.set(Position.OPEN);} // !!
-    public void closeSolenoidArm() {this.armSolenoid.set(Position.CLOSED);}
-    public void toggleSolenoidArm() {this.armSolenoid.toggle());}
+    public void setSolenoidArm(ArmValue val) {this.armSolenoid.set(val);}
+    public void toggleSolenoidArm() {this.armSolenoid.toggle();}
 
     @Override
     protected void initDefaultCommand() {} // but why tho

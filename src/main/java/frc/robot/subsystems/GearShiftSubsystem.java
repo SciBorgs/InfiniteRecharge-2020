@@ -12,15 +12,15 @@ import edu.wpi.first.wpilibj.command.Subsystem;
 public class GearShiftSubsystem extends Subsystem { // example for sciSolenoid
 
 	private final String fileName = "GearShiftSubsystem.java";
-    public SciSolenoid gearShiftSolenoid;
+    public SciSolenoid<GearValue> gearShiftSolenoid;
     
     private final double UPPER_HIGH_GEAR_THRESHOLD = 1000;
     private final double LOWER_LOW_GEAR_THRESHOLD = 500;
     
-    public enum Gear {HIGH, LOW, OFF}
+    public enum GearValue {HIGH, LOW, OFF}
 
     public GearShiftSubsystem() {
-        this.gearShiftSolenoid = new SciSolenoid(PortMap.GEAR_SHIFTER_SOLENOID_PDP, PortMap.GEAR_SHIFTER_SOLENOID, Gear.HIGH, Gear.LOW, Gear.OFF);
+        this.gearShiftSolenoid = new SciSolenoid<>(PortMap.GEAR_SHIFTER_SOLENOID_PDP, PortMap.GEAR_SHIFTER_SOLENOID, GearValue.HIGH, GearValue.LOW, GearValue.OFF);
         shiftUp();
     }
     
@@ -35,11 +35,11 @@ public class GearShiftSubsystem extends Subsystem { // example for sciSolenoid
         if(speed < LOWER_LOW_GEAR_THRESHOLD) {shiftUp();}
     }
 
-    public boolean currentlyInHighGear(){return this.gearShiftSolenoid.getValue() == Gear.HIGH;}
-    public boolean currentlyInLowGear() {return this.gearShiftSolenoid.getValue() == Gear.LOW;}
+    public boolean currentlyInHighGear(){return this.gearShiftSolenoid.getValue() == GearValue.HIGH;}
+    public boolean currentlyInLowGear() {return this.gearShiftSolenoid.getValue() == GearValue.LOW;}
 
-    public void shiftUp()    {this.gearShiftSolenoid.set(Gear.HIGH);}
-    public void shiftDown()  {this.gearShiftSolenoid.set(Gear.LOW);}
+    public void shiftUp()    {this.gearShiftSolenoid.set(GearValue.HIGH);}
+    public void shiftDown()  {this.gearShiftSolenoid.set(GearValue.LOW);}
     public void toggleGear() {this.gearShiftSolenoid.toggle();}
 
     @Override

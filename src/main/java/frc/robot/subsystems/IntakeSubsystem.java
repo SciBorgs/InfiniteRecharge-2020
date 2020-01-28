@@ -14,7 +14,9 @@ import edu.wpi.first.wpilibj.command.Subsystem;
 public class IntakeSubsystem extends Subsystem {
 
     public TalonSRX intakeTalon;
-    public SciSolenoid secureHatchSolenoid, armSolenoid, popHatchSolenoid;
+	private SciSolenoid<Hatch> secureHatchSolenoid;
+	private SciSolenoid<Arm> armSolenoid;
+	private SciSolenoid<Pop> popHatchSolenoid;
     public enum Hatch {RELEASE, SECURE, OFF}
     public enum Arm   {OPEN, CLOSED, OFF}
     public enum Pop   {EXTEND, RETRACT, OFF}
@@ -36,9 +38,9 @@ public class IntakeSubsystem extends Subsystem {
 		this.intakeTalon.configPeakCurrentLimit(10);
 		this.intakeTalon.enableCurrentLimit(true);
 		this.holdingCargo = false;
-		this.secureHatchSolenoid = new SciSolenoid(PortMap.SECURE_HATCH_SOLENOID_PDP, PortMap.SECURE_HATCH_SOLENOID, Hatch.RELEASE, Hatch.SECURE, Hatch.OFF);
-		this.armSolenoid         = new SciSolenoid(PortMap.ARM_SOLENOID_PDP, PortMap.ARM_SOLENOID, Arm.OPEN, Arm.CLOSED, Arm.OFF);
-		this.popHatchSolenoid    = new SciSolenoid(PortMap.POP_HATCH_SOLENOID_PDP, PortMap.POP_HATCH_SOLENOID, Pop.RETRACT, Pop.EXTEND, Pop.OFF);
+		this.secureHatchSolenoid = new SciSolenoid<>(PortMap.SECURE_HATCH_SOLENOID_PDP, PortMap.SECURE_HATCH_SOLENOID, Hatch.RELEASE, Hatch.SECURE, Hatch.OFF);
+		this.armSolenoid         = new SciSolenoid<>(PortMap.ARM_SOLENOID_PDP, PortMap.ARM_SOLENOID, Arm.OPEN, Arm.CLOSED, Arm.OFF);
+		this.popHatchSolenoid    = new SciSolenoid<>(PortMap.POP_HATCH_SOLENOID_PDP, PortMap.POP_HATCH_SOLENOID, Pop.RETRACT, Pop.EXTEND, Pop.OFF);
 	}
     
 	public void periodicLog(){
