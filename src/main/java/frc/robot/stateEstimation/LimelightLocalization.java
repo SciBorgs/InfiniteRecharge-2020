@@ -15,9 +15,9 @@ public class LimelightLocalization implements MaybeUpdater {
     public double radialDistanceFromLoadingBay = 5; // To be tuned
     public double radialDistanceFromInnerPort  = 5; // To be tuned
 
-    private static final double CAMERA_ABOVE_GROUND_HEIGHT = Utils.inchesToMeters(5);
-    private static final double CAMERA_MOUNTING_ANGLE      = Utils.inchesToMeters(5);
-    private static final double OUTER_PORT_HEIGHT          = Utils.inchesToMeters(98.25);
+    private static final double CAMERA_ABOVE_GROUND_HEIGHT = Utils.inchesToMeters(29);
+    private static final double CAMERA_MOUNTING_ANGLE      = Math.toRadians(0);
+    private static final double OUTER_PORT_HEIGHT          = Utils.inchesToMeters(90);
     private static final double LOADING_BAY_HEIGHT         = Utils.inchesToMeters(11);
 
     private static final double PIXEL_TO_NORMALIZED_X_RATIO  = 1/160;
@@ -41,8 +41,9 @@ public class LimelightLocalization implements MaybeUpdater {
         this.stdDevs.put(SD.Y,     0.0);
     }
 
-    public double calculateDistance(double heightOne, double heightTwo, double angleOne, double angleTwo) {
-        return (heightTwo - heightOne)/Math.tan(angleOne + angleTwo); 
+    public double calculateDistance() {
+        double yAngle = Math.toRadians(limeLight.getTableData(limeLight.getCameraTable(), "ty"));
+        return (OUTER_PORT_HEIGHT - CAMERA_ABOVE_GROUND_HEIGHT)/Math.tan(yAngle + CAMERA_MOUNTING_ANGLE); 
     }
 
     public Point getRobotPosition(PolarPoint polarP, Point landmarkLocation) {
@@ -54,9 +55,8 @@ public class LimelightLocalization implements MaybeUpdater {
 
     @Override
     public void updateState(RobotStateHistory pastRobotStates) {
-        double yAngle = getYAngle(limeLight.getTableData(limeLight.getCameraTable(), "ty"));
-        double xAngle = getXAngle(limeLight.getTableData(limeLight.getCameraTable(), "tx"));
-        double distance = calculateDistance(CAMERA_ABOVE_GROUND_HEIGHT, OUTER_PORT_HEIGHT, CAMERA_MOUNTING_ANGLE, yAngle);
+        double distance = calculateDistance();
+        double xAngle = limeLight.getTableData(limeLight.getCameraTable(), "tx");
         PolarPoint relativePosition = new PolarPoint(distance, xAngle);
         Point absolutePosition = getRobotPosition(relativePosition, new Point(LANDMARK_X, LANDMARK_Y));
         RobotState updatedState = new RobotState();
@@ -70,28 +70,18 @@ public class LimelightLocalization implements MaybeUpdater {
         return this.stdDevs;
     }
 
-    public double getYAngle(double pixelY) {
-        double normalizedY = (PIXEL_TO_NORMALIZED_Y_RATIO) * (PIXEL_TO_NORMALIZED_Y_OFFSET - pixelY); // Converts from pixel 2d y value to "normal" y value
-        double viewPlaneHeight = 2 * Math.tan(CAMERA_VERTICAL_POV/2); // gets height of imaginary view plane
-        double y = viewPlaneHeight/2 * normalizedY; // gets cartesian y coordinate
-        double yAngle =  Math.atan2(1,y); // gets angle to pixel using cartesian coordinate
-        return yAngle;
-    }
-
-    public double getXAngle(double pixelX) {
-        double normalizedX =  (PIXEL_TO_NORMALIZED_X_RATIO) * (pixelX - PIXEL_TO_NORMALIZED_X_OFFSET); // Converts from pixel 2d x value to "normal" x value
-        double viewPlaneWidth = 2 * Math.tan(CAMERA_HORIZONTAL_POV/2); // gets width of imaginary view plane
-        double x = viewPlaneWidth/2 * normalizedX; // gets cartesian x coordinate
-        double xAngle = Math.atan2(1,x); // gets angle to pixel using cartesian x coordinate
-        return xAngle;
+    public void printDistance() {
+        double distance = calculateDistance();
+        System.out.println("Target found at distance: " + distance);
+        System.out.println("Ty is: " + Math.toRadians(limeLight.getTableData(limeLight.getCameraTable(), "ty")));
     }
 
     @Override
     public boolean canUpdate() { // for now, for simplicity, we will be assuming that the targets we find belong to the inner port
         if (limeLight.getTableData(limeLight.getCameraTable(), "getpipe") == 1) {
             if (limeLight.getTableData(limeLight.getCameraTable(), "tv") == 1) {
-                double yAngle = getYAngle(limeLight.getTableData(limeLight.getCameraTable(), "ty"));
-                double distance = calculateDistance(CAMERA_ABOVE_GROUND_HEIGHT, OUTER_PORT_HEIGHT, CAMERA_MOUNTING_ANGLE, yAngle);
+                double distance = calculateDistance();
+                System.out.println("Target found at distance: " + distance);
                 return (distance <= radialDistanceFromInnerPort);           
             }
         }

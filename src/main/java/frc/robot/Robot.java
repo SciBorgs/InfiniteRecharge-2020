@@ -36,7 +36,7 @@ public class Robot extends TimedRobot {
     public static PigeonSubsystem     pigeonSubsystem     = new PigeonSubsystem();
     public static LimelightSubsystem  limelightSubsystem  = new LimelightSubsystem();
     public static PneumaticsSubsystem pneumaticsSubsystem = new PneumaticsSubsystem();
-    
+    public static LimelightLocalization limelightLocalization = new LimelightLocalization();
     public static Following following = new Following();
     public static CircleController circleController = new CircleController();
     public static OI oi = new OI();
@@ -129,7 +129,6 @@ public class Robot extends TimedRobot {
     public void robotPeriodic() {
         stateHistory.addState(getState().copy());
         allUpdateRobotStates();
-        maybeDefaultUpdater.updateRobotState();
         allPeriodicLogs();
         logDataPeriodic();
         Scheduler.getInstance().run();
@@ -159,6 +158,7 @@ public class Robot extends TimedRobot {
 
     public void teleopPeriodic() {
         driveSubsystem.manualDriveMode();
+        limelightLocalization.printDistance();
         new TankDriveCommand().start();
 
         //pneumaticsSubsystem.startCompressor();
