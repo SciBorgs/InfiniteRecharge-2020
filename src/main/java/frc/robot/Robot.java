@@ -35,6 +35,7 @@ public class Robot extends TimedRobot {
     public static PigeonSubsystem     pigeonSubsystem     = new PigeonSubsystem();
     public static LimelightSubsystem  limelightSubsystem  = new LimelightSubsystem();
     public static PneumaticsSubsystem pneumaticsSubsystem = new PneumaticsSubsystem();
+    public static ArmClimberSubsystem armClimberSubdystem = new ArmClimberSubsystem();
     
     public static Following following = new Following();
     public static Model positionModel = new EncoderLocalization();
