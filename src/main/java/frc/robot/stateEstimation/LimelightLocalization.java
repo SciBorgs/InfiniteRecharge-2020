@@ -36,19 +36,19 @@ public class LimelightLocalization implements MaybeUpdater {
         return (OUTER_PORT_HEIGHT - CAMERA_ABOVE_GROUND_HEIGHT)/Math.tan(yAngle + CAMERA_MOUNTING_ANGLE); 
     }
 
-    public Point getRobotPosition(PolarPoint polarP, Point landmarkLocation) {
-        Point relativePoint = Geo.convertPolarToCartesian(polarP);
-        double xAbsolute = relativePoint.x + landmarkLocation.x;
-        double yAbsolute = relativePoint.y + landmarkLocation.y;
+    public Point getRobotPosition() {
+        double distance = calculateDistance();
+        double xAngle = -1 * limeLight.getTableData(limeLight.getCameraTable(), "tx");
+        PolarPoint relativePosition = new PolarPoint(distance, xAngle);
+        Point relativePoint = Geo.convertPolarToCartesian(relativePosition);
+        double xAbsolute = relativePoint.x + LANDMARK_X;
+        double yAbsolute = relativePoint.y + LANDMARK_Y;
         return new Point(xAbsolute,yAbsolute);
     }
 
     @Override
     public void updateState(RobotStateHistory pastRobotStates) {
-        double distance = calculateDistance();
-        double xAngle = limeLight.getTableData(limeLight.getCameraTable(), "tx");
-        PolarPoint relativePosition = new PolarPoint(distance, xAngle);
-        Point absolutePosition = getRobotPosition(relativePosition, new Point(LANDMARK_X, LANDMARK_Y));
+        Point absolutePosition = getRobotPosition();
         RobotState updatedState = new RobotState();
         updatedState.set(SD.X, absolutePosition.x);
         updatedState.set(SD.Y, absolutePosition.y);
@@ -71,7 +71,6 @@ public class LimelightLocalization implements MaybeUpdater {
         if (limeLight.getTableData(limeLight.getCameraTable(), "getpipe") == 1) {
             if (limeLight.getTableData(limeLight.getCameraTable(), "tv") == 1) {
                 double distance = calculateDistance();
-                System.out.println("Target found at distance: " + distance);
                 return (distance <= radialDistanceFromInnerPort);           
             }
         }
