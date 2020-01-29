@@ -152,13 +152,11 @@ public class Robot extends TimedRobot {
         set(SD.X, ORIGINAL_POINT.x);
         set(SD.Y, ORIGINAL_POINT.y);
         set(SD.Angle, ORIGINAL_ANGLE);
-        this.shooterSubsystem.setSpeed(1000);
     }
 
     public void teleopPeriodic() {
         driveSubsystem.manualDriveMode();
         new TankDriveCommand().start();
-        shooterSubsystem.logSpeed();
         //pneumaticsSubsystem.startCompressor();
     }
 
