@@ -87,7 +87,7 @@ public class Robot extends TimedRobot {
     public static Point CURRENT_DESTINATION = ORIGINAL_POINT;
     public static double CURRENT_DESTINATION_HEADING = Geo.HORIZONTAL_ANGLE;
 
-    public static Point newDestPoint = new Point(2.743, .9144);
+    public static Point newDestPoint = new Point(Utils.inchesToMeters(4), .458);
     public static double newDestHeading = Geo.HORIZONTAL_ANGLE;
     private int attemptsSinceLastLog;
     public static final int LOG_PERIOD = 5;
