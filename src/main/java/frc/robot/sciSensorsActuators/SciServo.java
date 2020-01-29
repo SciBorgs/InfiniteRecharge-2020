@@ -10,9 +10,9 @@ public class SciServo extends Servo {
 	super(channel);
     }
 
-    public double getMinAngle() { return minAngle; }
-    public double getCenterAngle() { return centerAngle; }
-    public double getMaxAngle() { return maxAngle; }
+    public double getMinAngle()    { return this.minAngle; }
+    public double getCenterAngle() { return this.centerAngle; }
+    public double getMaxAngle()    { return this.maxAngle; }
 
     public void setMinAngle(double minAngle) {
         this.minAngle = minAngle;
@@ -32,11 +32,13 @@ public class SciServo extends Servo {
         this.maxAngle = maxAngle;
     }
 
+    @Override
     public double getAngle() {
-        return Math.toRadians(super.getAngle()) + minAngle;
+        return Math.toRadians(super.getAngle()) + this.minAngle;
     }
 
+    @Override
     public void setAngle(double angle) {
-        super.setAngle(Math.toDegrees(angle - minAngle));
+        super.setAngle(Math.toDegrees(angle - this.minAngle));
     }
 }
