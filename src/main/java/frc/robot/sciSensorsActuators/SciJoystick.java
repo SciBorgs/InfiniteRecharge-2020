@@ -4,18 +4,23 @@ import edu.wpi.first.wpilibj.Joystick;
 
 public class SciJoystick extends Joystick {
 
-    public SciJoystick(int port) {
-        super(port);
+    private double inputDeadZone = 0.11; //deadzone because the joysticks are bad and they detect input when there is none
+
+    public SciJoystick(int port) {super(port);}
+
+    public SciJoystick(int port, double inputDeadZone) {        
+        this(port);
+        this.inputDeadZone = inputDeadZone;
     }
 
-    private static final double INPUT_DEADZONE = 0.11; // deadzone because the joysticks are bad and they detect input when there is none
+    public void setInputDeadZone(double inputDeadZone) {this.inputDeadZone = inputDeadZone; }
 
-    public double deadzone(double output) { //from driver subsystem
-        return Math.abs(output) < INPUT_DEADZONE ? 0 : output;
-    }
+    public double getInputDeadZone() {return this.inputDeadZone;}
+
+    public double deadzone(double output) {return Math.abs(output) < this.inputDeadZone ? 0 : output;}
 
     //Cannot override final method 
-    public double getProcessedY() {
-        return -deadzone(this.getY());
-    }
+    public double getProcessedX() {return -this.deadzone(this.getX());}
+
+    public double getProcessedY() {return -this.deadzone(this.getY());}    
 }
