@@ -72,8 +72,16 @@ public class ShooterSubsystem extends Subsystem {
     this.hoodSpark.set(this.hoodAnglePID.getOutput());
   }
 
+  public void setHoodAngle(double speed) {
+    this.hoodSpark.set(speed);
+  }
+
   public void shoot() {
     this.shooterSparkVelocityPID.setReference(ShooterData.motorRPM, ControlType.kVelocity);
+  }
+
+  public void shoot(double speed) {
+    this.shooterSpark.set(speed);
   }
 
   private double getHoodAngle() {
