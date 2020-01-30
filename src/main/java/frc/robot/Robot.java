@@ -139,6 +139,7 @@ public class Robot extends TimedRobot {
         set(SD.X, ORIGINAL_POINT.x);
         set(SD.Y, ORIGINAL_POINT.y);
         set(SD.Angle, ORIGINAL_ANGLE);
+        new ShootCommand().start();
     }
 
     @Override
@@ -157,6 +158,8 @@ public class Robot extends TimedRobot {
     public void teleopPeriodic() {
         driveSubsystem.manualDriveMode();
         new TankDriveCommand().start();
+        new ManualHoodCommand().start();
+        new ManualShootCommand().start();
         //pneumaticsSubsystem.startCompressor();
     }
 

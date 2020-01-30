@@ -23,6 +23,8 @@ public class ShooterSubsystem extends Subsystem {
 
   private final double MAX_HOOD_ANGLE = Math.toRadians(70);
   private final double MIN_HOOD_ANGLE = Math.toRadians(30);
+  private final double MAX_HOOD_ANGLE_DISTANCE = 1.166;
+  private final double MIN_HOOD_ANGLE_DISTANCE = 6.073;
 
   private final double OUTER_PORT_HEIGHT_TOLERANCE = 0.4;
   private final double INNER_PORT_HEIGHT_TOLERANCE = 0.3;
@@ -72,21 +74,15 @@ public class ShooterSubsystem extends Subsystem {
     this.hoodSpark.set(this.hoodAnglePID.getOutput());
   }
 
-  public void setHoodAngle(double speed) {
-    this.hoodSpark.set(speed);
-  }
+  public void setHoodAngle(double speed) {this.hoodSpark.set(speed);}
 
-  public void shoot() {
-    this.shooterSparkVelocityPID.setReference(ShooterData.motorRPM, ControlType.kVelocity);
-  }
+  public void shoot() {this.shooterSparkVelocityPID.setReference(ShooterData.motorRPM, ControlType.kVelocity);}
 
-  public void shoot(double speed) {
-    this.shooterSpark.set(speed);
-  }
+  public void shoot(double speed) {this.shooterSpark.set(speed);}
 
   private double getHoodAngle() {
-    // Distance to target < 1.170 : return MAX_HOOD_ANGLE
-    // Distance to target > 6.073 : return MIN_HOOD_ANGLE
+    if (BALL_TO_OUTER_PORT_DISTANCE < MAX_HOOD_ANGLE_DISTANCE){return MAX_HOOD_ANGLE;}
+    if (BALL_TO_OUTER_PORT_DISTANCE > MIN_HOOD_ANGLE_DISTANCE){return MIN_HOOD_ANGLE;}
     double a = 0.958134;
     double b = -15.0864;
     double c = 86.285;
@@ -94,9 +90,7 @@ public class ShooterSubsystem extends Subsystem {
         a * Math.pow(BALL_TO_OUTER_PORT_DISTANCE, 2) + (b * BALL_TO_OUTER_PORT_DISTANCE) + c);
   }
 
-  private double getMotorRPM() {
-    return 60 * (ShooterData.ballVelocity * 2) / (2 * Math.PI * BALL_RADIUS);
-  }
+  private double getMotorRPM() {return 60 * (ShooterData.ballVelocity * 2) / (2 * Math.PI * BALL_RADIUS);}
 
   private double getBallVelocity() {
     if (ShooterData.ballVelocity == 0.0) {
@@ -104,9 +98,7 @@ public class ShooterSubsystem extends Subsystem {
           (BALL_TO_INNER_PORT_DISTANCE * GRAVITATIONAL_ACCELERATION)
               / Math.sin(2 * ShooterData.hoodAngle));
     }
-    if (ShooterData.innerPortError > 0) {
-      return ShooterData.ballVelocity + BALL_VELOCITY_INCREMENT;
-    }
+    if (ShooterData.innerPortError > 0) {return ShooterData.ballVelocity + BALL_VELOCITY_INCREMENT;}
     return ShooterData.ballVelocity - BALL_VELOCITY_INCREMENT;
   }
 
