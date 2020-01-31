@@ -5,6 +5,8 @@ import com.revrobotics.ControlType;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import frc.robot.controllers.PID;
 import frc.robot.sciSensorsActuators.SciSpark;
+import frc.robot.sciSensorsActuators.SciThroughBoreEncoder;
+
 import java.util.function.Function;
 
 public class ShooterSubsystem extends Subsystem {
@@ -35,6 +37,8 @@ public class ShooterSubsystem extends Subsystem {
   private double HOOD_SPARK_GEAR_RATIO = 36.0 / 3449;
   private double SHOOTER_SPARK_GEAR_RATIO = 1;
 
+  private SciThroughBoreEncoder absEncoder;
+
   private static class ShooterData {
     public static double hoodAngle, ballVelocity, motorRPM;
     public static double outerPortError = Double.POSITIVE_INFINITY;
@@ -51,6 +55,8 @@ public class ShooterSubsystem extends Subsystem {
     this.shooterSparkVelocityPID.setI(0.000001);
     this.shooterSparkVelocityPID.setD(0.01);
     this.shooterSparkVelocityPID.setOutputRange(-1, 1);
+
+    this.absEncoder = new SciThroughBoreEncoder(-1);
   }
 
   public void optimizeParameters() {
@@ -70,7 +76,7 @@ public class ShooterSubsystem extends Subsystem {
   }
 
   public void setHoodAngle() {
-    this.hoodAnglePID.addMeasurement(ShooterData.hoodAngle - this.hoodSpark.getWheelAngle());
+    this.hoodAnglePID.addMeasurement(ShooterData.hoodAngle - this.absEncoder.getRadians());
     this.hoodSpark.set(this.hoodAnglePID.getOutput());
   }
 
