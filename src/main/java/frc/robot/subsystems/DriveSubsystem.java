@@ -109,15 +109,6 @@ public class DriveSubsystem extends Subsystem {
         for(SciSpark spark : getSparks()){updateSparkState(spark);}
     }
 
-    public double deadzone(double output){
-        return Math.abs(output) < INPUT_DEADZONE ? 0 : output;
-    }
-    
-    public double processStick(Joystick stick){
-        //return -stick.getY();
-        return -deadzone(stick.getY());
-    }
-
     // If something is assiting, we don't want to drive using setSpeed
     public void assistedDriveMode(){this.assisted = true;}
     public void manualDriveMode()  {this.assisted = false;}
