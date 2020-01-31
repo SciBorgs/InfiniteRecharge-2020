@@ -19,6 +19,6 @@ public class SciJoystick extends Joystick {
     public double deadzoneY(double output) { return Math.abs(output) < this.inputDeadZoneY ? 0 : output; }
     
     //Cannot override final method 
-    public double getProcessedX() {return this.deadzone(this.getX());}
+    public double getProcessedX() {return  this.deadzone(this.getX());}
     public double getProcessedY() {return -this.deadzone(this.getY());}    
 }
