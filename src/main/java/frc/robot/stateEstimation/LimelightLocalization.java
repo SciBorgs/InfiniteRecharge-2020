@@ -39,20 +39,14 @@ public class LimelightLocalization implements MaybeUpdater {
     public Point getRobotPosition() {
         double distance = calculateDistance();
         double tx = limeLight.getTableData(limeLight.getCameraTable(), "tx");
-        double xAbsolute = 0, yAbsolute = 0;
-        if (tx > 0) {
-            double xRelative = distance * Math.cos(Math.toRadians(tx));
-            double yRelative = distance * Math.sin(Math.toRadians(tx));
-            xAbsolute = LANDMARK_X - xRelative;
-            yAbsolute = LANDMARK_Y - yRelative;
-        } else {
-            double xRelative = distance * Math.cos(Math.toRadians(tx));
-            double yRelative = distance * Math.sin(Math.toRadians(tx));
-            xAbsolute = xRelative - LANDMARK_X;
-            yAbsolute = yRelative - LANDMARK_Y;
+        double xRelative = distance * Math.cos(Math.toRadians(tx));
+        double yRelative = distance * Math.sin(Math.toRadians(tx));
+        double xAbsolute = LANDMARK_X - xRelative;
+        double yAbsolute = LANDMARK_Y - yRelative;
+        if (tx < 0){
+            xAbsolute *= -1;
+            yAbsolute *= -1;
         }
-        //PolarPoint relativePosition = new PolarPoint(distance, xAngle);
-        //Point relativePoint = Geo.convertPolarToCartesian(relativePosition);
         return new Point(xAbsolute,yAbsolute);
     }
 
@@ -70,27 +64,10 @@ public class LimelightLocalization implements MaybeUpdater {
         return this.stdDevs;
     }
 
-    public void printDistance() {
-        double distance = calculateDistance();
-        System.out.println("Target found at distance: " + distance);
-        System.out.println("Ty is: " + Math.toRadians(limeLight.getTableData(limeLight.getCameraTable(), "ty")));
-        limeLight.setCameraParams("distance", distance);
-    }
-
-    public void printPosition() {
-        Point position = getRobotPosition();
-        limeLight.setCameraParams("x", position.x);
-        limeLight.setCameraParams("y", position.y);
-    }
-
     @Override
     public boolean canUpdate() { // for now, for simplicity, we will be assuming that the targets we find belong to the inner port
-        if (limeLight.getTableData(limeLight.getCameraTable(), "getpipe") == 1) {
-            if (limeLight.getTableData(limeLight.getCameraTable(), "tv") == 1) {
-                double distance = calculateDistance();
-                return (distance <= radialDistanceFromInnerPort);           
-            }
-        }
-        return false;
+        boolean correctPipe   = limeLight.getTableData(limeLight.getCameraTable(), "getpipe") == 1;
+        boolean contourExists = limeLight.getTableData(limeLight.getCameraTable(), "tv") == 1;
+        return correctPipe && contourExists && (calculateDistance() <= radialDistanceFromInnerPort);
     }
 }
