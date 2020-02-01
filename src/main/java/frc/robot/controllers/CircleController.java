@@ -36,7 +36,6 @@ public class CircleController {
             setSpeed (currPos, currHeading, finalPos, finalHeading);
         }
         Robot.logger.addData("CircleController.java", "finalHeading", finalHeading, DefaultValue.Empty);
-        // periodicLog();
     }
 
     private static void setup() { Robot.driveSubsystem.assistedDriveMode(); }
@@ -70,8 +69,8 @@ public class CircleController {
     }
 
     private void addErrors(Point currPos, double currHeading, Point finalPos, double finalHeading) {
-        finalHeadingPID.addMeasurement(getFinalHeadingError(currPos, currHeading, finalPos, finalHeading));
-        desiredHeadingPID.addMeasurement(getDesiredHeadingError(currPos, currHeading, finalPos));
+        this.finalHeadingPID.addMeasurement(getFinalHeadingError(currPos, currHeading, finalPos, finalHeading));
+        this.desiredHeadingPID.addMeasurement(getDesiredHeadingError(currPos, currHeading, finalPos));
     }
 
     private void setSpeed(Point currPos, double currHeading, Point finalPos, double finalHeading) {
@@ -80,12 +79,12 @@ public class CircleController {
         // fix correct heading at close distance
         if (Geo.getDistance(currPos, finalPos) < ENDING_DISTANCE_TOLERANCE) {
             double endingError = Geo.subtractAngles(finalHeading, currHeading);
-            endingTurnPID.addMeasurement(endingError);
-            turnMagnitude = endingTurnPID.getOutput();
+            this.endingTurnPID.addMeasurement(endingError);
+            turnMagnitude = this.endingTurnPID.getOutput();
             Robot.driveSubsystem.setSpeedTankForwardTurningMagnitude(0, turnMagnitude);
         } else {
             // want stronger bias towards our heading at the end as we get closer to the point -> weight
-            turnMagnitude = getWeight(currPos, finalPos) * finalHeadingPID.getOutput() + desiredHeadingPID.getOutput();
+            turnMagnitude = getWeight(currPos, finalPos) * this.finalHeadingPID.getOutput() + this.desiredHeadingPID.getOutput();
             Robot.driveSubsystem.setSpeedTankTurningPercentage(turnMagnitude);
         }
         Robot.logger.addData("CircleController.java", "turnMagnitude", turnMagnitude, DefaultValue.Empty);
