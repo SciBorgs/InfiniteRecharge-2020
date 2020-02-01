@@ -145,8 +145,6 @@ public class DriveSubsystem extends Subsystem {
 	public void setTank(double leftSpeed, double rightSpeed) {
         this.l.set(leftSpeed  * this.driveMultiplier);
         this.r.set(rightSpeed * this.driveMultiplier);
-        //DelayedPrinter.print("right speed" + this.r.get());
-        // DelayedPrinter.print("rightspeed: "+rightSpeed);
     }
 
     public void setSpeedTank(double leftGoalSpeed, double rightGoalSpeed){

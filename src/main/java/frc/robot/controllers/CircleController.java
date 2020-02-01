@@ -19,15 +19,15 @@ public class CircleController {
     private static final double ENDING_DISTANCE_TOLERANCE = .4;
     private static final double TURNING_WEIGHT = .5; // it will be raised to a power of this, ie x^TURNING_WEIGHT
 
-    private double turnMagnitude;
-
     private final String FILENAME = "CircleController.java";
 
     public CircleController () { Robot.logger.logFinalPIDConstants("CircleController.java", "final heading PID", this.finalHeadingPID);  }
 
     public void update(Point finalPos, double finalHeading) {
-        Point currPos = Robot.getPos();
-        double currHeading = Robot.getHeading();
+        update(Robot.getPos(), Robot.getHeading(), finalPos, finalHeading);
+    }
+
+    public void update (Point currPos, double currHeading, Point finalPos, double finalHeading) {
         setup();
         Line sightLine = Geo.pointAngleForm(currPos, currHeading);
         if (sightLine.contains(finalPos)) { // go straight
@@ -35,7 +35,7 @@ public class CircleController {
         } else {
             setSpeed (currPos, currHeading, finalPos, finalHeading);
         }
-        Robot.logger.addData("CircleController.java", "finalHeading", finalHeading, DefaultValue.Previous);
+        Robot.logger.addData("CircleController.java", "finalHeading", finalHeading, DefaultValue.Empty);
         // periodicLog();
     }
 
@@ -56,26 +56,27 @@ public class CircleController {
             expectedFinalHeading = Geo.normalizeAngle(expectedFinalHeading + Geo.ANGLE_RANGE / 2);
         }
         double finalHeadingError = Geo.subtractAngles(expectedFinalHeading, finalHeading);
-        Robot.logger.addData("CircleController.java", "finalDirection", finalDirection, DefaultValue.Previous);
-        Robot.logger.addData("CircleController.java", "expectedCurrentHeading", expectedCurrentHeading, DefaultValue.Previous);
-        Robot.logger.addData("CircleController.java", "expectedFinalHeading", expectedFinalHeading, DefaultValue.Previous);
-        Robot.logger.addData("CircleController.java", "finalHeadingError", finalHeadingError, DefaultValue.Previous);
+        Robot.logger.addData("CircleController.java", "finalDirection", finalDirection, DefaultValue.Empty);
+        Robot.logger.addData("CircleController.java", "expectedCurrentHeading", expectedCurrentHeading, DefaultValue.Empty);
+        Robot.logger.addData("CircleController.java", "expectedFinalHeading", expectedFinalHeading, DefaultValue.Empty);
+        Robot.logger.addData("CircleController.java", "finalHeadingError", finalHeadingError, DefaultValue.Empty);
         return finalHeadingError;
     }
 
     private static double getDesiredHeadingError(Point currPos, double currHeading, Point finalPos) { 
         double desiredHeadingError = Geo.subtractAngles(Geo.angleBetween(currPos, finalPos), currHeading);
-        Robot.logger.addData("CircleController.java", "desiredHeadingError", desiredHeadingError, DefaultValue.Previous);
+        Robot.logger.addData("CircleController.java", "desiredHeadingError", desiredHeadingError, DefaultValue.Empty);
         return desiredHeadingError;
     }
 
     private void addErrors(Point currPos, double currHeading, Point finalPos, double finalHeading) {
-        finalHeadingPID.addMeasurement(getFinalHeadingError(finalPos, finalHeading, currPos, currHeading));
+        finalHeadingPID.addMeasurement(getFinalHeadingError(currPos, currHeading, finalPos, finalHeading));
         desiredHeadingPID.addMeasurement(getDesiredHeadingError(currPos, currHeading, finalPos));
     }
 
     private void setSpeed(Point currPos, double currHeading, Point finalPos, double finalHeading) {
         addErrors(currPos, currHeading, finalPos, finalHeading);
+        double turnMagnitude;
         // fix correct heading at close distance
         if (Geo.getDistance(currPos, finalPos) < ENDING_DISTANCE_TOLERANCE) {
             double endingError = Geo.subtractAngles(finalHeading, currHeading);
@@ -87,7 +88,7 @@ public class CircleController {
             turnMagnitude = getWeight(currPos, finalPos) * finalHeadingPID.getOutput() + desiredHeadingPID.getOutput();
             Robot.driveSubsystem.setSpeedTankTurningPercentage(turnMagnitude);
         }
-        Robot.logger.addData("CircleController.java", "turnMagnitude", turnMagnitude, DefaultValue.Previous);
+        Robot.logger.addData("CircleController.java", "turnMagnitude", turnMagnitude, DefaultValue.Empty);
     }
 
     private static double getWeight(Point currPos, Point finalPos) {

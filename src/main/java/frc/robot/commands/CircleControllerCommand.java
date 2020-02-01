@@ -15,7 +15,5 @@ public class CircleControllerCommand extends InstantCommand {
     protected void execute() {
         Robot.logger.logCommandStatus(FILENAME, CommandStatus.Executing);
         circleController.update(Robot.CURRENT_DESTINATION, Robot.CURRENT_DESTINATION_HEADING);
-        System.out.println("currDestination: " + Robot.CURRENT_DESTINATION);
-        System.out.println("currDestinationHeading: " + Robot.CURRENT_DESTINATION_HEADING);
     }
 }
