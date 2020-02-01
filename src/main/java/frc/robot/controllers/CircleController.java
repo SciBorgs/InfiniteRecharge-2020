@@ -19,73 +19,63 @@ public class CircleController {
     private static final double ENDING_DISTANCE_TOLERANCE = .4;
     private static final double TURNING_WEIGHT = .5; // it will be raised to a power of this, ie x^TURNING_WEIGHT
 
-    private Point currPos;
-    private Point finalPos;
-    private double currHeading;
-    private double finalHeading;
-
-    private Circle currCircle;
-    private double expectedFinalHeading;
-    private double expectedCurrentHeading; // for testing purposes
-
-    private double currDirection;
-    private double finalDirection;
-
-    private double finalHeadingError;
-    private double desiredHeadingError;
-
     private double turnMagnitude;
 
     private final String FILENAME = "CircleController.java";
 
+    public CircleController () { Robot.logger.logFinalPIDConstants("CircleController.java", "final heading PID", this.finalHeadingPID);  }
+
     public void update(Point finalPos, double finalHeading) {
-        setup(finalPos, finalHeading);
+        Point currPos = Robot.getPos();
+        double currHeading = Robot.getHeading();
+        setup();
         Line sightLine = Geo.pointAngleForm(currPos, currHeading);
         if (sightLine.contains(finalPos)) { // go straight
             Robot.driveSubsystem.setSpeedTankTurningPercentage(0);
         } else {
-            fixDirection();
-            addErrors();
-            setSpeed();
+            setSpeed (currPos, currHeading, finalPos, finalHeading);
         }
-        periodicLog();
+        Robot.logger.addData("CircleController.java", "finalHeading", finalHeading, DefaultValue.Previous);
+        // periodicLog();
     }
 
-    private void setup(Point finalPos, double finalHeading) {
-        setup(finalPos, finalHeading, Robot.getPos(), Robot.getHeading());
-    }
-
-    private void setup(Point finalPos, double finalHeading, Point currPos, double currHeading) {
-        this.finalPos = finalPos;
-        this.finalHeading = finalHeading;
-        this.currPos = currPos;
-        this.currHeading = currHeading;
-        Robot.driveSubsystem.assistedDriveMode();
-
+    private static void setup() { Robot.driveSubsystem.assistedDriveMode(); }
+    
+    private static double getFinalHeadingError(Point finalPos, double finalHeading, Point currPos, double currHeading)   { 
         // get info for circle
-        currCircle = Circle.twoPointTangentAngleForm(currPos, currHeading, finalPos);
-        expectedFinalHeading = Geo.thetaOf(Geo.getTangentToCircle(currCircle, finalPos)); // heading of tangent to circle at final position
-        expectedCurrentHeading = Geo.thetaOf(Geo.getTangentToCircle(currCircle, currPos)); // print for testing
-    }
+        Circle currCircle = Circle.twoPointTangentAngleForm(currPos, currHeading, finalPos);
+        double expectedFinalHeading = Geo.thetaOf(Geo.getTangentToCircle(currCircle, finalPos)); // heading of tangent to circle at final position
+        double expectedCurrentHeading = Geo.thetaOf(Geo.getTangentToCircle(currCircle, currPos)); // print for testing
 
-    private void fixDirection() {
         // adjusts heading along the circle
-        this.currDirection = Geo.subtractAngles(currHeading, Geo.angleBetween(currPos, currCircle.center));
-        this.finalDirection = Geo.subtractAngles(expectedFinalHeading, Geo.angleBetween(finalPos, currCircle.center));
+        double currDirection = Geo.subtractAngles(currHeading, Geo.angleBetween(currPos, currCircle.center));
+        double finalDirection = Geo.subtractAngles(expectedFinalHeading, Geo.angleBetween(finalPos, currCircle.center));
+
         // We don't need Geo.subtractAngles b/c we expect this to be 90 or -90.
         if (Utils.signOf(currDirection) != Utils.signOf(finalDirection)) {
             expectedFinalHeading = Geo.normalizeAngle(expectedFinalHeading + Geo.ANGLE_RANGE / 2);
         }
-    }
-    
-    private double getFinalHeadingError()   { return finalHeadingError  = Geo.subtractAngles(expectedFinalHeading, finalHeading); }
-    private double getDesiredHeadingError() { return desiredHeadingError = Geo.subtractAngles(Geo.angleBetween(currPos, finalPos), currHeading); }
-    private void addErrors() {
-        finalHeadingPID.addMeasurement(getFinalHeadingError());
-        desiredHeadingPID.addMeasurement(getDesiredHeadingError());
+        double finalHeadingError = Geo.subtractAngles(expectedFinalHeading, finalHeading);
+        Robot.logger.addData("CircleController.java", "finalDirection", finalDirection, DefaultValue.Previous);
+        Robot.logger.addData("CircleController.java", "expectedCurrentHeading", expectedCurrentHeading, DefaultValue.Previous);
+        Robot.logger.addData("CircleController.java", "expectedFinalHeading", expectedFinalHeading, DefaultValue.Previous);
+        Robot.logger.addData("CircleController.java", "finalHeadingError", finalHeadingError, DefaultValue.Previous);
+        return finalHeadingError;
     }
 
-    private void setSpeed() {
+    private static double getDesiredHeadingError(Point currPos, double currHeading, Point finalPos) { 
+        double desiredHeadingError = Geo.subtractAngles(Geo.angleBetween(currPos, finalPos), currHeading);
+        Robot.logger.addData("CircleController.java", "desiredHeadingError", desiredHeadingError, DefaultValue.Previous);
+        return desiredHeadingError;
+    }
+
+    private void addErrors(Point currPos, double currHeading, Point finalPos, double finalHeading) {
+        finalHeadingPID.addMeasurement(getFinalHeadingError(finalPos, finalHeading, currPos, currHeading));
+        desiredHeadingPID.addMeasurement(getDesiredHeadingError(currPos, currHeading, finalPos));
+    }
+
+    private void setSpeed(Point currPos, double currHeading, Point finalPos, double finalHeading) {
+        addErrors(currPos, currHeading, finalPos, finalHeading);
         // fix correct heading at close distance
         if (Geo.getDistance(currPos, finalPos) < ENDING_DISTANCE_TOLERANCE) {
             double endingError = Geo.subtractAngles(finalHeading, currHeading);
@@ -93,25 +83,14 @@ public class CircleController {
             turnMagnitude = endingTurnPID.getOutput();
             Robot.driveSubsystem.setSpeedTankForwardTurningMagnitude(0, turnMagnitude);
         } else {
-            // want stronger bias towards 
-            turnMagnitude = getWeight() * finalHeadingPID.getOutput() + desiredHeadingPID.getOutput();
+            // want stronger bias towards our heading at the end as we get closer to the point -> weight
+            turnMagnitude = getWeight(currPos, finalPos) * finalHeadingPID.getOutput() + desiredHeadingPID.getOutput();
             Robot.driveSubsystem.setSpeedTankTurningPercentage(turnMagnitude);
         }
+        Robot.logger.addData("CircleController.java", "turnMagnitude", turnMagnitude, DefaultValue.Previous);
     }
 
-    private double getWeight() {
+    private static double getWeight(Point currPos, Point finalPos) {
        return 1 + Math.pow(Geo.getDistance(currPos, finalPos), TURNING_WEIGHT);
     }    
-
-    public void periodicLog() {
-        Robot.logger.logFinalPIDConstants(FILENAME, "final heading PID", this.finalHeadingPID);
-        Robot.logger.addData(FILENAME, "expectedFinalHeading", expectedFinalHeading, DefaultValue.Previous);
-        Robot.logger.addData(FILENAME, "currDirection", currDirection, DefaultValue.Previous);
-        Robot.logger.addData(FILENAME, "finalDirection", finalDirection, DefaultValue.Previous);
-        Robot.logger.addData(FILENAME, "finalHeading", finalHeading, DefaultValue.Previous);
-        Robot.logger.addData(FILENAME, "desiredHeadingError", desiredHeadingError, DefaultValue.Previous);
-        Robot.logger.addData(FILENAME, "finalHeadingError", finalHeadingError, DefaultValue.Previous);
-        Robot.logger.addData(FILENAME, "turnMagnitude", turnMagnitude, DefaultValue.Previous);
-    }
-
 }
