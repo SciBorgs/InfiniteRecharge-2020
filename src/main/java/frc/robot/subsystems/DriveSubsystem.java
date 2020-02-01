@@ -113,16 +113,16 @@ public class DriveSubsystem extends Subsystem {
     public void assistedDriveMode(){this.assisted = true;}
     public void manualDriveMode()  {this.assisted = false;}
 
-    public void setSpeed(Joystick leftStick, Joystick rightStick) {
+    public void setSpeed(SciJoystick leftStick, SciJoystick rightStick) {
         if (!this.assisted) {
-            double leftInput  = processStick(leftStick);
-            double rightInput = processStick(rightStick);
+            double leftInput  = leftStick.getProcessedY();
+            double rightInput = rightStick.getProcessedY();
             setSpeedTankAngularControl(leftInput, rightInput);
         }
     }
 	
-	public void setSpeedRaw(Joystick leftStick, Joystick rightStick){
-		setTank(processStick(leftStick),processStick(rightStick));
+	public void setSpeedRaw(SciJoystick leftStick, SciJoystick rightStick){
+		setTank(leftStick.getProcessedY(), rightStick.getProcessedY());
     }
 
     public void defaultDriveMultilpier(){this.driveMultiplier = 1;}
@@ -174,7 +174,7 @@ public class DriveSubsystem extends Subsystem {
     }
     
     public void setSpeedTankTurningPercentage(double turnMagnitude){
-        double forward = (processStick(Robot.oi.leftStick) + processStick(Robot.oi.rightStick)) / 2;
+        double forward = (Robot.oi.leftStick.getProcessedY() + Robot.oi.rightStick.getProcessedY()) / 2;
         // double forward = (Robot.oi.leftStick.getY() + Robot.oi.rightStick.getY()) / 2;
         setSpeedTankForwardTurningPercentage(forward, turnMagnitude);
 	}

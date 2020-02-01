@@ -15,10 +15,8 @@ public class SwerveTankDriveCommand extends InstantCommand {
         Robot.logger.logCommandStatus(FILENAME, CommandStatus.Executing);
 
         // One controller controls turning percent, one controls velocity
-        double forward = Robot.driveSubsystem.processStick(Robot.oi.leftStick);
-        double turnAmount = Robot.oi.rightStick.getX();
+        double forward = Robot.oi.leftStick.getProcessedY();
+        double turnAmount = Robot.oi.rightStick.getProcessedX();
         Robot.driveSubsystem.setSpeedTankForwardTurningPercentage(forward, turnAmount);
-
-        
     }
 }
