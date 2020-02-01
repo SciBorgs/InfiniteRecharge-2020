@@ -3,6 +3,7 @@ package frc.robot.subsystems;
 import com.revrobotics.CANPIDController;
 import com.revrobotics.ControlType;
 import edu.wpi.first.wpilibj.command.Subsystem;
+import frc.robot.PortMap;
 import frc.robot.controllers.PID;
 import frc.robot.sciSensorsActuators.SciSpark;
 import frc.robot.sciSensorsActuators.SciThroughBoreEncoder;
@@ -38,7 +39,6 @@ public class ShooterSubsystem extends Subsystem {
   private double SHOOTER_SPARK_GEAR_RATIO = 1;
 
   private SciThroughBoreEncoder absEncoder;
-  private double SHOOT_SPEED_INCREMENT = 0.05;
 
   private static class ShooterData {
     public static double hoodAngle, ballVelocity, motorRPM;
@@ -47,8 +47,8 @@ public class ShooterSubsystem extends Subsystem {
   }
 
   public ShooterSubsystem() {
-    this.hoodSpark = new SciSpark(16, HOOD_SPARK_GEAR_RATIO);
-    this.shooterSpark = new SciSpark(33, SHOOTER_SPARK_GEAR_RATIO);
+    this.hoodSpark    = new SciSpark(PortMap.HOOD_SPARK, HOOD_SPARK_GEAR_RATIO);
+    this.shooterSpark = new SciSpark(PortMap.SHOOTER_SPARK, SHOOTER_SPARK_GEAR_RATIO);
 
     this.hoodAnglePID = new PID(0.01, 0, 0);
     this.shooterSparkVelocityPID = this.shooterSpark.getPIDController();
@@ -84,13 +84,8 @@ public class ShooterSubsystem extends Subsystem {
     this.hoodAnglePID.addMeasurement(ShooterData.hoodAngle - this.absEncoder.getRadians());
     this.hoodSpark.set(this.hoodAnglePID.getOutput());
   }
-  
-  public void setHoodAngle(double speed) {this.hoodSpark.set(speed);}
 
-  public void shoot()               {this.shooterSparkVelocityPID.setReference(ShooterData.motorRPM, ControlType.kVelocity);}
-  public void shoot(double speed)   {this.shooterSpark.set(speed);}
-  public void incrementShootSpeed() {this.shooterSpark.updateSpeed(SHOOT_SPEED_INCREMENT);}
-  public void decrementShootSpeed() {this.shooterSpark.updateSpeed(-SHOOT_SPEED_INCREMENT);}
+  public void shoot() {this.shooterSparkVelocityPID.setReference(ShooterData.motorRPM, ControlType.kVelocity);}
 
   private double getHoodAngle() {
     if (BALL_TO_OUTER_PORT_DISTANCE < MAX_HOOD_ANGLE_DISTANCE){return MAX_HOOD_ANGLE;}

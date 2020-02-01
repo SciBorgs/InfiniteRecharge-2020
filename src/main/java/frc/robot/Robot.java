@@ -137,6 +137,7 @@ public class Robot extends TimedRobot {
 
 
     public void autonomousInit() {
+        this.shooterSubsystem.shoot();
     }
 
     @Override
@@ -146,7 +147,6 @@ public class Robot extends TimedRobot {
     
     @Override
     public void teleopInit() {
-        this.shooterSubsystem.shoot(0.3);
     }
 
     public void teleopPeriodic() {

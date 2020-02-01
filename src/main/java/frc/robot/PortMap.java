@@ -56,6 +56,9 @@ public class PortMap {
     public static final int RIGHT_MIDDLE_SPARK = 2;
     public static final int RIGHT_BACK_SPARK = 1;
 
+    public static final int HOOD_SPARK = 16;
+    public static final int SHOOTER_SPARK = 33;
+
     //*******************TALONS******************//
 
     public static final int PIGEON_TALON = 9;
