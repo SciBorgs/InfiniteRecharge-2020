@@ -15,7 +15,7 @@ public class OI {
     public XboxController xboxController;
     
     public OI() {
-        this.leftStick = new SciJoystick(PortMap.JOYSTICK_LEFT);
+        this.leftStick = new SciJoystick(1);
         this.rightStick = new SciJoystick(PortMap.JOYSTICK_RIGHT);
         this.xboxController = new XboxController(PortMap.XBOX_CONTROLLER);
 
@@ -25,3 +25,4 @@ public class OI {
         this.decrement.whenPressed(new DecrementShootSpeedCommand());
     }
 }
+

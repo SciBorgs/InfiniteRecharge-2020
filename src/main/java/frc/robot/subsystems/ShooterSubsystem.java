@@ -47,8 +47,8 @@ public class ShooterSubsystem extends Subsystem {
   }
 
   public ShooterSubsystem() {
-    this.hoodSpark = new SciSpark(33, HOOD_SPARK_GEAR_RATIO);
-    this.shooterSpark = new SciSpark(16, SHOOTER_SPARK_GEAR_RATIO);
+    this.hoodSpark = new SciSpark(16, HOOD_SPARK_GEAR_RATIO);
+    this.shooterSpark = new SciSpark(33, SHOOTER_SPARK_GEAR_RATIO);
 
     this.hoodAnglePID = new PID(0.01, 0, 0);
     this.shooterSparkVelocityPID = this.shooterSpark.getPIDController();
@@ -77,7 +77,7 @@ public class ShooterSubsystem extends Subsystem {
   }
 
   public void logParamters() {
-    System.out.println("RPM: " + this.shooterSpark.get());
+    System.out.println("RPM " + this.shooterSpark.getEncoder().getVelocity());
   }
 
   public void setHoodAngle() {
