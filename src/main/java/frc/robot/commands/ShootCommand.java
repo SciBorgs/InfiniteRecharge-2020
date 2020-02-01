@@ -23,6 +23,6 @@ public class ShootCommand extends Command {
 
     @Override
     protected boolean isFinished() {
-        return foundOptimalParameters;
+        return this.foundOptimalParameters;
     }
 }
