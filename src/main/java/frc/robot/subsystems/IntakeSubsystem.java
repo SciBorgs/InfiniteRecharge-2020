@@ -30,13 +30,8 @@ public class IntakeSubsystem extends Subsystem {
     public void forwardIntake() {this.upDownSolenoid.set(CLOSED_VALUE);}
     public void reverseIntake() {this.upDownSolenoid.set(OPEN_VALUE);}
 
-    public void suck() {
-        setIntakeSpeed(INTAKE_SPEED);
-    }
-
-    public void stop() {
-        setIntakeSpeed(0);
-    }
+    public void suck() {setIntakeSpeed(INTAKE_SPEED);}
+    public void stop() {setIntakeSpeed(0);}
 
     @Override 
     protected void initDefaultCommand() {
