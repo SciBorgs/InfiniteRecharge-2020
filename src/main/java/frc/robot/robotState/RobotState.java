@@ -2,6 +2,7 @@ package frc.robot.robotState;
 
 import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.Optional;
 import java.util.Set;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
@@ -55,6 +56,13 @@ public class RobotState {
     public void   set(SD sd, double val) {this.data.put(sd, val);}
     public void   remove(SD sd)          {this.data.remove(sd);}
     public Set<SD> getKeys(){return data.keySet();}
+
+    public void optionalSet(Optional<SD> optionalSD, double v){
+        if (optionalSD.isPresent()){set(optionalSD.get(), v);}
+    }
+    public<K> void optionalMappedSet(BiHashMap<K, Double> biMap, Optional<SD> optionalSD, K v){
+        if (optionalSD.isPresent()){setMapped(biMap, optionalSD.get(), v);}
+    }
 
     public<K> void setMapped(BiHashMap<K, Double> biMap, SD sd, K key) {
         this.data.put(sd, biMap.getForward(key));

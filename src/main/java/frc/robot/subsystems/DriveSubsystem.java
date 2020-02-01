@@ -52,8 +52,6 @@ public class DriveSubsystem extends Subsystem {
 		this.r1 = new SciSpark(PortMap.RIGHT_MIDDLE_SPARK, GEAR_RATIO);
         this.r2 = new SciSpark(PortMap.RIGHT_BACK_SPARK,   GEAR_RATIO);
 
-        this.l.assignWheelAngleSD(l.g);
-
         this.r .setInverted(true);
         this.r1.setInverted(true);
         this.r2.setInverted(true);
@@ -64,6 +62,15 @@ public class DriveSubsystem extends Subsystem {
         this.r1.follow(this.r);
         this.r2.follow(this.r);
 
+        this.r.assignWheelAngleSD(SD.RightWheelAngle);
+        this.r1.assignWheelAngleSD(SD.R1WheelAngle);
+        this.r2.assignWheelAngleSD(SD.R2WheelAngle);
+
+        this.l.assignWheelAngleSD(SD.LeftWheelAngle);
+        this.l.assignWheelAngleSD(SD.L1WheelAngle);
+        this.l.assignWheelAngleSD(SD.L2WheelAngle);
+
+        
         // Mappings for logging
         this.sparkToValueSD.put(this.l, SD.LeftSparkVal);
         this.sparkToValueSD.put(this.r, SD.RightSparkVal);

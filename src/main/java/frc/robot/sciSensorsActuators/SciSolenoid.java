@@ -4,9 +4,15 @@ import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import frc.robot.Utils;
 import frc.robot.dataTypes.BiHashMap;
+import frc.robot.robotState.StateInfo;
+import frc.robot.robotState.RobotState.SD;
+
+import java.util.Optional;
+
 
 public class SciSolenoid <ValueType extends Enum<ValueType>> extends DoubleSolenoid {
     private BiHashMap<Value, ValueType> valueMap;
+    public Optional<SD> valueSD;
 
     public SciSolenoid(int[] ports, ValueType forwardValue, ValueType backwardValue, ValueType offValue) {
         this(1, ports, forwardValue, backwardValue, offValue);

@@ -6,6 +6,11 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import frc.robot.Utils;
 import frc.robot.commands.generalCommands.SciTalonSpeedCommand;
 import frc.robot.helpers.DelayedPrinter;
+import frc.robot.robotState.StateInfo;
+import frc.robot.Robot;
+import frc.robot.robotState.RobotState.SD;
+
+import java.util.Optional;
 
 public class SciTalon extends TalonSRX {
 
@@ -17,6 +22,7 @@ public class SciTalon extends TalonSRX {
     public double goalSpeed;
     public double currentMaxJerk;
     public double gearRatio;
+    public Optional<SD> wheelAngleSD, valueSD, currentSD;
 
     public SciTalon(int port) {
         this(port, 1);
@@ -84,4 +90,13 @@ public class SciTalon extends TalonSRX {
     public boolean atGoal(){
         return this.goalSpeed == super.getMotorOutputPercent();
     }
+
+    public void updateRobotState(){
+        Robot.optionalSet(this.wheelAngleSD, getWheelAngle());
+        Robot.optionalSet(this.valueSD,      super.getMotorOutputPercent());
+        Robot.optionalSet(this.currentSD,    super.getSupplyCurrent());
+    }
+
+    public void assignValueSD     (SD valueSD)      {this.valueSD      = Optional.of(valueSD);}
+    public void assignCurrentSD   (SD currentSD)    {this.currentSD    = Optional.of(currentSD);}
 }

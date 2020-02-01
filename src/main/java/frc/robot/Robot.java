@@ -3,6 +3,7 @@ package frc.robot;
 import com.revrobotics.CANSparkMax;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Optional;
 
 import frc.robot.subsystems.*;
 import frc.robot.commands.*;
@@ -47,6 +48,13 @@ public class Robot extends TimedRobot {
 
     public static double get(SD sd)            {return getState().get(sd);}
     public static void   set(SD sd, double val){       getState().set(sd, val);}
+    public static void optionalSet(Optional<SD> optionalSD , double val){       
+        getState().optionalSet(optionalSD, val);
+    }
+    public static<K> void optionalMappedSet(BiHashMap<K, Double> biMap, Optional<SD> optionalSD, K val){       
+        getState().optionalMappedSet(biMap, optionalSD, val);
+    }
+
 
     public static double getDifference(SD sd, int ticksBack1, int ticksBack2) {
         return StateInfo.getDifference(Robot.stateHistory, sd, ticksBack1, ticksBack2);

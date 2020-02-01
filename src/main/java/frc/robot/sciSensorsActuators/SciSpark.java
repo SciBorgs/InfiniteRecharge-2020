@@ -16,11 +16,11 @@ public class SciSpark extends CANSparkMax {
     public double currentMaxJerk;
     public final static double DEFAULT_MAX_JERK = 0.1;
     private double gearRatio;
-    public Optional<SD> wheelAngleSD, valueSD, currentSD, voltageSD;
+    public Optional<SD> wheelAngleSD, valueSD, currentSD;
     private int commandNumber;
 
 
-    public SciSpark(int port, SD wheelAngleSD, SD valueSD) {
+    public SciSpark(int port) {
         this(port, 1);
     }
 
@@ -95,13 +95,12 @@ public class SciSpark extends CANSparkMax {
     }
 
     public void updateRobotState(){
-        Robot.set(this.wheelAngleSD.get(), get());
+        Robot.optionalSet(this.wheelAngleSD, getWheelAngle());
+        Robot.optionalSet(this.valueSD,      super.get());
+        Robot.optionalSet(this.currentSD,    super.getOutputCurrent());
     }
 
-    public void assignWheelAngleSD(SD wheelAngleSD) {
-        this.wheelAngleSD = Optional.of(wheelAngleSD);
-    }
-    public void assignValueSD(SD valueSD){
-        this.valueSD = Optional.of(valueSD);
-    }
+    public void assignWheelAngleSD(SD wheelAngleSD) {this.wheelAngleSD = Optional.of(wheelAngleSD);}
+    public void assignValueSD     (SD valueSD)      {this.valueSD      = Optional.of(valueSD);}
+    public void assignCurrentSD   (SD currentSD)    {this.currentSD    = Optional.of(currentSD);}
 }
