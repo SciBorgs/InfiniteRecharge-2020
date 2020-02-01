@@ -90,7 +90,7 @@ public class Logger{
         addData(filename, fieldName, fieldValue, DefaultValue.Previous);
     }
     public void logFinalPIDConstants(String filename, String pidName, PID pid){
-        addData(filename, pidName, "(" + pid.getP() + ", " + pid.getI() + ", " + pid.getD() + ")", DefaultValue.Previous);
+        addData(filename, pidName, "(" + pid.getP() + " | " + pid.getI() + " | " + pid.getD() + ")", DefaultValue.Previous);
     }
     public void logCommandStatus(String filename, CommandStatus commandStatus){
         String stringStatus = "";
