@@ -7,7 +7,6 @@ public class SciPigeon extends PigeonIMU {
 
     public SciPigeon (TalonSRX talon) {
         super(talon);
-        double a = "b";
     }
 
     public PigeonIMU getPigeonIMU() {return this;}
