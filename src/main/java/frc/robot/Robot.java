@@ -37,15 +37,21 @@ public class Robot extends TimedRobot {
     }
     public static DriveSubsystem      driveSubsystem      = new DriveSubsystem();
 
+
     public static PigeonSubsystem     pigeonSubsystem     = new PigeonSubsystem();
     public static LimelightSubsystem  limelightSubsystem  = new LimelightSubsystem();
     public static PneumaticsSubsystem pneumaticsSubsystem = new PneumaticsSubsystem();
+
+    public static LimelightLocalization limelightLocalization = new LimelightLocalization();
     public static IntakeSubsystem     intakeSubsystem     = new IntakeSubsystem();
     
     public static Following following = new Following();
-    public static Model positionModel = new EncoderLocalization();
     public static CircleController circleController = new CircleController();
     public static OI oi = new OI();
+
+    public static Updater positionUpdater = new EncoderLocalization();
+
+    public static Model positionModel = new MaybeDefaultUpdater(new LimelightLocalization(), positionUpdater);
 
     public static RobotState getState(){ return stateHistory.currentState(); }
     public static RobotState statesAgo(int numTicks){return stateHistory.statesAgo(numTicks);}
@@ -131,8 +137,8 @@ public class Robot extends TimedRobot {
         set(SD.Angle, ORIGINAL_ANGLE);
         allUpdateRobotStates();
         pneumaticsSubsystem.stopCompressor();
-        //logger.incrementPrevious("robot.java", "deploy", DefaultValue.Previous);
-        //logger.logData();
+        // logger.incrementPrevious("robot.java", "deploy", DefaultValue.Previous);
+        // logger.logData();
         addSDToLog(SD.X);
         addSDToLog(SD.Y);
         addSDToLog(SD.Angle);
@@ -155,32 +161,34 @@ public class Robot extends TimedRobot {
 
 
     public void autonomousInit() {
+        Robot.driveSubsystem.assistedDriveMode();
+        set(SD.X, ORIGINAL_POINT.x);
+        set(SD.Y, ORIGINAL_POINT.y);
+        set(SD.Angle, ORIGINAL_ANGLE);
         intakeSubsystem.reverseIntake();
     }
 
     @Override
     public void autonomousPeriodic() {
         sequential.update();
-        // pneumaticsSubsystem.startCompressor();
     }
     
     @Override
     public void teleopInit() {
         intakeSubsystem.reverseIntake();
+        pneumaticsSubsystem.startCompressor();
     }
 
     public void teleopPeriodic() {
         (new TankDriveCommand()).start();
-        // pneumaticsSubsystem.startCompressor();
     }
     
 
     public void testPeriodic() {}
 
     public void disabledInit() {
-        //intakeSubsystem.stop();
-        // allPeriodicLogs();
-        // logger.logData();
-        // logger.writeLoggedData();
+        allPeriodicLogs();
+        logger.logData();
+        logger.writeLoggedData();
     }
 }
