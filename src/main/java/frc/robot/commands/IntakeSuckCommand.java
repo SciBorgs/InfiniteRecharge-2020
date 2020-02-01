@@ -14,7 +14,7 @@ public class IntakeSuckCommand extends InstantCommand {
 
     @Override 
     protected void execute() {
-	Robot.logger.logCommandStatus(FILENAME, CommandStatus.Executing);
+	    Robot.logger.logCommandStatus(FILENAME, CommandStatus.Executing);
         Robot.intakeSubsystem.suck();
     }
     
