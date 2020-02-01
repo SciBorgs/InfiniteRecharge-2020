@@ -12,6 +12,11 @@ import frc.robot.logging.Logger.DefaultValue;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.command.Subsystem;
 
+import com.revrobotics.CANSparkMax;
+import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+
 import java.util.Hashtable;
 
 public class DriveSubsystem extends Subsystem {
@@ -77,8 +82,6 @@ public class DriveSubsystem extends Subsystem {
         setSDMappings(this.l2, SD.L2WheelAngle, SD.L2SparkVal, SD.L2SparkVoltage, SD.L2SparkCurrent);
         setSDMappings(this.r2, SD.R2WheelAngle, SD.R2SparkVal, SD.R2SparkVoltage, SD.R2SparkCurrent);
 
-        Robot.addSDToLog(SD.LeftWheelAngle);
-
         this.tankAnglePID = new PID(TANK_ANGLE_P, TANK_ANGLE_I, TANK_ANGLE_D);
         this.tankSpeedRightPID = new PID(TANK_SPEED_LEFT_P, TANK_SPEED_LEFT_I, TANK_SPEED_LEFT_D);
         this.tankSpeedLeftPID = new PID(TANK_SPEED_RIGHT_P, TANK_SPEED_RIGHT_I, TANK_SPEED_RIGHT_D);
@@ -133,8 +136,6 @@ public class DriveSubsystem extends Subsystem {
 	public void setTank(double leftSpeed, double rightSpeed) {
         this.l.set(leftSpeed  * this.driveMultiplier);
         this.r.set(rightSpeed * this.driveMultiplier);
-        //DelayedPrinter.print("right speed" + this.r.get());
-        // DelayedPrinter.print("rightspeed: "+rightSpeed);
     }
 
     public void setSpeedTank(double leftGoalSpeed, double rightGoalSpeed){
@@ -181,7 +182,18 @@ public class DriveSubsystem extends Subsystem {
 
     public void setSpeedTankForwardTurningMagnitude(double forward, double turnMagnitude) {
         // Note: this controls dtheta/dt rather than dtheta/dx
-        setSpeedTank(forward - turnMagnitude, forward + turnMagnitude);
+        setTank(forward - turnMagnitude, forward + turnMagnitude);
+    }
+
+    public double limitJerk(double oldSpeed, double newSpeed, double maxJerk){
+        // Makes sure that the change in input for a motor is not more than maxJerk
+        if (oldSpeed - newSpeed > maxJerk){
+            return oldSpeed - maxJerk;
+        } else if (newSpeed - oldSpeed > maxJerk){
+            return oldSpeed + maxJerk;
+        } else {
+            return newSpeed;
+        }
     }
 
     @Override

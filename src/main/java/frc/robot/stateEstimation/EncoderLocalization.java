@@ -1,6 +1,7 @@
 package frc.robot.stateEstimation;
 
 import frc.robot.Robot;
+import frc.robot.helpers.DelayedPrinter;
 
 import java.util.ArrayList;
 import java.util.Hashtable;
@@ -73,6 +74,7 @@ public class EncoderLocalization implements Updater, Model {
         double thetaChange = StateInfo.getDifference(stateHistory, SD.PigeonAngle, 1);
         RobotState newPosition = 
             nextPosition(state.get(SD.X), state.get(SD.Y), state.get(SD.Angle), wheelChanges, thetaChange);
+        printWheelAngles();
         stateHistory.currentState().incorporateOtherState(newPosition); 
     }
 
@@ -87,9 +89,8 @@ public class EncoderLocalization implements Updater, Model {
 	public void periodicLog(){
 	}
 
-    public void printPosition(){
-        System.out.println("X: " + Robot.get(SD.X));
-        System.out.println("Y: " + Robot.get(SD.Y));
-        System.out.println("Angle: " + Math.toDegrees(Robot.get(SD.Angle)));
+    public void printWheelAngles(){
+        DelayedPrinter.print("leftWheelAngle: " + Robot.get(SD.LeftWheelAngle));
+        DelayedPrinter.print("rightWheelAngle: " + Robot.get(SD.RightWheelAngle));
     }
 }

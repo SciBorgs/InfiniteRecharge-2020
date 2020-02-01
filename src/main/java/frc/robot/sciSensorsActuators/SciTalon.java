@@ -4,13 +4,18 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 import frc.robot.Utils;
+import frc.robot.commands.generalCommands.SciTalonSpeedCommand;
+import frc.robot.helpers.DelayedPrinter;
 
 public class SciTalon extends TalonSRX {
 
     public static final double DEFAULT_MAX_JERK = 0.1;
     public static final double TICKS_PER_REV = 4096;
     public static final double TICKS_PER_RADIAN = TICKS_PER_REV / (2 * Math.PI);
+    private int commandNumber;
     private double wheelAngleOffset = 0;
+    public double goalSpeed;
+    public double currentMaxJerk;
     public double gearRatio;
 
     public SciTalon(int port) {
@@ -19,9 +24,14 @@ public class SciTalon extends TalonSRX {
 
     public SciTalon(int port, double gearRatio) {
         super(port);
+        this.goalSpeed = 0;
+        this.currentMaxJerk = 0;
         setWheelAngle(0);
         setGearRatio(gearRatio);
+        this.commandNumber = 0;
     }
+
+    public boolean isCurrentCommandNumber(int n){return n == this.commandNumber;}
 
     public double getGearRatio() {
         return this.gearRatio;
@@ -53,12 +63,26 @@ public class SciTalon extends TalonSRX {
         super.getSensorCollection().setQuadraturePosition(angleToTicks(angle), 0);
     }
 
-    public void set(double speed, double maxJerk) {
+    public void instantSet(double speed, double maxJerk) {
         super.set(ControlMode.PercentOutput, Utils.limitChange(super.getMotorOutputPercent(), speed, maxJerk));
+    }
+
+    public void set(double speed, double maxJerk){
+        this.goalSpeed = speed;
+        this.currentMaxJerk = maxJerk;
+        this.commandNumber++;
+        (new SciTalonSpeedCommand(this, this.commandNumber)).start();
     }
 
     public void set(double speed) {
         set(speed, DEFAULT_MAX_JERK);
+    }
+    public void moveToGoal(){
+        instantSet(this.goalSpeed, this.currentMaxJerk);
+    }
+
+    public boolean atGoal(){
+        return this.goalSpeed == super.getMotorOutputPercent();
     }
 
 }

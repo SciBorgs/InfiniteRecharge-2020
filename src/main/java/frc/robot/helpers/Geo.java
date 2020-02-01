@@ -47,6 +47,12 @@ public class Geo {
         return normalizeAngle(Utils.bringInRange(theta, -VERTICAL_ANGLE, VERTICAL_ANGLE));
     }
 
+    public static Point convertPolarToCartesian(PolarPoint p) {
+        double x = p.r * Math.cos(p.theta);
+        double y = p.r * Math.sin(p.theta);
+        return new Point(x,y);
+    }
+
     public static double mOf(LineLike lLike) { // Slope (Something is broken)
         if (isVertical(lLike)) {return Double.POSITIVE_INFINITY;}
         return Math.tan(thetaOf(lLike));
