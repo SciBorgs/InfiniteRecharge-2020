@@ -47,8 +47,8 @@ public class ShooterSubsystem extends Subsystem {
   }
 
   public ShooterSubsystem() {
-    this.hoodSpark = new SciSpark(-1, HOOD_SPARK_GEAR_RATIO);
-    this.shooterSpark = new SciSpark(-1, SHOOTER_SPARK_GEAR_RATIO);
+    this.hoodSpark = new SciSpark(33, HOOD_SPARK_GEAR_RATIO);
+    this.shooterSpark = new SciSpark(16, SHOOTER_SPARK_GEAR_RATIO);
 
     this.hoodAnglePID = new PID(0.01, 0, 0);
     this.shooterSparkVelocityPID = this.shooterSpark.getPIDController();
@@ -57,7 +57,7 @@ public class ShooterSubsystem extends Subsystem {
     this.shooterSparkVelocityPID.setD(0.01);
     this.shooterSparkVelocityPID.setOutputRange(-1, 1);
 
-    this.absEncoder = new SciThroughBoreEncoder(-1);
+    this.absEncoder = new SciThroughBoreEncoder(0);
   }
 
   public void optimizeParameters() {
@@ -74,6 +74,10 @@ public class ShooterSubsystem extends Subsystem {
   public boolean areParametersOptimal() {
     return Math.abs(ShooterData.outerPortError) <= OUTER_PORT_HEIGHT_TOLERANCE
         && Math.abs(ShooterData.innerPortError) <= INNER_PORT_HEIGHT_TOLERANCE;
+  }
+
+  public void logParamters() {
+    System.out.println("RPM: " + this.shooterSpark.get());
   }
 
   public void setHoodAngle() {
