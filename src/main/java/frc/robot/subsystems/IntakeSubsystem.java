@@ -22,7 +22,6 @@ public class IntakeSubsystem extends Subsystem {
         this.upDownSolenoid = new DoubleSolenoid(PortMap.INTAKE_SOLENOID_FORWARD, PortMap.INTAKE_SOLENOID_REVERSE);
         this.intakeMotor = new SciTalon(PortMap.INTAKE_TALON);
         this.acceptingCell = true;
-        this.intakeMotor.setInverted(false);
     }
     public void setIntakeSpeed(double speed) {
         this.intakeMotor.set(speed);
@@ -33,8 +32,6 @@ public class IntakeSubsystem extends Subsystem {
 
     public void suck() {
         setIntakeSpeed(INTAKE_SPEED);
-        //if (this.acceptingCell) {setIntakeSpeed(INTAKE_SPEED);} 
-       // else {stop();}
     }
 
     public void stop() {
