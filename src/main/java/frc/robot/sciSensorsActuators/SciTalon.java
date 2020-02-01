@@ -64,9 +64,7 @@ public class SciTalon extends TalonSRX {
     }
 
     public void instantSet(double speed, double maxJerk) {
-        DelayedPrinter.print("setting to " + speed + ", with max jerk of " + maxJerk, 5);
         super.set(ControlMode.PercentOutput, Utils.limitChange(super.getMotorOutputPercent(), speed, maxJerk));
-        DelayedPrinter.print("current: " + super.getMotorOutputPercent(), 5);
     }
 
     public void set(double speed, double maxJerk){

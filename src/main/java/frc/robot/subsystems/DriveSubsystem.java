@@ -81,8 +81,6 @@ public class DriveSubsystem extends Subsystem {
         setSDMappings(this.l2, SD.L2WheelAngle, SD.L2SparkVal, SD.L2SparkVoltage, SD.L2SparkCurrent);
         setSDMappings(this.r2, SD.R2WheelAngle, SD.R2SparkVal, SD.R2SparkVoltage, SD.R2SparkCurrent);
 
-        Robot.addSDToLog(SD.LeftWheelAngle);
-
         this.tankAnglePID = new PID(TANK_ANGLE_P, TANK_ANGLE_I, TANK_ANGLE_D);
         this.tankSpeedRightPID = new PID(TANK_SPEED_LEFT_P, TANK_SPEED_LEFT_I, TANK_SPEED_LEFT_D);
         this.tankSpeedLeftPID = new PID(TANK_SPEED_RIGHT_P, TANK_SPEED_RIGHT_I, TANK_SPEED_RIGHT_D);
@@ -113,22 +111,20 @@ public class DriveSubsystem extends Subsystem {
         for(SciSpark spark : getSparks()){updateSparkState(spark);}
     }
 
-    public double deadzone(double output){
-        return Math.abs(output) < INPUT_DEADZONE ? 0 : output;
-    }
-
     // If something is assiting, we don't want to drive using setSpeed
     public void assistedDriveMode(){this.assisted = true;}
     public void manualDriveMode()  {this.assisted = false;}
 
     public void setSpeed(SciJoystick leftStick, SciJoystick rightStick) {
         if (!this.assisted) {
-            setSpeedTankAngularControl(leftStick.getProcessedY(), rightStick.getProcessedY());
+            double leftInput  = leftStick.getProcessedY();
+            double rightInput = rightStick.getProcessedY();
+            setSpeedTankAngularControl(leftInput, rightInput);
         }
     }
 	
 	public void setSpeedRaw(SciJoystick leftStick, SciJoystick rightStick){
-		setSpeedTank(leftStick.getProcessedY(),rightStick.getProcessedY());
+		setTank(leftStick.getProcessedY(), rightStick.getProcessedY());
     }
 
     public void defaultDriveMultilpier(){this.driveMultiplier = 1;}
@@ -139,8 +135,6 @@ public class DriveSubsystem extends Subsystem {
 	public void setTank(double leftSpeed, double rightSpeed) {
         this.l.set(leftSpeed  * this.driveMultiplier);
         this.r.set(rightSpeed * this.driveMultiplier);
-        //DelayedPrinter.print("right speed" + this.r.get());
-        // DelayedPrinter.print("rightspeed: "+rightSpeed);
     }
 
     public void setSpeedTank(double leftGoalSpeed, double rightGoalSpeed){
@@ -181,12 +175,13 @@ public class DriveSubsystem extends Subsystem {
     
     public void setSpeedTankTurningPercentage(double turnMagnitude){
         double forward = (Robot.oi.leftStick.getProcessedY() + Robot.oi.rightStick.getProcessedY()) / 2;
+        // double forward = (Robot.oi.leftStick.getY() + Robot.oi.rightStick.getY()) / 2;
         setSpeedTankForwardTurningPercentage(forward, turnMagnitude);
 	}
 
     public void setSpeedTankForwardTurningMagnitude(double forward, double turnMagnitude) {
         // Note: this controls dtheta/dt rather than dtheta/dx
-        setSpeedTank(forward - turnMagnitude, forward + turnMagnitude);
+        setTank(forward - turnMagnitude, forward + turnMagnitude);
     }
 
     public double limitJerk(double oldSpeed, double newSpeed, double maxJerk){
