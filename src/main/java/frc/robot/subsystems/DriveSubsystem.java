@@ -12,6 +12,11 @@ import frc.robot.logging.Logger.DefaultValue;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.command.Subsystem;
 
+import com.revrobotics.CANSparkMax;
+import com.ctre.phoenix.motorcontrol.ControlMode;
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+
 import java.util.Hashtable;
 
 public class DriveSubsystem extends Subsystem {
@@ -189,6 +194,17 @@ public class DriveSubsystem extends Subsystem {
     public void setSpeedTankForwardTurningMagnitude(double forward, double turnMagnitude) {
         // Note: this controls dtheta/dt rather than dtheta/dx
         setTank(forward - turnMagnitude, forward + turnMagnitude);
+    }
+
+    public double limitJerk(double oldSpeed, double newSpeed, double maxJerk){
+        // Makes sure that the change in input for a motor is not more than maxJerk
+        if (oldSpeed - newSpeed > maxJerk){
+            return oldSpeed - maxJerk;
+        } else if (newSpeed - oldSpeed > maxJerk){
+            return oldSpeed + maxJerk;
+        } else {
+            return newSpeed;
+        }
     }
 
     @Override
