@@ -38,6 +38,7 @@ public class ShooterSubsystem extends Subsystem {
   private double SHOOTER_SPARK_GEAR_RATIO = 1;
 
   private SciThroughBoreEncoder absEncoder;
+  private double SHOOT_SPEED_INCREMENT = 0.05;
 
   private static class ShooterData {
     public static double hoodAngle, ballVelocity, motorRPM;
@@ -79,12 +80,13 @@ public class ShooterSubsystem extends Subsystem {
     this.hoodAnglePID.addMeasurement(ShooterData.hoodAngle - this.absEncoder.getRadians());
     this.hoodSpark.set(this.hoodAnglePID.getOutput());
   }
-
+  
   public void setHoodAngle(double speed) {this.hoodSpark.set(speed);}
 
-  public void shoot() {this.shooterSparkVelocityPID.setReference(ShooterData.motorRPM, ControlType.kVelocity);}
-
-  public void shoot(double speed) {this.shooterSpark.set(speed);}
+  public void shoot()               {this.shooterSparkVelocityPID.setReference(ShooterData.motorRPM, ControlType.kVelocity);}
+  public void shoot(double speed)   {this.shooterSpark.set(speed);}
+  public void incrementShootSpeed() {this.shooterSpark.updateSpeed(SHOOT_SPEED_INCREMENT);}
+  public void decrementShootSpeed() {this.shooterSpark.updateSpeed(-SHOOT_SPEED_INCREMENT);}
 
   private double getHoodAngle() {
     if (BALL_TO_OUTER_PORT_DISTANCE < MAX_HOOD_ANGLE_DISTANCE){return MAX_HOOD_ANGLE;}

@@ -2,6 +2,8 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
+import frc.robot.commands.DecrementShootSpeedCommand;
+import frc.robot.commands.IncrementShootSpeedCommand;
 import frc.robot.sciSensorsActuators.SciJoystick;
 
 // FILE HAS NOT BEEN CLEANED UP //
@@ -19,5 +21,7 @@ public class OI {
 
         this.increment = new JoystickButton(leftStick, PortMap.JOYSTICK_LEFT_BUTTON);
         this.decrement = new JoystickButton(leftStick, PortMap.JOYSTICK_RIGHT_BUTTON);
+        this.increment.whenPressed(new IncrementShootSpeedCommand());
+        this.decrement.whenPressed(new DecrementShootSpeedCommand());
     }
 }
