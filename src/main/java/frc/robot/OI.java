@@ -15,22 +15,9 @@ public class OI {
 
     
     public OI() {
-        leftStick = new SciJoystick(PortMap.JOYSTICK_LEFT);
-        rightStick = new SciJoystick(PortMap.JOYSTICK_RIGHT);
-        xboxController = new XboxController(PortMap.XBOX_CONTROLLER);
-
-        circleControllerButton = new JoystickButton(leftStick, PortMap.JOYSTICK_TRIGGER);
-        circleControllerButton.whileActive(new CircleControllerCommand());
-
-        pointOneButton = new JoystickButton(leftStick, PortMap.JOYSTICK_LEFT_BUTTON);
-        pointOneButton.whenPressed(new PointOneCommand());
-
-        pointTwoButton = new JoystickButton(leftStick, PortMap.JOYSTICK_RIGHT_BUTTON);
-        pointTwoButton.whenPressed(new PointTwoCommand());
-
-        
-        pointThreeButton = new JoystickButton(leftStick, PortMap.JOYSTICK_CENTER_BUTTON);
-        pointThreeButton.whenPressed(new PointThreeCommand());       
+        this.leftStick = new SciJoystick(PortMap.JOYSTICK_LEFT);
+        this.rightStick = new SciJoystick(PortMap.JOYSTICK_RIGHT);
+        this.xboxController = new XboxController(PortMap.XBOX_CONTROLLER);     
     }
 }
 
