@@ -12,9 +12,9 @@ public class OI {
     public XboxController xboxController;
     
     public OI() {
-        leftStick = new Joystick(PortMap.JOYSTICK_LEFT);
-        rightStick = new Joystick(PortMap.JOYSTICK_RIGHT);
-        xboxController = new XboxController(PortMap.XBOX_CONTROLLER);
+        this.leftStick = new Joystick(PortMap.JOYSTICK_LEFT);
+        this.rightStick = new Joystick(PortMap.JOYSTICK_RIGHT);
+        this.xboxController = new XboxController(PortMap.XBOX_CONTROLLER);
 
         //adjustTiltButton     = new JoystickButton(rightStick, PortMap.JOYSTICK_LEFT_BUTTON);
         //adjustTiltButton.whileHeld(new JoystickShiftCommand());
@@ -36,3 +36,4 @@ public class OI {
         pullStringButton.whenReleased(new StopStringCommand());
     }
 }
+
