@@ -33,7 +33,7 @@ public class CircleController {
         if (sightLine.contains(finalPos)) { // go straight
             Robot.driveSubsystem.setSpeedTankTurningPercentage(0);
         } else {
-            setSpeed (currPos, currHeading, finalPos, finalHeading);
+            setSpeed(currPos, currHeading, finalPos, finalHeading);
         }
         Robot.logger.addData("CircleController.java", "finalHeading", finalHeading, DefaultValue.Empty);
     }
@@ -43,20 +43,19 @@ public class CircleController {
     private static double getFinalHeadingError(Point finalPos, double finalHeading, Point currPos, double currHeading)   { 
         // get info for circle
         Circle currCircle = Circle.twoPointTangentAngleForm(currPos, currHeading, finalPos);
-        double expectedFinalHeading = Geo.thetaOf(Geo.getTangentToCircle(currCircle, finalPos)); // heading of tangent to circle at final position
-        double expectedCurrentHeading = Geo.thetaOf(Geo.getTangentToCircle(currCircle, currPos)); // print for testing
+        double expectedFinalHeading   = Geo.thetaOf(Geo.getTangentToCircle(currCircle, finalPos)); // heading of tangent to circle at final position
 
         // adjusts heading along the circle
-        double currDirection = Geo.subtractAngles(currHeading, Geo.angleBetween(currPos, currCircle.center));
+        double currDirection  = Geo.subtractAngles(currHeading,          Geo.angleBetween(currPos,  currCircle.center));
         double finalDirection = Geo.subtractAngles(expectedFinalHeading, Geo.angleBetween(finalPos, currCircle.center));
 
-        // We don't need Geo.subtractAngles b/c we expect this to be 90 or -90.
+        // Making sure that we have the correct direction because the creation of the circle
+        //  is created the same if you are faced in the opposite direction
         if (Utils.signOf(currDirection) != Utils.signOf(finalDirection)) {
             expectedFinalHeading = Geo.normalizeAngle(expectedFinalHeading + Geo.ANGLE_RANGE / 2);
         }
         double finalHeadingError = Geo.subtractAngles(expectedFinalHeading, finalHeading);
         Robot.logger.addData("CircleController.java", "finalDirection", finalDirection, DefaultValue.Empty);
-        Robot.logger.addData("CircleController.java", "expectedCurrentHeading", expectedCurrentHeading, DefaultValue.Empty);
         Robot.logger.addData("CircleController.java", "expectedFinalHeading", expectedFinalHeading, DefaultValue.Empty);
         Robot.logger.addData("CircleController.java", "finalHeadingError", finalHeadingError, DefaultValue.Empty);
         return finalHeadingError;
@@ -69,7 +68,7 @@ public class CircleController {
     }
 
     private void addErrors(Point currPos, double currHeading, Point finalPos, double finalHeading) {
-        this.finalHeadingPID.addMeasurement(getFinalHeadingError(currPos, currHeading, finalPos, finalHeading));
+        this.finalHeadingPID  .addMeasurement(getFinalHeadingError  (currPos, currHeading, finalPos, finalHeading));
         this.desiredHeadingPID.addMeasurement(getDesiredHeadingError(currPos, currHeading, finalPos));
     }
 
