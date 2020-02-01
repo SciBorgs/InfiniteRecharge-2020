@@ -36,7 +36,12 @@ public class Robot extends TimedRobot {
     public static PigeonSubsystem     pigeonSubsystem     = new PigeonSubsystem();
     public static LimelightSubsystem  limelightSubsystem  = new LimelightSubsystem();
     public static PneumaticsSubsystem pneumaticsSubsystem = new PneumaticsSubsystem();
+<<<<<<< HEAD
     public static LimelightLocalization limelightLocalization = new LimelightLocalization();
+=======
+    public static IntakeSubsystem     intakeSubsystem     = new IntakeSubsystem();
+    
+>>>>>>> master
     public static Following following = new Following();
     public static CircleController circleController = new CircleController();
     public static OI oi = new OI();
@@ -101,7 +106,7 @@ public class Robot extends TimedRobot {
         for (Pair<SD, DefaultValue> pair : Robot.dataToLog) {
             SD sd = pair.first;
             if (getState().contains(sd)){
-                Robot.logger.addData(FILENAME, sd.name(), get(sd), pair.second);
+                Robot.logger.addData("State", sd.name(), get(sd), pair.second);
             }
         }
     }
@@ -123,7 +128,6 @@ public class Robot extends TimedRobot {
 
     public void logDataPeriodic() {
         logger.logData();
-        logger.writeLoggedData();
     }
  
     public void robotPeriodic() {
@@ -131,44 +135,55 @@ public class Robot extends TimedRobot {
         allUpdateRobotStates();
         allPeriodicLogs();
         logDataPeriodic();
+        DelayedPrinter.print("x: " + getPos().x + "\ty: " + getPos().y + 
+                             "\nheading: " + getHeading() + 
+                             "\npigeon angle: " + Robot.get(SD.PigeonAngle));
         Scheduler.getInstance().run();
         DelayedPrinter.incTicks();
     }
 
 
     public void autonomousInit() {
+<<<<<<< HEAD
         Robot.driveSubsystem.assistedDriveMode();
         set(SD.X, ORIGINAL_POINT .x);
         set(SD.Y, ORIGINAL_POINT.y);
         set(SD.Angle, ORIGINAL_ANGLE);
+=======
+        intakeSubsystem.reverseIntake();
+>>>>>>> master
     }
 
     @Override
     public void autonomousPeriodic() {
-        //pneumaticsSubsystem.startCompressor();
+        // pneumaticsSubsystem.startCompressor();
     }
     
     @Override
     public void teleopInit() {
-        Robot.driveSubsystem.manualDriveMode();
-        set(SD.X, ORIGINAL_POINT.x);
-        set(SD.Y, ORIGINAL_POINT.y);
-        set(SD.Angle, ORIGINAL_ANGLE);
-        }
+        intakeSubsystem.reverseIntake();
+    }
 
     public void teleopPeriodic() {
+<<<<<<< HEAD
         driveSubsystem.manualDriveMode();
         limelightLocalization.printDistance();
         limelightLocalization.printPosition();
         new TankDriveCommand().start();
 
         //pneumaticsSubsystem.startCompressor();
+=======
+        // new TankDriveCommand().start();
+        //circleController.update(getPos(), getHeading(), TEST_POINT, TEST_HEADING);
+        // pneumaticsSubsystem.startCompressor();
+>>>>>>> master
     }
 
     public void testPeriodic() {
     }
 
     public void disabledInit() {
+        //intakeSubsystem.stop();
         // allPeriodicLogs();
         // logger.logData();
         // logger.writeLoggedData();

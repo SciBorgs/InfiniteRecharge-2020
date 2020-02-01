@@ -53,7 +53,7 @@ public class Utils{
     // if a number isn't in the range, you keep on adding the difference (max - min) until it is in the range
     // for example, you can use it to find an angle that is overlapping within a range, such as -180 and 180
     public static double bringInRange(double val, double min, double max) {
-        return ((val - min) % (max - min)) + min;
+        return mod(val - min, max - min) + min;
     }
 
     // if it isn't between max or min, it will bring it down to max, or up to min
@@ -109,22 +109,10 @@ public class Utils{
             case kReverse: return Value.kForward;
             default:       return Value.kOff;
         }
-
-    }
-
-    public static void toggleDoubleSolenoid(DoubleSolenoid doubleSolenoid){
-        doubleSolenoid.set(oppositeDoubleSolenoidValue(doubleSolenoid.get()));
     }
 
     public static void toggleDigitalOutput(DigitalOutput digitalOutput){
         digitalOutput.set(!digitalOutput.get());
-    }
-
-    public static DoubleSolenoid newDoubleSolenoid(int[] ports){
-        return new DoubleSolenoid(ports[0], ports[1]);
-    }
-    public static DoubleSolenoid newDoubleSolenoid(int pdpPort, int[] ports){
-        return new DoubleSolenoid(pdpPort, ports[0], ports[1]);
     }
 
     // given a mean and a stddev, generates a random number
@@ -196,6 +184,30 @@ public class Utils{
     public static double limitChange(double oldN, double newN, double maxChange) {
         // Makes sure that the change in input for a motor is not more than maxJerk
         return limitOutput(newN, oldN + maxChange, oldN - maxChange);
+    }
+
+    public static double max(double... numbers) {
+        double max = numbers[0];
+        for (double n : numbers) {
+            if (n > max) {
+                max = n;
+            }
+        }
+        return max;
+    }
+
+    public static double min(double... numbers) {
+        double min = numbers[0];
+        for (double n : numbers) {
+            if (n < min) {
+                min = n;
+            }
+        }
+        return min;
+    }
+
+    public static double mod(double num1, double num2) {
+        return (num1 % num2 + num2) % num2;
     }
 
 }

@@ -17,13 +17,14 @@ public class Logger{
     public enum DefaultValue {Previous, Empty} // If in a given cycle a value isn't set, what should that value be in the next row? Empty : "", Previous : the same as the previous value
     public enum CommandStatus {Initializing, Executing, Ending, Interrupted}
     public final static String LOGGING_FILE_PATH = "/home/lvuser/MainLog.csv"; // Path to file where data is logged
-    private Hashtable<String,Object> currentData; // Data of the current cycle
-    private Hashtable<String,DefaultValue> defaultValues; // Data of the current default values for each column
+    public Hashtable<String,Object> currentData; // Data of the current cycle
+    public Hashtable<String,DefaultValue> defaultValues; // Data of the current default values for each column
     // TODO: make default values not reset every deploy
     private CSVHelper csvHelper;
     private Calendar calendar;
     private boolean loggingDisabled = false;
-
+    private Timer timer;
+    private double matchStartTime;
     // Universal naming conventions
     public String commandStatusName = "status";
 
@@ -41,6 +42,9 @@ public class Logger{
         }
         resetCurrentData();
         this.defaultValues = new Hashtable<String,DefaultValue>();
+        this.timer = new Timer();
+        this.timer.start();
+        this.startMatchTimer();
     }
 
     private void fileNotFound(){
@@ -57,8 +61,8 @@ public class Logger{
     }
 
     public ArrayList<String> getColumns(){
-        //return this.csvHelper.getTopics();
-        return new ArrayList<String>();
+        return this.csvHelper.getTopics();
+        // return new ArrayList<String>();
     }
 
     private void addNewColumn(String columnName){
@@ -149,14 +153,15 @@ public class Logger{
 
     private void addDefaultData(){
         // All this data will be done automatically
-        double year   = this.calendar.get(Calendar.YEAR);
-        double month  = this.calendar.get(Calendar.MONTH);
-        double day    = this.calendar.get(Calendar.DAY_OF_MONTH);
-        double hour   = this.calendar.get(Calendar.HOUR_OF_DAY);
-        double minute = this.calendar.get(Calendar.MINUTE);
-        double second = this.calendar.get(Calendar.SECOND);
-        double matchTime = Timer.getMatchTime();
-        double batteryVoltage = RobotController.getBatteryVoltage();
+        Double year   = (double) this.calendar.get(Calendar.YEAR);
+        Double month  = (double) this.calendar.get(Calendar.MONTH);
+        Double day    = (double) this.calendar.get(Calendar.DAY_OF_MONTH);
+        Double hour   = (double) this.calendar.get(Calendar.HOUR_OF_DAY);
+        Double minute = (double) this.calendar.get(Calendar.MINUTE);
+        Double second = (double) this.calendar.get(Calendar.SECOND);
+        double timeSinceStartup = getTimeSinceStartup();
+        Double matchTime = Timer.getMatchTime();
+        Double batteryVoltage = RobotController.getBatteryVoltage();
         String prefix = "default";
         addData(prefix, "year",year,                      DefaultValue.Previous);
         addData(prefix, "month",month,                    DefaultValue.Previous);
@@ -164,6 +169,7 @@ public class Logger{
         addData(prefix, "hour",hour,                      DefaultValue.Previous);
         addData(prefix, "minute",minute,                  DefaultValue.Previous);
         addData(prefix, "second",second,                  DefaultValue.Previous);
+        addData(prefix, "sec startup",timeSinceStartup,   DefaultValue.Previous);
         addData(prefix, "match time",matchTime,           DefaultValue.Previous);
         addData(prefix, "battery voltage",batteryVoltage, DefaultValue.Previous);
     }
@@ -185,12 +191,24 @@ public class Logger{
 
     public void logData(){
         if (this.loggingDisabled){return;}
-        //System.out.println("attempting to log data...");
         // adds a new data record to the file and resets our current data
         this.csvHelper.addRow(createFullCurrentData());
+    }
+
+    public void writeLoggedData(){
+        this.csvHelper.writeRows();
         resetCurrentData();
     }
 
-    public void writeLoggedData(){this.csvHelper.writeRows();}
+    public double getTimeSinceStartup(){
+        return this.timer.get();
+    }
 
+    public void startMatchTimer(){
+        this.matchStartTime = this.timer.get();
+    }
+
+    public double getTimeSinceMatchStart(){
+        return this.timer.get() - this.matchStartTime;
+    }
 }

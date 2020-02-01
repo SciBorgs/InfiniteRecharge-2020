@@ -6,14 +6,18 @@ import frc.robot.shapes.*;
 import frc.robot.helpers.DelayedPrinter;
 import frc.robot.helpers.Geo;
 import frc.robot.logging.Logger.DefaultValue;
+import frc.robot.robotState.StateInfo;
 
 public class CircleController {
 
     private static final double ERROR = 0.02;
+    private static final double PROXIMITY_DAMPENER = .65;
     private static final double FINAL_HEADING_P = .4;
     private static final double DESIRED_HEADING_P = .2;
+    private static final double ENDING_TURN_P = .2;
     private PID finalHeadingPID = new PID(FINAL_HEADING_P, 0, 0);
     private PID desiredHeadingPID = new PID(DESIRED_HEADING_P, 0, 0);
+    private PID endingTurnPID = new PID(ENDING_TURN_P, 0, 0);
 
     public void update(Point currPos, double currHeading, Point finalPos, double finalHeading) {
         Robot.driveSubsystem.assistedDriveMode();
@@ -37,9 +41,25 @@ public class CircleController {
 
             double desiredHeadingError = Geo.subtractAngles(Geo.angleBetween(currPos, finalPos), currHeading);
             desiredHeadingPID.addMeasurement(desiredHeadingError);
+            double turnMagnitude;
+            if(Geo.getDistance(currPos, finalPos) < .2) {
+                double endingError = finalHeading - currHeading;
+                endingTurnPID.addMeasurement(endingError);
+                turnMagnitude = endingTurnPID.getOutput();
+                Robot.driveSubsystem.setSpeedTankForwardTurningMagnitude(0, turnMagnitude);
 
-            double turnMagnitude = desiredHeadingPID.getOutput() + finalHeadingPID.getOutput();
-            Robot.driveSubsystem.setSpeedTankTurningPercentage(.3*turnMagnitude);
+            } else if(Geo.getDistance(currPos, finalPos) < .4){
+                double endingError = finalHeading - currHeading;
+                endingTurnPID.addMeasurement(endingError);
+                turnMagnitude = endingTurnPID.getOutput();
+                Robot.driveSubsystem.setSpeedTankTurningPercentage(turnMagnitude);
+            } else {
+                turnMagnitude = desiredHeadingPID.getOutput() + finalHeadingPID.getOutput();
+                Robot.driveSubsystem.setSpeedTankTurningPercentage(turnMagnitude);
+            }
+            
+            // DelayedPrinter.print("turnMagnitude: " + turnMagnitude);
+            // Robot.driveSubsystem.setSpeedTankForwardTurningMagnitude(.3,turnMagnitude);
         }
     }
 }

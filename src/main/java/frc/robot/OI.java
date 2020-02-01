@@ -11,8 +11,9 @@ public class OI {
     public XboxController xboxController;
     
     public OI() {
-        leftStick = new Joystick(PortMap.JOYSTICK_LEFT);
-        rightStick = new Joystick(PortMap.JOYSTICK_RIGHT);
-        xboxController = new XboxController(PortMap.XBOX_CONTROLLER);
+        this.leftStick = new Joystick(PortMap.JOYSTICK_LEFT);
+        this.rightStick = new Joystick(PortMap.JOYSTICK_RIGHT);
+        this.xboxController = new XboxController(PortMap.XBOX_CONTROLLER);
     }
 }
+
