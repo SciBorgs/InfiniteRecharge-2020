@@ -50,16 +50,21 @@ public class SciSpark extends CANSparkMax {
     public void set(double speed, double maxJerk) {
         this.goalSpeed = speed;
         this.currentMaxJerk = maxJerk;
-        super.set(Utils.limitChange(super.get(), speed, maxJerk));
+        double limitedInput = Utils.limitChange(super.get(), speed, maxJerk);
+        super.set(limitedInput);
+        if (limitedInput != super.get()) {
+            String warning = "WARNING: Spark " + super.getDeviceId() + " was set to " + limitedInput
+                    + " but still has a value of " + super.get();
+            System.out.println(warning);
+            System.out.println(warning);
+            System.out.println(warning);
+            System.out.println(warning);
+            System.out.println(warning);
+        }
     }
 
-    public void set(double speed) {
-        set(speed, DEFAULT_MAX_JERK);
-    }
-
-    public void moveToGoal(){
-        set(this.goalSpeed, this.currentMaxJerk);
-    }
+    public void set(double speed) {set(speed, DEFAULT_MAX_JERK);}
+    public void moveToGoal()      {set(this.goalSpeed, this.currentMaxJerk);}
 
     public boolean atGoal(){
         return this.goalSpeed == super.get();
