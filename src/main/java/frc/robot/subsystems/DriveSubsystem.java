@@ -44,13 +44,15 @@ public class DriveSubsystem extends Subsystem {
     public DriveSubsystem() {
         this.sparkToValueSD = new Hashtable<>();
 
-		this.l  = new SciSpark(PortMap.LEFT_FRONT_SPARK,  GEAR_RATIO, SD.LeftWheelAngle);
-		this.l1 = new SciSpark(PortMap.LEFT_MIDDLE_SPARK, GEAR_RATIO, SD.L1WheelAngle);
-        this.l2 = new SciSpark(PortMap.LEFT_BACK_SPARK,   GEAR_RATIO, SD.L2WheelAngle);
+		this.l  = new SciSpark(PortMap.LEFT_FRONT_SPARK,   GEAR_RATIO);
+		this.l1 = new SciSpark(PortMap.LEFT_MIDDLE_SPARK,  GEAR_RATIO);
+        this.l2 = new SciSpark(PortMap.LEFT_BACK_SPARK,    GEAR_RATIO);
         
-		this.r  = new SciSpark(PortMap.RIGHT_FRONT_SPARK,  GEAR_RATIO, SD.RightWheelAngle);
-		this.r1 = new SciSpark(PortMap.RIGHT_MIDDLE_SPARK, GEAR_RATIO, SD.R1WheelAngle);
-        this.r2 = new SciSpark(PortMap.RIGHT_BACK_SPARK,   GEAR_RATIO, SD.R2WheelAngle);
+		this.r  = new SciSpark(PortMap.RIGHT_FRONT_SPARK,  GEAR_RATIO);
+		this.r1 = new SciSpark(PortMap.RIGHT_MIDDLE_SPARK, GEAR_RATIO);
+        this.r2 = new SciSpark(PortMap.RIGHT_BACK_SPARK,   GEAR_RATIO);
+
+        this.l.assignWheelAngleSD(l.g);
 
         this.r .setInverted(true);
         this.r1.setInverted(true);
