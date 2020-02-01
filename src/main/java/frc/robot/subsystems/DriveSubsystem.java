@@ -12,11 +12,6 @@ import frc.robot.logging.Logger.DefaultValue;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.command.Subsystem;
 
-import com.revrobotics.CANSparkMax;
-import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
-import com.revrobotics.CANSparkMaxLowLevel.MotorType;
-
 import java.util.Hashtable;
 
 public class DriveSubsystem extends Subsystem {
@@ -41,27 +36,21 @@ public class DriveSubsystem extends Subsystem {
     private PID tankSpeedRightPID;
     public boolean assisted = false;
     public double driveMultiplier = 1;
-    public Hashtable<SciSpark, SD> sparkToWheelAngleSD;
     public Hashtable<SciSpark, SD> sparkToValueSD;
-    public Hashtable<SciSpark, SD> sparkToVoltageSD;
-    public Hashtable<SciSpark, SD> sparkToCurrentSD;
 
     public PID getTankAnglePID()   {return this.tankAnglePID;}
     public double getMaxOmegaGoal(){return MAX_OMEGA_GOAL;}
 
     public DriveSubsystem() {
-        this.sparkToWheelAngleSD = new Hashtable<>();
         this.sparkToValueSD = new Hashtable<>();
-        this.sparkToVoltageSD = new Hashtable<>();
-        this.sparkToCurrentSD = new Hashtable<>();
 
-		this.l  = new SciSpark(PortMap.LEFT_FRONT_SPARK,  GEAR_RATIO);
-		this.l1 = new SciSpark(PortMap.LEFT_MIDDLE_SPARK, GEAR_RATIO);
-        this.l2 = new SciSpark(PortMap.LEFT_BACK_SPARK,   GEAR_RATIO);
+		this.l  = new SciSpark(PortMap.LEFT_FRONT_SPARK,  GEAR_RATIO, SD.LeftWheelAngle);
+		this.l1 = new SciSpark(PortMap.LEFT_MIDDLE_SPARK, GEAR_RATIO, SD.L1WheelAngle);
+        this.l2 = new SciSpark(PortMap.LEFT_BACK_SPARK,   GEAR_RATIO, SD.L2WheelAngle);
         
-		this.r  = new SciSpark(PortMap.RIGHT_FRONT_SPARK,  GEAR_RATIO);
-		this.r1 = new SciSpark(PortMap.RIGHT_MIDDLE_SPARK, GEAR_RATIO);
-        this.r2 = new SciSpark(PortMap.RIGHT_BACK_SPARK,   GEAR_RATIO);
+		this.r  = new SciSpark(PortMap.RIGHT_FRONT_SPARK,  GEAR_RATIO, SD.RightWheelAngle);
+		this.r1 = new SciSpark(PortMap.RIGHT_MIDDLE_SPARK, GEAR_RATIO, SD.R1WheelAngle);
+        this.r2 = new SciSpark(PortMap.RIGHT_BACK_SPARK,   GEAR_RATIO, SD.R2WheelAngle);
 
         this.r .setInverted(true);
         this.r1.setInverted(true);
@@ -74,13 +63,13 @@ public class DriveSubsystem extends Subsystem {
         this.r2.follow(this.r);
 
         // Mappings for logging
-        setSDMappings(this.l, SD.LeftWheelAngle,  SD.LeftSparkVal,  SD.LeftSparkVoltage,  SD.LeftSparkCurrent);
-        setSDMappings(this.r, SD.RightWheelAngle, SD.RightSparkVal, SD.RightSparkVoltage, SD.RightSparkCurrent);
+        this.sparkToValueSD.put(this.l, SD.LeftSparkVal);
+        this.sparkToValueSD.put(this.r, SD.RightSparkVal);
         
-        setSDMappings(this.l1, SD.L1WheelAngle, SD.L1SparkVal, SD.L1SparkVoltage, SD.L1SparkCurrent);
-        setSDMappings(this.r1, SD.R1WheelAngle, SD.R1SparkVal, SD.R1SparkVoltage, SD.R1SparkCurrent);
-        setSDMappings(this.l2, SD.L2WheelAngle, SD.L2SparkVal, SD.L2SparkVoltage, SD.L2SparkCurrent);
-        setSDMappings(this.r2, SD.R2WheelAngle, SD.R2SparkVal, SD.R2SparkVoltage, SD.R2SparkCurrent);
+        this.sparkToValueSD.put(this.l1, SD.L1SparkVal);
+        this.sparkToValueSD.put(this.r1, SD.R1SparkVal);
+        this.sparkToValueSD.put(this.l2, SD.L2SparkVal);
+        this.sparkToValueSD.put(this.r2, SD.R2SparkVal);
 
         Robot.addSDToLog(SD.LeftWheelAngle);
 
@@ -92,17 +81,12 @@ public class DriveSubsystem extends Subsystem {
     }
     
     public void setSDMappings(SciSpark spark, SD wheelAngleSD, SD valueSD, SD volatageSD, SD currentSd){
-        this.sparkToWheelAngleSD.put(spark, wheelAngleSD);
-        this.sparkToValueSD     .put(spark, valueSD);
-        this.sparkToVoltageSD   .put(spark, volatageSD);
-        this.sparkToCurrentSD   .put(spark, currentSd);
+        this.sparkToValueSD.put(spark, valueSD);
     }
     
     public void updateSparkState(SciSpark spark){
-        Robot.set(this.sparkToWheelAngleSD.get(spark), spark.getWheelAngle());
+        spark.updateRobotState();
         Robot.set(this.sparkToValueSD.get(spark),   spark.get());
-        Robot.set(this.sparkToVoltageSD.get(spark), spark.getBusVoltage());
-        Robot.set(this.sparkToCurrentSD.get(spark), spark.getOutputCurrent());
     }
 
 	public SciSpark[] getSparks() {

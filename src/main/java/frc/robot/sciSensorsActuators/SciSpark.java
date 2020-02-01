@@ -2,8 +2,12 @@ package frc.robot.sciSensorsActuators;
 
 import com.revrobotics.CANSparkMax;
 
+import frc.robot.Robot;
 import frc.robot.Utils;
 import frc.robot.commands.generalCommands.SciSparkSpeedCommand;
+import frc.robot.dataTypes.Deque;
+import frc.robot.robotState.StateInfo;
+import frc.robot.robotState.RobotState.SD;
 
 public class SciSpark extends CANSparkMax {
 
@@ -11,15 +15,17 @@ public class SciSpark extends CANSparkMax {
     private double currentMaxJerk;
     public final static double DEFAULT_MAX_JERK = 0.1;
     private double gearRatio;
+    public Optional<SD> wheelAngleSD, valueSD;
 
-    public SciSpark(int port) {
-        this(port, 1);
+    public SciSpark(int port, SD wheelAngleSD) {
+        this(port, 1, wheelAngleSD);
     }
 
-    public SciSpark(int port, double gearRatio) {
+    public SciSpark(int port, double gearRatio, SD wheelAngleSD) {
         super(port, MotorType.kBrushless);
         this.goalSpeed = 0;
         this.currentMaxJerk = DEFAULT_MAX_JERK;
+        this.wheelAngleSD = wheelAngleSD;
         setWheelAngle(0);
         setGearRatio(gearRatio);
         (new SciSparkSpeedCommand(this)).start();
@@ -59,7 +65,10 @@ public class SciSpark extends CANSparkMax {
             System.out.println(warning);
             System.out.println(warning);
             System.out.println(warning);
-            System.out.println(warning);
+            System.out.println("Debugging info:");
+            double positionChange = StateInfo.getFullDifference(this.wheelAngleSD);
+            System.out.println("Position Change: " + positionChange);
+            System.out.println("Is significant?: " + (Math.abs(positionChange) > Utils.EPSILON));
         }
     }
 
@@ -68,6 +77,13 @@ public class SciSpark extends CANSparkMax {
 
     public boolean atGoal(){
         return this.goalSpeed == super.get();
+    }
+
+    public void updateRobotState(){
+        Robot.set(this.wheelAngleSD, get());
+    }
+    public void setValueSD(SD valueSD){
+        this.valueSD = valueSD;
     }
 
 }
