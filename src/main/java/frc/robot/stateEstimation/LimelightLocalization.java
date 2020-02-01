@@ -19,8 +19,8 @@ public class LimelightLocalization implements MaybeUpdater {
     private static final double CAMERA_MOUNTING_ANGLE      = Math.toRadians(0);
     private static final double OUTER_PORT_HEIGHT          = Utils.inchesToMeters(90);
 
-    private static final double LANDMARK_X = -10;
-    private static final double LANDMARK_Y =  2;
+    private static final double LANDMARK_X = 0;
+    private static final double LANDMARK_Y = 0;
 
     private Hashtable<SD, Double> stdDevs;
 
@@ -38,11 +38,21 @@ public class LimelightLocalization implements MaybeUpdater {
 
     public Point getRobotPosition() {
         double distance = calculateDistance();
-        double xAngle = -1 * limeLight.getTableData(limeLight.getCameraTable(), "tx");
-        PolarPoint relativePosition = new PolarPoint(distance, xAngle);
-        Point relativePoint = Geo.convertPolarToCartesian(relativePosition);
-        double xAbsolute = relativePoint.x + LANDMARK_X;
-        double yAbsolute = relativePoint.y + LANDMARK_Y;
+        double tx = limeLight.getTableData(limeLight.getCameraTable(), "tx");
+        double xAbsolute = 0, yAbsolute = 0;
+        if (tx > 0) {
+            double xRelative = distance * Math.cos(Math.toRadians(tx));
+            double yRelative = distance * Math.sin(Math.toRadians(tx));
+            xAbsolute = LANDMARK_X - xRelative;
+            yAbsolute = LANDMARK_Y - yRelative;
+        } else {
+            double xRelative = distance * Math.cos(Math.toRadians(tx));
+            double yRelative = distance * Math.sin(Math.toRadians(tx));
+            xAbsolute = xRelative - LANDMARK_X;
+            yAbsolute = yRelative - LANDMARK_Y;
+        }
+        //PolarPoint relativePosition = new PolarPoint(distance, xAngle);
+        //Point relativePoint = Geo.convertPolarToCartesian(relativePosition);
         return new Point(xAbsolute,yAbsolute);
     }
 
@@ -64,6 +74,13 @@ public class LimelightLocalization implements MaybeUpdater {
         double distance = calculateDistance();
         System.out.println("Target found at distance: " + distance);
         System.out.println("Ty is: " + Math.toRadians(limeLight.getTableData(limeLight.getCameraTable(), "ty")));
+        limeLight.setCameraParams("distance", distance);
+    }
+
+    public void printPosition() {
+        Point position = getRobotPosition();
+        limeLight.setCameraParams("x", position.x);
+        limeLight.setCameraParams("y", position.y);
     }
 
     @Override
