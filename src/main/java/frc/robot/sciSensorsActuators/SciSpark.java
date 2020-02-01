@@ -4,12 +4,14 @@ import com.revrobotics.CANSparkMax;
 
 import frc.robot.Utils;
 import frc.robot.commands.generalCommands.SciSparkSpeedCommand;
+import frc.robot.helpers.DelayedPrinter;
 
 public class SciSpark extends CANSparkMax {
 
     private double goalSpeed;
     private double currentMaxJerk;
     public final static double DEFAULT_MAX_JERK = 0.1;
+    private int commandNumber;
     private double gearRatio;
 
     public SciSpark(int port) {
@@ -20,9 +22,10 @@ public class SciSpark extends CANSparkMax {
         super(port, MotorType.kBrushless);
         this.goalSpeed = 0;
         this.currentMaxJerk = DEFAULT_MAX_JERK;
+        this.commandNumber = 0;
         setWheelAngle(0);
         setGearRatio(gearRatio);
-        (new SciSparkSpeedCommand(this)).start();
+        (new SciSparkSpeedCommand(this, this.commandNumber)).start();
     }
 
     public double getGearRatio() {
@@ -53,12 +56,14 @@ public class SciSpark extends CANSparkMax {
 
     public void singleSet(double speed, double maxJerk) {
         super.set(Utils.limitChange(super.get(), speed, maxJerk));
+        DelayedPrinter.print("current: " + super.get(), 5);
     }
     
     public void set(double speed, double maxJerk) {
         this.goalSpeed = speed;
         this.currentMaxJerk = maxJerk;
-        (new SciSparkSpeedCommand(this)).start();
+        this.commandNumber++;
+        (new SciSparkSpeedCommand(this, this.commandNumber)).start();
     }
 
     public void set(double speed) {
@@ -66,11 +71,13 @@ public class SciSpark extends CANSparkMax {
     }
 
     public void moveToGoal(){
-        set(this.goalSpeed, this.currentMaxJerk);
+        singleSet(this.goalSpeed, this.currentMaxJerk);
     }
 
     public boolean atGoal(){
         return this.goalSpeed == super.get();
     }
+
+    public boolean isCurrentCommandNumber(int n){return n == this.commandNumber;}
 
 }
