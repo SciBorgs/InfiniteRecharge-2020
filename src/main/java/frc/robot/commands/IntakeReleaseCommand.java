@@ -14,8 +14,7 @@ public class IntakeReleaseCommand extends InstantCommand {
 
     @Override 
     protected void execute() {
-	    Robot.logger.logCommandStatus(FILENAME, CommandStatus.Executing);
+	Robot.logger.logCommandStatus(FILENAME, CommandStatus.Executing);
         Robot.intakeSubsystem.stop();
-        System.out.println("test test test test fuck");
     }
 }
