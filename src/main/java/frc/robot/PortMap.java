@@ -44,7 +44,7 @@ public class PortMap {
 
     //*******************SOLENOID****************//
 
-    public static final int[] CLIMBER_SOLENOID = {14, 15}; // CHANGE TO ACTUAL INPUT
+    //public static final int[] CLIMBER_SOLENOID = {14, 15}; // CHANGE TO ACTUAL INPUT
     
     //*******************SPARKS******************//
 
@@ -56,15 +56,19 @@ public class PortMap {
     public static final int RIGHT_MIDDLE_SPARK = 2;
     public static final int RIGHT_BACK_SPARK = 1;
 
-    public static final int TELESCOPING_SPARK = 13; //CHANGE TO ACTUAL INPUT
+    public static final int SHIFT_SPARK = 1;
+
     //*******************TALONS******************//
 
     public static final int PIGEON_TALON = 9;
 
-    public static final int TILT_PIGEON = 11;      // CHANGE TO ACTUAL INPUT
-    public static final int SHIFTING_TALON = 10;   // CHANGE TO ACTUAL INPUT
-    public static final int STRING_TALON_1 = 4;   // CHANGE TO ACTUAL INPUT
-    public static final int STRING_TALON_2 = 8;   // CHANGE TO ACTUAL INPUT
+    public static final int TILT_PIGEON = 11;       //CHANGE
+    public static final int SHIFTING_TALON = 10;    //CHANGE
+    public static final int STRING_TALON_1 = 4;     //CHANGE
+    public static final int STRING_TALON_2 = 8;     //CHANGE
+    public static final int TELESCOPE_TALON_1 = 13; //CHANGE
+    public static final int TELESCOPE_TALON_2 = 13; //CHANGE
+
 
     //*******************MISC********************//
 

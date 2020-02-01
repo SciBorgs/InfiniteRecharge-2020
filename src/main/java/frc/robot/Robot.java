@@ -42,7 +42,7 @@ public class Robot extends TimedRobot {
     public static Following following = new Following();
     public static Model positionModel = new EncoderLocalization();
     public static CircleController  circleController  = new CircleController();
-    public static ClimberController climberController = new ClimberController();
+    //public static ClimberController climberController = new ClimberController();
     public static AngleController   angleController   = new AngleController();
     public static OI oi = new OI();
 
