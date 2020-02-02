@@ -70,19 +70,7 @@ public class SciSpark extends CANSparkMax implements RobotStateUpdater {
                     + " but still has a value of " + super.get();
             System.out.println(warning);
             System.out.println(warning);
-            System.out.println("Debugging info:");
-            if (this.wheelAngleSD.isPresent()) {
-                double positionChange = StateInfo.getFullDifference(this.wheelAngleSD.get());
-                System.out.println("Position Change: " + positionChange);
-                System.out.println("Is significant?: " + (Math.abs(positionChange) > Utils.EPSILON));
-                System.out.println("All Positions: " + Robot.stateHistory.getFullSDData(this.wheelAngleSD.get()));
-            }
-            if (this.currentSD.isPresent()) {
-                System.out.println("Current: " + Robot.get(this.currentSD.get()));
-            }
-            if (this.valueSD.isPresent()) {
-                System.out.println("All Values: " + Robot.stateHistory.getFullSDData(this.valueSD.get()));
-            }
+            printDebuggingInfo();
         }
     }
 
@@ -95,6 +83,22 @@ public class SciSpark extends CANSparkMax implements RobotStateUpdater {
         (new SciSparkSpeedCommand(this, this.commandNumber)).start();
     }
     public void set(double speed) {set(speed, DEFAULT_MAX_JERK);}
+
+    public void printDebuggingInfo() {
+        System.out.println("Debugging info:");
+        if (this.wheelAngleSD.isPresent()) {
+            double positionChange = StateInfo.getFullDifference(this.wheelAngleSD.get());
+            System.out.println("Position Change: " + positionChange);
+            System.out.println("Is significant?: " + (Math.abs(positionChange) > Utils.EPSILON));
+            System.out.println("All Positions: " + Robot.stateHistory.getFullSDData(this.wheelAngleSD.get()));
+        }
+        if (this.currentSD.isPresent()) {
+            System.out.println("Current: " + Robot.get(this.currentSD.get()));
+        }
+        if (this.valueSD.isPresent()) {
+            System.out.println("All Values: " + Robot.stateHistory.getFullSDData(this.valueSD.get()));
+        }
+    }
 
     public void printValues()    {this.printValues = true;}
     public void dontPrintValues(){this.printValues = false;}

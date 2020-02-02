@@ -49,13 +49,17 @@ public class SciTalon extends TalonSRX implements RobotStateUpdater {
                     + " but still has a value of " + super.getMotorOutputPercent();
             System.out.println(warning);
             System.out.println(warning);
-            System.out.println("Debugging info:");
-            if (this.currentSD.isPresent()) {
-                System.out.println("Current: " + Robot.get(this.currentSD.get()));
-            }
-            if (this.valueSD.isPresent()) {
-                System.out.println("All Values: " + Robot.stateHistory.getFullSDData(this.valueSD.get()));
-            }
+            printDebuggingInfo();
+        }
+    }
+
+    public void printDebuggingInfo() {
+        System.out.println("Debugging info:");
+        if (this.currentSD.isPresent()) {
+            System.out.println("Current: " + Robot.get(this.currentSD.get()));
+        }
+        if (this.valueSD.isPresent()) {
+            System.out.println("All Values: " + Robot.stateHistory.getFullSDData(this.valueSD.get()));
         }
     }
 
