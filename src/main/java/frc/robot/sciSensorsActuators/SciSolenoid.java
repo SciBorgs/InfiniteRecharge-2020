@@ -36,6 +36,7 @@ public class SciSolenoid <ValueType extends Enum<ValueType>> extends DoubleSolen
             Value value = valueMap.getForward(valueType);
             this.valueDoubleMap.put(valueType, SOLENOID_MAPPING.getForward(value));
         }
+        this.valueSD = Optional.empty();
     }
     
     private Value toDoubleSolenoidValue(ValueType e) {

@@ -30,6 +30,8 @@ public class SciTalon extends TalonSRX {
         this.goalSpeed = 0;
         this.currentMaxJerk = 0;
         this.commandNumber = 0;
+        this.valueSD   = Optional.empty();
+        this.currentSD = Optional.empty();
     }
 
     public boolean isCurrentCommandNumber(int n){return n == this.commandNumber;}
