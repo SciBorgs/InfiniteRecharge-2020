@@ -11,6 +11,7 @@ import java.util.Optional;
 
 public class SciSolenoid <ValueType extends Enum<ValueType>> extends DoubleSolenoid {
 
+    private Class valueTypeClass;
     public final static BiHashMap<Value, Double> SOLENOID_MAPPING;
     static {
         SOLENOID_MAPPING=new BiHashMap<>();
@@ -21,6 +22,7 @@ public class SciSolenoid <ValueType extends Enum<ValueType>> extends DoubleSolen
     private BiHashMap<ValueType, Value> valueMap;
     private BiHashMap<ValueType, Double> valueDoubleMap;
     public Optional<SD> valueSD;
+    private boolean printValues;
 
     public SciSolenoid(int[] ports, ValueType forwardValue, ValueType backwardValue, ValueType offValue) {
         this(1, ports, forwardValue, backwardValue, offValue);
@@ -37,6 +39,8 @@ public class SciSolenoid <ValueType extends Enum<ValueType>> extends DoubleSolen
             this.valueDoubleMap.put(valueType, SOLENOID_MAPPING.getForward(value));
         }
         this.valueSD = Optional.empty();
+        this.valueTypeClass = forwardValue.getClass();
+        this.printValues = false;
     }
     
     private Value toDoubleSolenoidValue(ValueType e) {
@@ -59,7 +63,9 @@ public class SciSolenoid <ValueType extends Enum<ValueType>> extends DoubleSolen
         super.set(Utils.oppositeDoubleSolenoidValue(super.get()));
     }
 
-    
+    public void printValues()    {this.printValues = true;}
+    public void dontPrintValues(){this.printValues = false;}
+
     /**
      * get() is deprecated for SciSolenoids. Use getValue() instead.
      * @deprecated
@@ -75,5 +81,8 @@ public class SciSolenoid <ValueType extends Enum<ValueType>> extends DoubleSolen
 
     public void updateRobotState(){
         Robot.optionalMappedSet(this.valueDoubleMap, this.valueSD, getValue());
+        if (this.printValues){
+            System.out.println("SciSolenoid<" + this.valueTypeClass + "> value: " + getValue());
+        }
     }
 }
