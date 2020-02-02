@@ -31,6 +31,9 @@ public class SciSpark extends CANSparkMax {
         setWheelAngle(0);
         setGearRatio(gearRatio);
         this.commandNumber = 0;
+        this.wheelAngleSD = Optional.empty();
+        this.valueSD      = Optional.empty();
+        this.currentSD    = Optional.empty();
     }
 
     public boolean isCurrentCommandNumber(int n){ return n == this.commandNumber; } 
@@ -58,27 +61,35 @@ public class SciSpark extends CANSparkMax {
     }
 
     public void instantSet(double speed, double maxJerk) {
-        super.set(Utils.limitChange(super.get(), speed, maxJerk));
+        double limitedInput = Utils.limitChange(super.get(), speed, maxJerk);
+        super.set(limitedInput);
+        if (limitedInput != super.get()) {
+            String warning = "WARNING: Spark " + super.getDeviceId() + " was set to " + limitedInput
+                    + " but still has a value of " + super.get();
+            System.out.println(warning);
+            System.out.println(warning);
+            System.out.println(warning);
+            System.out.println(warning);
+            System.out.println("Debugging info:");
+            if (this.wheelAngleSD.isPresent()) {
+                double positionChange = StateInfo.getFullDifference(this.wheelAngleSD.get());
+                System.out.println("Position Change: " + positionChange);
+                System.out.println("Is significant?: " + (Math.abs(positionChange) > Utils.EPSILON));
+                System.out.println("All Positions: " + Robot.stateHistory.getFullSDData(this.wheelAngleSD.get()));
+            }
+            if (this.currentSD.isPresent()) {
+                System.out.println("Current: " + Robot.get(this.currentSD.get()));
+            }
+            if (this.valueSD.isPresent()) {
+                System.out.println("All Values: " + Robot.stateHistory.getFullSDData(this.valueSD.get()));
+            }
+        }
     }
 
     public void set(double speed, double maxJerk) {
         this.goalSpeed = speed;
         this.currentMaxJerk = maxJerk;
         this.commandNumber++;
-        double limitedInput = Utils.limitChange(super.get(), speed, maxJerk);
-        if (limitedInput != super.get()) {
-            String warning = "WARNING: Spark " + super.getDeviceId() + " was set to " + limitedInput + " but still has a value of " + super.get();
-            System.out.println(warning);
-            System.out.println(warning);
-            System.out.println(warning);
-            System.out.println(warning);
-            System.out.println("Debugging info:");
-            if (wheelAngleSD.isPresent()) {
-                double positionChange = StateInfo.getFullDifference(this.wheelAngleSD.get());
-                System.out.println("Position Change: " + positionChange);
-                System.out.println("Is significant?: " + (Math.abs(positionChange) > Utils.EPSILON));
-            }
-        }
         (new SciSparkSpeedCommand(this, this.commandNumber)).start();
     }
 

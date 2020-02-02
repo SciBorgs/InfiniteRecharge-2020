@@ -2,6 +2,7 @@ package frc.robot.robotState;
 
 import java.util.List;
 import frc.robot.dataTypes.Deque;
+import frc.robot.robotState.RobotState.SD;
 
 public class RobotStateHistory{
 
@@ -39,6 +40,14 @@ public class RobotStateHistory{
     public void setCurrentState(RobotState state){this.robotStates.set(0, state);}
     public void addState       (RobotState state){this.robotStates.add(state);}
     public void dropFirstState()                 {this.robotStates.remove(0);}
+
+    public Deque<Double> getFullSDData(SD sd) {
+        Deque<Double> reversedData = new Deque<>(this.robotStates.maxLength);
+        for(RobotState robotState : this.robotStates){
+            reversedData.add(robotState.get(sd));
+        }
+        return reversedData.reversed();
+    }
     
     public RobotStateHistory copy(){
         return new RobotStateHistory((Deque<RobotState>) this.robotStates.clone());
