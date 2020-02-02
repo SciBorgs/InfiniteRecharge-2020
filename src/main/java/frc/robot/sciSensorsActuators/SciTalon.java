@@ -19,6 +19,7 @@ public class SciTalon extends TalonSRX {
     public double currentMaxJerk;
     public double gearRatio;
     public Optional<SD> valueSD, currentSD;
+    public boolean printValues;
 
     public SciTalon(int port) {
         this(port, 1);
@@ -31,6 +32,7 @@ public class SciTalon extends TalonSRX {
         this.commandNumber = 0;
         this.valueSD   = Optional.empty();
         this.currentSD = Optional.empty();
+        this.printValues = false;
     }
 
 
@@ -65,11 +67,17 @@ public class SciTalon extends TalonSRX {
     }
     public void set(double speed) {set(speed, DEFAULT_MAX_JERK);}
 
+    public void printValues()    {this.printValues = true;}
+    public void dontPrintValues(){this.printValues = false;}
+
     public void updateRobotState(){
         Robot.optionalSet(this.valueSD,   super.getMotorOutputPercent());
         Robot.optionalSet(this.currentSD, super.getSupplyCurrent());
+        if(this.printValues){
+            System.out.println("Talon " + super.getDeviceID() + " value: " + super.getMotorOutputPercent());
+        }
     }
 
-    public void assignValueSD   (SD valueSD)   {this.valueSD   = Optional.of(valueSD);}
-    public void assignCurrentSD (SD currentSD) {this.currentSD = Optional.of(currentSD);}
+    public void assignValueSD  (SD valueSD)   {this.valueSD   = Optional.of(valueSD);}
+    public void assignCurrentSD(SD currentSD) {this.currentSD = Optional.of(currentSD);}
 }

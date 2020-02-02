@@ -18,6 +18,7 @@ public class SciSpark extends CANSparkMax {
     private double gearRatio;
     public Optional<SD> wheelAngleSD, valueSD, currentSD;
     private int commandNumber;
+    private boolean printValues;
 
 
     public SciSpark(int port) {
@@ -34,6 +35,7 @@ public class SciSpark extends CANSparkMax {
         this.wheelAngleSD = Optional.empty();
         this.valueSD      = Optional.empty();
         this.currentSD    = Optional.empty();
+        this.printValues = false;
     }
 
     public double getGearRatio() {return this.gearRatio;}
@@ -92,10 +94,16 @@ public class SciSpark extends CANSparkMax {
     }
     public void set(double speed) {set(speed, DEFAULT_MAX_JERK);}
 
+    public void printValues()    {this.printValues = true;}
+    public void dontPrintValues(){this.printValues = false;}
+
     public void updateRobotState(){
         Robot.optionalSet(this.wheelAngleSD, getWheelAngle());
         Robot.optionalSet(this.valueSD,      super.get());
         Robot.optionalSet(this.currentSD,    super.getOutputCurrent());
+        if(this.printValues){
+            System.out.println("Spark " + super.getDeviceId() + " value: " + super.get());
+        }
     }
 
     public void assignWheelAngleSD(SD wheelAngleSD) {this.wheelAngleSD = Optional.of(wheelAngleSD);}
