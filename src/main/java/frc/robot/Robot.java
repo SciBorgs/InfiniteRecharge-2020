@@ -18,6 +18,7 @@ import frc.robot.logging.Logger.DefaultValue;
 import frc.robot.robotState.*;
 import frc.robot.robotState.RobotState.SD;
 import frc.robot.sciSensorsActuators.SciSpark;
+import frc.robot.interfaces.*;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Scheduler;
@@ -36,6 +37,8 @@ public class Robot extends TimedRobot {
             stateHistory.addState(new RobotState());
         }
     }
+
+    public static ArrayList<AutoUpdatable> autoUpdatable  = new ArrayList<>();
     public static DriveSubsystem      driveSubsystem      = new DriveSubsystem();
 
 
@@ -116,7 +119,9 @@ public class Robot extends TimedRobot {
     }
     
     private void allUpdateRobotStates() {
-        driveSubsystem.updateRobotState();
+        for (AutoUpdatable i : autoUpdatable) {
+            i.updateRobotState();
+        }
         pneumaticsSubsystem.updateRobotState();
         pigeonSubsystem.updateRobotState();
     }

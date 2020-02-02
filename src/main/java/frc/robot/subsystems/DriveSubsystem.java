@@ -76,11 +76,6 @@ public class DriveSubsystem extends Subsystem {
 
 	public void periodicLog(){
     }
-    
-    public void updateRobotState(){
-        this.l.updateRobotState();
-        this.r.updateRobotState();
-    }
 
     // If something is assiting, we don't want to drive using setSpeed
     public void assistedDriveMode(){this.assisted = true;}
