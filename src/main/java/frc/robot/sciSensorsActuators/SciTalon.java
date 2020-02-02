@@ -6,13 +6,13 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import frc.robot.Utils;
 import frc.robot.commands.generalCommands.SciTalonSpeedCommand;
 import frc.robot.helpers.DelayedPrinter;
-import frc.robot.interfaces.AutoUpdatable;
+import frc.robot.interfaces.RobotStateUpdater;
 import frc.robot.Robot;
 import frc.robot.robotState.RobotState.SD;
 
 import java.util.Optional;
 
-public class SciTalon extends TalonSRX implements AutoUpdatable {
+public class SciTalon extends TalonSRX implements RobotStateUpdater {
 
     public static final double DEFAULT_MAX_JERK = 0.1;
     private int commandNumber;
@@ -34,7 +34,7 @@ public class SciTalon extends TalonSRX implements AutoUpdatable {
         this.valueSD   = Optional.empty();
         this.currentSD = Optional.empty();
         this.printValues = false;
-        Robot.autoUpdatable.add(this);
+        Robot.robotStateUpdaters.add(this);
     }
 
 

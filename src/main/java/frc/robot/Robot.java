@@ -31,6 +31,7 @@ public class Robot extends TimedRobot {
     public static Logger logger = new Logger();
     private static List<Pair<SD, DefaultValue>> dataToLog = new ArrayList<>();
 
+    public static ArrayList<RobotStateUpdater> robotStateUpdaters  = new ArrayList<>();
     public static RobotStateHistory stateHistory = new RobotStateHistory();
     static {
         if (stateHistory.numberOfStates() == 0){
@@ -38,7 +39,6 @@ public class Robot extends TimedRobot {
         }
     }
 
-    public static ArrayList<AutoUpdatable> autoUpdatable  = new ArrayList<>();
     public static DriveSubsystem      driveSubsystem      = new DriveSubsystem();
 
 
@@ -119,7 +119,7 @@ public class Robot extends TimedRobot {
     }
     
     private void allUpdateRobotStates() {
-        for (AutoUpdatable i : autoUpdatable) {
+        for (RobotStateUpdater i : robotStateUpdaters) {
             i.updateRobotState();
         }
         pneumaticsSubsystem.updateRobotState();

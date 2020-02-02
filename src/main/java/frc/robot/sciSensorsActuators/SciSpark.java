@@ -7,11 +7,11 @@ import java.util.Optional;
 import frc.robot.Robot;
 import frc.robot.Utils;
 import frc.robot.commands.generalCommands.SciSparkSpeedCommand;
-import frc.robot.interfaces.AutoUpdatable;
+import frc.robot.interfaces.RobotStateUpdater;
 import frc.robot.robotState.StateInfo;
 import frc.robot.robotState.RobotState.SD;
 
-public class SciSpark extends CANSparkMax implements AutoUpdatable {
+public class SciSpark extends CANSparkMax implements RobotStateUpdater {
 
     public double goalSpeed;
     public double currentMaxJerk;
@@ -37,7 +37,7 @@ public class SciSpark extends CANSparkMax implements AutoUpdatable {
         this.valueSD      = Optional.empty();
         this.currentSD    = Optional.empty();
         this.printValues = false;
-        Robot.autoUpdatable.add(this);
+        Robot.robotStateUpdaters.add(this);
     }
 
     public double getGearRatio() {return this.gearRatio;}
