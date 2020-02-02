@@ -4,12 +4,13 @@ import edu.wpi.first.wpilibj.DoubleSolenoid;
 import frc.robot.Robot;
 import frc.robot.Utils;
 import frc.robot.dataTypes.BiHashMap;
+import frc.robot.robotState.RobotStateUpdater;
 import frc.robot.robotState.RobotState.SD;
 
 import java.util.Optional;
 
 
-public class SciSolenoid <ValueType extends Enum<ValueType>> extends DoubleSolenoid {
+public class SciSolenoid <ValueType extends Enum<ValueType>> extends DoubleSolenoid implements RobotStateUpdater {
 
     private Class valueTypeClass;
     public final static BiHashMap<Value, Double> SOLENOID_MAPPING;
@@ -41,6 +42,7 @@ public class SciSolenoid <ValueType extends Enum<ValueType>> extends DoubleSolen
         this.valueSD = Optional.empty();
         this.valueTypeClass = forwardValue.getClass();
         this.printValues = false;
+        Robot.addRobotStateUpdater(this);
     }
     
     private Value toDoubleSolenoidValue(ValueType e) {

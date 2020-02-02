@@ -4,15 +4,17 @@ import java.util.Optional;
 
 import edu.wpi.first.wpilibj.Servo;
 import frc.robot.Robot;
+import frc.robot.robotState.RobotStateUpdater;
 import frc.robot.robotState.RobotState.SD;
 
-public class SciServo extends Servo {
+public class SciServo extends Servo implements RobotStateUpdater {
     private static final double ANGLE_RANGE = Math.PI;
     private double minAngle = 0;
     public Optional<SD> angleSD, rawSD;
 
     public SciServo(int channel) {
         super(channel);
+        Robot.addRobotStateUpdater(this);
     }
 
     public double getMinAngle()    { return this.minAngle; }

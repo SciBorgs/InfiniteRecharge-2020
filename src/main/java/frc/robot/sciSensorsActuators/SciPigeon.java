@@ -6,13 +6,15 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.sensors.PigeonIMU;
 
 import frc.robot.Robot;
+import frc.robot.robotState.RobotStateUpdater;
 import frc.robot.robotState.RobotState.SD;
 
-public class SciPigeon extends PigeonIMU {
+public class SciPigeon extends PigeonIMU implements RobotStateUpdater {
     public Optional<SD> angleSD, pitchSD, roleSD;
 
     public SciPigeon(TalonSRX talon) {
         super(talon);
+        Robot.addRobotStateUpdater(this);
     }
 
     public PigeonIMU getPigeonIMU() {return this;}
