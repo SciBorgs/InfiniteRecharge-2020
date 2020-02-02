@@ -8,7 +8,7 @@ import frc.robot.robotState.RobotState.SD;
 
 public class SciServo extends Servo {
     private static final double ANGLE_RANGE = Math.PI;
-    private double minAngle;
+    private double minAngle = 0;
     public Optional<SD> angleSD, rawSD;
 
     public SciServo(int channel) {
