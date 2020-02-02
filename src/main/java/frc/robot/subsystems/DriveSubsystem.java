@@ -69,6 +69,7 @@ public class DriveSubsystem extends Subsystem {
         this.tankAnglePID      = new PID(TANK_ANGLE_P,       TANK_ANGLE_I,       TANK_ANGLE_D);
         this.tankSpeedRightPID = new PID(TANK_SPEED_LEFT_P,  TANK_SPEED_LEFT_I,  TANK_SPEED_LEFT_D);
         this.tankSpeedLeftPID  = new PID(TANK_SPEED_RIGHT_P, TANK_SPEED_RIGHT_I, TANK_SPEED_RIGHT_D);
+        
         Robot.logger.logFinalPIDConstants(FILENAME, "tank angle PID", this.tankAnglePID);
         Robot.logger.logFinalField       (FILENAME, "input deadzone", INPUT_DEADZONE);
     }
@@ -114,8 +115,6 @@ public class DriveSubsystem extends Subsystem {
 	public void setTank(double leftSpeed, double rightSpeed) {
         this.l.set(leftSpeed  * this.driveMultiplier);
         this.r.set(rightSpeed * this.driveMultiplier);
-        //DelayedPrinter.print("right speed" + this.r.get());
-        // DelayedPrinter.print("rightspeed: "+rightSpeed);
     }
 
     public void setSpeedTank(double leftGoalSpeed, double rightGoalSpeed){
@@ -162,7 +161,7 @@ public class DriveSubsystem extends Subsystem {
 
     public void setSpeedTankForwardTurningMagnitude(double forward, double turnMagnitude) {
         // Note: this controls dtheta/dt rather than dtheta/dx
-        setSpeedTank(forward - turnMagnitude, forward + turnMagnitude);
+        setTank(forward - turnMagnitude, forward + turnMagnitude);
     }
 
     public double limitJerk(double oldSpeed, double newSpeed, double maxJerk){

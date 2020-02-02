@@ -36,6 +36,8 @@ public class RobotState {
         BOOLEAN_MAPPING = new BiHashMap<>();
         BOOLEAN_MAPPING.put(true,  1.0);
         BOOLEAN_MAPPING.put(false, 0.0);
+        RobotState.SD sd = SD.X;
+
     }
 
     public RobotState() {
