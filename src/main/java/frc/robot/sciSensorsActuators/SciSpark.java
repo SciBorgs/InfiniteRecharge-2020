@@ -31,13 +31,13 @@ public class SciSpark extends CANSparkMax implements RobotStateUpdater {
         super(port, MotorType.kBrushless);
         this.goalSpeed = 0;
         this.currentMaxJerk = DEFAULT_MAX_JERK;
-        setWheelAngle(0);
-        setGearRatio(gearRatio);
         this.commandNumber = 0;
         this.wheelAngleSD = Optional.empty();
         this.valueSD      = Optional.empty();
         this.currentSD    = Optional.empty();
         this.printValues = false;
+        setWheelAngle(0);
+        setGearRatio(gearRatio);
         Robot.addRobotStateUpdater(this);
     }
 
