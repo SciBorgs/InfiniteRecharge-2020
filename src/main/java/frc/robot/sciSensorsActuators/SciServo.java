@@ -13,7 +13,6 @@ public class SciServo extends Servo {
 
     public SciServo(int channel) {
         super(channel);
-        this.minAngle = 0;
     }
 
     public double getMinAngle()    { return this.minAngle; }
