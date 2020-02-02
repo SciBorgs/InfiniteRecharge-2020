@@ -66,11 +66,11 @@ public class DriveSubsystem extends Subsystem {
         Robot.addSDToLog(SD.LeftSparkVal);
         Robot.addSDToLog(SD.RightSparkVal);
 
-        this.tankAnglePID = new PID(TANK_ANGLE_P, TANK_ANGLE_I, TANK_ANGLE_D);
-        this.tankSpeedRightPID = new PID(TANK_SPEED_LEFT_P, TANK_SPEED_LEFT_I, TANK_SPEED_LEFT_D);
-        this.tankSpeedLeftPID = new PID(TANK_SPEED_RIGHT_P, TANK_SPEED_RIGHT_I, TANK_SPEED_RIGHT_D);
+        this.tankAnglePID      = new PID(TANK_ANGLE_P,       TANK_ANGLE_I,       TANK_ANGLE_D);
+        this.tankSpeedRightPID = new PID(TANK_SPEED_LEFT_P,  TANK_SPEED_LEFT_I,  TANK_SPEED_LEFT_D);
+        this.tankSpeedLeftPID  = new PID(TANK_SPEED_RIGHT_P, TANK_SPEED_RIGHT_I, TANK_SPEED_RIGHT_D);
         Robot.logger.logFinalPIDConstants(FILENAME, "tank angle PID", this.tankAnglePID);
-        Robot.logger.logFinalField(FILENAME, "input deadzone", INPUT_DEADZONE);
+        Robot.logger.logFinalField       (FILENAME, "input deadzone", INPUT_DEADZONE);
     }
 
 	public void periodicLog(){
