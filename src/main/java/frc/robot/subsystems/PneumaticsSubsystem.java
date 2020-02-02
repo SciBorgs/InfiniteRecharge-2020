@@ -37,7 +37,7 @@ public class PneumaticsSubsystem extends Subsystem implements RobotStateUpdater 
   }
 
   public double getPressure() {
-    // QUESTION: What's up with 250 and 15? Definitely at minimum bordering on magic numbers
+    // QUESTION: What's up with 250 and 15? Magic fucking numbers, shmdfh
     return 250.0 * getRawVoltage() / NORMALIZED_SUPPLY_VOLTAGE - 15.0;
   }
 
