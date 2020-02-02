@@ -2,8 +2,7 @@ package frc.robot.robotState;
 
 import frc.robot.Robot;
 import frc.robot.robotState.RobotState.SD;
-
-import com.revrobotics.CANSparkMax;
+import frc.robot.sciSensorsActuators.SciSpark;
 
 public class StateInfo{
 
@@ -17,6 +16,9 @@ public class StateInfo{
     }
     public static double getDifference(RobotStateHistory stateHistory, SD sd, int ticksBack){
         return getDifference(stateHistory, sd, 0, ticksBack);
+    }
+    public static double getFullDifference(RobotStateHistory stateHistory, SD sd){
+        return getDifference(stateHistory, sd, stateHistory.numberOfStates() - 1);
     }
     public static double getRateOfChange(RobotStateHistory stateHistory, SD sd, int ticksBack1, int ticksBack2) {
         return (stateHistory.statesAgo(ticksBack1).get(sd) - stateHistory.statesAgo(ticksBack2).get(sd)) / 
@@ -41,8 +43,12 @@ public class StateInfo{
     public static double getSpeed(RobotStateHistory stateHistory){
         return Math.sqrt(getSpeedSquared(stateHistory));
     }
-    public static double getWheelSpeed(RobotStateHistory stateHistory, CANSparkMax wheel){
-        return getRateOfChange(stateHistory, Robot.driveSubsystem.sparkToWheelAngleSD.get(wheel), WHEEL_SPEED_PRECISION);
+    public static double getWheelSpeed(RobotStateHistory stateHistory, SciSpark spark){
+        if (spark.wheelAngleSD.isPresent()) {
+            return getRateOfChange(stateHistory, spark.wheelAngleSD.get(), WHEEL_SPEED_PRECISION);
+        } else {
+            throw new RuntimeException("GetWheelSpeed given spark with empty wheelAngleSD");
+        }
     }
     public static double getAvgWheelInput(RobotState state){
         return (state.get(SD.LeftSparkVal) + state.get(SD.RightSparkVal)) / 2;
@@ -54,6 +60,9 @@ public class StateInfo{
     public static double getDifference(SD sd, int ticksBack) {
         return getDifference(Robot.stateHistory, sd, ticksBack);
     }
+    public static double getFullDifference(SD sd){
+        return getFullDifference(Robot.stateHistory, sd);
+    }
 
     public static double getAngularVelocity() {return getAngularVelocity(Robot.stateHistory);}
     public static double getXVelocity()       {return getXVelocity(      Robot.stateHistory);}
@@ -63,6 +72,6 @@ public class StateInfo{
 
     public static double getAvgWheelInput() {return getAvgWheelInput(Robot.getState());}
 
-    public static double getWheelSpeed(CANSparkMax wheel){return getWheelSpeed(Robot.stateHistory, wheel);}
+    public static double getWheelSpeed(SciSpark wheel){return getWheelSpeed(Robot.stateHistory, wheel);}
 
 }

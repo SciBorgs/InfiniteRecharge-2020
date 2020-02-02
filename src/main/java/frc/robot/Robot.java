@@ -1,9 +1,9 @@
 package frc.robot;
 
-import com.revrobotics.CANSparkMax;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import javax.swing.text.Position;
 
@@ -17,6 +17,7 @@ import frc.robot.shapes.*;
 import frc.robot.logging.Logger.DefaultValue;
 import frc.robot.robotState.*;
 import frc.robot.robotState.RobotState.SD;
+import frc.robot.sciSensorsActuators.SciSpark;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Scheduler;
@@ -29,15 +30,15 @@ public class Robot extends TimedRobot {
     public static Logger logger = new Logger();
     private static List<Pair<SD, DefaultValue>> dataToLog = new ArrayList<>();
 
+    public static ArrayList<RobotStateUpdater> robotStateUpdaters  = new ArrayList<>();
     public static RobotStateHistory stateHistory = new RobotStateHistory();
     static {
         if (stateHistory.numberOfStates() == 0){
             stateHistory.addState(new RobotState());
         }
     }
+
     public static DriveSubsystem      driveSubsystem      = new DriveSubsystem();
-
-
     public static PigeonSubsystem     pigeonSubsystem     = new PigeonSubsystem();
     public static LimelightSubsystem  limelightSubsystem  = new LimelightSubsystem();
     public static PneumaticsSubsystem pneumaticsSubsystem = new PneumaticsSubsystem();
@@ -58,6 +59,13 @@ public class Robot extends TimedRobot {
 
     public static double get(SD sd)            {return getState().get(sd);}
     public static void   set(SD sd, double val){       getState().set(sd, val);}
+    public static void optionalSet(Optional<SD> optionalSD , double val){       
+        getState().optionalSet(optionalSD, val);
+    }
+    public static<K> void optionalMappedSet(BiHashMap<K, Double> biMap, Optional<SD> optionalSD, K val){       
+        getState().optionalMappedSet(biMap, optionalSD, val);
+    }
+
 
     public static double getDifference(SD sd, int ticksBack1, int ticksBack2) {
         return StateInfo.getDifference(Robot.stateHistory, sd, ticksBack1, ticksBack2);
@@ -74,7 +82,7 @@ public class Robot extends TimedRobot {
 
     public static double getAvgWheelInput() {return StateInfo.getAvgWheelInput(getState());}
 
-    public static double getWheelSpeed(CANSparkMax wheel){return StateInfo.getWheelSpeed(Robot.stateHistory, wheel);}
+    public static double getWheelSpeed(SciSpark wheel){return StateInfo.getWheelSpeed(Robot.stateHistory, wheel);}
 
     // testing
     public static Point  getPos() {return new Point(get(SD.X),get(SD.Y));}
@@ -107,10 +115,13 @@ public class Robot extends TimedRobot {
         logState();
     }
     
+    public static void addRobotStateUpdater(RobotStateUpdater robotStateUpdater){
+        robotStateUpdaters.add(robotStateUpdater);
+    }
     private void allUpdateRobotStates() {
-        driveSubsystem.updateRobotState();
-        pneumaticsSubsystem.updateRobotState();
-        pigeonSubsystem.updateRobotState();
+        for (RobotStateUpdater i : robotStateUpdaters) {
+            i.updateRobotState();
+        }
     }
 
     private void allModels(){

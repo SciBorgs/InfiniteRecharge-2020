@@ -2,6 +2,7 @@ package frc.robot.robotState;
 
 import java.util.ArrayList;
 import java.util.Hashtable;
+import java.util.Optional;
 import java.util.Set;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
@@ -16,11 +17,10 @@ public class RobotState {
         X, Y, PigeonAngle, Angle,
 
         // Chassis motor values
-        LeftWheelAngle, RightWheelAngle, L1WheelAngle, R1WheelAngle, L2WheelAngle, R2WheelAngle,
-        LeftSparkVal, RightSparkVal, L1SparkVal, R1SparkVal, L2SparkVal, R2SparkVal,
-        LeftSparkVoltage, RightSparkVoltage, L1SparkVoltage, R1SparkVoltage, L2SparkVoltage, R2SparkVoltage,
-        LeftSparkCurrent, RightSparkCurrent, L1SparkCurrent, R1SparkCurrent, L2SparkCurrent, R2SparkCurrent,
-
+        LeftWheelAngle, RightWheelAngle,
+        LeftSparkVal, RightSparkVal,
+        LeftCurrentVal, RightCurrentVal,
+        
         // Solenoids
         GearShiftSolenoid,
 
@@ -30,15 +30,9 @@ public class RobotState {
     
     private Hashtable<SD, Double> data;
 
-    public final static BiHashMap<Value,   Double> SOLENOID_MAPPING;
     public final static BiHashMap<Boolean, Double> BOOLEAN_MAPPING;
 
     static {
-        SOLENOID_MAPPING = new BiHashMap<>();
-        SOLENOID_MAPPING.put(Value.kForward,  1.0);
-        SOLENOID_MAPPING.put(Value.kOff,      0.0);
-        SOLENOID_MAPPING.put(Value.kReverse, -1.0);
-
         BOOLEAN_MAPPING = new BiHashMap<>();
         BOOLEAN_MAPPING.put(true,  1.0);
         BOOLEAN_MAPPING.put(false, 0.0);
@@ -59,6 +53,13 @@ public class RobotState {
     public void   set(SD sd, double val) {this.data.put(sd, val);}
     public void   remove(SD sd)          {this.data.remove(sd);}
     public Set<SD> getKeys(){return data.keySet();}
+
+    public void optionalSet(Optional<SD> optionalSD, double v){
+        if (optionalSD.isPresent()){set(optionalSD.get(), v);}
+    }
+    public<K> void optionalMappedSet(BiHashMap<K, Double> biMap, Optional<SD> optionalSD, K v){
+        if (optionalSD.isPresent()){setMapped(biMap, optionalSD.get(), v);}
+    }
 
     public<K> void setMapped(BiHashMap<K, Double> biMap, SD sd, K key) {
         this.data.put(sd, biMap.getForward(key));
