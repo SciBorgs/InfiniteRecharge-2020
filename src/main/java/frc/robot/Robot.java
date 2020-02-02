@@ -1,6 +1,5 @@
 package frc.robot;
 
-import com.revrobotics.CANSparkMax;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -15,6 +14,7 @@ import frc.robot.shapes.*;
 import frc.robot.logging.Logger.DefaultValue;
 import frc.robot.robotState.*;
 import frc.robot.robotState.RobotState.SD;
+import frc.robot.sciSensorsActuators.SciSpark;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Scheduler;
@@ -71,7 +71,7 @@ public class Robot extends TimedRobot {
 
     public static double getAvgWheelInput() {return StateInfo.getAvgWheelInput(getState());}
 
-    public static double getWheelSpeed(CANSparkMax wheel){return StateInfo.getWheelSpeed(Robot.stateHistory, wheel);}
+    public static double getWheelSpeed(SciSpark wheel){return StateInfo.getWheelSpeed(Robot.stateHistory, wheel);}
 
     // testing
     public static Point  getPos() {return new Point(get(SD.X),get(SD.Y));}

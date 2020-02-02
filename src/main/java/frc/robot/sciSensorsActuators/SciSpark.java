@@ -114,4 +114,9 @@ public class SciSpark extends CANSparkMax {
     public void assignWheelAngleSD(SD wheelAngleSD) {this.wheelAngleSD = Optional.of(wheelAngleSD);}
     public void assignValueSD     (SD valueSD)      {this.valueSD      = Optional.of(valueSD);}
     public void assignCurrentSD   (SD currentSD)    {this.currentSD    = Optional.of(currentSD);}
+    public void assignAll(SD wheelAngleSD, SD valueSD, SD currentSD){
+        assignWheelAngleSD(wheelAngleSD);
+        assignValueSD(valueSD);
+        assignCurrentSD(currentSD);
+    }
 }

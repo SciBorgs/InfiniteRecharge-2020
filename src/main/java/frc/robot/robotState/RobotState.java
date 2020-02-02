@@ -17,8 +17,9 @@ public class RobotState {
         X, Y, PigeonAngle, Angle,
 
         // Chassis motor values
-        LeftWheelAngle, RightWheelAngle, L1WheelAngle, R1WheelAngle, L2WheelAngle, R2WheelAngle,
-        LeftSparkVal, RightSparkVal, L1SparkVal, R1SparkVal, L2SparkVal, R2SparkVal,
+        LeftWheelAngle, RightWheelAngle,
+        LeftSparkVal, RightSparkVal,
+        LeftCurrentVal, RightCurrentVal,
         
         // Solenoids
         GearShiftSolenoid,
@@ -29,7 +30,6 @@ public class RobotState {
     
     private Hashtable<SD, Double> data;
 
-    public final static BiHashMap<Value,   Double> SOLENOID_MAPPING;
     public final static BiHashMap<Boolean, Double> BOOLEAN_MAPPING;
 
     static {

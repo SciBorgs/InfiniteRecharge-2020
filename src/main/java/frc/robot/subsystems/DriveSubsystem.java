@@ -12,8 +12,6 @@ import frc.robot.logging.Logger.DefaultValue;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.command.Subsystem;
 
-import java.util.Hashtable;
-
 public class DriveSubsystem extends Subsystem {
     // Define tested error values here
     double TANK_ANGLE_P = .075, TANK_ANGLE_D = 0.0, TANK_ANGLE_I = 0;
@@ -36,13 +34,11 @@ public class DriveSubsystem extends Subsystem {
     private PID tankSpeedRightPID;
     public boolean assisted = false;
     public double driveMultiplier = 1;
-    public Hashtable<SciSpark, SD> sparkToValueSD;
 
     public PID getTankAnglePID()   {return this.tankAnglePID;}
     public double getMaxOmegaGoal(){return MAX_OMEGA_GOAL;}
 
     public DriveSubsystem() {
-        this.sparkToValueSD = new Hashtable<>();
 
 		this.l  = new SciSpark(PortMap.LEFT_FRONT_SPARK,   GEAR_RATIO);
 		this.l1 = new SciSpark(PortMap.LEFT_MIDDLE_SPARK,  GEAR_RATIO);
@@ -62,25 +58,13 @@ public class DriveSubsystem extends Subsystem {
         this.r1.follow(this.r);
         this.r2.follow(this.r);
 
-        this.r.assignWheelAngleSD(SD.RightWheelAngle);
-        this.r1.assignWheelAngleSD(SD.R1WheelAngle);
-        this.r2.assignWheelAngleSD(SD.R2WheelAngle);
-
-        this.l.assignWheelAngleSD(SD.LeftWheelAngle);
-        this.l.assignWheelAngleSD(SD.L1WheelAngle);
-        this.l.assignWheelAngleSD(SD.L2WheelAngle);
-
-        
-        // Mappings for logging
-        this.sparkToValueSD.put(this.l, SD.LeftSparkVal);
-        this.sparkToValueSD.put(this.r, SD.RightSparkVal);
-        
-        this.sparkToValueSD.put(this.l1, SD.L1SparkVal);
-        this.sparkToValueSD.put(this.r1, SD.R1SparkVal);
-        this.sparkToValueSD.put(this.l2, SD.L2SparkVal);
-        this.sparkToValueSD.put(this.r2, SD.R2SparkVal);
+        this.r.assignAll(SD.RightWheelAngle, SD.RightSparkVal, SD.RightCurrentVal);
+        this.l.assignAll(SD.LeftWheelAngle,  SD.LeftSparkVal,  SD.LeftCurrentVal);
 
         Robot.addSDToLog(SD.LeftWheelAngle);
+        Robot.addSDToLog(SD.RightWheelAngle);
+        Robot.addSDToLog(SD.LeftSparkVal);
+        Robot.addSDToLog(SD.RightSparkVal);
 
         this.tankAnglePID = new PID(TANK_ANGLE_P, TANK_ANGLE_I, TANK_ANGLE_D);
         this.tankSpeedRightPID = new PID(TANK_SPEED_LEFT_P, TANK_SPEED_LEFT_I, TANK_SPEED_LEFT_D);
@@ -88,23 +72,13 @@ public class DriveSubsystem extends Subsystem {
         Robot.logger.logFinalPIDConstants(FILENAME, "tank angle PID", this.tankAnglePID);
         Robot.logger.logFinalField(FILENAME, "input deadzone", INPUT_DEADZONE);
     }
-    
-    public void setSDMappings(SciSpark spark, SD wheelAngleSD, SD valueSD, SD volatageSD, SD currentSd){
-        this.sparkToValueSD.put(spark, valueSD);
-    }
-    
-    public void updateSparkState(SciSpark spark){
-        spark.updateRobotState();
-        Robot.set(this.sparkToValueSD.get(spark),   spark.get());
-    }
 
-	public SciSpark[] getSparks() {
-        return new SciSpark[]{this.l, this.l1, this.l2, this.r, this.r1, this.r2};
-    }
 	public void periodicLog(){
     }
+    
     public void updateRobotState(){
-        for(SciSpark spark : getSparks()){updateSparkState(spark);}
+        this.l.updateRobotState();
+        this.r.updateRobotState();
     }
 
     public double deadzone(double output){
