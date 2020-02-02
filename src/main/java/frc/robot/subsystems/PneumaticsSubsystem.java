@@ -5,10 +5,11 @@ import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.Compressor;
 import frc.robot.PortMap;
 import frc.robot.Robot;
+import frc.robot.robotState.RobotStateUpdater;
 import frc.robot.robotState.RobotState.SD;
 import frc.robot.logging.Logger.DefaultValue;
 
-public class PneumaticsSubsystem extends Subsystem {
+public class PneumaticsSubsystem extends Subsystem implements RobotStateUpdater {
   
   private AnalogInput pressureSensor;
   private final double NORMALIZED_SUPPLY_VOLTAGE = 5.0;
@@ -24,11 +25,13 @@ public class PneumaticsSubsystem extends Subsystem {
     //Robot.set(SD.PressureSensorVoltage, 0.0);
     this.compressor = new Compressor();
     //Robot.addSDToLog(SD.PressureSensorVoltage);
+    Robot.addRobotStateUpdater(this);
   }
     
 	public void periodicLog(){
     Robot.logger.addData(FILENAME, "pressure", getPressure(), DefaultValue.Previous);
   }
+  @Override
   public void updateRobotState(){
     Robot.getState().set(SD.PressureSensorVoltage, pressureSensor.getVoltage());
   }

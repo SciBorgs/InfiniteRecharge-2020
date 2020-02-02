@@ -34,7 +34,7 @@ public class SciTalon extends TalonSRX implements RobotStateUpdater {
         this.valueSD   = Optional.empty();
         this.currentSD = Optional.empty();
         this.printValues = false;
-        Robot.robotStateUpdaters.add(this);
+        Robot.addRobotStateUpdater(this);
     }
 
 

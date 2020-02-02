@@ -37,7 +37,7 @@ public class SciSpark extends CANSparkMax implements RobotStateUpdater {
         this.valueSD      = Optional.empty();
         this.currentSD    = Optional.empty();
         this.printValues = false;
-        Robot.robotStateUpdaters.add(this);
+        Robot.addRobotStateUpdater(this);
     }
 
     public double getGearRatio() {return this.gearRatio;}

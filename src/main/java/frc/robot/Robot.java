@@ -39,8 +39,6 @@ public class Robot extends TimedRobot {
     }
 
     public static DriveSubsystem      driveSubsystem      = new DriveSubsystem();
-
-
     public static PigeonSubsystem     pigeonSubsystem     = new PigeonSubsystem();
     public static LimelightSubsystem  limelightSubsystem  = new LimelightSubsystem();
     public static PneumaticsSubsystem pneumaticsSubsystem = new PneumaticsSubsystem();
@@ -117,12 +115,13 @@ public class Robot extends TimedRobot {
         logState();
     }
     
+    public static void addRobotStateUpdater(RobotStateUpdater robotStateUpdater){
+        robotStateUpdaters.add(robotStateUpdater);
+    }
     private void allUpdateRobotStates() {
         for (RobotStateUpdater i : robotStateUpdaters) {
             i.updateRobotState();
         }
-        pneumaticsSubsystem.updateRobotState();
-        pigeonSubsystem.updateRobotState();
     }
 
     private void allModels(){
