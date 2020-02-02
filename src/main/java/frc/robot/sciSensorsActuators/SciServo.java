@@ -1,10 +1,15 @@
 package frc.robot.sciSensorsActuators;
 
+import java.util.Optional;
+
 import edu.wpi.first.wpilibj.Servo;
+import frc.robot.Robot;
+import frc.robot.robotState.RobotState.SD;
 
 public class SciServo extends Servo {
     private static final double ANGLE_RANGE = Math.PI;
     private double minAngle;
+    public Optional<SD> angleSD, rawSD;
 
     public SciServo(int channel) {
         super(channel);
@@ -28,4 +33,12 @@ public class SciServo extends Servo {
     public void setAngle(double angle) {
         super.setAngle(Math.toDegrees(angle - this.minAngle));
     }
+
+    public void updateRobotState() {
+        Robot.optionalSet(this.angleSD, getAngle());
+        Robot.optionalSet(this.rawSD,   super.get());
+    }
+    
+    public void assignAngleSD(SD angleSD) {this.angleSD = Optional.of(angleSD);}
+    public void assignRawSd  (SD rawSD)   {this.rawSD   = Optional.of(rawSD);}
 }
