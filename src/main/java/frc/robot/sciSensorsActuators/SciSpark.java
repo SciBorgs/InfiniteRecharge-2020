@@ -7,6 +7,7 @@ import java.util.Optional;
 import frc.robot.Robot;
 import frc.robot.Utils;
 import frc.robot.commands.generalCommands.SciSparkSpeedCommand;
+import frc.robot.helpers.DelayedPrinter;
 import frc.robot.robotState.RobotStateUpdater;
 import frc.robot.robotState.StateInfo;
 import frc.robot.robotState.RobotState.SD;
@@ -108,7 +109,7 @@ public class SciSpark extends CANSparkMax implements RobotStateUpdater {
         Robot.optionalSet(this.valueSD,      super.get());
         Robot.optionalSet(this.currentSD,    super.getOutputCurrent());
         if(this.printValues){
-            System.out.println("Spark " + super.getDeviceId() + " value: " + super.get());
+            DelayedPrinter.print("Spark " + super.getDeviceId() + " value: " + super.get());
         }
     }
 

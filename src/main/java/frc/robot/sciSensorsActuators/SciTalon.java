@@ -80,7 +80,7 @@ public class SciTalon extends TalonSRX implements RobotStateUpdater {
         Robot.optionalSet(this.valueSD,   super.getMotorOutputPercent());
         Robot.optionalSet(this.currentSD, super.getSupplyCurrent());
         if(this.printValues){
-            System.out.println("Talon " + super.getDeviceID() + " value: " + super.getMotorOutputPercent());
+            DelayedPrinter.print("Talon " + super.getDeviceID() + " value: " + super.getMotorOutputPercent());
         }
     }
 
