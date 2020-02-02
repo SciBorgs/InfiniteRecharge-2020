@@ -155,17 +155,6 @@ public class DriveSubsystem extends Subsystem {
         setTank(forward - turnMagnitude, forward + turnMagnitude);
     }
 
-    public double limitJerk(double oldSpeed, double newSpeed, double maxJerk){
-        // Makes sure that the change in input for a motor is not more than maxJerk
-        if (oldSpeed - newSpeed > maxJerk){
-            return oldSpeed - maxJerk;
-        } else if (newSpeed - oldSpeed > maxJerk){
-            return oldSpeed + maxJerk;
-        } else {
-            return newSpeed;
-        }
-    }
-
     @Override
     protected void initDefaultCommand() {
 		//IGNORE THIS METHOD
