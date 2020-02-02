@@ -36,11 +36,7 @@ public class SciSpark extends CANSparkMax {
         this.currentSD    = Optional.empty();
     }
 
-    public boolean isCurrentCommandNumber(int n){ return n == this.commandNumber; } 
-
-    public double getGearRatio() {
-        return this.gearRatio;
-    }
+    public double getGearRatio() {return this.gearRatio;}
 
     public void setGearRatio(double gearRatio) {
         double currentAngle = getWheelAngle();
@@ -60,14 +56,14 @@ public class SciSpark extends CANSparkMax {
         return super.getEncoder().getPosition();
     }
 
-    public void instantSet(double speed, double maxJerk) {
-        double limitedInput = Utils.limitChange(super.get(), speed, maxJerk);
+    public boolean isCurrentCommandNumber(int n){return n == this.commandNumber;} 
+    public boolean atGoal() {return this.goalSpeed == super.get();}
+    public void instantSet() {
+        double limitedInput = Utils.limitChange(super.get(), this.goalSpeed, this.currentMaxJerk);
         super.set(limitedInput);
         if (limitedInput != super.get()) {
             String warning = "WARNING: Spark " + super.getDeviceId() + " was set to " + limitedInput
                     + " but still has a value of " + super.get();
-            System.out.println(warning);
-            System.out.println(warning);
             System.out.println(warning);
             System.out.println(warning);
             System.out.println("Debugging info:");
@@ -90,20 +86,11 @@ public class SciSpark extends CANSparkMax {
         this.goalSpeed = speed;
         this.currentMaxJerk = maxJerk;
         this.commandNumber++;
+        // Set will call this command, which will continue to call instantSet
+        // InstantSet will only set the value of the motor to the correct value if it is within maxJerk
         (new SciSparkSpeedCommand(this, this.commandNumber)).start();
     }
-
-    public void set(double speed) {
-        set(speed, DEFAULT_MAX_JERK);
-    }
-
-    public void moveToGoal() {
-        instantSet(this.goalSpeed, this.currentMaxJerk);
-    }
-    
-    public boolean atGoal(){
-        return this.goalSpeed == super.get();
-    }
+    public void set(double speed) {set(speed, DEFAULT_MAX_JERK);}
 
     public void updateRobotState(){
         Robot.optionalSet(this.wheelAngleSD, getWheelAngle());

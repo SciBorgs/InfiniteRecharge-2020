@@ -18,7 +18,7 @@ public class SciSparkSpeedCommand extends Command {
     }
 
     @Override
-    protected void execute(){this.spark.moveToGoal();}
+    protected void execute(){this.spark.instantSet();}
     @Override
     protected boolean isFinished(){return this.spark.atGoal();}
 

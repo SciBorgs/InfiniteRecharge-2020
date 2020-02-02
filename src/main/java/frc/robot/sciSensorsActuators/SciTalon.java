@@ -34,20 +34,16 @@ public class SciTalon extends TalonSRX {
         this.currentSD = Optional.empty();
     }
 
+
+    public double getGearRatio() {return this.gearRatio;}
     public boolean isCurrentCommandNumber(int n){return n == this.commandNumber;}
-
-    public double getGearRatio() {
-        return this.gearRatio;
-    }
-
-    public void instantSet(double speed, double maxJerk) {
-        double limitedInput = Utils.limitChange(super.getMotorOutputPercent(), speed, maxJerk);
+    public boolean atGoal() {return this.goalSpeed == super.getMotorOutputPercent();}
+    public void instantSet() {
+        double limitedInput = Utils.limitChange(super.getMotorOutputPercent(), this.goalSpeed, this.currentMaxJerk);
         super.set(ControlMode.PercentOutput, limitedInput);
         if (limitedInput != super.getMotorOutputPercent()) {
             String warning = "WARNING: Talon " + super.getDeviceID() + " was set to " + limitedInput
                     + " but still has a value of " + super.getMotorOutputPercent();
-            System.out.println(warning);
-            System.out.println(warning);
             System.out.println(warning);
             System.out.println(warning);
             System.out.println("Debugging info:");
@@ -64,19 +60,11 @@ public class SciTalon extends TalonSRX {
         this.goalSpeed = speed;
         this.currentMaxJerk = maxJerk;
         this.commandNumber++;
+        // Set will call this command, which will continue to call instantSet
+        // InstantSet will only set the value of the motor to the correct value if it is within maxJerk
         (new SciTalonSpeedCommand(this, this.commandNumber)).start();
     }
-
-    public void set(double speed) {
-        set(speed, DEFAULT_MAX_JERK);
-    }
-    public void moveToGoal(){
-        instantSet(this.goalSpeed, this.currentMaxJerk);
-    }
-
-    public boolean atGoal(){
-        return this.goalSpeed == super.getMotorOutputPercent();
-    }
+    public void set(double speed) {set(speed, DEFAULT_MAX_JERK);}
 
     public void updateRobotState(){
         Robot.optionalSet(this.valueSD,   super.getMotorOutputPercent());
