@@ -33,7 +33,7 @@ public class PneumaticsSubsystem extends Subsystem implements RobotStateUpdater 
   }
   @Override
   public void updateRobotState(){
-    Robot.getState().set(SD.PressureSensorVoltage, pressureSensor.getVoltage());
+    Robot.set(SD.PressureSensorVoltage, pressureSensor.getVoltage());
   }
 
   public double getPressure() {
