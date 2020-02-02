@@ -7,17 +7,22 @@ import frc.robot.dataTypes.BiHashMap;
 
 public class SciSolenoid <ValueType extends Enum<ValueType>> extends DoubleSolenoid {
     private BiHashMap<Value, ValueType> valueMap;
+    private ValueType defaultValue;
 
-    public SciSolenoid(int[] ports, ValueType forwardValue, ValueType backwardValue, ValueType offValue) {
-        this(1, ports, forwardValue, backwardValue, offValue);
+    public SciSolenoid(int[] ports, ValueType forwardValue, ValueType backwardValue, ValueType offValue, ValueType defaultValue) {
+        this(1, ports, forwardValue, backwardValue, offValue, defaultValue);
     }
 
-    public SciSolenoid(int pdpPort, int[] ports, ValueType forwardValue, ValueType reverseValue, ValueType offValue) {
+    public SciSolenoid(int pdpPort, int[] ports, ValueType forwardValue, ValueType reverseValue, ValueType offValue, ValueType defaultValue) {
         super(pdpPort, ports[0], ports[1]);
+
         this.valueMap = new BiHashMap<Value, ValueType>();
         this.valueMap.put(Value.kForward, forwardValue);
         this.valueMap.put(Value.kReverse, reverseValue);
         this.valueMap.put(Value.kOff,     offValue);
+        this.defaultValue = defaultValue;
+
+        set(defaultValue);
     }
     
     private Value toDoubleSolenoidValue(ValueType e) {
@@ -29,7 +34,9 @@ public class SciSolenoid <ValueType extends Enum<ValueType>> extends DoubleSolen
     }
 
     public ValueType oppositeSciSolenoidValue(ValueType e) {
-        return valueMap.getForward(Utils.oppositeDoubleSolenoidValue(valueMap.getBackward(e)));
+        return (toDoubleSolenoidValue(e) == Value.kOff) 
+            ? defaultValue 
+            : valueMap.getForward(Utils.oppositeDoubleSolenoidValue(valueMap.getBackward(e)));
     }
 
     public void set(ValueType e) {
@@ -37,9 +44,8 @@ public class SciSolenoid <ValueType extends Enum<ValueType>> extends DoubleSolen
     }
 
     public void toggle() {
-        super.set(Utils.oppositeDoubleSolenoidValue(super.get()));
+        set(oppositeSciSolenoidValue(getValue()));
     }
-
     
     /**
      * get() is deprecated for SciSolenoids. Use getValue() instead.
