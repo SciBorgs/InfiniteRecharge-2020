@@ -6,7 +6,7 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import frc.robot.Utils;
 import frc.robot.commands.generalCommands.SciTalonSpeedCommand;
 import frc.robot.helpers.DelayedPrinter;
-import frc.robot.interfaces.RobotStateUpdater;
+import frc.robot.robotState.RobotStateUpdater;
 import frc.robot.Robot;
 import frc.robot.robotState.RobotState.SD;
 

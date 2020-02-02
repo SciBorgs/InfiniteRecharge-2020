@@ -7,7 +7,7 @@ import java.util.Optional;
 import frc.robot.Robot;
 import frc.robot.Utils;
 import frc.robot.commands.generalCommands.SciSparkSpeedCommand;
-import frc.robot.interfaces.RobotStateUpdater;
+import frc.robot.robotState.RobotStateUpdater;
 import frc.robot.robotState.StateInfo;
 import frc.robot.robotState.RobotState.SD;
 

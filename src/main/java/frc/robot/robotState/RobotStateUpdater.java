@@ -1,4 +1,4 @@
-package frc.robot.interfaces;
+package frc.robot.robotState;
 
 public interface RobotStateUpdater {
 
