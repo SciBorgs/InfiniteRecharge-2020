@@ -33,11 +33,6 @@ public class RobotState {
     public final static BiHashMap<Boolean, Double> BOOLEAN_MAPPING;
 
     static {
-        SOLENOID_MAPPING = new BiHashMap<>();
-        SOLENOID_MAPPING.put(Value.kForward,  1.0);
-        SOLENOID_MAPPING.put(Value.kOff,      0.0);
-        SOLENOID_MAPPING.put(Value.kReverse, -1.0);
-
         BOOLEAN_MAPPING = new BiHashMap<>();
         BOOLEAN_MAPPING.put(true,  1.0);
         BOOLEAN_MAPPING.put(false, 0.0);
