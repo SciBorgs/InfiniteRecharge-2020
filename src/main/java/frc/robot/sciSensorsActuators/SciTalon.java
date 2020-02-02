@@ -15,14 +15,11 @@ import java.util.Optional;
 public class SciTalon extends TalonSRX {
 
     public static final double DEFAULT_MAX_JERK = 0.1;
-    public static final double TICKS_PER_REV = 4096;
-    public static final double TICKS_PER_RADIAN = TICKS_PER_REV / (2 * Math.PI);
     private int commandNumber;
-    private double wheelAngleOffset = 0;
     public double goalSpeed;
     public double currentMaxJerk;
     public double gearRatio;
-    public Optional<SD> wheelAngleSD, valueSD, currentSD;
+    public Optional<SD> valueSD, currentSD;
 
     public SciTalon(int port) {
         this(port, 1);
@@ -32,8 +29,6 @@ public class SciTalon extends TalonSRX {
         super(port);
         this.goalSpeed = 0;
         this.currentMaxJerk = 0;
-        setWheelAngle(0);
-        setGearRatio(gearRatio);
         this.commandNumber = 0;
     }
 
@@ -43,34 +38,24 @@ public class SciTalon extends TalonSRX {
         return this.gearRatio;
     }
 
-    public void setGearRatio(double gearRatio) {
-        double currentAngle = getWheelAngle();
-        this.gearRatio = gearRatio;
-        // W/o this when we changed gear ratios, it would weirdly change the angle
-        // For instance, if you have a gear ratio of 1/5 and your getPosition() is 20 radians
-        // and then you change the gear ratio to 1/10, your getPosition() will go to 10 radians
-        setWheelAngle(currentAngle);
-
-    }
-
-    private double ticksToAngle(int ticks) {
-        return ticks / TICKS_PER_RADIAN * this.gearRatio;
-    }
-
-    private int angleToTicks(double angle) {
-        return (int) (angle * TICKS_PER_RADIAN / this.gearRatio);
-    }
-
-    public double getWheelAngle() {
-        return ticksToAngle(super.getSensorCollection().getQuadraturePosition());
-    }
-
-    public void setWheelAngle(double angle) {
-        super.getSensorCollection().setQuadraturePosition(angleToTicks(angle), 0);
-    }
-
     public void instantSet(double speed, double maxJerk) {
-        super.set(ControlMode.PercentOutput, Utils.limitChange(super.getMotorOutputPercent(), speed, maxJerk));
+        double limitedInput = Utils.limitChange(super.getMotorOutputPercent(), speed, maxJerk);
+        super.set(ControlMode.PercentOutput, limitedInput);
+        if (limitedInput != super.getMotorOutputPercent()) {
+            String warning = "WARNING: Talon " + super.getDeviceID() + " was set to " + limitedInput
+                    + " but still has a value of " + super.getMotorOutputPercent();
+            System.out.println(warning);
+            System.out.println(warning);
+            System.out.println(warning);
+            System.out.println(warning);
+            System.out.println("Debugging info:");
+            if (this.currentSD.isPresent()) {
+                System.out.println("Current: " + Robot.get(this.currentSD.get()));
+            }
+            if (this.valueSD.isPresent()) {
+                System.out.println("All Values: " + Robot.stateHistory.getFullSDData(this.valueSD.get()));
+            }
+        }
     }
 
     public void set(double speed, double maxJerk){
@@ -92,11 +77,10 @@ public class SciTalon extends TalonSRX {
     }
 
     public void updateRobotState(){
-        Robot.optionalSet(this.wheelAngleSD, getWheelAngle());
-        Robot.optionalSet(this.valueSD,      super.getMotorOutputPercent());
-        Robot.optionalSet(this.currentSD,    super.getSupplyCurrent());
+        Robot.optionalSet(this.valueSD,   super.getMotorOutputPercent());
+        Robot.optionalSet(this.currentSD, super.getSupplyCurrent());
     }
 
-    public void assignValueSD     (SD valueSD)      {this.valueSD      = Optional.of(valueSD);}
-    public void assignCurrentSD   (SD currentSD)    {this.currentSD    = Optional.of(currentSD);}
+    public void assignValueSD   (SD valueSD)   {this.valueSD   = Optional.of(valueSD);}
+    public void assignCurrentSD (SD currentSD) {this.currentSD = Optional.of(currentSD);}
 }
