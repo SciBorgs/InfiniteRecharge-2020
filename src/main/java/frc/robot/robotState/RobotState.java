@@ -28,7 +28,8 @@ public class RobotState {
         PressureSensorVoltage,
 
         // Shooter
-        ShooterAngle
+        HoodSparkWheelAngle,
+        ShooterSparkRPS
     }
     
     private Hashtable<SD, Double> data;

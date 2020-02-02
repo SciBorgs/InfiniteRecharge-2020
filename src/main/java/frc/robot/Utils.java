@@ -210,4 +210,7 @@ public class Utils{
         return (num1 % num2 + num2) % num2;
     }
 
+    public static double RPSToRPM(double RPS) {
+        return (RPS * 30) / Math.PI;
+    }
 }
