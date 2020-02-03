@@ -85,9 +85,6 @@ public class DriveSubsystem extends Subsystem {
         Robot.logger.logFinalField       (FILENAME, "input deadzone", INPUT_DEADZONE);
     }
 
-	public void periodicLog(){
-    }
-
     // If something is assiting, we don't want to drive using setSpeed
     public void assistedDriveMode(){this.assisted = true;}
     public void manualDriveMode()  {this.assisted = false;}
@@ -110,6 +107,8 @@ public class DriveSubsystem extends Subsystem {
     }
         	
 	public void setTank(double leftSpeed, double rightSpeed) {
+        Robot.logger.addData(FILENAME, "LeftInput", leftSpeed, DefaultValue.Empty);
+        Robot.logger.addData(FILENAME, "RightInput", rightSpeed, DefaultValue.Empty);
         this.l.set(leftSpeed  * this.driveMultiplier);
         this.r.set(rightSpeed * this.driveMultiplier);
     }
