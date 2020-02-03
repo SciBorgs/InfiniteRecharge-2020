@@ -27,6 +27,7 @@ public class PneumaticsSubsystem extends Subsystem implements RobotStateUpdater,
     this.compressor = new Compressor();
     //Robot.addSDToLog(SD.PressureSensorVoltage);
     Robot.addRobotStateUpdater(this);
+    Robot.addLogUpdater(this);
   }
     
 	public void periodicLog(){
