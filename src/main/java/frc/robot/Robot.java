@@ -11,17 +11,18 @@ import frc.robot.subsystems.*;
 import frc.robot.commands.*;
 import frc.robot.helpers.*;
 import frc.robot.dataTypes.*;
-import frc.robot.stateEstimation.*;
 import frc.robot.logging.*;
 import frc.robot.shapes.*;
 import frc.robot.logging.Logger.DefaultValue;
 import frc.robot.robotState.*;
 import frc.robot.robotState.RobotState.SD;
-import frc.robot.sciSensorsActuators.SciSpark;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import frc.robot.controllers.*;
+import frc.robot.stateEstimation.interfaces.*;
+import frc.robot.stateEstimation.higherLevel.*;
+import frc.robot.stateEstimation.explicit.*;
 
 public class Robot extends TimedRobot {
     private Timer timer = new Timer();
@@ -81,9 +82,6 @@ public class Robot extends TimedRobot {
     public static double getSpeed()           {return StateInfo.getSpeed(          Robot.stateHistory);}
 
     public static double getAvgWheelInput() {return StateInfo.getAvgWheelInput(getState());}
-
-    public static double getWheelSpeed(SciSpark wheel){return StateInfo.getWheelSpeed(Robot.stateHistory, wheel);}
-
     // testing
     public static Point  getPos() {return new Point(get(SD.X),get(SD.Y));}
     public static double getHeading() {return get(SD.Angle);}

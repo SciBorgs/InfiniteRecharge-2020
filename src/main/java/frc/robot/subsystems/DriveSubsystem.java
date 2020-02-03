@@ -58,8 +58,15 @@ public class DriveSubsystem extends Subsystem {
         this.r1.follow(this.r);
         this.r2.follow(this.r);
 
-        this.r.assignAll(SD.RightWheelAngle, SD.RightSparkVal, SD.RightCurrentVal);
-        this.l.assignAll(SD.LeftWheelAngle,  SD.LeftSparkVal,  SD.LeftCurrentVal);
+        this.r.assignWheelAngleSD(SD.RightWheelAngle);
+        this.r.assignVelocitySD(SD.RightWheelSpeed);
+        this.r.assignValueSD(SD.RightSparkVal);
+        this.r.assignCurrentSD(SD.RightCurrentVal);
+
+        this.l.assignWheelAngleSD(SD.LeftWheelAngle);
+        this.l.assignVelocitySD(SD.LeftWheelSpeed);
+        this.l.assignValueSD(SD.LeftSparkVal);
+        this.l.assignCurrentSD(SD.LeftCurrentVal);
 
         Robot.addSDToLog(SD.LeftWheelAngle);
         Robot.addSDToLog(SD.RightWheelAngle);
@@ -104,10 +111,8 @@ public class DriveSubsystem extends Subsystem {
     }
 
     public void setSpeedTank(double leftGoalSpeed, double rightGoalSpeed){
-        double currentLeft  = StateInfo.getWheelSpeed(this.l);
-        double currentRight = StateInfo.getWheelSpeed(this.r);
-        this.tankSpeedLeftPID.addMeasurement(leftGoalSpeed - currentLeft);
-        this.tankSpeedRightPID.addMeasurement(rightGoalSpeed - currentRight);
+        this.tankSpeedLeftPID .addMeasurement(leftGoalSpeed  - Robot.get(SD.LeftWheelSpeed));
+        this.tankSpeedRightPID.addMeasurement(rightGoalSpeed - Robot.get(SD.RightWheelSpeed));
         setTank(tankSpeedLeftPID.getOutput(), tankSpeedRightPID.getOutput());
     }
 	

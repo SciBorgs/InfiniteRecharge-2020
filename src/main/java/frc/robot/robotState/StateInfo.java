@@ -43,13 +43,6 @@ public class StateInfo{
     public static double getSpeed(RobotStateHistory stateHistory){
         return Math.sqrt(getSpeedSquared(stateHistory));
     }
-    public static double getWheelSpeed(RobotStateHistory stateHistory, SciSpark spark){
-        if (spark.wheelAngleSD.isPresent()) {
-            return getRateOfChange(stateHistory, spark.wheelAngleSD.get(), WHEEL_SPEED_PRECISION);
-        } else {
-            throw new RuntimeException("GetWheelSpeed given spark with empty wheelAngleSD");
-        }
-    }
     public static double getAvgWheelInput(RobotState state){
         return (state.get(SD.LeftSparkVal) + state.get(SD.RightSparkVal)) / 2;
     }
@@ -63,6 +56,9 @@ public class StateInfo{
     public static double getFullDifference(SD sd){
         return getFullDifference(Robot.stateHistory, sd);
     }
+    public static double getRateOfChange(SD sd, int ticksBack){
+        return getRateOfChange(Robot.stateHistory, sd, ticksBack);
+    }
 
     public static double getAngularVelocity() {return getAngularVelocity(Robot.stateHistory);}
     public static double getXVelocity()       {return getXVelocity(      Robot.stateHistory);}
@@ -71,7 +67,4 @@ public class StateInfo{
     public static double getSpeed()           {return getSpeed(          Robot.stateHistory);}
 
     public static double getAvgWheelInput() {return getAvgWheelInput(Robot.getState());}
-
-    public static double getWheelSpeed(SciSpark wheel){return getWheelSpeed(Robot.stateHistory, wheel);}
-
 }
