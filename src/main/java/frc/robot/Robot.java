@@ -116,10 +116,6 @@ public class Robot extends TimedRobot {
         for (LogUpdater i : logUpdaters) {
             i.periodicLog();
         }
-        driveSubsystem.periodicLog();
-        limelightSubsystem.periodicLog();
-        pneumaticsSubsystem.periodicLog();
-        following.periodicLog();
         logState();
     }
     
