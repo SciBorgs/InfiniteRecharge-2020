@@ -1,6 +1,6 @@
 package frc.robot.subsystems;
 
-import edu.wpi.first.wpilibj.command.Subsystem;
+import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import frc.robot.PortMap;
@@ -9,7 +9,7 @@ import frc.robot.sciSensorsActuators.SciTalon;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 
-public class IntakeSubsystem extends Subsystem {
+public class IntakeSubsystem implements Subsystem {
     DoubleSolenoid upDownSolenoid;
     public SciTalon intakeMotor;
 
@@ -32,10 +32,5 @@ public class IntakeSubsystem extends Subsystem {
 
     public void suck() {setIntakeSpeed(INTAKE_SPEED);}
     public void stop() {setIntakeSpeed(0);}
-
-    @Override 
-    protected void initDefaultCommand() {
-        // Useless
-    }
 
 }

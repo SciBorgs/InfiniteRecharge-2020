@@ -1,9 +1,12 @@
 package frc.robot.commands.generalCommands;
 
-import edu.wpi.first.wpilibj.command.Command;
+import java.util.HashSet;
+import java.util.Set;
+
+import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.sciSensorsActuators.SciTalon;
 
-public class SciTalonSpeedCommand extends Command {
+public class SciTalonSpeedCommand extends CommandBase {
 
     private SciTalon talon;
     private double goalSpeed;
@@ -18,12 +21,10 @@ public class SciTalonSpeedCommand extends Command {
     }
 
     @Override
-    protected void execute(){this.talon.instantSet();}
+    public void execute(){this.talon.instantSet();}
     @Override
-    protected boolean isFinished(){
+    public boolean isFinished(){
         return this.talon.atGoal() || !this.talon.isCurrentCommandNumber(this.commandNunber);
     }
-    @Override
-    protected void end(){ }
 
 }
