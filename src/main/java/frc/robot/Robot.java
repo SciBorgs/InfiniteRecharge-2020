@@ -27,10 +27,11 @@ public class Robot extends TimedRobot implements LogUpdater {
     private Timer timer = new Timer();
 
     public static Logger logger = new Logger();
+    
     private static List<Pair<SD, DefaultValue>> dataToLog = new ArrayList<>();
     public static ArrayList<LogUpdater> logUpdaters = new ArrayList<>();
-
     public static ArrayList<RobotStateUpdater> robotStateUpdaters  = new ArrayList<>();
+
     public static RobotStateHistory stateHistory = new RobotStateHistory();
     static {
         if (stateHistory.numberOfStates() == 0){
@@ -114,15 +115,14 @@ public class Robot extends TimedRobot implements LogUpdater {
     public static void addLogUpdater(LogUpdater logUpdater) {
         logUpdaters.add(logUpdater);
     }
+    public static void addRobotStateUpdater(RobotStateUpdater robotStateUpdater){
+        robotStateUpdaters.add(robotStateUpdater);
+    }
 
     private void allPeriodicLogs() {
         for (LogUpdater i : logUpdaters) {
             i.periodicLog();
         }
-    }
-    
-    public static void addRobotStateUpdater(RobotStateUpdater robotStateUpdater){
-        robotStateUpdaters.add(robotStateUpdater);
     }
     private void allUpdateRobotStates() {
         for (RobotStateUpdater i : robotStateUpdaters) {
