@@ -29,6 +29,7 @@ public class Robot extends TimedRobot {
 
     public static Logger logger = new Logger();
     private static List<Pair<SD, DefaultValue>> dataToLog = new ArrayList<>();
+    public static ArrayList<LogUpdater> logUpdaters = new ArrayList<>();
 
     public static ArrayList<RobotStateUpdater> robotStateUpdaters  = new ArrayList<>();
     public static RobotStateHistory stateHistory = new RobotStateHistory();
@@ -107,7 +108,14 @@ public class Robot extends TimedRobot {
     private int attemptsSinceLastLog;
     public static final int LOG_PERIOD = 5;
 
+    public static void addLogUpdater(LogUpdater logUpdater) {
+        logUpdaters.add(logUpdater);
+    }
+
     private void allPeriodicLogs() {
+        for (LogUpdater i : logUpdaters) {
+            i.periodicLog();
+        }
         driveSubsystem.periodicLog();
         limelightSubsystem.periodicLog();
         pneumaticsSubsystem.periodicLog();

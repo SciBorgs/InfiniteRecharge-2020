@@ -7,9 +7,10 @@ import frc.robot.PortMap;
 import frc.robot.Robot;
 import frc.robot.robotState.RobotStateUpdater;
 import frc.robot.robotState.RobotState.SD;
+import frc.robot.logging.LogUpdater;
 import frc.robot.logging.Logger.DefaultValue;
 
-public class PneumaticsSubsystem extends Subsystem implements RobotStateUpdater {
+public class PneumaticsSubsystem extends Subsystem implements RobotStateUpdater, LogUpdater {
   
   private AnalogInput pressureSensor;
   private final double NORMALIZED_SUPPLY_VOLTAGE = 5.0;

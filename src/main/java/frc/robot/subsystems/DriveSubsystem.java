@@ -8,11 +8,12 @@ import frc.robot.controllers.PID;
 import frc.robot.helpers.DelayedPrinter;
 import frc.robot.robotState.StateInfo;
 import frc.robot.sciSensorsActuators.*;
+import frc.robot.logging.LogUpdater;
 import frc.robot.logging.Logger.DefaultValue;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.command.Subsystem;
 
-public class DriveSubsystem extends Subsystem {
+public class DriveSubsystem extends Subsystem implements LogUpdater {
     // Define tested error values here
     double TANK_ANGLE_P = .075, TANK_ANGLE_D = 0.0, TANK_ANGLE_I = 0;
     double TANK_SPEED_LEFT_P  = .1, TANK_SPEED_LEFT_D  = 0.0, TANK_SPEED_LEFT_I  = 0;
@@ -72,6 +73,8 @@ public class DriveSubsystem extends Subsystem {
 
         Robot.logger.logFinalPIDConstants(FILENAME, "tank angle PID", this.tankAnglePID);
         Robot.logger.logFinalField       (FILENAME, "input deadzone", INPUT_DEADZONE);
+
+        Robot.addLogUpdater(this);
     }
 
 	public void periodicLog(){
