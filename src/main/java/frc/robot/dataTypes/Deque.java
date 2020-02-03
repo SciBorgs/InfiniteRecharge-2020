@@ -1,9 +1,10 @@
 package frc.robot.dataTypes;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
-public class Deque<T> {
+public class Deque<T> implements Iterable<T>{
     // For us, if you add an element to a deque, and do .get(0) you will get that
     // Once you hit the maximum length, you will effectively also remove the last element (the element that's been in the deque for the longest)
     // To make adding O(1), when it is the max length, we shift our "starting point", and just set an element of the arraylist
@@ -58,4 +59,30 @@ public class Deque<T> {
         clone.head = this.head;
         return clone;
     }
+
+    @Override
+    public Iterator<T> iterator(){
+        return new DequeIterator<T>(this);
+    }
+
+    public Deque<T> reversed(){
+        Deque<T> deq = new Deque<T>(this.maxLength);
+        for(T t : this){
+            deq.add(t);
+        }
+        return deq;
+    }
+}
+
+class DequeIterator<T> implements Iterator<T> {
+
+    private Deque<T> deque;
+
+    public DequeIterator(Deque<T> deque){
+        this.deque = deque;
+    }
+
+    @Override public boolean hasNext(){return !this.deque.isEmpty();}
+    @Override public T next(){return this.deque.get(0);}
+    @Override public void remove()  {this.deque.remove(0);}
 }
