@@ -47,6 +47,22 @@ public class Logger{
         this.startMatchTimer();
     }
 
+    public String getCallerClassName() { 
+        StackTraceElement[] elements = Thread.currentThread().getStackTrace();
+        for (int i = 1; i < elements.length; i++) {
+            StackTraceElement element = elements[i];
+            if (!element.getClassName().equals(Logger.class.getName()) && !element.getClassName().contains("java.lang.Thread")) {
+                return element.getClassName() + ".java";
+            }
+        }
+        // At this point, this function is not called beyond this class or some other error occurred
+        String trace = "";
+        for (StackTraceElement i : elements) {
+            trace += i.toString() + "\n";
+        }
+        throw new RuntimeException("Unable to determine calling class or only Logger calls this function:\n" + trace);
+    }
+
     private void fileNotFound(){
         System.out.println("FILE NOT FOUND (logger)");
     }
@@ -75,10 +91,10 @@ public class Logger{
         addNewColumn(getColumnName(filename, valueName));
     }
 
-    public void addData(String filename, String valueName, Object data, DefaultValue defaultValue){
+    public void addData(String valueName, Object data, DefaultValue defaultValue){
         // Adds a singular piece of data to the currentData hash. Also will add the column if it is unrecognized
         if (this.loggingDisabled){return;}
-        String columnName = getColumnName(filename, valueName);
+        String columnName = getColumnName(getCallerClassName(), valueName);
         if (!columnExists(columnName)) { 
             //System.out.println("adding column " + columnName);
             addNewColumn(columnName);
@@ -86,13 +102,13 @@ public class Logger{
         this.defaultValues.put(columnName, defaultValue);
         this.currentData.put(columnName, data);
     }
-    public void logFinalField(String filename, String fieldName, Object fieldValue){
-        addData(filename, fieldName, fieldValue, DefaultValue.Previous);
+    public void logFinalField(String fieldName, Object fieldValue){
+        addData(fieldName, fieldValue, DefaultValue.Previous);
     }
-    public void logFinalPIDConstants(String filename, String pidName, PID pid){
-        addData(filename, pidName, "(" + pid.getP() + " | " + pid.getI() + " | " + pid.getD() + ")", DefaultValue.Previous);
+    public void logFinalPIDConstants(String pidName, PID pid){
+        addData(pidName, "(" + pid.getP() + " | " + pid.getI() + " | " + pid.getD() + ")", DefaultValue.Previous);
     }
-    public void logCommandStatus(String filename, CommandStatus commandStatus){
+    public void logCommandStatus(CommandStatus commandStatus){
         String stringStatus = "";
         switch (commandStatus) {
             case Initializing: stringStatus = "initializing"; break;
@@ -100,7 +116,7 @@ public class Logger{
             case Ending:       stringStatus = "edning";       break;
             case Interrupted:  stringStatus = "interrupted";  break;
         }
-        addData(filename, commandStatusName, stringStatus, DefaultValue.Empty);
+        addData(commandStatusName, stringStatus, DefaultValue.Empty);
     }
 
     public DefaultValue getDefaultValue(String column){
@@ -142,12 +158,12 @@ public class Logger{
         return getColumns().contains(columnName);
     }
 
-    public void addToPrevious(String filename, String valueName, DefaultValue defaultValue, double incrementAmount){
+    public void addToPrevious(String valueName, DefaultValue defaultValue, double incrementAmount){
         // Logs the next values as the incrementAmount + the bool value of the most recent logged data point
         double lastValue = getLastLogValueDouble(filename, valueName);
         addData(filename, valueName, lastValue + incrementAmount, defaultValue);
     }
-    public void incrementPrevious(String filename, String valueName, DefaultValue defaultValue){
+    public void incrementPrevious(String valueName, DefaultValue defaultValue){
         addToPrevious(filename, valueName, defaultValue, 1);
     }
 
