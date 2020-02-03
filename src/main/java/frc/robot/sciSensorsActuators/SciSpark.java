@@ -144,6 +144,15 @@ public class SciSpark extends CANSparkMax implements RobotStateUpdater {
     public void assignSnapSD      (SD snapSD)       {this.snapSD       = Optional.of(snapSD);}
     public void assignValueSD     (SD valueSD)      {this.valueSD      = Optional.of(valueSD);}
     public void assignCurrentSD   (SD currentSD)    {this.currentSD    = Optional.of(currentSD);}
+
+    public ArrayList<SD> getAllSDs(){
+        return Utils.optionalInitArrayList(wheelAngleSD, velocitySD, accelSD, jerkSD, snapSD, valueSD, currentSD);
+    }
+
+    public void logAllSDs(){
+        for(SD sd : getAllSDs()){Robot.addSDToLog(sd);}
+    }
+
 }
 
 class AccelModel implements Model {

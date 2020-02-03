@@ -74,10 +74,8 @@ public class DriveSubsystem extends Subsystem {
         this.l.assignValueSD(SD.LeftSparkVal);
         this.l.assignCurrentSD(SD.LeftCurrentVal);
 
-        Robot.addSDToLog(SD.LeftWheelAngle);
-        Robot.addSDToLog(SD.RightWheelAngle);
-        Robot.addSDToLog(SD.LeftSparkVal);
-        Robot.addSDToLog(SD.RightSparkVal);
+        this.r.logAllSDs();
+        this.l.logAllSDs();
 
         this.tankAnglePID      = new PID(TANK_ANGLE_P,       TANK_ANGLE_I,       TANK_ANGLE_D);
         this.tankSpeedRightPID = new PID(TANK_SPEED_LEFT_P,  TANK_SPEED_LEFT_I,  TANK_SPEED_LEFT_D);
