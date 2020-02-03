@@ -14,7 +14,7 @@ public class SciTalonSpeedCommand extends Command {
     }
 
     @Override
-    protected void execute(){this.talon.moveToGoal();}
+    protected void execute(){this.talon.instantSet();}
     @Override
     protected boolean isFinished(){
         return this.talon.atGoal() || !this.talon.isCurrentCommandNumber(this.commandNunber);

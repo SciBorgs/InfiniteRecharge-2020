@@ -4,7 +4,7 @@ import frc.robot.Robot;
 import frc.robot.robotState.RobotState.SD;
 import java.util.function.Function;
 
-public class TrajectoryController {
+public class BallTrajectoryController {
   private static final double GRAVITATIONAL_ACCELERATION = 9.81;
   private static final double AIR_DENSITY = 1.21;
 
@@ -33,21 +33,23 @@ public class TrajectoryController {
   private static double ballVelocity = 0;
 
   public static void optimizeParameters() {
-    Robot.set(SD.HoodSparkWheelAngle, getHoodAngle());
-
     Function<Double, Double> trajectoryFunction = getTrajectoryFunction();
     outerPortError =
         BALL_TO_PORT_CENTER_HEIGHT - trajectoryFunction.apply(BALL_TO_OUTER_PORT_DISTANCE);
     innerPortError =
         BALL_TO_PORT_CENTER_HEIGHT - trajectoryFunction.apply(BALL_TO_INNER_PORT_DISTANCE);
-
-    Robot.set(SD.ShooterSparkRPS, ballVelocity / BALL_RADIUS * 2);
   }
 
   public static boolean areParametersOptimal() {
     return Math.abs(outerPortError) <= OUTER_PORT_HEIGHT_TOLERANCE
         && Math.abs(innerPortError) <= INNER_PORT_HEIGHT_TOLERANCE;
   }
+
+  public static void shoot() {
+    Robot.shooterSubsystem.setShooterSpark(60 * (ballVelocity * 2) / (2 * Math.PI * BALL_RADIUS));
+  }
+
+  public static void setHoodAngle() {Robot.shooterSubsystem.setHoodSpark(getHoodAngle());}
 
   private static double getHoodAngle() {
     if (BALL_TO_OUTER_PORT_DISTANCE < MAX_HOOD_ANGLE_DISTANCE) {return MAX_HOOD_ANGLE;}
@@ -60,7 +62,7 @@ public class TrajectoryController {
   }
 
   private static Function<Double, Double> getTrajectoryFunction() {
-    double hoodAngle = Robot.get(SD.HoodSparkWheelAngle);
+    double hoodAngle = Robot.get(SD.HoodAngle);
     if (ballVelocity == 0.0) {
       ballVelocity =
           Math.sqrt(

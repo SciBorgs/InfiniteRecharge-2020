@@ -2,7 +2,7 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.Robot;
-import frc.robot.controllers.TrajectoryController;
+import frc.robot.controllers.BallTrajectoryController;
 
 public class ShootCommand extends Command {
   private boolean foundOptimalParameters;
@@ -13,12 +13,12 @@ public class ShootCommand extends Command {
 
   @Override
   protected void execute() {
-    if (TrajectoryController.areParametersOptimal()) {
-      Robot.shooterSubsystem.setHoodAngle();
-      Robot.shooterSubsystem.shoot();
+    if (BallTrajectoryController.areParametersOptimal()) {
+      BallTrajectoryController.setHoodAngle();
+      BallTrajectoryController.shoot();
       this.foundOptimalParameters = true;
     } else {
-      TrajectoryController.optimizeParameters();
+      BallTrajectoryController.optimizeParameters();
     }
   }
 
