@@ -22,10 +22,9 @@ public class SciSolenoid <ValueType extends Enum<ValueType>> extends DoubleSolen
     
     private BiHashMap<ValueType, Value> valueMap;
     private BiHashMap<ValueType, Double> valueDoubleMap;
-    private ValueType defaultValue;
-    public Optional<SD> valueSD;
     private boolean printValues;
-
+    public ValueType defaultValue;
+    public Optional<SD> valueSD;
 
     public SciSolenoid(int pdpPort, int[] ports, ValueType forwardValue, ValueType reverseValue, ValueType offValue) {
         super(pdpPort, ports[0], ports[1]);
