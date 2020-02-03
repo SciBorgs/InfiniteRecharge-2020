@@ -20,7 +20,7 @@ import frc.robot.robotState.RobotState.SD;
 import frc.robot.sciSensorsActuators.SciSpark;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
-import edu.wpi.first.wpilibj.command.Scheduler;
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.controllers.*;
 
 public class Robot extends TimedRobot {
@@ -166,7 +166,7 @@ public class Robot extends TimedRobot {
         allPeriodicLogs();
         logDataPeriodic();
         DelayedPrinter.print("x: " + getPos().x + "\ty: " + getPos().y + "\nheading: " + getHeading() + "\npigeon angle: " + Robot.get(SD.PigeonAngle));
-        Scheduler.getInstance().run();
+        CommandScheduler.getInstance().run();
         DelayedPrinter.incTicks();
     }
 
@@ -191,7 +191,7 @@ public class Robot extends TimedRobot {
     }
 
     public void teleopPeriodic() {
-        (new TankDriveCommand()).start();
+        CommandScheduler.getInstance().schedule(new TankDriveCommand());
     }
     
 

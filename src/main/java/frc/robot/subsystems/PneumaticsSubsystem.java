@@ -1,6 +1,6 @@
 package frc.robot.subsystems;
 
-import edu.wpi.first.wpilibj.command.Subsystem;
+import edu.wpi.first.wpilibj2.command.Subsystem;
 import edu.wpi.first.wpilibj.AnalogInput;
 import edu.wpi.first.wpilibj.Compressor;
 import frc.robot.PortMap;
@@ -9,7 +9,7 @@ import frc.robot.robotState.RobotStateUpdater;
 import frc.robot.robotState.RobotState.SD;
 import frc.robot.logging.Logger.DefaultValue;
 
-public class PneumaticsSubsystem extends Subsystem implements RobotStateUpdater {
+public class PneumaticsSubsystem implements Subsystem, RobotStateUpdater {
   
   private AnalogInput pressureSensor;
   private final double NORMALIZED_SUPPLY_VOLTAGE = 5.0;
@@ -17,9 +17,6 @@ public class PneumaticsSubsystem extends Subsystem implements RobotStateUpdater 
   private final String FILENAME = "PneumaticsSubsystem.java";
   public static final SD VOLTAGE_SD = SD.PressureSensorVoltage;
   
-  @Override
-  public void initDefaultCommand() {}
-
   public PneumaticsSubsystem() {
     this.pressureSensor = new AnalogInput(PortMap.PRESSURE_SENSOR);
     //Robot.set(SD.PressureSensorVoltage, 0.0);
