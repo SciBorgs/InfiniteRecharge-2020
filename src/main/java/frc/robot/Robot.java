@@ -23,7 +23,7 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import frc.robot.controllers.*;
 
-public class Robot extends TimedRobot {
+public class Robot extends TimedRobot implements LogUpdater {
     private Timer timer = new Timer();
     private final String FILENAME = "Robot.java";
 
@@ -108,6 +108,10 @@ public class Robot extends TimedRobot {
     private int attemptsSinceLastLog;
     public static final int LOG_PERIOD = 5;
 
+    public Robot() {
+        addLogUpdater(this);
+    }
+
     public static void addLogUpdater(LogUpdater logUpdater) {
         logUpdaters.add(logUpdater);
     }
@@ -116,7 +120,6 @@ public class Robot extends TimedRobot {
         for (LogUpdater i : logUpdaters) {
             i.periodicLog();
         }
-        logState();
     }
     
     public static void addRobotStateUpdater(RobotStateUpdater robotStateUpdater){
@@ -135,7 +138,7 @@ public class Robot extends TimedRobot {
     public static void addSDToLog(SD sd, DefaultValue val) { Robot.dataToLog.add(new Pair<>(sd, val)); }
     public static void addSDToLog(SD sd)                   { addSDToLog(sd, DefaultValue.Empty); }
 
-    public void logState() {
+    public void periodicLog() {
         for (Pair<SD, DefaultValue> pair : Robot.dataToLog) {
             SD sd = pair.first;
             if (getState().contains(sd)){
