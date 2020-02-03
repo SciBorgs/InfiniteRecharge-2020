@@ -7,10 +7,8 @@ import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 
 public class LimelightSubsystem extends Subsystem implements LogUpdater {
-
     public final static double IMAGE_WIDTH = Math.toRadians(27.); // In degrees
     public final static double IMAGE_HEIGHT = Math.toRadians(20.5); // In degrees
-    private final String FILENAME = "LimelightSubsystem.java";
     
     public LimelightSubsystem() {
         Robot.addLogUpdater(this);

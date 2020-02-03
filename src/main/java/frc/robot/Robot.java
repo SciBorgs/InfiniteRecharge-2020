@@ -25,7 +25,6 @@ import frc.robot.controllers.*;
 
 public class Robot extends TimedRobot implements LogUpdater {
     private Timer timer = new Timer();
-    private final String FILENAME = "Robot.java";
 
     public static Logger logger = new Logger();
     private static List<Pair<SD, DefaultValue>> dataToLog = new ArrayList<>();

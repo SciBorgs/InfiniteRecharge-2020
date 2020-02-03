@@ -27,7 +27,6 @@ public class LidarServer implements LogUpdater {
     private Thread mThread;
     private Process mProcess;
     private boolean mEnding = false;
-    private final String FILENAME = "LidarServer.java";
     public enum LidarScanInfo {RealAngle, Distance}
     public Hashtable<Double, Hashtable<LidarScanInfo, Double>> lidarScan = new Hashtable<>();
     private Hashtable<Double,Integer> lidarZeros = new Hashtable<>();

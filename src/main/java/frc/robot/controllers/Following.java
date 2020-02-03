@@ -6,8 +6,6 @@ import frc.robot.logging.LogUpdater;
 // Follows an object at a certian angle
 
 public class Following implements LogUpdater {
-	private final String FILENAME = "Following.java";
-
     public final static int lineupSmoother = 5;
     public final static double LINEUP_SHIFT = -.95;
 

@@ -21,7 +21,6 @@ public class DriveSubsystem extends Subsystem implements LogUpdater {
     double GOAL_OMEGA_CONSTANT = 8; // Change this to change angle
     private double MAX_OMEGA_GOAL = 1 * GOAL_OMEGA_CONSTANT;
     public SciSpark l, l1, l2, r, r1, r2;
-    private final String FILENAME = "DriveSubsystem.java";
     public static final double WHEEL_RADIUS = Utils.inchesToMeters(3);
 
     // deadzones by Alejandro at Chris' request. Graph them with the joystick function to understand the math.
@@ -71,8 +70,8 @@ public class DriveSubsystem extends Subsystem implements LogUpdater {
         this.tankSpeedRightPID = new PID(TANK_SPEED_LEFT_P,  TANK_SPEED_LEFT_I,  TANK_SPEED_LEFT_D);
         this.tankSpeedLeftPID  = new PID(TANK_SPEED_RIGHT_P, TANK_SPEED_RIGHT_I, TANK_SPEED_RIGHT_D);
 
-        Robot.logger.logFinalPIDConstants(FILENAME, "tank angle PID", this.tankAnglePID);
-        Robot.logger.logFinalField       (FILENAME, "input deadzone", INPUT_DEADZONE);
+        Robot.logger.logFinalPIDConstants("tank angle PID", this.tankAnglePID);
+        Robot.logger.logFinalField       ("input deadzone", INPUT_DEADZONE);
 
         Robot.addLogUpdater(this);
     }
@@ -132,8 +131,8 @@ public class DriveSubsystem extends Subsystem implements LogUpdater {
         if (goalOmega == 0 && (Math.abs(inputDiff) < STRAIGHT_EQUAL_INPUT_DEADZONE)){
             inputDiff = 0;
         }
-        Robot.logger.addData(FILENAME, "input diff", inputDiff, DefaultValue.Empty);
-        Robot.logger.addData(FILENAME, "error", error, DefaultValue.Empty);
+        Robot.logger.addData("input diff", inputDiff, DefaultValue.Empty);
+        Robot.logger.addData("error", error, DefaultValue.Empty);
 		setSpeedTankForwardTurningMagnitude(averageOutput, inputDiff);
 	}
 	

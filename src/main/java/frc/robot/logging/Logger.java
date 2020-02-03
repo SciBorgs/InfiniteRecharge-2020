@@ -85,12 +85,23 @@ public class Logger{
         // adds a new column to the file and records it in the column hashset
         this.csvHelper.addTopic(columnName);
     }
-    public void newDataPoint(String filename, String valueName){
+    public void newDataPoint(String valueName){
         if (this.loggingDisabled){return;}
         // Same as add new column but is what should generally be called directly
-        addNewColumn(getColumnName(filename, valueName));
+        addNewColumn(getColumnName(getCallerClassName(), valueName));
     }
 
+    public void addData(String filename, String valueName, Object data, DefaultValue defaultValue){
+        // Adds a singular piece of data to the currentData hash. Also will add the column if it is unrecognized
+        if (this.loggingDisabled){return;}
+        String columnName = getColumnName(filename, valueName);
+        if (!columnExists(columnName)) { 
+            //System.out.println("adding column " + columnName);
+            addNewColumn(columnName);
+        }
+        this.defaultValues.put(columnName, defaultValue);
+        this.currentData.put(columnName, data);
+    }
     public void addData(String valueName, Object data, DefaultValue defaultValue){
         // Adds a singular piece of data to the currentData hash. Also will add the column if it is unrecognized
         if (this.loggingDisabled){return;}
@@ -135,23 +146,23 @@ public class Logger{
         // Given a column name, it gives the most recent value of that column as a string
         return getLastLog().get(columnName);
     }
-    public String getLastValueLogged(String filename, String valueName){
+    public String getLastValueLogged(String valueName){
         // Same as get lastLoggedInColumn but should generally be called
-        return getLastLoggedInColumn(getColumnName(filename,  valueName));
+        return getLastLoggedInColumn(getColumnName(getCallerClassName(),  valueName));
     }
-    public double getLastLogValueDouble(String filename, String valueName){
+    public double getLastLogValueDouble(String valueName){
         // Converts last log value as a string to a double, returns 0 if it isn't a number
         // Maybe TODO - should it throw an error if the previous value is not a number of ""? I think it shouldn't but to consider
-        String stringValue = getLastValueLogged(filename, valueName);
+        String stringValue = getLastValueLogged(valueName);
         try {
             return Double.valueOf(stringValue);
         } catch (Exception e) {
             return 0;
         }
     }
-    public boolean getLastLogValueBool(String filename, String valueName){
+    public boolean getLastLogValueBool(String valueName){
         // Converts last log to a bool
-        return Boolean.valueOf(getLastValueLogged(filename, valueName));
+        return Boolean.valueOf(getLastValueLogged(valueName));
     }
 
     public boolean columnExists(String columnName){
@@ -160,11 +171,11 @@ public class Logger{
 
     public void addToPrevious(String valueName, DefaultValue defaultValue, double incrementAmount){
         // Logs the next values as the incrementAmount + the bool value of the most recent logged data point
-        double lastValue = getLastLogValueDouble(filename, valueName);
-        addData(filename, valueName, lastValue + incrementAmount, defaultValue);
+        double lastValue = getLastLogValueDouble(valueName);
+        addData(valueName, lastValue + incrementAmount, defaultValue);
     }
     public void incrementPrevious(String valueName, DefaultValue defaultValue){
-        addToPrevious(filename, valueName, defaultValue, 1);
+        addToPrevious(valueName, defaultValue, 1);
     }
 
     private void addDefaultData(){
