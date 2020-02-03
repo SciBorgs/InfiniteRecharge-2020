@@ -48,13 +48,8 @@ public class SciSolenoid <ValueType extends Enum<ValueType>> extends DoubleSolen
         Robot.addRobotStateUpdater(this);
     }
     
-    private Value toDoubleSolenoidValue(ValueType e) {
-        return valueMap.getForward(e);
-    }
-
-    private ValueType toValueType(Value v){
-        return valueMap.getBackward(v);
-    }
+    private Value toDoubleSolenoidValue(ValueType e) {return valueMap.getForward(e);}
+    private ValueType toValueType(Value v)           {return valueMap.getBackward(v);}
 
     public ValueType oppositeSciSolenoidValue(ValueType e) {
         return (toDoubleSolenoidValue(e) == Value.kOff) 
