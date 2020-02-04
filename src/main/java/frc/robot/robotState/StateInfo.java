@@ -20,9 +20,10 @@ public class StateInfo{
     public static double getFullDifference(RobotStateHistory stateHistory, SD sd){
         return getDifference(stateHistory, sd, stateHistory.numberOfStates() - 1);
     }
+
     public static double getRateOfChange(RobotStateHistory stateHistory, SD sd, int ticksBack1, int ticksBack2) {
         return (stateHistory.statesAgo(ticksBack1).get(sd) - stateHistory.statesAgo(ticksBack2).get(sd)) / 
-            (ticksBack2 - ticksBack1);
+            (stateHistory.statesAgo(ticksBack1).get(SD.Time) - stateHistory.statesAgo(ticksBack2).get(SD.Time));
     }
     public static double getRateOfChange(RobotStateHistory stateHistory, SD sd, int ticksBack) {
         return getRateOfChange(stateHistory, sd, 0, ticksBack);

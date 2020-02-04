@@ -25,6 +25,8 @@ public class SciSpark extends CANSparkMax implements RobotStateUpdater {
     public Optional<SD> wheelAngleSD, velocitySD, accelSD, jerkSD, snapSD, valueSD, currentSD;
     private int commandNumber;
     private boolean printValues;
+    private boolean diminishSnap = false;
+    public static final double TOLERABLE_DIFFERENCE = 0.01;
     public static final int DEFAULT_STALL_CURRENT_LIMIT = 40;
     public static final int DEFAULT_FREE_CURRNET_LIMT = 40;
     public static final int DEFAULT_SPIKE_CURRENT_LIMIT = 100;
@@ -44,6 +46,10 @@ public class SciSpark extends CANSparkMax implements RobotStateUpdater {
         this.currentMaxJerk = DEFAULT_MAX_JERK;
         this.commandNumber = 0;
         this.wheelAngleSD = Optional.empty();
+        this.velocitySD   = Optional.empty();
+        this.accelSD      = Optional.empty();
+        this.jerkSD       = Optional.empty();
+        this.snapSD       = Optional.empty();
         this.valueSD      = Optional.empty();
         this.currentSD    = Optional.empty();
         this.printValues = false;
@@ -61,13 +67,16 @@ public class SciSpark extends CANSparkMax implements RobotStateUpdater {
     public int getMovementPrecision() {return this.movmentPrecision;}
     
     public void setMovementPrecision(int movementPrecision){this.movmentPrecision = movementPrecision;}
+    
+    public void diminishSnap(){this.diminishSnap = true;}
+    public void ignoreSnap()  {this.diminishSnap = false;} 
 
     public void setGearRatio(double gearRatio) {
         double currentAngle = determineWheelAngle();
         this.gearRatio = gearRatio;
         super.getEncoder().setPositionConversionFactor(this.gearRatio * 2 * Math.PI);
         // I don't know if we have to multiply this by getPositionConversionFactor()
-        super.getEncoder().setVelocityConversionFactor(Utils.SECONDS_PER_MINUTE * super.getEncoder().getPositionConversionFactor()); 
+        super.getEncoder().setVelocityConversionFactor(super.getEncoder().getPositionConversionFactor() / Utils.SECONDS_PER_MINUTE); 
         // W/o this when we changed gear ratios, it would weirdly change the angle
         // For instance, if you have a gear ratio of 1/5 and your getPosition() is 20 radians
         //  and then you change the gear ratio to 1/10, your getPosition() will go to 10 radians
@@ -75,7 +84,7 @@ public class SciSpark extends CANSparkMax implements RobotStateUpdater {
     }
 
     public void setWheelAngle(double angle) {
-        super.getEncoder().setPosition(angle / super.getEncoder().getPositionConversionFactor());
+        super.getEncoder().setPosition(angle);
     }
 
     private double determineWheelAngle() {return super.getEncoder().getPosition();}
@@ -85,14 +94,26 @@ public class SciSpark extends CANSparkMax implements RobotStateUpdater {
     public boolean atGoal() {return this.goalSpeed == super.get();}
     public void instantSet() {
         double limitedInput = Utils.limitChange(super.get(), this.goalSpeed, this.currentMaxJerk);
-        super.set(limitedInput);
-        if (limitedInput != super.get()) {
+        double input = this.diminishSnap ? diminishSnap(limitedInput) : limitedInput;
+        super.set(input);
+        if (!Utils.inRange(input, super.get(), TOLERABLE_DIFFERENCE) && false) {
             String warning = "WARNING: " + getDeviceName() + " was set to " + limitedInput
                     + " but still has a value of " + super.get();
             System.out.println(warning);
             System.out.println(warning);
             printDebuggingInfo();
         }
+    }
+
+    private double diminishSnap(double input){
+        double lastJerk = StateInfo.getDifference(Robot.stateHistory, this.valueSD.get(), 1);
+        double currentJerk = input - Robot.get(this.valueSD.get());
+        double snap = currentJerk - lastJerk;
+        double scale = 1/8;
+        DelayedPrinter.print("Calculated Snap: " + snap, 5);
+        double newSnap = Math.tanh(snap * scale) / scale;
+        DelayedPrinter.print("New Snap: " + snap);
+        return lastJerk + newSnap;
     }
 
     public void set(double speed, double maxJerk) {
@@ -111,13 +132,13 @@ public class SciSpark extends CANSparkMax implements RobotStateUpdater {
             double positionChange = StateInfo.getFullDifference(this.wheelAngleSD.get());
             System.out.println("Position Change: " + positionChange);
             System.out.println("Is significant?: " + (Math.abs(positionChange) > Utils.EPSILON));
-            System.out.println("All Positions: " + Robot.stateHistory.getFullSDData(this.wheelAngleSD.get()));
+            // System.out.println("All Positions: " + Robot.stateHistory.getFullSDData(this.wheelAngleSD.get()));
         }
         if (this.currentSD.isPresent()) {
             System.out.println("Current: " + Robot.get(this.currentSD.get()));
         }
         if (this.valueSD.isPresent()) {
-            System.out.println("All Values: " + Robot.stateHistory.getFullSDData(this.valueSD.get()));
+           // System.out.println("All Values: " + Robot.stateHistory.getFullSDData(this.valueSD.get()));
         }
     }
 
@@ -137,13 +158,13 @@ public class SciSpark extends CANSparkMax implements RobotStateUpdater {
         }
     }
 
-    public void assignWheelAngleSD(SD wheelAngleSD) {this.wheelAngleSD = Optional.of(wheelAngleSD);}
-    public void assignVelocitySD  (SD velocitySD)   {this.velocitySD   = Optional.of(velocitySD);}
-    public void assignAccelD      (SD accelSD)      {this.accelSD      = Optional.of(accelSD);}
-    public void assignJerkSD      (SD jerkSD)       {this.jerkSD       = Optional.of(jerkSD);}
-    public void assignSnapSD      (SD snapSD)       {this.snapSD       = Optional.of(snapSD);}
-    public void assignValueSD     (SD valueSD)      {this.valueSD      = Optional.of(valueSD);}
-    public void assignCurrentSD   (SD currentSD)    {this.currentSD    = Optional.of(currentSD);}
+    public void assignWheelAngleSD(SD wheelAngleSD) {this.wheelAngleSD = Optional.of(wheelAngleSD); Robot.set(wheelAngleSD, 0);}
+    public void assignVelocitySD  (SD velocitySD)   {this.velocitySD   = Optional.of(velocitySD);   Robot.set(velocitySD  , 0);}
+    public void assignAccelD      (SD accelSD)      {this.accelSD      = Optional.of(accelSD);      Robot.set(accelSD     , 0);}
+    public void assignJerkSD      (SD jerkSD)       {this.jerkSD       = Optional.of(jerkSD);       Robot.set(jerkSD      , 0);}
+    public void assignSnapSD      (SD snapSD)       {this.snapSD       = Optional.of(snapSD);       Robot.set(snapSD      , 0);}
+    public void assignValueSD     (SD valueSD)      {this.valueSD      = Optional.of(valueSD);      Robot.set(valueSD     , 0);}
+    public void assignCurrentSD   (SD currentSD)    {this.currentSD    = Optional.of(currentSD);    Robot.set(currentSD   , 0);}
 
     public ArrayList<SD> getAllSDs(){
         return Utils.optionalInitArrayList(wheelAngleSD, velocitySD, accelSD, jerkSD, snapSD, valueSD, currentSD);
@@ -161,7 +182,9 @@ class AccelModel implements Model {
     public AccelModel(SciSpark spark) {this.spark = spark;}
     @Override
     public void updateRobotState() {
-        Robot.optionalSet(this.spark.accelSD, StateInfo.getRateOfChange(this.spark.velocitySD.get(), spark.getMovementPrecision()));
+        if(this.spark.accelSD.isPresent()) {
+            Robot.optionalSet(this.spark.accelSD, StateInfo.getRateOfChange(this.spark.velocitySD.get(), spark.getMovementPrecision()));
+        }
     }
     @Override public Iterable<SD> getSDs() {return Utils.optionalInitArrayList(this.spark.accelSD);}
 }
@@ -172,7 +195,9 @@ class JerkModel implements Model {
     public JerkModel(SciSpark spark) {this.spark = spark;}
     @Override
     public void updateRobotState() {
-        Robot.optionalSet(this.spark.jerkSD, StateInfo.getRateOfChange(this.spark.accelSD.get(), spark.getMovementPrecision()));
+        if(this.spark.jerkSD.isPresent()) {
+            Robot.optionalSet(this.spark.jerkSD, StateInfo.getRateOfChange(this.spark.accelSD.get(), spark.getMovementPrecision()));
+        }
     }
     @Override public Iterable<SD> getSDs() {return Utils.optionalInitArrayList(this.spark.jerkSD);}
 
@@ -184,7 +209,9 @@ class SnapModel implements Model {
     public SnapModel(SciSpark spark) {this.spark = spark;}
     @Override
     public void updateRobotState() {
-        Robot.optionalSet(this.spark.snapSD,StateInfo.getRateOfChange(this.spark.snapSD.get(), spark.getMovementPrecision()));
+        if(this.spark.snapSD.isPresent()) {
+            Robot.optionalSet(this.spark.snapSD,StateInfo.getRateOfChange(this.spark.jerkSD.get(), spark.getMovementPrecision()));
+        }
     }
     @Override public Iterable<SD> getSDs() {return Utils.optionalInitArrayList(this.spark.snapSD);}
 

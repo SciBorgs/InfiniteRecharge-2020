@@ -7,6 +7,8 @@ import java.util.Optional;
 
 import javax.swing.text.Position;
 
+import com.fasterxml.jackson.databind.ser.std.StdKeySerializers.Default;
+
 import frc.robot.subsystems.*;
 import frc.robot.commands.*;
 import frc.robot.helpers.*;
@@ -51,9 +53,7 @@ public class Robot extends TimedRobot {
     public static CircleController circleController = new CircleController();
     public static OI oi = new OI();
 
-    public static Updater positionUpdater = new EncoderLocalization();
-
-    public static Model positionModel = new MaybeDefaultUpdater(new LimelightLocalization(), positionUpdater);
+    public static Model positionModel = new EncoderLocalization();
 
     public static RobotState getState(){ return stateHistory.currentState(); }
     public static RobotState statesAgo(int numTicks){return stateHistory.statesAgo(numTicks);}
@@ -102,11 +102,10 @@ public class Robot extends TimedRobot {
 
     public static Point newDestPoint = new Point(Utils.inchesToMeters(4), .458);
     public static double newDestHeading = Geo.HORIZONTAL_ANGLE;
-    private int attemptsSinceLastLog;
+    private int attemptsSinceLastLog = 0;
     public static final int LOG_PERIOD = 5;
 
     private void allPeriodicLogs() {
-        driveSubsystem.periodicLog();
         limelightSubsystem.periodicLog();
         pneumaticsSubsystem.periodicLog();
         following.periodicLog();
@@ -117,6 +116,7 @@ public class Robot extends TimedRobot {
         robotStateUpdaters.add(robotStateUpdater);
     }
     private void allUpdateRobotStates() {
+        set(SD.Time, this.timer.get());
         for (RobotStateUpdater i : robotStateUpdaters) {
             i.updateRobotState();
         }
@@ -140,7 +140,7 @@ public class Robot extends TimedRobot {
 
     public void robotInit() {
         timer.start();
-        // attemptsSinceLastLog = 0;
+        attemptsSinceLastLog = 0;
         set(SD.X, ORIGINAL_POINT.x);
         set(SD.Y, ORIGINAL_POINT.y);
         set(SD.Angle, ORIGINAL_ANGLE);
@@ -151,19 +151,22 @@ public class Robot extends TimedRobot {
         addSDToLog(SD.X);
         addSDToLog(SD.Y);
         addSDToLog(SD.Angle);
+        addSDToLog(SD.Time);
     }
 
     public void logDataPeriodic() {
-        logger.logData();
+        if(attemptsSinceLastLog == 2) {
+            logger.logData();
+            attemptsSinceLastLog = 0;
+        }
+        attemptsSinceLastLog++;
     }
  
     public void robotPeriodic() {
         stateHistory.addState(getState().copy());
         allUpdateRobotStates();
         allModels();
-        allPeriodicLogs();
-        logDataPeriodic();
-        DelayedPrinter.print("x: " + getPos().x + "\ty: " + getPos().y + "\nheading: " + getHeading() + "\npigeon angle: " + Robot.get(SD.PigeonAngle));
+        // DelayedPrinter.print("x: " + getPos().x + "\ty: " + getPos().y + "\nheading: " + getHeading() + "\npigeon angle: " + Robot.get(SD.PigeonAngle));
         Scheduler.getInstance().run();
         DelayedPrinter.incTicks();
     }
@@ -180,20 +183,31 @@ public class Robot extends TimedRobot {
     @Override
     public void autonomousPeriodic() {
         sequential.update();
+        allPeriodicLogs();
+        logDataPeriodic();
     }
     
     @Override
     public void teleopInit() {
         intakeSubsystem.reverseIntake();
-        pneumaticsSubsystem.startCompressor();
+        // pneumaticsSubsystem.startCompressor();
     }
 
     public void teleopPeriodic() {
         (new TankDriveCommand()).start();
+        allPeriodicLogs();
+        logDataPeriodic();
     }
     
 
-    public void testPeriodic() {}
+    public void testPeriodic() {
+        DelayedPrinter.print("testing...");
+    }
+
+    @Override
+    public void disabledPeriodic() {
+        DelayedPrinter.print("disabled...");
+    }
 
     public void disabledInit() {
         allPeriodicLogs();

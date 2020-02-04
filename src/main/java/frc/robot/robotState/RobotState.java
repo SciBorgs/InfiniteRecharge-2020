@@ -28,6 +28,8 @@ public class RobotState {
 
         // Pneumatics
         PressureSensorVoltage,
+
+        Time
     }
     
     private Hashtable<SD, Double> data;
