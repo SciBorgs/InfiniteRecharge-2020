@@ -113,7 +113,8 @@ public class SciSpark extends CANSparkMax implements RobotStateUpdater {
         DelayedPrinter.print("Calculated Snap: " + snap, 5);
         double newSnap = Math.tanh(snap * scale) / scale;
         DelayedPrinter.print("New Snap: " + snap);
-        return lastJerk + newSnap;
+        double newJerk = lastJerk + newSnap;
+        return Robot.get(this.valueSD.get()) + newJerk;
     }
 
     public void set(double speed, double maxJerk) {
