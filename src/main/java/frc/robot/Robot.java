@@ -180,6 +180,7 @@ public class Robot extends TimedRobot {
     }
 
     public void teleopPeriodic() {
+        limelightLocalization.test();
         (new TankDriveCommand()).start();
     }
     

@@ -36,38 +36,34 @@ public class LimelightLocalization implements MaybeUpdater {
         return (OUTER_PORT_HEIGHT - CAMERA_ABOVE_GROUND_HEIGHT)/Math.tan(yAngle + CAMERA_MOUNTING_ANGLE); 
     }
 
-    public Point getRobotPosition() {
+    public void test() {
+        Point pos = getRobotPosition();
+        double angle = getRobotAngle();
         double distance = calculateDistance();
-        double tx = limeLight.getTableData(limeLight.getCameraTable(), "tx");
-        double xRelative = distance * Math.cos(Math.toRadians(tx));
-        double yRelative = distance * Math.sin(Math.toRadians(tx));
-        double xAbsolute = LANDMARK_X - xRelative;
-        double yAbsolute = LANDMARK_Y - yRelative;
-        if (tx < 0){
-            xAbsolute *= -1;
-            yAbsolute *= -1;
-        }
-        return new Point(xAbsolute,yAbsolute);
+        Robot.limelightSubsystem.setCameraParams("X", pos.x);
+        Robot.limelightSubsystem.setCameraParams("Y", pos.y);
+        Robot.limelightSubsystem.setCameraParams("Angle", Math.toDegrees(angle));
+        Robot.limelightSubsystem.setCameraParams("Distance", distance);
     }
 
-    public double getRobotAngle() {
-        Point absolutePosition = getRobotPosition();
-        double aX = LANDMARK_X - absolutePosition.x;
-        double aY = LANDMARK_Y - absolutePosition.y;
-        double magnitude = Math.sqrt(aX * aX + aY * aY);
-        double theta = Math.acos(aX/magnitude);
+    public Point getRobotPosition() {
+        double distance = calculateDistance();
+        double robotAngle = Robot.get(SD.Angle);
         double tx = limeLight.getTableData(limeLight.getCameraTable(), "tx");
-        return theta + tx;
+        double complement = 90 - (tx + robotAngle);
+        double changeInY = distance * Math.cos(Math.toRadians(complement));
+        double changeInX = Math.sqrt(distance * distance - changeInY * changeInY);
+        double yAbsolute = LANDMARK_Y - changeInY;
+        double xAbsolute = LANDMARK_X + changeInX; 
+        return new Point(xAbsolute,yAbsolute);
     }
 
     @Override
     public void updateState(RobotStateHistory pastRobotStates) {
         Point absolutePosition = getRobotPosition();
         RobotState updatedState = new RobotState();
-        double angle = getRobotAngle();
         updatedState.set(SD.X, absolutePosition.x);
         updatedState.set(SD.Y, absolutePosition.y);
-        updatedState.set(SD.Angle, angle);
         pastRobotStates.setCurrentState(updatedState);
     }
 
