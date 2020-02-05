@@ -190,17 +190,22 @@ public class Robot extends TimedRobot {
     @Override
     public void teleopInit() {
         intakeSubsystem.reverseIntake();
+        Robot.driveSubsystem.l.ignoreSnap();
+        Robot.driveSubsystem.r.ignoreSnap();
         // pneumaticsSubsystem.startCompressor();
     }
 
     public void teleopPeriodic() {
-        (new TankDriveCommand()).start();
+        (new TankDriveCommand()).start();    
         allPeriodicLogs();
         logDataPeriodic();
     }
     
 
     public void testPeriodic() {
+        (new TankDriveCommand()).start();
+        Robot.driveSubsystem.l.diminishSnap();
+        Robot.driveSubsystem.r.diminishSnap();
         DelayedPrinter.print("testing...");
     }
 

@@ -18,7 +18,7 @@ public class SciSpark extends CANSparkMax implements RobotStateUpdater {
 
     public double goalSpeed;
     public double currentMaxJerk;
-    public static final double DEFAULT_MAX_JERK = 0.1;
+    public static final double DEFAULT_MAX_JERK = 0.15;
     private int movmentPrecision = 3;
     private double gearRatio;
     private Model accelModel, jerkModel, snapModel;
@@ -33,6 +33,7 @@ public class SciSpark extends CANSparkMax implements RobotStateUpdater {
     public static final double DEFAULT_SPIKE_MAX_TIME = 0.1;
     public static final double CHOP_CYCLE_DURATION = 0.05;
     public static final int DEFAULT_CHOP_CYCLES = (int) (DEFAULT_SPIKE_MAX_TIME / CHOP_CYCLE_DURATION);
+    public double decrementSnapSpeed = .3;
 
     public SciSpark(int port) {
         this(port, 1);
@@ -96,7 +97,7 @@ public class SciSpark extends CANSparkMax implements RobotStateUpdater {
         double limitedInput = Utils.limitChange(super.get(), this.goalSpeed, this.currentMaxJerk);
         double input = this.diminishSnap ? diminishSnap(limitedInput) : limitedInput;
         super.set(input);
-        if (!Utils.inRange(input, super.get(), TOLERABLE_DIFFERENCE) && false) {
+        if (!Utils.inRange(input, super.get(), TOLERABLE_DIFFERENCE)) {
             String warning = "WARNING: " + getDeviceName() + " was set to " + limitedInput
                     + " but still has a value of " + super.get();
             System.out.println(warning);
@@ -105,14 +106,21 @@ public class SciSpark extends CANSparkMax implements RobotStateUpdater {
         }
     }
 
+    private double snapDecrementer(double x){
+        double sign = Math.signum(x);
+        x = Math.abs(x);
+        return sign * Math.pow(x, 1/(1 + Math.log(Math.sqrt(x) + 1)*this.decrementSnapSpeed));
+    }
+
     private double diminishSnap(double input){
         double lastJerk = StateInfo.getDifference(Robot.stateHistory, this.valueSD.get(), 1);
         double currentJerk = input - Robot.get(this.valueSD.get());
         double snap = currentJerk - lastJerk;
-        double scale = 1/8;
         DelayedPrinter.print("Calculated Snap: " + snap, 5);
-        double newSnap = Math.tanh(snap * scale) / scale;
-        DelayedPrinter.print("New Snap: " + snap);
+        double newSnap = snapDecrementer(snap);
+        DelayedPrinter.print("New Snap: " + newSnap, 5);
+        DelayedPrinter.print("% Error: "+(snap - newSnap) * 100 / (snap), 5);
+        DelayedPrinter.print("DecrementConstant: " + this.decrementSnapSpeed, 5);
         double newJerk = lastJerk + newSnap;
         return Robot.get(this.valueSD.get()) + newJerk;
     }
@@ -133,13 +141,13 @@ public class SciSpark extends CANSparkMax implements RobotStateUpdater {
             double positionChange = StateInfo.getFullDifference(this.wheelAngleSD.get());
             System.out.println("Position Change: " + positionChange);
             System.out.println("Is significant?: " + (Math.abs(positionChange) > Utils.EPSILON));
-            // System.out.println("All Positions: " + Robot.stateHistory.getFullSDData(this.wheelAngleSD.get()));
+            System.out.println("All Positions: " + Robot.stateHistory.getFullSDData(this.wheelAngleSD.get()));
         }
         if (this.currentSD.isPresent()) {
             System.out.println("Current: " + Robot.get(this.currentSD.get()));
         }
         if (this.valueSD.isPresent()) {
-           // System.out.println("All Values: " + Robot.stateHistory.getFullSDData(this.valueSD.get()));
+           System.out.println("All Values: " + Robot.stateHistory.getFullSDData(this.valueSD.get()));
         }
     }
 
