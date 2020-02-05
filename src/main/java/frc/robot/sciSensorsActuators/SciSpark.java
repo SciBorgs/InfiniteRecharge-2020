@@ -101,7 +101,6 @@ public class SciSpark extends CANSparkMax implements RobotStateUpdater {
             String warning = "WARNING: " + getDeviceName() + " was set to " + limitedInput
                     + " but still has a value of " + super.get();
             System.out.println(warning);
-            System.out.println(warning);
             printDebuggingInfo();
         }
     }
@@ -116,11 +115,7 @@ public class SciSpark extends CANSparkMax implements RobotStateUpdater {
         double lastJerk = StateInfo.getDifference(Robot.stateHistory, this.valueSD.get(), 1);
         double currentJerk = input - Robot.get(this.valueSD.get());
         double snap = currentJerk - lastJerk;
-        DelayedPrinter.print("Calculated Snap: " + snap, 5);
         double newSnap = snapDecrementer(snap);
-        DelayedPrinter.print("New Snap: " + newSnap, 5);
-        DelayedPrinter.print("% Error: "+(snap - newSnap) * 100 / (snap), 5);
-        DelayedPrinter.print("DecrementConstant: " + this.decrementSnapSpeed, 5);
         double newJerk = lastJerk + newSnap;
         return Robot.get(this.valueSD.get()) + newJerk;
     }
