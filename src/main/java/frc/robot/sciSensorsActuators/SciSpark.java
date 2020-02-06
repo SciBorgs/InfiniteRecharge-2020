@@ -7,6 +7,8 @@ import java.util.Optional;
 
 import frc.robot.Robot;
 import frc.robot.Utils;
+import frc.robot.commands.SparkDelayWarningCommand;
+import frc.robot.commands.TankDriveCommand;
 import frc.robot.commands.generalCommands.SciSparkSpeedCommand;
 import frc.robot.helpers.DelayedPrinter;
 import frc.robot.robotState.RobotStateUpdater;
@@ -98,9 +100,10 @@ public class SciSpark extends CANSparkMax implements RobotStateUpdater {
         double input = this.diminishSnap ? diminishSnap(limitedInput) : limitedInput;
         super.set(input);
         if (!Utils.inRange(input, super.get(), TOLERABLE_DIFFERENCE)) {
-            String warning = "WARNING: " + getDeviceName() + " was set to " + limitedInput
-                    + " but still has a value of " + super.get();
-            System.out.println(warning);
+            // String warning = "WARNING: " + getDeviceName() + " was set to " + limitedInput
+            //        + " but still has a value of " + super.get();
+            // System.out.println(warning);
+            (new SparkDelayWarningCommand(this, limitedInput)).start();
             printDebuggingInfo();
         }
     }
