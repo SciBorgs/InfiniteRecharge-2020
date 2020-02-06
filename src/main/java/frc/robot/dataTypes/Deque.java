@@ -105,7 +105,7 @@ class DequeIterator<T> implements Iterator<T> {
     private Deque<T> deque;
 
     public DequeIterator(Deque<T> deque) {
-        this.deque = deque;
+        this.deque = deque.clone();
     }
 
     @Override

@@ -7,6 +7,8 @@ import java.util.Optional;
 
 import frc.robot.Robot;
 import frc.robot.Utils;
+import frc.robot.commands.SparkDelayWarningCommand;
+import frc.robot.commands.TankDriveCommand;
 import frc.robot.commands.generalCommands.SciSparkSpeedCommand;
 import frc.robot.helpers.DelayedPrinter;
 import frc.robot.robotState.RobotStateUpdater;
@@ -18,7 +20,7 @@ public class SciSpark extends CANSparkMax implements RobotStateUpdater {
 
     public double goalSpeed;
     public double currentMaxJerk;
-    public static final double DEFAULT_MAX_JERK = 0.1;
+    public static final double DEFAULT_MAX_JERK = 0.15;
     private int movmentPrecision = 3;
     private double gearRatio;
     private Model accelModel, jerkModel, snapModel;
@@ -34,6 +36,7 @@ public class SciSpark extends CANSparkMax implements RobotStateUpdater {
     public static final double CHOP_CYCLE_DURATION = 0.05;
     public static final int DEFAULT_CHOP_CYCLES = (int) (DEFAULT_SPIKE_MAX_TIME / CHOP_CYCLE_DURATION);
     private double expectedVal;
+    public double decrementSnapSpeed = .3;
 
     public SciSpark(int port) {
         this(port, 1);
@@ -97,9 +100,12 @@ public class SciSpark extends CANSparkMax implements RobotStateUpdater {
     public void instantSet() {
         double limitedInput = Utils.limitChange(super.get(), this.goalSpeed, this.currentMaxJerk);
         double input = this.diminishSnap ? diminishSnap(limitedInput) : limitedInput;
+        this.expectedVal = input;
         super.set(input);
-        if (!Utils.inRange(input, super.get(), TOLERABLE_DIFFERENCE) && false) {
-        }
+        /*
+        if (!Utils.inRange(input, super.get(), TOLERABLE_DIFFERENCE)) {
+            setWarning(input, super.get());
+        }*/
     }
 
     public void setWarning(double expectedOutput, double realOutput){
@@ -108,17 +114,19 @@ public class SciSpark extends CANSparkMax implements RobotStateUpdater {
         System.out.println(warning);
         System.out.println(warning);
         printDebuggingInfo();
+    }
 
+    private double snapDecrementer(double x){
+        double sign = Math.signum(x);
+        x = Math.abs(x);
+        return sign * Math.pow(x, 1/(1 + Math.log(Math.sqrt(x) + 1)*this.decrementSnapSpeed));
     }
 
     private double diminishSnap(double input){
         double lastJerk = StateInfo.getDifference(Robot.stateHistory, this.valueSD.get(), 1);
         double currentJerk = input - Robot.get(this.valueSD.get());
         double snap = currentJerk - lastJerk;
-        double scale = 1/8;
-        DelayedPrinter.print("Calculated Snap: " + snap, 5);
-        double newSnap = Math.tanh(snap * scale) / scale;
-        DelayedPrinter.print("New Snap: " + snap);
+        double newSnap = snapDecrementer(snap);
         double newJerk = lastJerk + newSnap;
         return Robot.get(this.valueSD.get()) + newJerk;
     }
@@ -139,13 +147,13 @@ public class SciSpark extends CANSparkMax implements RobotStateUpdater {
             double positionChange = StateInfo.getFullDifference(this.wheelAngleSD.get());
             System.out.println("Position Change: " + positionChange);
             System.out.println("Is significant?: " + (Math.abs(positionChange) > Utils.EPSILON));
-            // System.out.println("All Positions: " + Robot.stateHistory.getFullSDData(this.wheelAngleSD.get()));
+            System.out.println("All Positions: " + Robot.stateHistory.getFullSDData(this.wheelAngleSD.get()));
         }
         if (this.currentSD.isPresent()) {
             System.out.println("Current: " + Robot.get(this.currentSD.get()));
         }
         if (this.valueSD.isPresent()) {
-           // System.out.println("All Values: " + Robot.stateHistory.getFullSDData(this.valueSD.get()));
+           System.out.println("All Values: " + Robot.stateHistory.getFullSDData(this.valueSD.get()));
         }
     }
 
@@ -162,6 +170,9 @@ public class SciSpark extends CANSparkMax implements RobotStateUpdater {
         this.snapModel .updateRobotState();
         if(this.printValues){
             DelayedPrinter.print("Spark " + super.getDeviceId() + " value: " + super.get());
+        }
+        if(!Utils.impreciseEquals(this.expectedVal, super.get())){
+            setWarning(this.expectedVal, super.get());
         }
     }
 
