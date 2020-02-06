@@ -10,9 +10,9 @@ import frc.robot.robotState.StateInfo;
 import frc.robot.sciSensorsActuators.*;
 import frc.robot.logging.Logger.DefaultValue;
 import edu.wpi.first.wpilibj.Joystick;
-import edu.wpi.first.wpilibj.command.Subsystem;
+import edu.wpi.first.wpilibj2.command.Subsystem;
 
-public class DriveSubsystem extends Subsystem {
+public class DriveSubsystem implements Subsystem {
     // Define tested error values here
     double TANK_ANGLE_P = .075, TANK_ANGLE_D = 0.0, TANK_ANGLE_I = 0;
     double TANK_SPEED_LEFT_P  = .1, TANK_SPEED_LEFT_D  = 0.0, TANK_SPEED_LEFT_I  = 0;
@@ -148,10 +148,5 @@ public class DriveSubsystem extends Subsystem {
     public void setSpeedTankForwardTurningMagnitude(double forward, double turnMagnitude) {
         // Note: this controls dtheta/dt rather than dtheta/dx
         setTank(forward - turnMagnitude, forward + turnMagnitude);
-    }
-
-    @Override
-    protected void initDefaultCommand() {
-		//IGNORE THIS METHOD
     }
 }

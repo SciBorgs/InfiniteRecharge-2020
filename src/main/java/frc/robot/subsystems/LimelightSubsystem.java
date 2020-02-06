@@ -1,11 +1,11 @@
 package frc.robot.subsystems;
 
-import edu.wpi.first.wpilibj.command.Subsystem;
+import edu.wpi.first.wpilibj2.command.Subsystem;
 
 import edu.wpi.first.networktables.NetworkTable;
 import edu.wpi.first.networktables.NetworkTableInstance;
 
-public class LimelightSubsystem extends Subsystem{
+public class LimelightSubsystem implements Subsystem{
 
     public final static double IMAGE_WIDTH = Math.toRadians(27.); // In degrees
     public final static double IMAGE_HEIGHT = Math.toRadians(20.5); // In degrees
@@ -29,10 +29,5 @@ public class LimelightSubsystem extends Subsystem{
     }
 
     public void periodicLog(){
-    }
-
-    @Override
-    protected void initDefaultCommand() {
-        // LITTERALLY DIE
     }
 }

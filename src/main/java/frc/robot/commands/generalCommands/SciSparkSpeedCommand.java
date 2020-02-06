@@ -1,9 +1,12 @@
 package frc.robot.commands.generalCommands;
 
-import edu.wpi.first.wpilibj.command.Command;
+import java.util.HashSet;
+import java.util.Set;
+
+import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.sciSensorsActuators.SciSpark;
 
-public class SciSparkSpeedCommand extends Command {
+public class SciSparkSpeedCommand extends CommandBase {
 
     private SciSpark spark;
     private double goalSpeed;
@@ -18,8 +21,8 @@ public class SciSparkSpeedCommand extends Command {
     }
 
     @Override
-    protected void execute(){this.spark.instantSet();}
+    public void execute(){this.spark.instantSet();}
     @Override
-    protected boolean isFinished(){return this.spark.atGoal();}
+    public boolean isFinished(){return this.spark.atGoal();}
 
 }

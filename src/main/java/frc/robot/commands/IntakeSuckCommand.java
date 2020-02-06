@@ -1,19 +1,19 @@
 package frc.robot.commands;
 
-import edu.wpi.first.wpilibj.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.Robot;
 import frc.robot.logging.Logger.CommandStatus;
 
-public class IntakeSuckCommand extends InstantCommand {
+public class IntakeSuckCommand extends CommandBase {
 
     private final String FILENAME = "IntakeSuckCommand.java";
 
     public IntakeSuckCommand() {
-        requires(Robot.intakeSubsystem);
+        addRequirements(Robot.intakeSubsystem);
     }
 
     @Override 
-    protected void execute() {
+    public void execute() {
 	    Robot.logger.logCommandStatus(FILENAME, CommandStatus.Executing);
         Robot.intakeSubsystem.suck();
     }

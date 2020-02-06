@@ -2,6 +2,8 @@ package frc.robot.sciSensorsActuators;
 
 import com.revrobotics.CANSparkMax;
 
+import edu.wpi.first.wpilibj2.command.CommandScheduler;
+
 import java.util.Optional;
 
 import frc.robot.Robot;
@@ -88,7 +90,7 @@ public class SciSpark extends CANSparkMax implements RobotStateUpdater {
         this.commandNumber++;
         // Set will call this command, which will continue to call instantSet
         // InstantSet will only set the value of the motor to the correct value if it is within maxJerk
-        (new SciSparkSpeedCommand(this, this.commandNumber)).start();
+        CommandScheduler.getInstance().schedule(new SciSparkSpeedCommand(this, this.commandNumber));
     }
     public void set(double speed) {set(speed, DEFAULT_MAX_JERK);}
 

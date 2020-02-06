@@ -5,10 +5,10 @@ import frc.robot.Robot;
 import frc.robot.robotState.RobotStateUpdater;
 import frc.robot.robotState.RobotState.SD;
 import frc.robot.sciSensorsActuators.SciPigeon;
-import edu.wpi.first.wpilibj.command.Subsystem;
+import edu.wpi.first.wpilibj2.command.Subsystem;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
-public class PigeonSubsystem extends Subsystem {
+public class PigeonSubsystem implements Subsystem {
   // for the main pigeon on the robot
     public  SciPigeon pigeon;
     private TalonSRX pigeonTalon;
@@ -20,9 +20,4 @@ public class PigeonSubsystem extends Subsystem {
     }
 
     public SciPigeon getPigeon() {return this.pigeon;}
-
-    @Override
-    protected void initDefaultCommand() {
-		//IGNORE THIS METHOD
-    }
 }
