@@ -17,8 +17,8 @@ public class RobotState {
         X, Y, PigeonAngle, Angle,
 
         // Chassis direct motor values
-        LeftWheelAngle, LeftSparkVal, LeftCurrentVal, LeftWheelSpeed,
-        RightWheelAngle, RightSparkVal, RightCurrentVal, RightWheelSpeed,
+        LeftWheelAngle, LeftWheelVal, LeftWheelCurrent, LeftWheelSpeed,
+        RightWheelAngle, RightWheelVal, RightWheelCurrent, RightWheelSpeed,
         // Chassis calculated motor values
         LeftWheelAccel, LeftWheelJerk, LeftWheelSnap,
         RightWheelAccel, RightWheelJerk, RightWheelSnap,

@@ -45,7 +45,7 @@ public class StateInfo{
         return Math.sqrt(getSpeedSquared(stateHistory));
     }
     public static double getAvgWheelInput(RobotState state){
-        return (state.get(SD.LeftSparkVal) + state.get(SD.RightSparkVal)) / 2;
+        return (state.get(SD.LeftWheelVal) + state.get(SD.RightWheelVal)) / 2;
     }
 
     public static double getDifference(SD sd, int ticksBack1, int ticksBack2) {
