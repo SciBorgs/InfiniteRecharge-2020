@@ -33,6 +33,7 @@ public class SciSpark extends CANSparkMax implements RobotStateUpdater {
     public static final double DEFAULT_SPIKE_MAX_TIME = 0.1;
     public static final double CHOP_CYCLE_DURATION = 0.05;
     public static final int DEFAULT_CHOP_CYCLES = (int) (DEFAULT_SPIKE_MAX_TIME / CHOP_CYCLE_DURATION);
+    private double expectedVal;
 
     public SciSpark(int port) {
         this(port, 1);
@@ -56,6 +57,7 @@ public class SciSpark extends CANSparkMax implements RobotStateUpdater {
         this.accelModel = new AccelModel(this);
         this.jerkModel  = new JerkModel(this);
         this.snapModel  = new SnapModel(this);
+        this.expectedVal = super.get();
         setWheelAngle(0);
         setGearRatio(gearRatio);
         Robot.addRobotStateUpdater(this);
@@ -97,12 +99,16 @@ public class SciSpark extends CANSparkMax implements RobotStateUpdater {
         double input = this.diminishSnap ? diminishSnap(limitedInput) : limitedInput;
         super.set(input);
         if (!Utils.inRange(input, super.get(), TOLERABLE_DIFFERENCE) && false) {
-            String warning = "WARNING: " + getDeviceName() + " was set to " + limitedInput
-                    + " but still has a value of " + super.get();
-            System.out.println(warning);
-            System.out.println(warning);
-            printDebuggingInfo();
         }
+    }
+
+    public void setWarning(double expectedOutput, double realOutput){
+        String warning = "WARNING: " + getDeviceName() + " was set to " + expectedOutput + " but still has a value of "
+                + realOutput;
+        System.out.println(warning);
+        System.out.println(warning);
+        printDebuggingInfo();
+
     }
 
     private double diminishSnap(double input){
