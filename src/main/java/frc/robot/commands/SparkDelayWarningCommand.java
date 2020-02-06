@@ -20,9 +20,10 @@ public class SparkDelayWarningCommand extends InstantCommand {
     protected void execute() {
         try {
             t.wait(delay);
-        } catch (InterruptedException e) {
             System.out.println("WARNING: " + this.sciSpark.getDeviceName() + " was set to " + this.limitedInput
             + " but still has a value of " + this.sciSpark.get());
+        } catch (InterruptedException e) {
+            System.out.println("interreupted");
         }
     }
 }
