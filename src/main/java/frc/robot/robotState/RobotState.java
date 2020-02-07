@@ -1,11 +1,16 @@
 package frc.robot.robotState;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.Hashtable;
 import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
+import frc.robot.Utils;
 import frc.robot.dataTypes.BiHashMap;
 
 public class RobotState {
@@ -100,10 +105,11 @@ public class RobotState {
         return incorporateIntoNew(otherState, otherState.getKeys());
     }
 
-    public void cutDownTo(ArrayList<SD> sdToInclude){
+    public void cutDownTo(Iterable<SD> sdToInclude){
         // Will get rid of all keys not in sdToInclude
+        HashSet<SD> sdSet = Utils.toStream(sdToInclude).collect(Collectors.toCollection(HashSet::new));
         for(SD sd : getKeys()){
-            if (!sdToInclude.contains(sd)){remove(sd);}
+            if (!sdSet.contains(sd)){remove(sd);}
         }
     }
   

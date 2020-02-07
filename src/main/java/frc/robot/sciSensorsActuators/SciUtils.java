@@ -1,6 +1,8 @@
 package frc.robot.sciSensorsActuators;
 
 import frc.robot.Robot;
+import frc.robot.robotState.RobotState;
+import frc.robot.robotState.RobotStateHistory;
 import frc.robot.robotState.RobotState.SD;
 
 public class SciUtils<SciSD> {
@@ -42,5 +44,12 @@ public class SciUtils<SciSD> {
         for(SD sd : getSDs()){
             Robot.addSDToLog(sd);
         }
+    }
+    public RobotStateHistory getDeviceData(){
+        RobotStateHistory newStateHistory = Robot.stateHistory.copy();
+        for(RobotState robotState : newStateHistory){
+            robotState.cutDownTo(getSDs());
+        }
+        return newStateHistory;
     }
 }

@@ -31,6 +31,11 @@ public class SciPigeon extends PigeonIMU implements RobotStateUpdater, SciSensor
     @Override 
     public String getDeviceName(){return "Pigeon " + super.getDeviceID();}
 
+    @Override
+    public void assignSD(SciPigeonSD pigeonSD, SD sd) {
+        this.sciUtils.assignSD(pigeonSD, sd);
+    }
+
     private double[] yawPitchRole(){
         double[] yawPitchRoll = new double[3];
         super.getYawPitchRoll(yawPitchRoll);
@@ -49,10 +54,5 @@ public class SciPigeon extends PigeonIMU implements RobotStateUpdater, SciSensor
         this.sciUtils.sciSet(SciPigeonSD.Angle, getAngle());
         this.sciUtils.sciSet(SciPigeonSD.Pitch, getPitch());
         this.sciUtils.sciSet(SciPigeonSD.Role,  getRole());
-    }
-
-    @Override
-    public void assignSD(SciPigeonSD pigeonSD, SD sd) {
-        this.sciUtils.assignSD(pigeonSD, sd);
     }
 }
