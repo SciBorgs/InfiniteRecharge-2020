@@ -9,12 +9,16 @@ import frc.robot.helpers.DelayedPrinter;
 import frc.robot.robotState.RobotStateUpdater;
 import frc.robot.Robot;
 import frc.robot.robotState.RobotState.SD;
+import frc.robot.sciSensorsActuators.GeneralSciSDs.SciTalonSD;
 
+import java.util.HashMap;
 import java.util.Optional;
 
-public class SciTalon extends TalonSRX implements RobotStateUpdater {
+public class SciTalon extends TalonSRX implements RobotStateUpdater, SciSensorActuator<SciTalonSD> {
 
     public static final double DEFAULT_MAX_JERK = 0.1;
+    public HashMap<SciTalonSD, SD> sdMap;
+    private SciUtils<SciTalonSD> sciUtils; 
     private int commandNumber;
     public double goalSpeed;
     public double currentMaxJerk;
@@ -34,7 +38,20 @@ public class SciTalon extends TalonSRX implements RobotStateUpdater {
         this.valueSD   = Optional.empty();
         this.currentSD = Optional.empty();
         this.printValues = false;
+        this.sciUtils = new SciUtils<>(this);
+        this.sdMap = new HashMap<>();
         Robot.addRobotStateUpdater(this);
+    }
+    @Override
+    public HashMap<SciTalonSD, SD> getSDMap(){return this.sdMap;}
+    @Override 
+    public SciUtils<SciTalonSD> getSciUtils(){return this.sciUtils;}
+    @Override 
+    public String getDeviceName(){return "Talon " + super.getDeviceID();}
+
+    @Override
+    public void assignSD(SciTalonSD talonSD, SD sd) {
+        this.sciUtils.assignSD(talonSD, sd);
     }
 
 
@@ -83,7 +100,4 @@ public class SciTalon extends TalonSRX implements RobotStateUpdater {
             DelayedPrinter.print("Talon " + super.getDeviceID() + " value: " + super.getMotorOutputPercent());
         }
     }
-
-    public void assignValueSD  (SD valueSD)   {this.valueSD   = Optional.of(valueSD);}
-    public void assignCurrentSD(SD currentSD) {this.currentSD = Optional.of(currentSD);}
 }
