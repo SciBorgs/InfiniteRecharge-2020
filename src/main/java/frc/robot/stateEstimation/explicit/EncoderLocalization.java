@@ -1,4 +1,4 @@
-package frc.robot.stateEstimation;
+package frc.robot.stateEstimation.explicit;
 
 import frc.robot.Robot;
 import frc.robot.helpers.DelayedPrinter;
@@ -14,6 +14,7 @@ import frc.robot.robotState.RobotState.SD;
 import frc.robot.sciSensorsActuators.SciPigeon;
 import frc.robot.subsystems.DriveSubsystem;
 import frc.robot.logging.Logger.DefaultValue;
+import frc.robot.stateEstimation.interfaces.*;
 
 public class EncoderLocalization implements Updater, Model {
 
@@ -74,7 +75,6 @@ public class EncoderLocalization implements Updater, Model {
         double thetaChange = StateInfo.getDifference(stateHistory, SD.PigeonAngle, 1);
         RobotState newPosition = 
             nextPosition(state.get(SD.X), state.get(SD.Y), state.get(SD.Angle), wheelChanges, thetaChange);
-        printWheelAngles();
         stateHistory.currentState().incorporateOtherState(newPosition); 
     }
 

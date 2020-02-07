@@ -1,5 +1,6 @@
 package frc.robot.sciSensorsActuators;
 
+import java.lang.StackWalker.Option;
 import java.util.Optional;
 
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
@@ -15,6 +16,9 @@ public class SciPigeon extends PigeonIMU implements RobotStateUpdater {
     public SciPigeon(TalonSRX talon) {
         super(talon);
         Robot.addRobotStateUpdater(this);
+        this.angleSD = Optional.empty();
+        this.pitchSD = Optional.empty();
+        this.roleSD = Optional.empty();
     }
 
     public PigeonIMU getPigeonIMU() {return this;}
