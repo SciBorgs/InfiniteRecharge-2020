@@ -8,7 +8,7 @@ import frc.robot.commands.*;
 // FILE HAS NOT BEEN CLEANED UP //
 public class OI {
     public Joystick leftStick, rightStick;
-    public JoystickButton toggleClawButton, adjustTiltButton, raiseTelescopeButton, lowerTelescopeButton, pullStringButton, reverseStringButton;
+    public JoystickButton toggleClawButton, adjustTiltButton, raiseTelescopeButton, lowerTelescopeButton, joystickTelescopeButton;
     public XboxController xboxController;
     
     public OI() {
@@ -19,21 +19,17 @@ public class OI {
         //adjustTiltButton     = new JoystickButton(rightStick, PortMap.JOYSTICK_LEFT_BUTTON);
         //adjustTiltButton.whileHeld(new JoystickShiftCommand());
 
-        raiseTelescopeButton = new JoystickButton(rightStick, PortMap.JOYSTICK_CENTER_BUTTON); // change
+        raiseTelescopeButton = new JoystickButton(leftStick, PortMap.JOYSTICK_LEFT_BUTTON); // change
         raiseTelescopeButton.whenPressed(new RaiseTelescopeCommand());
         raiseTelescopeButton.whenReleased(new StopTelescopeCommand());
 
-        lowerTelescopeButton = new JoystickButton(rightStick, PortMap.JOYSTICK_TRIGGER);
+        lowerTelescopeButton = new JoystickButton(leftStick, PortMap.JOYSTICK_RIGHT_BUTTON);
         lowerTelescopeButton.whenPressed(new DropTelescopeCommand());
         lowerTelescopeButton.whenReleased(new StopTelescopeCommand());
 
-        pullStringButton     = new JoystickButton(rightStick, PortMap.JOYSTICK_RIGHT_BUTTON); // change
-        pullStringButton.whenPressed(new PullStringCommand());
-        pullStringButton.whenReleased(new StopStringCommand());
-
-        reverseStringButton  = new JoystickButton(rightStick, PortMap.JOYSTICK_LEFT_BUTTON);
-        pullStringButton.whenPressed(new ReverseStringCommand());
-        pullStringButton.whenReleased(new StopStringCommand());
+        joystickTelescopeButton = new JoystickButton(leftStick, PortMap.JOYSTICK_TRIGGER);
+        joystickTelescopeButton.whileHeld(new JoystickTelescopeCommand());
+        joystickTelescopeButton.whenReleased(new StopTelescopeCommand());
     }
 }
 
