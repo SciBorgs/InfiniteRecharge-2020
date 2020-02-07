@@ -2,7 +2,8 @@ package frc.robot.robotState;
 
 import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.Hashtable;
+import java.util.Iterator;
+import java.util.HashMap;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collector;
@@ -12,8 +13,10 @@ import java.util.stream.Stream;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import frc.robot.Utils;
 import frc.robot.dataTypes.BiHashMap;
+import frc.robot.dataTypes.Pair;
+import frc.robot.robotState.RobotState.SD;
 
-public class RobotState {
+public class RobotState implements Iterable<Pair<SD, Double>>{
     private final String FILENAME = "RobotState.java";
     
     // SD = State Dimension
@@ -37,7 +40,7 @@ public class RobotState {
         Time
     }
     
-    private Hashtable<SD, Double> data;
+    private HashMap<SD, Double> data;
 
     public final static BiHashMap<Boolean, Double> BOOLEAN_MAPPING;
 
@@ -45,15 +48,14 @@ public class RobotState {
         BOOLEAN_MAPPING = new BiHashMap<>();
         BOOLEAN_MAPPING.put(true,  1.0);
         BOOLEAN_MAPPING.put(false, 0.0);
-        RobotState.SD sd = SD.X;
 
     }
 
     public RobotState() {
-        this(new Hashtable<>());
+        this(new HashMap<>());
     }
 
-    public RobotState(Hashtable<SD, Double> data) {
+    public RobotState(HashMap<SD, Double> data) {
         this.data = data;
     }
 
@@ -79,7 +81,7 @@ public class RobotState {
     }
 
     public RobotState copy(){
-        return new RobotState((Hashtable<SD, Double>) data.clone());
+        return new RobotState((HashMap<SD, Double>) data.clone());
     }
     public RobotState copyIntoNew(SD sd, double val){
         RobotState newRobotState = copy();
@@ -112,5 +114,47 @@ public class RobotState {
             if (!sdSet.contains(sd)){remove(sd);}
         }
     }
+    public RobotState cutDownIntoNew(Iterable<SD> sdToInclude){
+        RobotState newState = this.copy();
+        newState.cutDownTo(sdToInclude);
+        return newState;
+    }
+
+    @Override 
+    public Iterator<Pair<SD,Double>> iterator(){
+        return new RobotStateIterator(this.data);
+    }
   
+}
+
+class RobotStateIterator implements Iterator<Pair<SD,Double>> {
+
+    private HashMap<SD,Double> data;
+    private SD[] keys;
+    private int indexOn;
+
+    public RobotStateIterator(HashMap<SD, Double> data) {
+        this.data = (HashMap<SD, Double>) data.clone();
+        this.keys = this.data.keySet().toArray(this.keys);
+        this.indexOn = 0;
+    }
+
+    @Override
+    public boolean hasNext() {
+        return indexOn < keys.length;
+    }
+
+    @Override
+    public Pair<SD, Double> next() {
+        SD key = this.keys[indexOn];
+        Pair<SD, Double> pair = new Pair<>(key, this.data.get(key));
+        this.indexOn++;
+        return pair;
+    }
+
+    @Override
+    public void remove() {
+        this.data.remove(this.keys[indexOn]);
+        this.indexOn++;
+    }
 }

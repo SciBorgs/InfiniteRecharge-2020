@@ -1,6 +1,7 @@
 package frc.robot.sciSensorsActuators;
 
 import frc.robot.Robot;
+import frc.robot.dataTypes.Pair;
 import frc.robot.robotState.RobotState;
 import frc.robot.robotState.RobotStateHistory;
 import frc.robot.robotState.RobotState.SD;
@@ -45,11 +46,21 @@ public class SciUtils<SciSD> {
             Robot.addSDToLog(sd);
         }
     }
-    public RobotStateHistory getDeviceData(){
+    public RobotState getDeviceData(RobotState robotState){
+        return robotState.cutDownIntoNew(getSDs());
+    }
+    public RobotStateHistory getAllDeviceData(){
         RobotStateHistory newStateHistory = Robot.stateHistory.copy();
         for(RobotState robotState : newStateHistory){
             robotState.cutDownTo(getSDs());
         }
         return newStateHistory;
+    }
+
+    public void printAllData(){
+        System.out.println("Current " + this.sciSensorActuator.getDeviceName() + " data: ");
+        for(Pair<SD, Double> data : getDeviceData(Robot.getState())){
+            System.out.println(data.first + " = " + data.second);
+        }
     }
 }
