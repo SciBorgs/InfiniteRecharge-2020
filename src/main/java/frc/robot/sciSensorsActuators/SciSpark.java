@@ -117,7 +117,8 @@ public class SciSpark extends CANSparkMax implements RobotStateUpdater, SciSenso
                 + realOutput;
         System.out.println(warning);
         System.out.println(warning);
-        printDebuggingInfo();
+        System.out.println("Debugging info:");
+        this.sciUtils.printAllData();
     }
 
     private double snapDecrementer(double x){
@@ -167,23 +168,6 @@ public class SciSpark extends CANSparkMax implements RobotStateUpdater, SciSenso
     @Override
     public void assignSD(SciSparkSD sparkSD, SD sd) {
         this.sciUtils.assignSD(sparkSD, sd);
-    }
-
-    public void printDebuggingInfo() {
-        System.out.println("Debugging info:");
-        if (this.sciUtils.isTracked(SciSparkSD.WheelAngle)) {
-            double positionChange = StateInfo.getFullDifference(this.sdMap.get(SciSparkSD.WheelAngle));
-            System.out.println("Position Change: " + positionChange);
-            System.out.println("Is significant?: " + (Math.abs(positionChange) > Utils.EPSILON));
-            System.out.println(
-                    "All Positions: " + Robot.stateHistory.getFullSDData(this.sdMap.get(SciSparkSD.WheelAngle)));
-        }
-        if (this.sciUtils.isTracked(SciSparkSD.Current)) {
-            System.out.println("Current: " + this.sciUtils.sciGet(SciSparkSD.Current));
-        }
-        if (this.sciUtils.isTracked(SciSparkSD.Value)) {
-            System.out.println("All Values: " + Robot.stateHistory.getFullSDData(this.sdMap.get(SciSparkSD.Value)));
-        }
     }
 
 }

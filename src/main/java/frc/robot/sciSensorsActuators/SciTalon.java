@@ -64,13 +64,9 @@ public class SciTalon extends TalonSRX implements RobotStateUpdater, SciSensorAc
                     + " but still has a value of " + super.getMotorOutputPercent();
             System.out.println(warning);
             System.out.println(warning);
-            printDebuggingInfo();
+            System.out.println("Debugging info:");
+            this.sciUtils.printAllData();
         }
-    }
-
-    public void printDebuggingInfo() {
-        System.out.println("Debugging info:");
-        this.sciUtils.printAllData();
     }
 
     public void set(double speed, double maxJerk){
