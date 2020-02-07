@@ -11,9 +11,10 @@ import com.ctre.phoenix.sensors.PigeonIMU;
 import frc.robot.Robot;
 import frc.robot.robotState.RobotStateUpdater;
 import frc.robot.robotState.RobotState.SD;
-import frc.robot.sciSensorsActuators.GeneralSciSDs.SciPigeonSD;
+import frc.robot.sciSensorsActuators.SciPigeon.SciPigeonSD;;
 
 public class SciPigeon extends PigeonIMU implements RobotStateUpdater, SciSensorActuator<SciPigeonSD> {
+    public static enum SciPigeonSD {Angle, Pitch, Role}
     public HashMap<SciPigeonSD, SD> sdMap;
     private SciUtils<SciPigeonSD> sciUtils;
 

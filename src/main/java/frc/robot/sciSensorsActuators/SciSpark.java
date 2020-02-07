@@ -15,12 +15,12 @@ import frc.robot.helpers.DelayedPrinter;
 import frc.robot.robotState.RobotStateUpdater;
 import frc.robot.robotState.StateInfo;
 import frc.robot.robotState.RobotState.SD;
-import frc.robot.sciSensorsActuators.GeneralSciSDs.SciPigeonSD;
-import frc.robot.sciSensorsActuators.GeneralSciSDs.SciSparkSD;
+import frc.robot.sciSensorsActuators.SciSpark.SciSparkSD;
 import frc.robot.stateEstimation.interfaces.Model;
 
 public class SciSpark extends CANSparkMax implements RobotStateUpdater, SciSensorActuator<SciSparkSD> {
 
+    public static enum SciSparkSD {WheelAngle, Velocity, Accel, Jerk, Snap, Value, Current}
     public double goalSpeed;
     public double currentMaxJerk;
     public static final double DEFAULT_MAX_JERK = 0.15;

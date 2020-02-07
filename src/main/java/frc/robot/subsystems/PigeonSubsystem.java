@@ -5,7 +5,7 @@ import frc.robot.Robot;
 import frc.robot.robotState.RobotStateUpdater;
 import frc.robot.robotState.RobotState.SD;
 import frc.robot.sciSensorsActuators.SciPigeon;
-import frc.robot.sciSensorsActuators.GeneralSciSDs.SciPigeonSD;
+import frc.robot.sciSensorsActuators.SciPigeon.SciPigeonSD;
 import edu.wpi.first.wpilibj.command.Subsystem;
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 

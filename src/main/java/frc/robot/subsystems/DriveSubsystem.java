@@ -8,7 +8,7 @@ import frc.robot.controllers.PID;
 import frc.robot.helpers.DelayedPrinter;
 import frc.robot.robotState.StateInfo;
 import frc.robot.sciSensorsActuators.*;
-import frc.robot.sciSensorsActuators.GeneralSciSDs.SciSparkSD;
+import frc.robot.sciSensorsActuators.SciSpark.SciSparkSD;
 import frc.robot.logging.Logger.DefaultValue;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.command.Subsystem;

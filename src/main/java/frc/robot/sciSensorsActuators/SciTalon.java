@@ -9,13 +9,14 @@ import frc.robot.helpers.DelayedPrinter;
 import frc.robot.robotState.RobotStateUpdater;
 import frc.robot.Robot;
 import frc.robot.robotState.RobotState.SD;
-import frc.robot.sciSensorsActuators.GeneralSciSDs.SciTalonSD;
+import frc.robot.sciSensorsActuators.SciTalon.SciTalonSD;
 
 import java.util.HashMap;
 import java.util.Optional;
 
 public class SciTalon extends TalonSRX implements RobotStateUpdater, SciSensorActuator<SciTalonSD> {
 
+    public static enum SciTalonSD {ValueSD, CurrentSD;}
     public static final double DEFAULT_MAX_JERK = 0.1;
     public HashMap<SciTalonSD, SD> sdMap;
     private SciUtils<SciTalonSD> sciUtils; 
