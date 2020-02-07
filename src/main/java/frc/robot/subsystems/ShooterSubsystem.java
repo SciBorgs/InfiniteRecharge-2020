@@ -52,6 +52,11 @@ public class ShooterSubsystem extends Subsystem implements RobotStateUpdater {
     this.hoodSpark.set(this.hoodAnglePID.getOutput());
   }
 
+  // TODO: Remove this method
+  public void testHoodSpark(double speed) {
+    this.hoodSpark.set(speed);
+  }
+
   public void setShooterSpark(double RPM) {
     this.shooterSparkVelocityPID.setReference(RPM, ControlType.kVelocity);
   }
@@ -61,14 +66,11 @@ public class ShooterSubsystem extends Subsystem implements RobotStateUpdater {
   }
 
   @Override
-  protected void initDefaultCommand() {
-    // TODO Auto-generated method stub
-  }
+  protected void initDefaultCommand() {}
 
   @Override
   public void updateRobotState() {
     Robot.set(SD.HoodAngle, this.absEncoder.getRadians());
     Robot.set(SD.ShooterSparkOmega, RPMToOmega(this.shooterSparkEncoder.getVelocity()));
   }
-
 }

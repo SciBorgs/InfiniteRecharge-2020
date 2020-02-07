@@ -5,8 +5,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-import javax.swing.text.Position;
-
 import frc.robot.subsystems.*;
 import frc.robot.commands.*;
 import frc.robot.helpers.*;
@@ -178,7 +176,7 @@ public class Robot extends TimedRobot {
         set(SD.Y, ORIGINAL_POINT.y);
         set(SD.Angle, ORIGINAL_ANGLE);
         intakeSubsystem.reverseIntake();
-        new ShootCommand().start();
+        //new ShootCommand().start();
     }
 
     @Override
@@ -190,10 +188,12 @@ public class Robot extends TimedRobot {
     public void teleopInit() {
         intakeSubsystem.reverseIntake();
         pneumaticsSubsystem.startCompressor();
+        shooterSubsystem.testHoodSpark(0.1);
     }
 
     public void teleopPeriodic() {
         (new TankDriveCommand()).start();
+        System.out.println("ANGLE: " + Robot.get(SD.HoodAngle));
     }
     
 
