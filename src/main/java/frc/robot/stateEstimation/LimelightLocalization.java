@@ -44,8 +44,7 @@ public class LimelightLocalization implements MaybeUpdater {
 
     public Point getRobotPosition() {
         double distance = calculateDistance();
-        // double robotAngle = Robot.get(SD.Angle);
-        double robotAngle = 20;
+        double robotAngle = Robot.get(SD.Angle);
         double tx = limeLight.getTableData(limeLight.getCameraTable(), "tx");
         double complement = 90 - (tx + robotAngle);
         double changeInY = distance * Math.cos(Math.toRadians(complement));
