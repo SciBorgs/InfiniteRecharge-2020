@@ -29,7 +29,7 @@ public class SciSpark extends CANSparkMax implements RobotStateUpdater {
     private boolean diminishSnap = false;
     public static final double TOLERABLE_DIFFERENCE = 0.01;
     public static final int DEFAULT_STALL_CURRENT_LIMIT = 40;
-    public static final int DEFAULT_FREE_CURRNET_LIMT = 40;
+    public static final int DEFAULT_FREE_CURRENT_LIMT = 40;
     public static final int DEFAULT_SPIKE_CURRENT_LIMIT = 100;
     public static final double DEFAULT_SPIKE_MAX_TIME = 0.1;
     public static final double CHOP_CYCLE_DURATION = 0.05;
@@ -42,7 +42,7 @@ public class SciSpark extends CANSparkMax implements RobotStateUpdater {
 
     public SciSpark(int port, double gearRatio) {
         super(port, MotorType.kBrushless);
-        super.setSmartCurrentLimit(DEFAULT_STALL_CURRENT_LIMIT, DEFAULT_FREE_CURRNET_LIMT);
+        super.setSmartCurrentLimit(DEFAULT_STALL_CURRENT_LIMIT, DEFAULT_FREE_CURRENT_LIMT);
         super.setSecondaryCurrentLimit(DEFAULT_SPIKE_MAX_TIME, DEFAULT_CHOP_CYCLES);
         this.goalSpeed = 0;
         this.currentMaxJerk = DEFAULT_MAX_JERK;
