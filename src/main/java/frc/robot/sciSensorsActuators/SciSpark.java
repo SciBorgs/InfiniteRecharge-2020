@@ -106,19 +106,13 @@ public class SciSpark extends CANSparkMax implements RobotStateUpdater, SciSenso
         double input = this.diminishSnap ? diminishSnap(limitedInput) : limitedInput;
         this.expectedVal = input;
         super.set(input);
-        /*
-        if (!Utils.inRange(input, super.get(), TOLERABLE_DIFFERENCE)) {
-            setWarning(input, super.get());
-        }*/
+        checkWarningStatus(input, super.get());
     }
 
-    public void setWarning(double expectedOutput, double realOutput){
-        String warning = "WARNING: " + getDeviceName() + " was set to " + expectedOutput + " but still has a value of "
-                + realOutput;
-        System.out.println(warning);
-        System.out.println(warning);
-        System.out.println("Debugging info:");
-        this.sciUtils.printAllData();
+    public void checkWarningStatus(double input, double realOutput){
+        if (!Utils.inRange(input, super.get(), TOLERABLE_DIFFERENCE)) {
+            (new SparkDelayWarningCommand(this, input)).start();
+        }   
     }
 
     private double snapDecrementer(double x){
@@ -159,9 +153,6 @@ public class SciSpark extends CANSparkMax implements RobotStateUpdater, SciSenso
         this.snapModel .updateRobotState();
         if(this.printValues){
             DelayedPrinter.print("Spark " + super.getDeviceId() + " value: " + super.get());
-        }
-        if(!Utils.impreciseEquals(this.expectedVal, super.get())){
-            setWarning(this.expectedVal, super.get());
         }
     }
 
