@@ -19,8 +19,8 @@ public class BallTrajectoryController {
   private static final double BALL_TO_PORT_CENTER_HEIGHT = 2.49555 - BALL_TO_FLOOR_BOTTOM_HEIGHT;
   private static final double BALL_VELOCITY_INCREMENT = 0.01;
 
-  private static final double OUTER_PORT_HEIGHT_TOLERANCE = 0.1;
-  private static final double INNER_PORT_HEIGHT_TOLERANCE = 0.1;
+  private static final double OUTER_PORT_HEIGHT_TOLERANCE = 0.18;
+  private static final double INNER_PORT_HEIGHT_TOLERANCE = 0.01;
 
   private static double outerPortError = Double.POSITIVE_INFINITY;
   private static double innerPortError = Double.POSITIVE_INFINITY;

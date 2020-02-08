@@ -177,13 +177,13 @@ public class Robot extends TimedRobot {
         set(SD.Angle, ORIGINAL_ANGLE);
         intakeSubsystem.reverseIntake();
         //new ShootCommand().start();
-        shooterSubsystem.setShooterSpark(1000);
-
+        //shooterSubsystem.setShooterSpark(3958);
     }
 
     @Override
     public void autonomousPeriodic() {
         sequential.update();
+        //System.out.println("VEL: " + shooterSubsystem.shooterSparkEncoder.getVelocity());
         shooterSubsystem.testHoodSpark(0.0);
         // System.out.println("ANGLE: " + shooterSubsystem.absEncoder.getRadians());
         // System.out.println("SD ANGLE: " + get(SD.HoodAngle));
@@ -208,12 +208,12 @@ public class Robot extends TimedRobot {
     public void testInit() {
         // shooterSubsystem.absEncoder.reset();
         System.out.println("REG " + shooterSubsystem.absEncoder.getRadians());
-        shooterSubsystem.absEncoder.setAngle(Math.toRadians(58));
+        shooterSubsystem.absEncoder.setAngle(Math.toRadians(60));
     }
 
     public void testPeriodic() {
         System.out.println("REG " + shooterSubsystem.absEncoder.getRadians());
-        shooterSubsystem.absEncoder.setAngle(Math.toRadians(58));
+        shooterSubsystem.absEncoder.setAngle(Math.toRadians(60));
     }
 
     public void disabledInit() {

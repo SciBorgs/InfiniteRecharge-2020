@@ -4,9 +4,7 @@ import com.revrobotics.CANEncoder;
 import com.revrobotics.CANPIDController;
 import com.revrobotics.ControlType;
 import edu.wpi.first.wpilibj.command.Subsystem;
-import frc.robot.PortMap;
 import frc.robot.Robot;
-import frc.robot.Utils;
 import frc.robot.controllers.PID;
 import frc.robot.robotState.RobotStateUpdater;
 import frc.robot.robotState.RobotState.SD;
@@ -14,10 +12,10 @@ import frc.robot.sciSensorsActuators.SciSpark;
 import frc.robot.sciSensorsActuators.SciThroughBoreEncoder;
 
 public class ShooterSubsystem extends Subsystem implements RobotStateUpdater {
-  public double HOOD_ANGLE_P = 0.5, HOOD_ANGLE_I = 0, HOOD_ANGLE_D = 0;
-  private final double SHOOTER_VELOCITY_P = 0.0001,
-      SHOOTER_VELOCITY_I = 0.000001,
-      SHOOTER_VELOCITY_D = 0.01;
+  public double HOOD_ANGLE_P = 0.3, HOOD_ANGLE_I = 0, HOOD_ANGLE_D = 0;
+  private final double SHOOTER_VELOCITY_P = 0.0000001,
+      SHOOTER_VELOCITY_I = 0.0000001,
+      SHOOTER_VELOCITY_D = 0.15;
   private final double HOOD_SPARK_GEAR_RATIO = 36.0 / 334.0;
   private final double SHOOTER_SPARK_GEAR_RATIO = 1;
 

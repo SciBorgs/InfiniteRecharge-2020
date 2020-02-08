@@ -20,7 +20,7 @@ public class OI {
         this.rightStick = new SciJoystick(PortMap.JOYSTICK_RIGHT);
         this.xboxController = new XboxController(PortMap.XBOX_CONTROLLER);     
 
-        this.centerButton = new JoystickButton(rightStick, PortMap.JOYSTICK_CENTER_BUTTON);
+        this.centerButton = new JoystickButton(leftStick, PortMap.JOYSTICK_CENTER_BUTTON);
         this.centerButton.whenPressed(new ShootCommand());
         //this.centerButton.whenReleased(new StopShooterCommand());
         
