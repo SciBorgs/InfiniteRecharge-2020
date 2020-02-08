@@ -35,8 +35,9 @@ public class LimelightLocalization implements MaybeUpdater {
     }
 
     public void test() {
-        Point pos = getRobotPosition();
+        //Point pos = getRobotPosition();
         double distance = calculateDistance();
+        Point pos = Robot.getPos();
         Robot.limelightSubsystem.setCameraParams("X", pos.x);
         Robot.limelightSubsystem.setCameraParams("Y", pos.y);
         Robot.limelightSubsystem.setCameraParams("Distance", distance);
