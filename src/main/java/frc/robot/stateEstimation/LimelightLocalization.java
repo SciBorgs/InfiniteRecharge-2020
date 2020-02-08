@@ -65,7 +65,7 @@ public class LimelightLocalization implements MaybeUpdater {
 
     @Override
     public Hashtable<SD, Double> getStdDevs() {
-        return this.stdDevs;
+        return (Hashtable<SD, Double>) this.stdDevs.clone();
     }
 
     @Override
