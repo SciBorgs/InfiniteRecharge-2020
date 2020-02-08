@@ -110,8 +110,13 @@ public class RobotState implements Iterable<Pair<SD, Double>>{
     public void cutDownTo(Iterable<SD> sdToInclude){
         // Will get rid of all keys not in sdToInclude
         HashSet<SD> sdSet = Utils.toStream(sdToInclude).collect(Collectors.toCollection(HashSet::new));
+        ArrayList<SD> sdsToRemove = new ArrayList<>();
         for(SD sd : getKeys()){
-            if (!sdSet.contains(sd)){remove(sd);}
+            if (!sdSet.contains(sd)){sdsToRemove.add(sd);}
+        }
+
+        for(SD sd: sdsToRemove){
+            remove(sd);
         }
     }
     public RobotState cutDownIntoNew(Iterable<SD> sdToInclude){
@@ -135,6 +140,7 @@ class RobotStateIterator implements Iterator<Pair<SD,Double>> {
 
     public RobotStateIterator(HashMap<SD, Double> data) {
         this.data = (HashMap<SD, Double>) data.clone();
+        this.keys = new SD[this.data.keySet().size()];
         this.keys = this.data.keySet().toArray(this.keys);
         this.indexOn = 0;
     }
