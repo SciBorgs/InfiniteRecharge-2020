@@ -12,13 +12,6 @@ import frc.robot.logging.Logger.DefaultValue;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.command.Subsystem;
 
-import com.revrobotics.CANSparkMax;
-import com.ctre.phoenix.motorcontrol.ControlMode;
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
-import com.revrobotics.CANSparkMaxLowLevel.MotorType;
-
-import java.util.Hashtable;
-
 public class DriveSubsystem extends Subsystem {
     // Define tested error values here
     double TANK_ANGLE_P = .075, TANK_ANGLE_D = 0.0, TANK_ANGLE_I = 0;
@@ -41,23 +34,15 @@ public class DriveSubsystem extends Subsystem {
     private PID tankSpeedRightPID;
     public boolean assisted = false;
     public double driveMultiplier = 1;
-    public Hashtable<SciSpark, SD> sparkToWheelAngleSD;
-    public Hashtable<SciSpark, SD> sparkToValueSD;
-    public Hashtable<SciSpark, SD> sparkToVoltageSD;
-    public Hashtable<SciSpark, SD> sparkToCurrentSD;
 
     public PID getTankAnglePID()   {return this.tankAnglePID;}
     public double getMaxOmegaGoal(){return MAX_OMEGA_GOAL;}
 
     public DriveSubsystem() {
-        this.sparkToWheelAngleSD = new Hashtable<>();
-        this.sparkToValueSD = new Hashtable<>();
-        this.sparkToVoltageSD = new Hashtable<>();
-        this.sparkToCurrentSD = new Hashtable<>();
 
-		this.l  = new SciSpark(PortMap.LEFT_FRONT_SPARK,  GEAR_RATIO);
-		this.l1 = new SciSpark(PortMap.LEFT_MIDDLE_SPARK, GEAR_RATIO);
-        this.l2 = new SciSpark(PortMap.LEFT_BACK_SPARK,   GEAR_RATIO);
+		this.l  = new SciSpark(PortMap.LEFT_FRONT_SPARK,   GEAR_RATIO);
+		this.l1 = new SciSpark(PortMap.LEFT_MIDDLE_SPARK,  GEAR_RATIO);
+        this.l2 = new SciSpark(PortMap.LEFT_BACK_SPARK,    GEAR_RATIO);
         
 		this.r  = new SciSpark(PortMap.RIGHT_FRONT_SPARK,  GEAR_RATIO);
 		this.r1 = new SciSpark(PortMap.RIGHT_MIDDLE_SPARK, GEAR_RATIO);
@@ -73,68 +58,39 @@ public class DriveSubsystem extends Subsystem {
         this.r1.follow(this.r);
         this.r2.follow(this.r);
 
-        // Mappings for logging
-        setSDMappings(this.l, SD.LeftWheelAngle,  SD.LeftSparkVal,  SD.LeftSparkVoltage,  SD.LeftSparkCurrent);
-        setSDMappings(this.r, SD.RightWheelAngle, SD.RightSparkVal, SD.RightSparkVoltage, SD.RightSparkCurrent);
-        
-        setSDMappings(this.l1, SD.L1WheelAngle, SD.L1SparkVal, SD.L1SparkVoltage, SD.L1SparkCurrent);
-        setSDMappings(this.r1, SD.R1WheelAngle, SD.R1SparkVal, SD.R1SparkVoltage, SD.R1SparkCurrent);
-        setSDMappings(this.l2, SD.L2WheelAngle, SD.L2SparkVal, SD.L2SparkVoltage, SD.L2SparkCurrent);
-        setSDMappings(this.r2, SD.R2WheelAngle, SD.R2SparkVal, SD.R2SparkVoltage, SD.R2SparkCurrent);
+        this.r.assignAll(SD.RightWheelAngle, SD.RightSparkVal, SD.RightCurrentVal);
+        this.l.assignAll(SD.LeftWheelAngle,  SD.LeftSparkVal,  SD.LeftCurrentVal);
 
-        this.tankAnglePID = new PID(TANK_ANGLE_P, TANK_ANGLE_I, TANK_ANGLE_D);
-        this.tankSpeedRightPID = new PID(TANK_SPEED_LEFT_P, TANK_SPEED_LEFT_I, TANK_SPEED_LEFT_D);
-        this.tankSpeedLeftPID = new PID(TANK_SPEED_RIGHT_P, TANK_SPEED_RIGHT_I, TANK_SPEED_RIGHT_D);
+        Robot.addSDToLog(SD.LeftWheelAngle);
+        Robot.addSDToLog(SD.RightWheelAngle);
+        Robot.addSDToLog(SD.LeftSparkVal);
+        Robot.addSDToLog(SD.RightSparkVal);
+
+        this.tankAnglePID      = new PID(TANK_ANGLE_P,       TANK_ANGLE_I,       TANK_ANGLE_D);
+        this.tankSpeedRightPID = new PID(TANK_SPEED_LEFT_P,  TANK_SPEED_LEFT_I,  TANK_SPEED_LEFT_D);
+        this.tankSpeedLeftPID  = new PID(TANK_SPEED_RIGHT_P, TANK_SPEED_RIGHT_I, TANK_SPEED_RIGHT_D);
+
         Robot.logger.logFinalPIDConstants(FILENAME, "tank angle PID", this.tankAnglePID);
-        Robot.logger.logFinalField(FILENAME, "input deadzone", INPUT_DEADZONE);
-    }
-    
-    public void setSDMappings(SciSpark spark, SD wheelAngleSD, SD valueSD, SD volatageSD, SD currentSd){
-        this.sparkToWheelAngleSD.put(spark, wheelAngleSD);
-        this.sparkToValueSD     .put(spark, valueSD);
-        this.sparkToVoltageSD   .put(spark, volatageSD);
-        this.sparkToCurrentSD   .put(spark, currentSd);
-    }
-    
-    public void updateSparkState(SciSpark spark){
-        Robot.set(this.sparkToWheelAngleSD.get(spark), spark.getWheelAngle());
-        Robot.set(this.sparkToValueSD.get(spark),   spark.get());
-        Robot.set(this.sparkToVoltageSD.get(spark), spark.getBusVoltage());
-        Robot.set(this.sparkToCurrentSD.get(spark), spark.getOutputCurrent());
+        Robot.logger.logFinalField       (FILENAME, "input deadzone", INPUT_DEADZONE);
     }
 
-	public SciSpark[] getSparks() {
-        return new SciSpark[]{this.l, this.l1, this.l2, this.r, this.r1, this.r2};
-    }
 	public void periodicLog(){
-    }
-    public void updateRobotState(){
-        for(SciSpark spark : getSparks()){updateSparkState(spark);}
-    }
-
-    public double deadzone(double output){
-        return Math.abs(output) < INPUT_DEADZONE ? 0 : output;
-    }
-    
-    public double processStick(Joystick stick){
-        //return -stick.getY();
-        return -deadzone(stick.getY());
     }
 
     // If something is assiting, we don't want to drive using setSpeed
     public void assistedDriveMode(){this.assisted = true;}
     public void manualDriveMode()  {this.assisted = false;}
 
-    public void setSpeed(Joystick leftStick, Joystick rightStick) {
+    public void setSpeed(SciJoystick leftStick, SciJoystick rightStick) {
         if (!this.assisted) {
-            double leftInput  = processStick(leftStick);
-            double rightInput = processStick(rightStick);
+            double leftInput  = leftStick.getProcessedY();
+            double rightInput = rightStick.getProcessedY();
             setSpeedTankAngularControl(leftInput, rightInput);
         }
     }
 	
-	public void setSpeedRaw(Joystick leftStick, Joystick rightStick){
-		setTank(processStick(leftStick),processStick(rightStick));
+	public void setSpeedRaw(SciJoystick leftStick, SciJoystick rightStick){
+		setTank(leftStick.getProcessedY(), rightStick.getProcessedY());
     }
 
     public void defaultDriveMultilpier(){this.driveMultiplier = 1;}
@@ -184,7 +140,7 @@ public class DriveSubsystem extends Subsystem {
     }
     
     public void setSpeedTankTurningPercentage(double turnMagnitude){
-        double forward = (processStick(Robot.oi.leftStick) + processStick(Robot.oi.rightStick)) / 2;
+        double forward = (Robot.oi.leftStick.getProcessedY() + Robot.oi.rightStick.getProcessedY()) / 2;
         // double forward = (Robot.oi.leftStick.getY() + Robot.oi.rightStick.getY()) / 2;
         setSpeedTankForwardTurningPercentage(forward, turnMagnitude);
 	}
@@ -192,17 +148,6 @@ public class DriveSubsystem extends Subsystem {
     public void setSpeedTankForwardTurningMagnitude(double forward, double turnMagnitude) {
         // Note: this controls dtheta/dt rather than dtheta/dx
         setTank(forward - turnMagnitude, forward + turnMagnitude);
-    }
-
-    public double limitJerk(double oldSpeed, double newSpeed, double maxJerk){
-        // Makes sure that the change in input for a motor is not more than maxJerk
-        if (oldSpeed - newSpeed > maxJerk){
-            return oldSpeed - maxJerk;
-        } else if (newSpeed - oldSpeed > maxJerk){
-            return oldSpeed + maxJerk;
-        } else {
-            return newSpeed;
-        }
     }
 
     @Override
