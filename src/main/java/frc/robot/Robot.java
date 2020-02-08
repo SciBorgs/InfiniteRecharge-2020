@@ -43,7 +43,6 @@ public class Robot extends TimedRobot {
     public static LimelightSubsystem  limelightSubsystem  = new LimelightSubsystem();
     public static PneumaticsSubsystem pneumaticsSubsystem = new PneumaticsSubsystem();
 
-    public static LimelightLocalization limelightLocalization = new LimelightLocalization();
     public static IntakeSubsystem     intakeSubsystem     = new IntakeSubsystem();
     
     public static Following following = new Following();
@@ -163,7 +162,7 @@ public class Robot extends TimedRobot {
         allModels();
         allPeriodicLogs();
         logDataPeriodic();
-        DelayedPrinter.print("x: " + getPos().x + "\ty: " + getPos().y + "\nheading: " + getHeading() + "\npigeon angle: " + Robot.get(SD.PigeonAngle));
+        DelayedPrinter.print("x: " + getPos().x + "\ty: " + getPos().y + "\nheading: " + getHeading(), 5);
         Scheduler.getInstance().run();
         DelayedPrinter.incTicks();
     }
@@ -189,7 +188,6 @@ public class Robot extends TimedRobot {
     }
 
     public void teleopPeriodic() {
-        limelightLocalization.test();
         (new TankDriveCommand()).start();
     }
     

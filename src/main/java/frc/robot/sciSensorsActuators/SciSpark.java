@@ -73,7 +73,7 @@ public class SciSpark extends CANSparkMax implements RobotStateUpdater {
     public void instantSet() {
         double limitedInput = Utils.limitChange(super.get(), this.goalSpeed, this.currentMaxJerk);
         super.set(limitedInput);
-        if (limitedInput != super.get()) {
+        if (false && limitedInput != super.get()) {
             String warning = "WARNING: Spark " + super.getDeviceId() + " was set to " + limitedInput
                     + " but still has a value of " + super.get();
             System.out.println(warning);

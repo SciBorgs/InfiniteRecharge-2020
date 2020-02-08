@@ -74,7 +74,6 @@ public class EncoderLocalization implements Updater, Model {
         double thetaChange = StateInfo.getDifference(stateHistory, SD.PigeonAngle, 1);
         RobotState newPosition = 
             nextPosition(state.get(SD.X), state.get(SD.Y), state.get(SD.Angle), wheelChanges, thetaChange);
-        printWheelAngles();
         stateHistory.currentState().incorporateOtherState(newPosition); 
     }
 

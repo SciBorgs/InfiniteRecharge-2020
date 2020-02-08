@@ -36,12 +36,14 @@ public class MaybeDefaultUpdater implements Model, Updater {
     public void updateState(RobotStateHistory stateHistory){
         this.defaultUpdater.updateState(stateHistory);
         if (this.maybeUpdater.canUpdate()){
+            //System.out.println("calling limelight update");
             this.maybeUpdater.updateState(stateHistory);
         }
     }
 
     @Override
     public void updateRobotState(){
+        //System.out.println("udpating robot state");
         this.updateState(Robot.stateHistory);
     }
 
