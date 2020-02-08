@@ -8,7 +8,6 @@ import java.util.Optional;
 import frc.robot.Robot;
 import frc.robot.Utils;
 import frc.robot.commands.SparkDelayWarningCommand;
-import frc.robot.commands.TankDriveCommand;
 import frc.robot.commands.generalCommands.SciSparkSpeedCommand;
 import frc.robot.helpers.DelayedPrinter;
 import frc.robot.robotState.RobotStateUpdater;
@@ -30,12 +29,11 @@ public class SciSpark extends CANSparkMax implements RobotStateUpdater {
     private boolean diminishSnap = false;
     public static final double TOLERABLE_DIFFERENCE = 0.01;
     public static final int DEFAULT_STALL_CURRENT_LIMIT = 40;
-    public static final int DEFAULT_FREE_CURRNET_LIMT = 40;
+    public static final int DEFAULT_FREE_CURRENT_LIMT = 40;
     public static final int DEFAULT_SPIKE_CURRENT_LIMIT = 100;
     public static final double DEFAULT_SPIKE_MAX_TIME = 0.1;
     public static final double CHOP_CYCLE_DURATION = 0.05;
     public static final int DEFAULT_CHOP_CYCLES = (int) (DEFAULT_SPIKE_MAX_TIME / CHOP_CYCLE_DURATION);
-    private double expectedVal;
     public double decrementSnapSpeed = .3;
 
     public SciSpark(int port) {
@@ -44,7 +42,7 @@ public class SciSpark extends CANSparkMax implements RobotStateUpdater {
 
     public SciSpark(int port, double gearRatio) {
         super(port, MotorType.kBrushless);
-        super.setSmartCurrentLimit(DEFAULT_STALL_CURRENT_LIMIT, DEFAULT_FREE_CURRNET_LIMT);
+        super.setSmartCurrentLimit(DEFAULT_STALL_CURRENT_LIMIT, DEFAULT_FREE_CURRENT_LIMT);
         super.setSecondaryCurrentLimit(DEFAULT_SPIKE_MAX_TIME, DEFAULT_CHOP_CYCLES);
         this.goalSpeed = 0;
         this.currentMaxJerk = DEFAULT_MAX_JERK;
@@ -60,7 +58,6 @@ public class SciSpark extends CANSparkMax implements RobotStateUpdater {
         this.accelModel = new AccelModel(this);
         this.jerkModel  = new JerkModel(this);
         this.snapModel  = new SnapModel(this);
-        this.expectedVal = super.get();
         setWheelAngle(0);
         setGearRatio(gearRatio);
         Robot.addRobotStateUpdater(this);
@@ -100,7 +97,6 @@ public class SciSpark extends CANSparkMax implements RobotStateUpdater {
     public void instantSet() {
         double limitedInput = Utils.limitChange(super.get(), this.goalSpeed, this.currentMaxJerk);
         double input = this.diminishSnap ? diminishSnap(limitedInput) : limitedInput;
-        this.expectedVal = input;
         super.set(input);
         checkWarningStatus(input, super.get());
     }
@@ -108,7 +104,6 @@ public class SciSpark extends CANSparkMax implements RobotStateUpdater {
     public void checkWarningStatus(double input, double realOutput){
         if (!Utils.inRange(input, super.get(), TOLERABLE_DIFFERENCE)) {
             (new SparkDelayWarningCommand(this, input)).start();
-            printDebuggingInfo();        
         }   
     }
 
