@@ -2,6 +2,7 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.sciSensorsActuators.SciSpark;
+import frc.robot.Utils;
 
 public class SparkDelayWarningCommand extends Command {
 
@@ -18,7 +19,7 @@ public class SparkDelayWarningCommand extends Command {
     @Override 
     protected void execute () {
         ticks++;
-        if (this.sciSpark.get() != this.input) {
+        if (!Utils.impreciseEquals(this.sciSpark.get(), this.input)) {
             System.out.println("WARNING: " + this.sciSpark.getDeviceName() + " was set to " + this.input
             + " but still has a value of " + this.sciSpark.get() +" after " + ticks + " ticks");
         }
@@ -26,7 +27,7 @@ public class SparkDelayWarningCommand extends Command {
 
     @Override
     protected boolean isFinished () { 
-        return this.sciSpark.get() == this.input; 
+        return !Utils.impreciseEquals(this.sciSpark.get(), this.input); 
     }
 
 
