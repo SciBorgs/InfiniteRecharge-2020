@@ -4,8 +4,6 @@ import frc.robot.Robot;
 import frc.robot.Utils;
 import frc.robot.subsystems.LimelightSubsystem;
 import frc.robot.shapes.Point;
-import frc.robot.shapes.PolarPoint;
-import frc.robot.helpers.Geo;
 import frc.robot.robotState.*;
 import frc.robot.robotState.RobotState.SD;
 import java.util.Hashtable;
@@ -38,17 +36,16 @@ public class LimelightLocalization implements MaybeUpdater {
 
     public void test() {
         Point pos = getRobotPosition();
-        double angle = getRobotAngle();
         double distance = calculateDistance();
         Robot.limelightSubsystem.setCameraParams("X", pos.x);
         Robot.limelightSubsystem.setCameraParams("Y", pos.y);
-        Robot.limelightSubsystem.setCameraParams("Angle", Math.toDegrees(angle));
         Robot.limelightSubsystem.setCameraParams("Distance", distance);
     }
 
     public Point getRobotPosition() {
         double distance = calculateDistance();
-        double robotAngle = Robot.get(SD.Angle);
+        // double robotAngle = Robot.get(SD.Angle);
+        double robotAngle = 20;
         double tx = limeLight.getTableData(limeLight.getCameraTable(), "tx");
         double complement = 90 - (tx + robotAngle);
         double changeInY = distance * Math.cos(Math.toRadians(complement));
