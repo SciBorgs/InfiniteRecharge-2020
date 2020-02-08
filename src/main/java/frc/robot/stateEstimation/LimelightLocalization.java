@@ -57,10 +57,8 @@ public class LimelightLocalization implements MaybeUpdater {
     @Override
     public void updateState(RobotStateHistory pastRobotStates) {
         Point absolutePosition = getRobotPosition();
-        RobotState updatedState = new RobotState();
-        updatedState.set(SD.X, absolutePosition.x);
-        updatedState.set(SD.Y, absolutePosition.y);
-        pastRobotStates.setCurrentState(updatedState);
+        pastRobotStates.statesAgo(0).set(SD.X, absolutePosition.x);
+        pastRobotStates.statesAgo(0).set(SD.X, absolutePosition.x);
     }
 
     @Override
