@@ -49,9 +49,7 @@ public class Robot extends TimedRobot {
     public static CircleController circleController = new CircleController();
     public static OI oi = new OI();
 
-    public static Updater positionUpdater = new EncoderLocalization();
-
-    public static Model positionModel = new MaybeDefaultUpdater(new LimelightLocalization(), positionUpdater);
+    public static Model positionModel = new MaybeDefaultUpdater(new LimelightLocalization(), new EncoderLocalization());
 
     public static RobotState getState(){ return stateHistory.currentState(); }
     public static RobotState statesAgo(int numTicks){return stateHistory.statesAgo(numTicks);}
