@@ -14,26 +14,26 @@ import frc.robot.sciSensorsActuators.SciSpark;
 import frc.robot.sciSensorsActuators.SciThroughBoreEncoder;
 
 public class ShooterSubsystem extends Subsystem implements RobotStateUpdater {
-  private final double HOOD_ANGLE_P = 0, HOOD_ANGLE_I = 0, HOOD_ANGLE_D = 0;
-  private final double SHOOTER_VELOCITY_P = 0.001,
+  public double HOOD_ANGLE_P = 0.5, HOOD_ANGLE_I = 0, HOOD_ANGLE_D = 0;
+  private final double SHOOTER_VELOCITY_P = 0.0001,
       SHOOTER_VELOCITY_I = 0.000001,
       SHOOTER_VELOCITY_D = 0.01;
-  private final double HOOD_SPARK_GEAR_RATIO = 36.0 / 3449;
+  private final double HOOD_SPARK_GEAR_RATIO = 36.0 / 334.0;
   private final double SHOOTER_SPARK_GEAR_RATIO = 1;
 
   private final double SHOOTER_SPARK_MIN_OUTPUT = -1;
   private final double SHOOTER_SPARK_MAX_OUTPUT = 1;
 
-  private SciSpark hoodSpark, shooterSpark;
-  private SciThroughBoreEncoder absEncoder;
+  public SciSpark hoodSpark, shooterSpark;
+  public SciThroughBoreEncoder absEncoder;
 
-  private CANPIDController shooterSparkVelocityPID;
-  private CANEncoder shooterSparkEncoder;
-  private PID hoodAnglePID;
+  public CANPIDController shooterSparkVelocityPID;
+  public CANEncoder shooterSparkEncoder;
+  public PID hoodAnglePID;
 
   public ShooterSubsystem() {
-    this.hoodSpark = new SciSpark(PortMap.HOOD_SPARK, HOOD_SPARK_GEAR_RATIO);
-    this.shooterSpark = new SciSpark(PortMap.SHOOTER_SPARK, SHOOTER_SPARK_GEAR_RATIO);
+    this.hoodSpark = new SciSpark(1, HOOD_SPARK_GEAR_RATIO);
+    this.shooterSpark = new SciSpark(7, SHOOTER_SPARK_GEAR_RATIO);
 
     this.hoodAnglePID = new PID(HOOD_ANGLE_P, HOOD_ANGLE_I, HOOD_ANGLE_D);
     this.shooterSparkVelocityPID = this.shooterSpark.getPIDController();
@@ -42,14 +42,18 @@ public class ShooterSubsystem extends Subsystem implements RobotStateUpdater {
     this.shooterSparkVelocityPID.setD(SHOOTER_VELOCITY_D);
     this.shooterSparkVelocityPID.setOutputRange(SHOOTER_SPARK_MIN_OUTPUT, SHOOTER_SPARK_MAX_OUTPUT);
 
-    this.absEncoder = new SciThroughBoreEncoder(PortMap.THROUGH_BORE_ENCODER);
+    this.absEncoder = new SciThroughBoreEncoder(1);
+    this.absEncoder.setDistancePerRotation(2 * Math.PI * HOOD_SPARK_GEAR_RATIO);
+    //this.absEncoder.setDistancePerRotation(2 * Math.PI * HOOD_SPARK_GEAR_RATIO);
     this.shooterSparkEncoder = this.shooterSpark.getEncoder();
+    Robot.set(SD.HoodAngle, this.absEncoder.getRadians());
+    Robot.addRobotStateUpdater(this);
   }
 
   public void setHoodSpark(double angle) {
-    this.hoodAnglePID.addMeasurement(
-        angle - Robot.get(SD.HoodAngle));
+    this.hoodAnglePID.addMeasurement(angle - Robot.get(SD.HoodAngle));
     this.hoodSpark.set(this.hoodAnglePID.getOutput());
+    //System.out.println("INPUT " + this.hoodSpark.get());
   }
 
   // TODO: Remove this method
@@ -58,7 +62,12 @@ public class ShooterSubsystem extends Subsystem implements RobotStateUpdater {
   }
 
   public void setShooterSpark(double RPM) {
+    //System.out.println("FLYWHEEL GOING TO: " + RPM + " RPM");
     this.shooterSparkVelocityPID.setReference(RPM, ControlType.kVelocity);
+  }
+
+  public void testShooterSpark(double speed) {
+    this.shooterSpark.set(speed);
   }
 
   private double RPMToOmega(double RPM) {

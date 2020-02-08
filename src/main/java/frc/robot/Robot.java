@@ -177,27 +177,44 @@ public class Robot extends TimedRobot {
         set(SD.Angle, ORIGINAL_ANGLE);
         intakeSubsystem.reverseIntake();
         //new ShootCommand().start();
+        shooterSubsystem.setShooterSpark(1000);
+
     }
 
     @Override
     public void autonomousPeriodic() {
         sequential.update();
+        shooterSubsystem.testHoodSpark(0.0);
+        // System.out.println("ANGLE: " + shooterSubsystem.absEncoder.getRadians());
+        // System.out.println("SD ANGLE: " + get(SD.HoodAngle));
+        System.out.println("REG " + shooterSubsystem.absEncoder.getRadians());
     }
     
     @Override
     public void teleopInit() {
         intakeSubsystem.reverseIntake();
         pneumaticsSubsystem.startCompressor();
-        shooterSubsystem.testHoodSpark(0.1);
-    }
+    }    
 
     public void teleopPeriodic() {
-        (new TankDriveCommand()).start();
-        System.out.println("ANGLE: " + Robot.get(SD.HoodAngle));
+        //(new TankDriveCommand()).start();
+        // shooterSubsystem.hoodSpark.set(oi.rightStick.getY() / 5.0);
+        // shooterSubsystem.shooterSpark.set(0.2);
+        //System.out.println("SD ANGLE: " + get(SD.HoodAngle));
+        //System.out.println("P: " + shooterSubsystem.HOOD_ANGLE_P);
     }
-    
 
-    public void testPeriodic() {}
+    @Override
+    public void testInit() {
+        // shooterSubsystem.absEncoder.reset();
+        System.out.println("REG " + shooterSubsystem.absEncoder.getRadians());
+        shooterSubsystem.absEncoder.setAngle(Math.toRadians(58));
+    }
+
+    public void testPeriodic() {
+        System.out.println("REG " + shooterSubsystem.absEncoder.getRadians());
+        shooterSubsystem.absEncoder.setAngle(Math.toRadians(58));
+    }
 
     public void disabledInit() {
         allPeriodicLogs();

@@ -13,19 +13,14 @@ public class BallTrajectoryController {
   private static final double BALL_CROSS_SECTIONAL_AREA = Math.PI * Math.pow(BALL_RADIUS, 2);
   private static final double BALL_LIFT_COEFFICIENT = 0.01;
   private static final double BALL_DRAG_COEFFICIENT = 0.61;
-  private static final double BALL_TO_OUTER_PORT_DISTANCE = 9;
-  private static final double BALL_TO_INNER_PORT_DISTANCE = BALL_TO_OUTER_PORT_DISTANCE + 0.74295;
-  private static final double BALL_TO_FLOOR_BOTTOM_HEIGHT = 0.3048 + 0.18288;
+  private static final double BALL_TO_OUTER_PORT_DISTANCE = 7.1374;
+  private static final double BALL_TO_INNER_PORT_DISTANCE = BALL_TO_OUTER_PORT_DISTANCE + 0.762;
+  private static final double BALL_TO_FLOOR_BOTTOM_HEIGHT = 0.571;
   private static final double BALL_TO_PORT_CENTER_HEIGHT = 2.49555 - BALL_TO_FLOOR_BOTTOM_HEIGHT;
   private static final double BALL_VELOCITY_INCREMENT = 0.01;
 
-  private static final double MAX_HOOD_ANGLE = Math.toRadians(70);
-  private static final double MIN_HOOD_ANGLE = Math.toRadians(30);
-  private static final double MAX_HOOD_ANGLE_DISTANCE = 1.166;
-  private static final double MIN_HOOD_ANGLE_DISTANCE = 6.073;
-
-  private static final double OUTER_PORT_HEIGHT_TOLERANCE = 0.4;
-  private static final double INNER_PORT_HEIGHT_TOLERANCE = 0.3;
+  private static final double OUTER_PORT_HEIGHT_TOLERANCE = 0.1;
+  private static final double INNER_PORT_HEIGHT_TOLERANCE = 0.1;
 
   private static double outerPortError = Double.POSITIVE_INFINITY;
   private static double innerPortError = Double.POSITIVE_INFINITY;
@@ -46,23 +41,32 @@ public class BallTrajectoryController {
   }
 
   public static void shoot() {
-    Robot.shooterSubsystem.setShooterSpark(60 * (ballVelocity * 2) / (2 * Math.PI * BALL_RADIUS));
+    Robot.shooterSubsystem.setShooterSpark(getMotorRPM());
+    //Robot.shooterSubsystem.setShooterSpark(getMotorRPM());
   }
 
-  public static void setHoodAngle() {Robot.shooterSubsystem.setHoodSpark(getHoodAngle());}
+  public static double getMotorRPM() {
+    return 60 * (ballVelocity * 2) / (2 * Math.PI * BALL_RADIUS);
+  }
 
-  private static double getHoodAngle() {
-    if (BALL_TO_OUTER_PORT_DISTANCE < MAX_HOOD_ANGLE_DISTANCE) {return MAX_HOOD_ANGLE;}
-    if (BALL_TO_OUTER_PORT_DISTANCE > MIN_HOOD_ANGLE_DISTANCE) {return MIN_HOOD_ANGLE;}
-    double a = 0.958134;
-    double b = -15.0864;
-    double c = 86.285;
-    return Math.toRadians(
-        a * Math.pow(BALL_TO_OUTER_PORT_DISTANCE, 2) + (b * BALL_TO_OUTER_PORT_DISTANCE) + c);
+  public static void setHoodAngle() {
+    System.out.println("HOOD GOING TO: " + getHoodAngle());
+    Robot.shooterSubsystem.setHoodSpark(getHoodAngle());
+  }
+
+  public static double getHoodAngle() {
+    double angle = Math.toRadians(0.958134 * Math.pow(BALL_TO_OUTER_PORT_DISTANCE, 2) 
+    + (-15.0864 * BALL_TO_OUTER_PORT_DISTANCE) + 86.285);
+    System.out.println("ANGLE " + angle);
+    if (angle < Math.toRadians(25))
+      return Math.toRadians(25);
+    if (angle > Math.toRadians(65))
+      return Math.toRadians(65);
+    return angle;
   }
 
   private static Function<Double, Double> getTrajectoryFunction() {
-    double hoodAngle = Robot.get(SD.HoodAngle);
+    double hoodAngle = getHoodAngle();
     if (ballVelocity == 0.0) {
       ballVelocity =
           Math.sqrt(
@@ -70,6 +74,7 @@ public class BallTrajectoryController {
     }
     if (innerPortError > 0) {ballVelocity += BALL_VELOCITY_INCREMENT;} 
     else                    {ballVelocity -= BALL_VELOCITY_INCREMENT;}
+    System.out.println("BALLV " + ballVelocity);
 
     double vx = ballVelocity * Math.cos(hoodAngle);
     double vy = ballVelocity * Math.sin(hoodAngle);

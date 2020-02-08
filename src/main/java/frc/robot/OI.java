@@ -13,11 +13,17 @@ public class OI {
 
     public JoystickButton circleControllerButton, pointOneButton, pointTwoButton, pointThreeButton;
 
-    
+    public JoystickButton centerButton;
+
     public OI() {
         this.leftStick = new SciJoystick(PortMap.JOYSTICK_LEFT);
         this.rightStick = new SciJoystick(PortMap.JOYSTICK_RIGHT);
         this.xboxController = new XboxController(PortMap.XBOX_CONTROLLER);     
+
+        this.centerButton = new JoystickButton(rightStick, PortMap.JOYSTICK_CENTER_BUTTON);
+        this.centerButton.whenPressed(new ShootCommand());
+        //this.centerButton.whenReleased(new StopShooterCommand());
+        
     }
 }
 
