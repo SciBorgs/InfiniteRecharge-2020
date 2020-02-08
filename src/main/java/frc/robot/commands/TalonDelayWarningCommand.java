@@ -20,7 +20,7 @@ public class TalonDelayWarningCommand extends Command {
     protected void execute () {
         ticks++;
         if (!Utils.impreciseEquals(this.sciTalon.getMotorOutputPercent(), this.input)) {
-            System.out.println("WARNING: " + this.sciTalon.getDeviceName() + " was set to " + this.input
+            System.out.println("WARNING: " + this.sciTalon.getDeviceID() + " was set to " + this.input
             + " but still has a value of " + this.sciTalon.getMotorOutputPercent() +" after " + this.ticks + " ticks");
         }
     }
