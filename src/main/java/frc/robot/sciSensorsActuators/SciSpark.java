@@ -8,7 +8,7 @@ import java.util.Optional;
 
 import frc.robot.Robot;
 import frc.robot.Utils;
-import frc.robot.commands.SparkDelayWarningCommand;
+import frc.robot.commands.generalCommands.SparkDelayWarningCommand;
 import frc.robot.commands.generalCommands.SciSparkSpeedCommand;
 import frc.robot.helpers.DelayedPrinter;
 import frc.robot.robotState.RobotStateUpdater;
