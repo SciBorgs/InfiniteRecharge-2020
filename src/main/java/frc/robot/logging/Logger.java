@@ -49,8 +49,7 @@ public class Logger{
 
     public String getCallerClassName() { 
         StackTraceElement[] elements = Thread.currentThread().getStackTrace();
-        for (int i = 1; i < elements.length; i++) {
-            StackTraceElement element = elements[i];
+        for (StackTraceElement element : elements) {
             if (!element.getClassName().equals(Logger.class.getName()) && !element.getClassName().contains("java.lang.Thread")) {
                 return element.getClassName();
             }
