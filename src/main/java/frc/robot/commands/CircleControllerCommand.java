@@ -7,13 +7,11 @@ import frc.robot.logging.Logger.CommandStatus;
 import frc.robot.helpers.DelayedPrinter;
 
 public class CircleControllerCommand extends InstantCommand {
-
-    private final String FILENAME = "CircleControllerCommand.java";
     CircleController circleController = new CircleController();
 
     @Override
     protected void execute() {
-        Robot.logger.logCommandStatus(FILENAME, CommandStatus.Executing);
+        Robot.logger.logCommandStatus(CommandStatus.Executing);
         circleController.update(Robot.CURRENT_DESTINATION, Robot.CURRENT_DESTINATION_HEADING);
     }
 }

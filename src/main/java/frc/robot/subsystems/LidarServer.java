@@ -1,6 +1,8 @@
 package frc.robot.subsystems;
 
 import edu.wpi.first.wpilibj.Timer;
+import frc.robot.Robot;
+import frc.robot.logging.LogUpdater;
 
 import java.io.BufferedReader;
 import java.io.EOFException;
@@ -18,19 +20,22 @@ import java.util.*;
  * to {@link LidarProcessor.addPoint(...)}.
  */
 // FILE HAS NOT BEEN CLEANED UP //
-public class LidarServer {
+public class LidarServer implements LogUpdater {
     private static LidarServer mInstance = null;
     private static BufferedReader mBufferedReader;
     private boolean mRunning = false;
     private Thread mThread;
     private Process mProcess;
     private boolean mEnding = false;
-    private final String FILENAME = "LidarServer.java";
     public enum LidarScanInfo {RealAngle, Distance}
     public Hashtable<Double, Hashtable<LidarScanInfo, Double>> lidarScan = new Hashtable<>();
     private Hashtable<Double,Integer> lidarZeros = new Hashtable<>();
     private String lidarPath = "/home/root/ultra_simple";
     private double minimumZeros = 3;
+
+    public LidarServer() {
+        Robot.addLogUpdater(this);
+    }
 
     public static LidarServer getInstance() {
         if (mInstance == null) {

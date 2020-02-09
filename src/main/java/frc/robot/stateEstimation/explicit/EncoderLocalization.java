@@ -13,12 +13,11 @@ import frc.robot.robotState.*;
 import frc.robot.robotState.RobotState.SD;
 import frc.robot.sciSensorsActuators.SciPigeon;
 import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.logging.LogUpdater;
 import frc.robot.logging.Logger.DefaultValue;
 import frc.robot.stateEstimation.interfaces.*;
 
-public class EncoderLocalization implements Updater, Model {
-
-    private final String FILENAME = "RobotPosition.java";
+public class EncoderLocalization implements Updater, Model, LogUpdater {
     private static final double X_STD_DEV     = 0; // These are meant to be estimates
     private static final double Y_STD_DEV     = 0;
     private static final double ANGLE_STD_DEV = 0;
@@ -38,6 +37,7 @@ public class EncoderLocalization implements Updater, Model {
         this.stdDevs.put(SD.GearShiftSolenoid, 0.0);
         this.stdDevs.put(SD.LeftWheelAngle, 0.0);
         this.stdDevs.put(SD.RightWheelAngle, 0.0);
+        Robot.addLogUpdater(this);
     }
 
     public SciPigeon getPigeon() {return this.pigeon;}

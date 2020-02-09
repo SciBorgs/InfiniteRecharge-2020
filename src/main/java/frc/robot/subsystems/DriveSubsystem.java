@@ -8,11 +8,12 @@ import frc.robot.controllers.PID;
 import frc.robot.helpers.DelayedPrinter;
 import frc.robot.robotState.StateInfo;
 import frc.robot.sciSensorsActuators.*;
+import frc.robot.logging.LogUpdater;
 import frc.robot.logging.Logger.DefaultValue;
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.command.Subsystem;
 
-public class DriveSubsystem extends Subsystem {
+public class DriveSubsystem extends Subsystem implements LogUpdater {
     // Define tested error values here
     double TANK_ANGLE_P = .075, TANK_ANGLE_D = 0.0, TANK_ANGLE_I = 0;
     double TANK_SPEED_LEFT_P  = .1, TANK_SPEED_LEFT_D  = 0.0, TANK_SPEED_LEFT_I  = 0;
@@ -20,7 +21,6 @@ public class DriveSubsystem extends Subsystem {
     double GOAL_OMEGA_CONSTANT = 8; // Change this to change angle
     private double MAX_OMEGA_GOAL = 1 * GOAL_OMEGA_CONSTANT;
     public SciSpark l, l1, l2, r, r1, r2;
-    private final String FILENAME = "DriveSubsystem.java";
     public static final double WHEEL_RADIUS = Utils.inchesToMeters(3);
 
     // deadzones by Alejandro at Chris' request. Graph them with the joystick function to understand the math.
@@ -84,8 +84,10 @@ public class DriveSubsystem extends Subsystem {
         this.tankSpeedRightPID = new PID(TANK_SPEED_LEFT_P,  TANK_SPEED_LEFT_I,  TANK_SPEED_LEFT_D);
         this.tankSpeedLeftPID  = new PID(TANK_SPEED_RIGHT_P, TANK_SPEED_RIGHT_I, TANK_SPEED_RIGHT_D);
 
-        Robot.logger.logFinalPIDConstants(FILENAME, "tank angle PID", this.tankAnglePID);
-        Robot.logger.logFinalField       (FILENAME, "input deadzone", INPUT_DEADZONE);
+        Robot.logger.logFinalPIDConstants("tank angle PID", this.tankAnglePID);
+        Robot.logger.logFinalField       ("input deadzone", INPUT_DEADZONE);
+
+        Robot.addLogUpdater(this);
     }
 
     // If something is assiting, we don't want to drive using setSpeed
@@ -110,8 +112,6 @@ public class DriveSubsystem extends Subsystem {
     }
         	
 	public void setTank(double leftSpeed, double rightSpeed) {
-        Robot.logger.addData(FILENAME, "LeftInput", leftSpeed, DefaultValue.Empty);
-        Robot.logger.addData(FILENAME, "RightInput", rightSpeed, DefaultValue.Empty);
         this.l.set(leftSpeed  * this.driveMultiplier);
         this.r.set(rightSpeed * this.driveMultiplier);
     }
@@ -140,8 +140,8 @@ public class DriveSubsystem extends Subsystem {
         if (goalOmega == 0 && (Math.abs(inputDiff) < STRAIGHT_EQUAL_INPUT_DEADZONE)){
             inputDiff = 0;
         }
-        Robot.logger.addData(FILENAME, "input diff", inputDiff, DefaultValue.Empty);
-        Robot.logger.addData(FILENAME, "error", error, DefaultValue.Empty);
+        Robot.logger.addData("input diff", inputDiff, DefaultValue.Empty);
+        Robot.logger.addData("error", error, DefaultValue.Empty);
 		setSpeedTankForwardTurningMagnitude(averageOutput, inputDiff);
 	}
 	
@@ -165,4 +165,7 @@ public class DriveSubsystem extends Subsystem {
     protected void initDefaultCommand() {
 		//IGNORE THIS METHOD
     }
+
+    @Override 
+    public void periodicLog(){}
 }
