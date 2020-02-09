@@ -34,21 +34,11 @@ public class LimelightLocalization implements MaybeUpdater {
         return (OUTER_PORT_HEIGHT - CAMERA_ABOVE_GROUND_HEIGHT)/Math.tan(yAngle + CAMERA_MOUNTING_ANGLE); 
     }
 
-    public void test() {
-        //Point pos = getRobotPosition();
-        double distance = calculateDistance();
-        Point pos = Robot.getPos();
-        Robot.limelightSubsystem.setCameraParams("X", pos.x);
-        Robot.limelightSubsystem.setCameraParams("Y", pos.y);
-        Robot.limelightSubsystem.setCameraParams("Distance", distance);
-    }
-
     public Point getRobotPosition() {
         double distance = calculateDistance();
-        double robotAngle = Robot.get(SD.Angle);
         double tx = limeLight.getTableData(limeLight.getCameraTable(), "tx");
-        double complement = 90 - (tx + robotAngle);
-        double changeInY = distance * Math.cos(Math.toRadians(complement));
+        double totalAngle = Math.toRadians(tx) + Robot.get(SD.Angle);
+        double changeInY = distance * Math.sin(Math.toRadians(totalAngle));
         double changeInX = Math.sqrt(distance * distance - changeInY * changeInY);
         double yAbsolute = LANDMARK_Y - changeInY;
         double xAbsolute = LANDMARK_X + changeInX; 
