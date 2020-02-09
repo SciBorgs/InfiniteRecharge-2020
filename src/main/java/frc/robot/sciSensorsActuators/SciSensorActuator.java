@@ -8,30 +8,30 @@ import frc.robot.robotState.RobotState;
 import frc.robot.robotState.RobotStateHistory;
 import frc.robot.robotState.RobotState.SD;
 
-public interface SciSensorActuator<T> {
-    public HashMap<T, SD> getSDMap();
+public interface SciSensorActuator<SciSD> {
+    public HashMap<SciSD, SD> getSDMap();
     public String getDeviceName();
 
-    default public void sciSet(T sciSD, double v){
+    default public void sciSet(SciSD sciSD, double v){
         if (isTracked(sciSD)){
             Robot.set(getSDMap().get(sciSD), v);
         }
     }
 
-    default public void assignSD(T sciSD, SD sd){
+    default public void assignSD(SciSD sciSD, SD sd){
         getSDMap().put(sciSD, sd);
         Robot.set(sd, 0);
     }
 
-    default public boolean isTracked(T sciSD){
+    default public boolean isTracked(SciSD sciSD){
         return getSDMap().containsKey(sciSD);
     }
 
-    default public double sciGet(T sciSD){
+    default public double sciGet(SciSD sciSD){
         return Robot.get(getSDMap().get(sciSD));
     }
 
-    default public SD sdOf(T sciSD) {
+    default public SD sdOf(SciSD sciSD) {
         return getSDMap().get(sciSD);
     }
 
