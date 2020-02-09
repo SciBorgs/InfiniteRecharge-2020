@@ -24,7 +24,6 @@ public class SciSolenoid<ValueType extends Enum<ValueType>> extends DoubleSoleno
     private BiHashMap<ValueType, Double> valueDoubleMap;
     private Class valueTypeClass;
     private boolean printValues;
-    private SciUtils<SciSolenoidSD> sciUtils;
     private HashMap<SciSolenoidSD, SD> sdMap;
     public ValueType defaultValue;
     public Optional<SD> valueSD;
@@ -42,7 +41,6 @@ public class SciSolenoid<ValueType extends Enum<ValueType>> extends DoubleSoleno
         this.valueSD = Optional.empty();
         this.valueTypeClass = forwardValue.getClass();
         this.printValues = false;
-        this.sciUtils = new SciUtils<>(this);
         this.sdMap = new HashMap<>();
         Robot.addRobotStateUpdater(this);
     }
@@ -92,10 +90,6 @@ public class SciSolenoid<ValueType extends Enum<ValueType>> extends DoubleSoleno
 
     @Override
     public HashMap<SciSolenoidSD, SD> getSDMap() {return sdMap;}
-    @Override
-    public void assignSD(SciSolenoidSD sciSD, SD sd) {this.sciUtils.assignSD(sciSD, sd);}
-    @Override
-    public SciUtils<SciSolenoidSD> getSciUtils() {return sciUtils;}
     @Override
     public String getDeviceName() {return "Solenoid " + super.m_moduleNumber;}
 }

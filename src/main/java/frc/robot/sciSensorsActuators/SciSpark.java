@@ -27,7 +27,6 @@ public class SciSpark extends CANSparkMax implements RobotStateUpdater, SciSenso
     private double gearRatio;
     private Model accelModel, jerkModel, snapModel;
     private HashMap<SciSparkSD, SD> sdMap;
-    private SciUtils<SciSparkSD> sciUtils;; 
     private int commandNumber;
     private boolean printValues;
     private boolean diminishSnap = false;
@@ -52,11 +51,10 @@ public class SciSpark extends CANSparkMax implements RobotStateUpdater, SciSenso
         this.currentMaxJerk = DEFAULT_MAX_JERK;
         this.commandNumber = 0;
         this.sdMap = new HashMap<>();
-        this.sciUtils = new SciUtils<>(this);
         this.printValues = false;
-        this.accelModel = new AccelModel(this, this.sciUtils);
-        this.jerkModel  = new JerkModel (this, this.sciUtils);
-        this.snapModel  = new SnapModel (this, this.sciUtils);
+        this.accelModel = new AccelModel(this);
+        this.jerkModel  = new JerkModel (this);
+        this.snapModel  = new SnapModel (this);
         setWheelAngle(0);
         setGearRatio(gearRatio);
         Robot.addRobotStateUpdater(this);
@@ -64,8 +62,6 @@ public class SciSpark extends CANSparkMax implements RobotStateUpdater, SciSenso
 
     @Override
     public HashMap<SciSparkSD, SD> getSDMap(){return this.sdMap;}
-    @Override 
-    public SciUtils<SciSparkSD> getSciUtils(){return this.sciUtils;}
     @Override
     public String getDeviceName() {return "Spark " + super.getDeviceId();}
 
@@ -118,12 +114,12 @@ public class SciSpark extends CANSparkMax implements RobotStateUpdater, SciSenso
     }
 
     private double diminishSnap(double input){
-        double lastJerk = StateInfo.getDifference(Robot.stateHistory, this.sciUtils.sdOf(SciSparkSD.Value), 1);
-        double currentJerk = input - this.sciUtils.sciGet(SciSparkSD.Value);
+        double lastJerk = StateInfo.getDifference(Robot.stateHistory, sdOf(SciSparkSD.Value), 1);
+        double currentJerk = input - sciGet(SciSparkSD.Value);
         double snap = currentJerk - lastJerk;
         double newSnap = snapDecrementer(snap);
         double newJerk = lastJerk + newSnap;
-        return this.sciUtils.sciGet(SciSparkSD.Value) + newJerk;
+        return sciGet(SciSparkSD.Value) + newJerk;
     }
 
     public void set(double speed, double maxJerk) {
@@ -140,10 +136,10 @@ public class SciSpark extends CANSparkMax implements RobotStateUpdater, SciSenso
     public void dontPrintValues(){this.printValues = false;}
 
     public void updateRobotState(){
-        this.sciUtils.sciSet(SciSparkSD.WheelAngle, determineWheelAngle());
-        this.sciUtils.sciSet(SciSparkSD.Velocity,   determineVelocity());
-        this.sciUtils.sciSet(SciSparkSD.Value,      super.get());
-        this.sciUtils.sciSet(SciSparkSD.Current,    super.getOutputCurrent());
+        sciSet(SciSparkSD.WheelAngle, determineWheelAngle());
+        sciSet(SciSparkSD.Velocity,   determineVelocity());
+        sciSet(SciSparkSD.Value,      super.get());
+        sciSet(SciSparkSD.Current,    super.getOutputCurrent());
         this.accelModel.updateRobotState();
         this.jerkModel .updateRobotState();
         this.snapModel .updateRobotState();
@@ -152,26 +148,19 @@ public class SciSpark extends CANSparkMax implements RobotStateUpdater, SciSenso
         }
     }
 
-    @Override
-    public void assignSD(SciSparkSD sparkSD, SD sd) {
-        this.sciUtils.assignSD(sparkSD, sd);
-    }
-
 }
 
 class AccelModel implements Model {
 
-    public SciUtils<SciSparkSD> sciUtils;
     public SciSpark spark;
-    public AccelModel(SciSpark spark, SciUtils<SciSparkSD> sciUtils) {
+    public AccelModel(SciSpark spark) {
         this.spark = spark;
-        this.sciUtils = new SciUtils<>(this.spark);
     }
     @Override
     public void updateRobotState() {
-        if(this.sciUtils.isTracked(SciSparkSD.Accel)) {
-            sciUtils.sciSet(SciSparkSD.Accel, 
-                StateInfo.getRateOfChange(this.sciUtils.sdOf(SciSparkSD.Velocity), this.spark.getMovementPrecision()));
+        if(this.spark.isTracked(SciSparkSD.Accel)) {
+            this.spark.sciSet(SciSparkSD.Accel, 
+                StateInfo.getRateOfChange(this.spark.sdOf(SciSparkSD.Velocity), this.spark.getMovementPrecision()));
         }
     }
     @Override public Iterable<SD> getSDs() {return this.spark.getSDMap().values();}
@@ -179,17 +168,15 @@ class AccelModel implements Model {
 
 class JerkModel implements Model {
 
-    public SciUtils<SciSparkSD> sciUtils;
     public SciSpark spark;
-    public JerkModel(SciSpark spark, SciUtils<SciSparkSD> sciUtils) {
+    public JerkModel(SciSpark spark) {
         this.spark = spark;
-        this.sciUtils = new SciUtils<>(this.spark);
     }
     @Override
     public void updateRobotState() {
-        if(this.sciUtils.isTracked(SciSparkSD.Jerk)) {
-            sciUtils.sciSet(SciSparkSD.Jerk, 
-                StateInfo.getRateOfChange(this.sciUtils.sdOf(SciSparkSD.Accel), this.spark.getMovementPrecision()));
+        if(this.spark.isTracked(SciSparkSD.Jerk)) {
+            this.spark.sciSet(SciSparkSD.Jerk, 
+                StateInfo.getRateOfChange(this.spark.sdOf(SciSparkSD.Accel), this.spark.getMovementPrecision()));
         }
     }
     @Override public Iterable<SD> getSDs() {return this.spark.getSDMap().values();}
@@ -197,17 +184,15 @@ class JerkModel implements Model {
 
 class SnapModel implements Model {
 
-    public SciUtils<SciSparkSD> sciUtils;
     public SciSpark spark;
-    public SnapModel(SciSpark spark, SciUtils<SciSparkSD> sciUtils) {
+    public SnapModel(SciSpark spark) {
         this.spark = spark;
-        this.sciUtils = new SciUtils<>(this.spark);
     }
     @Override
     public void updateRobotState() {
-        if(this.sciUtils.isTracked(SciSparkSD.Snap)) {
-            sciUtils.sciSet(SciSparkSD.Snap, 
-                StateInfo.getRateOfChange(this.sciUtils.sdOf(SciSparkSD.Jerk), this.spark.getMovementPrecision()));
+        if(this.spark.isTracked(SciSparkSD.Snap)) {
+            this.spark.sciSet(SciSparkSD.Snap, 
+                StateInfo.getRateOfChange(this.spark.sdOf(SciSparkSD.Jerk), this.spark.getMovementPrecision()));
         }
     }
     @Override public Iterable<SD> getSDs() {return this.spark.getSDMap().values();}

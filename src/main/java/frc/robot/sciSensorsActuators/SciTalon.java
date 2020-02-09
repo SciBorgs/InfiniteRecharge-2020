@@ -20,7 +20,6 @@ public class SciTalon extends TalonSRX implements RobotStateUpdater, SciSensorAc
     public static enum SciTalonSD {ValueSD, CurrentSD;}
     public static final double DEFAULT_MAX_JERK = 0.1;
     public HashMap<SciTalonSD, SD> sdMap;
-    private SciUtils<SciTalonSD> sciUtils; 
     public static final double TOLERABLE_DIFFERENCE = 0.01;
     private int commandNumber;
     public double goalSpeed;
@@ -38,21 +37,13 @@ public class SciTalon extends TalonSRX implements RobotStateUpdater, SciSensorAc
         this.currentMaxJerk = 0;
         this.commandNumber = 0;
         this.printValues = false;
-        this.sciUtils = new SciUtils<>(this);
         this.sdMap = new HashMap<>();
         Robot.addRobotStateUpdater(this);
     }
     @Override
     public HashMap<SciTalonSD, SD> getSDMap(){return this.sdMap;}
     @Override 
-    public SciUtils<SciTalonSD> getSciUtils(){return this.sciUtils;}
-    @Override 
     public String getDeviceName(){return "Talon " + super.getDeviceID();}
-
-    @Override
-    public void assignSD(SciTalonSD talonSD, SD sd) {
-        this.sciUtils.assignSD(talonSD, sd);
-    }
 
 
     public double getGearRatio() {return this.gearRatio;}
@@ -83,8 +74,8 @@ public class SciTalon extends TalonSRX implements RobotStateUpdater, SciSensorAc
     public void dontPrintValues(){this.printValues = false;}
 
     public void updateRobotState(){
-        this.sciUtils.sciSet(SciTalonSD.ValueSD,   super.getMotorOutputPercent());
-        this.sciUtils.sciSet(SciTalonSD.CurrentSD, super.getSupplyCurrent());
+        sciSet(SciTalonSD.ValueSD,   super.getMotorOutputPercent());
+        sciSet(SciTalonSD.CurrentSD, super.getSupplyCurrent());
         if(this.printValues){
             DelayedPrinter.print("Talon " + super.getDeviceID() + " value: " + super.getMotorOutputPercent());
         }

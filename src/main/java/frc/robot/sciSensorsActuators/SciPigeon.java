@@ -16,11 +16,9 @@ import frc.robot.sciSensorsActuators.SciPigeon.SciPigeonSD;;
 public class SciPigeon extends PigeonIMU implements RobotStateUpdater, SciSensorActuator<SciPigeonSD> {
     public static enum SciPigeonSD {Angle, Pitch, Role}
     public HashMap<SciPigeonSD, SD> sdMap;
-    private SciUtils<SciPigeonSD> sciUtils;
 
     public SciPigeon(TalonSRX talon) {
         super(talon);
-        this.sciUtils = new SciUtils<>(this);
         this.sdMap = new HashMap<>();
         Robot.addRobotStateUpdater(this);
     }
@@ -28,14 +26,7 @@ public class SciPigeon extends PigeonIMU implements RobotStateUpdater, SciSensor
     @Override
     public HashMap<SciPigeonSD, SD> getSDMap(){return this.sdMap;}
     @Override 
-    public SciUtils<SciPigeonSD> getSciUtils(){return this.sciUtils;}
-    @Override 
     public String getDeviceName(){return "Pigeon " + super.getDeviceID();}
-
-    @Override
-    public void assignSD(SciPigeonSD pigeonSD, SD sd) {
-        this.sciUtils.assignSD(pigeonSD, sd);
-    }
 
     private double[] yawPitchRole(){
         double[] yawPitchRoll = new double[3];
@@ -52,8 +43,8 @@ public class SciPigeon extends PigeonIMU implements RobotStateUpdater, SciSensor
     }
 
     public void updateRobotState(){
-        this.sciUtils.sciSet(SciPigeonSD.Angle, getAngle());
-        this.sciUtils.sciSet(SciPigeonSD.Pitch, getPitch());
-        this.sciUtils.sciSet(SciPigeonSD.Role,  getRole());
+        sciSet(SciPigeonSD.Angle, getAngle());
+        sciSet(SciPigeonSD.Pitch, getPitch());
+        sciSet(SciPigeonSD.Role,  getRole());
     }
 }

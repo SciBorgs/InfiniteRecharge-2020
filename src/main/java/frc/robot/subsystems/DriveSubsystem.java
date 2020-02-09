@@ -75,8 +75,8 @@ public class DriveSubsystem extends Subsystem {
         this.l.assignSD(SciSparkSD.Current, SD.LeftWheelCurrent);
         this.l.assignSD(SciSparkSD.Value, SD.LeftWheelVal);
 
-        this.r.getSciUtils().logAllSDs();
-        this.l.getSciUtils().logAllSDs();
+        this.r.logAllSDs();
+        this.l.logAllSDs();
 
         this.l.diminishSnap();
         this.r.diminishSnap();
