@@ -52,7 +52,7 @@ public class Logger{
         for (int i = 1; i < elements.length; i++) {
             StackTraceElement element = elements[i];
             if (!element.getClassName().equals(Logger.class.getName()) && !element.getClassName().contains("java.lang.Thread")) {
-                return element.getClassName() + ".java";
+                return element.getClassName();
             }
         }
         // At this point, this function is not called beyond this class or some other error occurred
@@ -210,7 +210,6 @@ public class Logger{
         Double hour   = (double) this.calendar.get(Calendar.HOUR_OF_DAY);
         Double minute = (double) this.calendar.get(Calendar.MINUTE);
         Double second = (double) this.calendar.get(Calendar.SECOND);
-        double timeSinceStartup = getTimeSinceStartup();
         Double matchTime = Timer.getMatchTime();
         Double batteryVoltage = RobotController.getBatteryVoltage();
         String prefix = "default";
@@ -220,7 +219,6 @@ public class Logger{
         addData(prefix, "hour",hour,                      DefaultValue.Previous);
         addData(prefix, "minute",minute,                  DefaultValue.Previous);
         addData(prefix, "second",second,                  DefaultValue.Previous);
-        addData(prefix, "sec startup",timeSinceStartup,   DefaultValue.Previous);
         addData(prefix, "match time",matchTime,           DefaultValue.Previous);
         addData(prefix, "battery voltage",batteryVoltage, DefaultValue.Previous);
     }
@@ -249,10 +247,6 @@ public class Logger{
     public void writeLoggedData(){
         this.csvHelper.writeRows();
         resetCurrentData();
-    }
-
-    public double getTimeSinceStartup(){
-        return this.timer.get();
     }
 
     public void startMatchTimer(){
