@@ -1,21 +1,29 @@
 package frc.robot.sciSensorsActuators;
 
+import java.util.HashMap;
 import java.util.Optional;
 
 import edu.wpi.first.wpilibj.Servo;
 import frc.robot.Robot;
 import frc.robot.robotState.RobotStateUpdater;
 import frc.robot.robotState.RobotState.SD;
+import frc.robot.sciSensorsActuators.SciServo.SciServoSD;
 
-public class SciServo extends Servo implements RobotStateUpdater {
+public class SciServo extends Servo implements RobotStateUpdater, SciSensorActuator<SciServoSD> {
+    public static enum SciServoSD {Angle, Raw}
+    public HashMap<SciServoSD, SD> sdMap;
     private static final double ANGLE_RANGE = Math.PI;
     private double minAngle = 0;
-    public Optional<SD> angleSD, rawSD;
 
     public SciServo(int channel) {
         super(channel);
         Robot.addRobotStateUpdater(this);
     }
+
+    @Override
+    public HashMap<SciServoSD, SD> getSDMap(){return this.sdMap;}
+    @Override 
+    public String getDeviceName(){return "Servo " + super.getChannel();}
 
     public double getMinAngle()    { return this.minAngle; }
     public double getCenterAngle() { return this.minAngle + ANGLE_RANGE/2; }
@@ -36,10 +44,7 @@ public class SciServo extends Servo implements RobotStateUpdater {
     }
 
     public void updateRobotState() {
-        Robot.optionalSet(this.angleSD, getAngle());
-        Robot.optionalSet(this.rawSD,   super.get());
+        sciSet(SciServoSD.Angle, getAngle());
+        sciSet(SciServoSD.Raw,   super.get());
     }
-    
-    public void assignAngleSD(SD angleSD) {this.angleSD = Optional.of(angleSD);}
-    public void assignRawSd  (SD rawSD)   {this.rawSD   = Optional.of(rawSD);}
 }
