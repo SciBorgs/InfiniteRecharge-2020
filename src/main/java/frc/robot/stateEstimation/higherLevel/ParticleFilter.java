@@ -1,12 +1,11 @@
-package frc.robot.stateEstimation;
+package frc.robot.stateEstimation.higherLevel;
 
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Hashtable;
 import java.util.Set;
 
-import frc.robot.stateEstimation.Updater;
-import frc.robot.stateEstimation.Weighter;
+import frc.robot.stateEstimation.interfaces.*;
 import frc.robot.Robot;
 import frc.robot.robotState.RobotState;
 import frc.robot.robotState.RobotState.SD;

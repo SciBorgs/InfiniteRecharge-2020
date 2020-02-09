@@ -10,7 +10,7 @@ public class RobotStateHistory{
     // and really allows it to be distinguished from just a list of RobotState objects
 
     private Deque<RobotState> robotStates;
-    public int DEFAULT_MAX_SIZE = 7;
+    public int DEFAULT_MAX_SIZE = 10;
 
     public RobotStateHistory() {
         this.robotStates = new Deque<RobotState>(DEFAULT_MAX_SIZE);
