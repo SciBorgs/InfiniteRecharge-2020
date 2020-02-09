@@ -1,8 +1,5 @@
 package frc.robot.commands.generalCommands;
 
-import java.util.HashSet;
-import java.util.Set;
-
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.sciSensorsActuators.SciSpark;
 
