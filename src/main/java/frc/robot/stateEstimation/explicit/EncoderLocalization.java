@@ -43,7 +43,7 @@ public class EncoderLocalization implements Updater, Model, LogUpdater {
     public SciPigeon getPigeon() {return this.pigeon;}
 
     @Override
-    public Hashtable<SD, Double> getStdDevs(){return this.stdDevs;}
+    public Hashtable<SD, Double> getStdDevs(){return (Hashtable<SD, Double>) this.stdDevs.clone();}
     
     // Just multiplies the difference in angle by the wheel radius
     public double wheelRotationChange(SD wheelAngleSD, RobotStateHistory stateHistory){

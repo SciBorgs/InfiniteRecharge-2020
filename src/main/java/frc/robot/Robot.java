@@ -47,14 +47,13 @@ public class Robot extends TimedRobot implements LogUpdater {
     public static LimelightSubsystem  limelightSubsystem  = new LimelightSubsystem();
     public static PneumaticsSubsystem pneumaticsSubsystem = new PneumaticsSubsystem();
 
-    public static LimelightLocalization limelightLocalization = new LimelightLocalization();
     public static IntakeSubsystem     intakeSubsystem     = new IntakeSubsystem();
     
     public static Following following = new Following();
     public static CircleController circleController = new CircleController();
     public static OI oi = new OI();
 
-    public static Model positionModel = new EncoderLocalization();
+    public static Model positionModel = new MaybeDefaultUpdater(new LimelightLocalization(), new EncoderLocalization());
 
     public static RobotState getState(){ return stateHistory.currentState(); }
     public static RobotState statesAgo(int numTicks){return stateHistory.statesAgo(numTicks);}
@@ -173,7 +172,6 @@ public class Robot extends TimedRobot implements LogUpdater {
         stateHistory.addState(getState().copy());
         allUpdateRobotStates();
         allModels();
-        // DelayedPrinter.print("x: " + getPos().x + "\ty: " + getPos().y + "\nheading: " + getHeading() + "\npigeon angle: " + Robot.get(SD.PigeonAngle));
         Scheduler.getInstance().run();
         DelayedPrinter.incTicks();
     }
