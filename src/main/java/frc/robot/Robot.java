@@ -148,6 +148,7 @@ public class Robot extends TimedRobot implements LogUpdater {
         set(SD.X, ORIGINAL_POINT.x);
         set(SD.Y, ORIGINAL_POINT.y);
         set(SD.Angle, ORIGINAL_ANGLE);
+        set(SD.DistanceToPort, 0);
         allUpdateRobotStates();
         pneumaticsSubsystem.stopCompressor();
         // logger.incrementPrevious("robot.java", "deploy", DefaultValue.Previous);
