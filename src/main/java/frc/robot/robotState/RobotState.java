@@ -29,7 +29,9 @@ public class RobotState {
 
         // Shooter
         HoodAngle,
-        ShooterSparkOmega
+        ShooterSparkOmega,
+
+        DistanceToPort,
     }
     
     private Hashtable<SD, Double> data;
