@@ -13,7 +13,8 @@ public class BallTrajectoryController {
   private static final double BALL_CROSS_SECTIONAL_AREA = Math.PI * Math.pow(BALL_RADIUS, 2);
   private static final double BALL_LIFT_COEFFICIENT = 0.01;
   private static final double BALL_DRAG_COEFFICIENT = 0.61;
-  private static final double BALL_TO_OUTER_PORT_DISTANCE = 7.1374;
+  private static final double LIMELIGHT_OFFSET = 0;
+  private static final double BALL_TO_OUTER_PORT_DISTANCE = Robot.get(SD.DistanceToPort) - LIMELIGHT_OFFSET;
   private static final double BALL_TO_INNER_PORT_DISTANCE = BALL_TO_OUTER_PORT_DISTANCE + 0.762;
   private static final double BALL_TO_FLOOR_BOTTOM_HEIGHT = 0.571;
   private static final double BALL_TO_PORT_CENTER_HEIGHT = 2.49555 - BALL_TO_FLOOR_BOTTOM_HEIGHT;
