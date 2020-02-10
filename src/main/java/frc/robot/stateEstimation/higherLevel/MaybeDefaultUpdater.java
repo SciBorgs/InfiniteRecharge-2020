@@ -1,4 +1,4 @@
-package frc.robot.stateEstimation;
+package frc.robot.stateEstimation.higherLevel;
 
 import java.util.Hashtable;
 import java.util.Set;
@@ -6,6 +6,7 @@ import java.util.Set;
 import frc.robot.Robot;
 import frc.robot.robotState.RobotStateHistory;
 import frc.robot.robotState.RobotState.SD;
+import frc.robot.stateEstimation.interfaces.*;
 
 public class MaybeDefaultUpdater implements Model, Updater {
     private MaybeUpdater maybeUpdater;
@@ -16,13 +17,15 @@ public class MaybeDefaultUpdater implements Model, Updater {
         this.defaultUpdater = defaultUpdater;
     }
 
-    public Updater getCurrentUpdater(){
-        return this.maybeUpdater.canUpdate() ? this.maybeUpdater :  this.defaultUpdater;
-    }
-
     @Override
     public Hashtable<SD, Double> getStdDevs(){
-        return getCurrentUpdater().getStdDevs();
+        Hashtable<SD, Double> stdDevs = this.defaultUpdater.getStdDevs();
+        if (this.maybeUpdater.canUpdate()){
+            for(SD sd : this.maybeUpdater.getStdDevs().keySet()){
+                stdDevs.put(sd, this.maybeUpdater.getStdDevs().get(sd));
+            }
+        }
+        return stdDevs;
     }
 
     @Override
@@ -32,12 +35,17 @@ public class MaybeDefaultUpdater implements Model, Updater {
 
     @Override
     public void updateState(RobotStateHistory stateHistory){
-        getCurrentUpdater().updateState(stateHistory);
+        this.defaultUpdater.updateState(stateHistory);
+        if (this.maybeUpdater.canUpdate()){
+            //System.out.println("calling limelight update");
+            this.maybeUpdater.updateState(stateHistory);
+        }
     }
 
     @Override
     public void updateRobotState(){
-        getCurrentUpdater().updateState(Robot.stateHistory);
+        //System.out.println("udpating robot state");
+        this.updateState(Robot.stateHistory);
     }
 
 }

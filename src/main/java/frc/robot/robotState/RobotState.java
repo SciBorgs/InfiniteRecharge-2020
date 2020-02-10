@@ -8,19 +8,19 @@ import java.util.Set;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import frc.robot.dataTypes.BiHashMap;
 
-public class RobotState {
-    private final String FILENAME = "RobotState.java";
-    
+public class RobotState {    
     // SD = State Dimension
     public enum SD {
         // Position
         X, Y, PigeonAngle, Angle,
 
-        // Chassis motor values
-        LeftWheelAngle, RightWheelAngle,
-        LeftSparkVal, RightSparkVal,
-        LeftCurrentVal, RightCurrentVal,
-        
+        // Chassis direct motor values
+        LeftWheelAngle, LeftSparkVal, LeftCurrentVal, LeftWheelSpeed,
+        RightWheelAngle, RightSparkVal, RightCurrentVal, RightWheelSpeed,
+        // Chassis calculated motor values
+        LeftWheelAccel, LeftWheelJerk, LeftWheelSnap,
+        RightWheelAccel, RightWheelJerk, RightWheelSnap,
+
         // Solenoids
         GearShiftSolenoid,
 
@@ -32,6 +32,7 @@ public class RobotState {
         ShooterSparkOmega,
 
         DistanceToPort,
+        Time,
     }
     
     private Hashtable<SD, Double> data;

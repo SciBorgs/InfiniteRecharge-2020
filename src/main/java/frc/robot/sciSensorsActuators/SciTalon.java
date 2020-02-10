@@ -5,16 +5,19 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 import frc.robot.Utils;
 import frc.robot.commands.generalCommands.SciTalonSpeedCommand;
+import frc.robot.commands.TalonDelayWarningCommand;
 import frc.robot.helpers.DelayedPrinter;
 import frc.robot.robotState.RobotStateUpdater;
 import frc.robot.Robot;
 import frc.robot.robotState.RobotState.SD;
+
 
 import java.util.Optional;
 
 public class SciTalon extends TalonSRX implements RobotStateUpdater {
 
     public static final double DEFAULT_MAX_JERK = 0.1;
+    public static final double TOLERABLE_DIFFERENCE = 0.01;
     private int commandNumber;
     public double goalSpeed;
     public double currentMaxJerk;
@@ -44,13 +47,12 @@ public class SciTalon extends TalonSRX implements RobotStateUpdater {
     public void instantSet() {
         double limitedInput = Utils.limitChange(super.getMotorOutputPercent(), this.goalSpeed, this.currentMaxJerk);
         super.set(ControlMode.PercentOutput, limitedInput);
-        if (limitedInput != super.getMotorOutputPercent()) {
-            String warning = "WARNING: Talon " + super.getDeviceID() + " was set to " + limitedInput
-                    + " but still has a value of " + super.getMotorOutputPercent();
-            System.out.println(warning);
-            System.out.println(warning);
-            printDebuggingInfo();
-        }
+        checkWarningStatus(limitedInput,super.getMotorOutputPercent());
+    }
+    public void checkWarningStatus(double input, double realOutput){
+        if (!Utils.inRange(input, super.getMotorOutputPercent(), TOLERABLE_DIFFERENCE)) {
+            (new TalonDelayWarningCommand(this, input)).start();
+        }   
     }
 
     public void printDebuggingInfo() {

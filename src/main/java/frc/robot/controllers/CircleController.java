@@ -19,9 +19,7 @@ public class CircleController {
     private static final double ENDING_DISTANCE_TOLERANCE = .4;
     private static final double TURNING_WEIGHT = .5; // it will be raised to a power of this, ie x^TURNING_WEIGHT
 
-    private final String FILENAME = "CircleController.java";
-
-    public CircleController () { Robot.logger.logFinalPIDConstants("CircleController.java", "final heading PID", this.finalHeadingPID);  }
+    public CircleController () { Robot.logger.logFinalPIDConstants("final heading PID", this.finalHeadingPID);  }
 
     public void update(Point finalPos, double finalHeading) {
         update(Robot.getPos(), Robot.getHeading(), finalPos, finalHeading);
@@ -35,7 +33,7 @@ public class CircleController {
         } else {
             setSpeed(currPos, currHeading, finalPos, finalHeading);
         }
-        Robot.logger.addData("CircleController.java", "finalHeading", finalHeading, DefaultValue.Empty);
+        Robot.logger.addData("finalHeading", finalHeading, DefaultValue.Empty);
     }
 
     private static void setup() { Robot.driveSubsystem.assistedDriveMode(); }

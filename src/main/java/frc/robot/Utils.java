@@ -22,6 +22,7 @@ public class Utils{
     private static Random r = new Random();
 
     public static final double METERS_TO_INCHES = 39.37;
+    public static final double SECONDS_PER_MINUTE = 60;
     // essnetially an error that we're willing to have, probably due to floating point rounding
     public static final double EPSILON = 1e-6;
 
@@ -209,4 +210,18 @@ public class Utils{
     public static double mod(double num1, double num2) {
         return (num1 % num2 + num2) % num2;
     }
+
+    public static<T> ArrayList<T> initArrayList(T... args){
+        ArrayList<T> arrayList = new ArrayList<T>();
+        for (T el : args){arrayList.add(el);}
+        return arrayList;
+    }
+    public static<T> ArrayList<T> optionalInitArrayList(Optional<T>... args){
+        ArrayList<T> arrayList = new ArrayList<T>();
+        for (Optional<T> el : args){
+            if (el.isPresent()){arrayList.add(el.get());}
+        }
+        return arrayList;
+    }
+
 }

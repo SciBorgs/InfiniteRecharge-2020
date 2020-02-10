@@ -1,10 +1,11 @@
-package frc.robot.stateEstimation;
+package frc.robot.stateEstimation.higherLevel;
 
 import java.util.Map;
 
 import frc.robot.robotState.RobotState;
 import frc.robot.robotState.RobotStateHistory;
 import frc.robot.robotState.RobotState.SD;
+import frc.robot.stateEstimation.interfaces.*;
 
 public class GaussianWeighter implements Weighter {
 

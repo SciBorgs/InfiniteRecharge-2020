@@ -23,7 +23,5 @@ public class SciSparkSpeedCommand extends Command {
     protected boolean isFinished(){
         return this.spark.atGoal() || !this.spark.isCurrentCommandNumber(this.commandNunber);
     }
-    @Override
-    protected void end(){ }
 
 }

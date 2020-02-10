@@ -9,25 +9,22 @@ import frc.robot.robotState.RobotState.SD;
 
 import java.util.Optional;
 
-
 public class SciSolenoid <ValueType extends Enum<ValueType>> extends DoubleSolenoid implements RobotStateUpdater {
-
     private Class valueTypeClass;
     public final static BiHashMap<Value, Double> SOLENOID_MAPPING;
+
     static {
         SOLENOID_MAPPING=new BiHashMap<>();
         SOLENOID_MAPPING.put(Value.kForward, 1.0);
         SOLENOID_MAPPING.put(Value.kOff,     0.0);
         SOLENOID_MAPPING.put(Value.kReverse,-1.0);
     }
+    
     private BiHashMap<ValueType, Value> valueMap;
     private BiHashMap<ValueType, Double> valueDoubleMap;
-    public Optional<SD> valueSD;
     private boolean printValues;
-
-    public SciSolenoid(int[] ports, ValueType forwardValue, ValueType backwardValue, ValueType offValue) {
-        this(1, ports, forwardValue, backwardValue, offValue);
-    }
+    public ValueType defaultValue;
+    public Optional<SD> valueSD;
 
     public SciSolenoid(int pdpPort, int[] ports, ValueType forwardValue, ValueType reverseValue, ValueType offValue) {
         super(pdpPort, ports[0], ports[1]);
@@ -45,16 +42,13 @@ public class SciSolenoid <ValueType extends Enum<ValueType>> extends DoubleSolen
         Robot.addRobotStateUpdater(this);
     }
     
-    private Value toDoubleSolenoidValue(ValueType e) {
-        return valueMap.getForward(e);
-    }
-
-    private ValueType toValueType(Value v){
-        return valueMap.getBackward(v);
-    }
+    private Value toDoubleSolenoidValue(ValueType e) {return valueMap.getForward(e);}
+    private ValueType toValueType(Value v)           {return valueMap.getBackward(v);}
 
     public ValueType oppositeSciSolenoidValue(ValueType e) {
-        return valueMap.getBackward(Utils.oppositeDoubleSolenoidValue(valueMap.getForward(e)));
+        return (toDoubleSolenoidValue(e) == Value.kOff) 
+            ? defaultValue 
+            : valueMap.getBackward(Utils.oppositeDoubleSolenoidValue(valueMap.getForward(e)));
     }
 
     public void set(ValueType e) {
@@ -62,7 +56,7 @@ public class SciSolenoid <ValueType extends Enum<ValueType>> extends DoubleSolen
     }
 
     public void toggle() {
-        super.set(Utils.oppositeDoubleSolenoidValue(super.get()));
+        set(oppositeSciSolenoidValue(valueMap.getBackward(super.get())));
     }
 
     public void printValues()    {this.printValues = true;}
