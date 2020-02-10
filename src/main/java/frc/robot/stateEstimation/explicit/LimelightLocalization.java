@@ -38,7 +38,7 @@ public class LimelightLocalization implements MaybeUpdater {
         double distance = calculateDistance();
         double tx = limeLight.getTableData(limeLight.getCameraTable(), "tx");
         double totalAngle = Math.toRadians(tx) + Robot.get(SD.Angle);
-        double changeInY = distance * Math.sin(Math.toRadians(totalAngle));
+        double changeInY = distance * Math.sin(totalAngle);
         double changeInX = Math.sqrt(distance * distance - changeInY * changeInY);
         double yAbsolute = LANDMARK_Y - changeInY;
         double xAbsolute = LANDMARK_X + changeInX; 
@@ -48,8 +48,6 @@ public class LimelightLocalization implements MaybeUpdater {
     @Override
     public void updateState(RobotStateHistory pastRobotStates) {
         Point absolutePosition = getRobotPosition();
-        DelayedPrinter.print("updating state", 5);
-        test();
         pastRobotStates.statesAgo(0).set(SD.X, absolutePosition.x);
         pastRobotStates.statesAgo(0).set(SD.Y, absolutePosition.y);
     }
