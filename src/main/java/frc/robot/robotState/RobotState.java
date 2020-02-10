@@ -17,8 +17,6 @@ import frc.robot.dataTypes.Pair;
 import frc.robot.robotState.RobotState.SD;
 
 public class RobotState implements Iterable<Pair<SD, Double>>{
-    private final String FILENAME = "RobotState.java";
-    
     // SD = State Dimension
     public enum SD {
         // Position

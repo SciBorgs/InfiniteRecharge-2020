@@ -47,6 +47,21 @@ public class Logger{
         this.startMatchTimer();
     }
 
+    public String getCallerClassName() { 
+        StackTraceElement[] elements = Thread.currentThread().getStackTrace();
+        for (StackTraceElement element : elements) {
+            if (!element.getClassName().equals(Logger.class.getName()) && !element.getClassName().contains("java.lang.Thread")) {
+                return element.getClassName();
+            }
+        }
+        // At this point, this function is not called beyond this class or some other error occurred
+        String trace = "";
+        for (StackTraceElement i : elements) {
+            trace += i.toString() + "\n";
+        }
+        throw new RuntimeException("Unable to determine calling class or only Logger calls this function:\n" + trace);
+    }
+
     private void fileNotFound(){
         System.out.println("FILE NOT FOUND (logger)");
     }
@@ -55,6 +70,9 @@ public class Logger{
         this.currentData = new Hashtable<String,Object>();
     }
 
+    public String getColumnName(String valueName){
+        return getColumnName(getCallerClassName(), valueName);
+    }
     public String getColumnName(String filename, String valueName){
         // This is simply how we name the columns. That way, everything is organized by file and differnet files can have data of the same name
         return filename + ": " + valueName;
@@ -69,12 +87,18 @@ public class Logger{
         // adds a new column to the file and records it in the column hashset
         this.csvHelper.addTopic(columnName);
     }
+    public void newDataPoint(String valueName){
+        newDataPoint(getCallerClassName(), valueName);
+    }
     public void newDataPoint(String filename, String valueName){
         if (this.loggingDisabled){return;}
         // Same as add new column but is what should generally be called directly
         addNewColumn(getColumnName(filename, valueName));
     }
 
+    public void addData(String valueName, Object data, DefaultValue defaultValue){
+        addData(getCallerClassName(), valueName, data, defaultValue);
+    }
     public void addData(String filename, String valueName, Object data, DefaultValue defaultValue){
         // Adds a singular piece of data to the currentData hash. Also will add the column if it is unrecognized
         if (this.loggingDisabled){return;}
@@ -86,18 +110,27 @@ public class Logger{
         this.defaultValues.put(columnName, defaultValue);
         this.currentData.put(columnName, data);
     }
+    public void logFinalField(String fieldName, Object fieldValue){
+        logFinalField(getCallerClassName(), fieldName, fieldValue);
+    }
     public void logFinalField(String filename, String fieldName, Object fieldValue){
         addData(filename, fieldName, fieldValue, DefaultValue.Previous);
     }
+    public void logFinalPIDConstants(String pidName, PID pid){
+        logFinalPIDConstants(getCallerClassName(), pidName, pid);
+    }
     public void logFinalPIDConstants(String filename, String pidName, PID pid){
         addData(filename, pidName, "(" + pid.getP() + " | " + pid.getI() + " | " + pid.getD() + ")", DefaultValue.Previous);
+    }
+    public void logCommandStatus(CommandStatus commandStatus){
+        logCommandStatus(getCallerClassName(), commandStatus);
     }
     public void logCommandStatus(String filename, CommandStatus commandStatus){
         String stringStatus = "";
         switch (commandStatus) {
             case Initializing: stringStatus = "initializing"; break;
             case Executing:    stringStatus = "executing";    break;
-            case Ending:       stringStatus = "edning";       break;
+            case Ending:       stringStatus = "ending";       break;
             case Interrupted:  stringStatus = "interrupted";  break;
         }
         addData(filename, commandStatusName, stringStatus, DefaultValue.Empty);
@@ -119,11 +152,18 @@ public class Logger{
         // Given a column name, it gives the most recent value of that column as a string
         return getLastLog().get(columnName);
     }
+    public String getLastValueLogged(String valueName){
+        // Same as get lastLoggedInColumn but should generally be called
+        return getLastValueLogged(getCallerClassName(), valueName);
+    }
     public String getLastValueLogged(String filename, String valueName){
         // Same as get lastLoggedInColumn but should generally be called
-        return getLastLoggedInColumn(getColumnName(filename,  valueName));
+        return getLastLoggedInColumn(getColumnName(filename, valueName));
     }
-    public double getLastLogValueDouble(String filename, String valueName){
+    public double getLastValueLoggedDouble(String valueName){
+        return getLastValueLoggedDouble(getCallerClassName(), valueName);
+    }
+    public double getLastValueLoggedDouble(String filename, String valueName){
         // Converts last log value as a string to a double, returns 0 if it isn't a number
         // Maybe TODO - should it throw an error if the previous value is not a number of ""? I think it shouldn't but to consider
         String stringValue = getLastValueLogged(filename, valueName);
@@ -133,7 +173,11 @@ public class Logger{
             return 0;
         }
     }
-    public boolean getLastLogValueBool(String filename, String valueName){
+    public boolean getLastValueLoggedBool(String valueName){
+        // Converts last log to a bool
+        return getLastValueLoggedBool(getCallerClassName(), valueName);
+    }
+    public boolean getLastValueLoggedBool(String filename, String valueName){
         // Converts last log to a bool
         return Boolean.valueOf(getLastValueLogged(filename, valueName));
     }
@@ -142,10 +186,16 @@ public class Logger{
         return getColumns().contains(columnName);
     }
 
+    public void addToPrevious(String valueName, DefaultValue defaultValue, double incrementAmount){
+        addToPrevious(getCallerClassName(), valueName, defaultValue, incrementAmount);
+    }
     public void addToPrevious(String filename, String valueName, DefaultValue defaultValue, double incrementAmount){
         // Logs the next values as the incrementAmount + the bool value of the most recent logged data point
-        double lastValue = getLastLogValueDouble(filename, valueName);
+        double lastValue = getLastValueLoggedDouble(filename, valueName);
         addData(filename, valueName, lastValue + incrementAmount, defaultValue);
+    }
+    public void incrementPrevious(String valueName, DefaultValue defaultValue){
+        incrementPrevious(getCallerClassName(), valueName, defaultValue);
     }
     public void incrementPrevious(String filename, String valueName, DefaultValue defaultValue){
         addToPrevious(filename, valueName, defaultValue, 1);
