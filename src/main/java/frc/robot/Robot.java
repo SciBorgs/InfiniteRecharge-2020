@@ -189,11 +189,6 @@ public class Robot extends TimedRobot implements LogUpdater {
     @Override
     public void autonomousPeriodic() {
         sequential.update();
-        //System.out.println("VEL: " + shooterSubsystem.shooterSparkEncoder.getVelocity());
-        shooterSubsystem.testHoodSpark(0.0);
-        // System.out.println("ANGLE: " + shooterSubsystem.absEncoder.getRadians());
-        // System.out.println("SD ANGLE: " + get(SD.HoodAngle));
-        System.out.println("REG " + shooterSubsystem.absEncoder.getRadians());
         allPeriodicLogs();
         logDataPeriodic();
     }
@@ -214,14 +209,11 @@ public class Robot extends TimedRobot implements LogUpdater {
 
     @Override
     public void testInit() {
-        // shooterSubsystem.absEncoder.reset();
-        System.out.println("REG " + shooterSubsystem.absEncoder.getRadians());
         shooterSubsystem.absEncoder.setAngle(Math.toRadians(60));
     }
 
     public void testPeriodic() {
-        System.out.println("REG " + shooterSubsystem.absEncoder.getRadians());
-        shooterSubsystem.absEncoder.setAngle(Math.toRadians(60));
+        System.out.println("HOOD ANGLE " + shooterSubsystem.absEncoder.getRadians());
     }
 
     public void disabledInit() {

@@ -18,7 +18,11 @@ public class BallTrajectoryController {
   private static final double BALL_TO_INNER_PORT_DISTANCE = BALL_TO_OUTER_PORT_DISTANCE + 0.762;
   private static final double BALL_TO_FLOOR_BOTTOM_HEIGHT = 0.571;
   private static final double BALL_TO_PORT_CENTER_HEIGHT = 2.49555 - BALL_TO_FLOOR_BOTTOM_HEIGHT;
-  private static final double BALL_VELOCITY_INCREMENT = 0.01;
+
+  private static final double MINIMUM_HOOD_ANGLE = Math.toRadians(25);
+  private static final double MAXIMUM_HOOD_ANGLE = Math.toRadians(65);
+
+  private static final double OUTER_PORT_ERROR_P_GAIN = 0.35;
 
   private static final double OUTER_PORT_HEIGHT_TOLERANCE = 0.18;
   private static final double INNER_PORT_HEIGHT_TOLERANCE = 0.01;
@@ -41,41 +45,28 @@ public class BallTrajectoryController {
         && Math.abs(innerPortError) <= INNER_PORT_HEIGHT_TOLERANCE;
   }
 
-  public static void shoot() {
-    Robot.shooterSubsystem.setShooterSpark(getMotorRPM());
-    //Robot.shooterSubsystem.setShooterSpark(getMotorRPM());
-  }
-
   public static double getMotorRPM() {
     return 60 * (ballVelocity * 2) / (2 * Math.PI * BALL_RADIUS);
   }
 
-  public static void setHoodAngle() {
-    System.out.println("HOOD GOING TO: " + getHoodAngle());
-    Robot.shooterSubsystem.setHoodSpark(getHoodAngle());
-  }
+  public static void shoot() {Robot.shooterSubsystem.setShooterSpark(getMotorRPM());}
 
   public static double getHoodAngle() {
-    double angle = Math.toRadians(0.958134 * Math.pow(BALL_TO_OUTER_PORT_DISTANCE, 2) 
-    + (-15.0864 * BALL_TO_OUTER_PORT_DISTANCE) + 86.285);
-    System.out.println("ANGLE " + angle);
-    if (angle < Math.toRadians(25))
-      return Math.toRadians(25);
-    if (angle > Math.toRadians(65))
-      return Math.toRadians(65);
-    return angle;
+    
   }
+
+  public static void setHoodAngle() {Robot.shooterSubsystem.setHoodSpark(getHoodAngle());}
 
   private static Function<Double, Double> getTrajectoryFunction() {
     double hoodAngle = getHoodAngle();
-    if (ballVelocity == 0.0) {
+    if (ballVelocity == 0) {
       ballVelocity =
           Math.sqrt(
               (BALL_TO_INNER_PORT_DISTANCE * GRAVITATIONAL_ACCELERATION) / Math.sin(2 * hoodAngle));
     }
-    if (innerPortError > 0) {ballVelocity += BALL_VELOCITY_INCREMENT;} 
-    else                    {ballVelocity -= BALL_VELOCITY_INCREMENT;}
-    System.out.println("BALLV " + ballVelocity);
+    double increment = Math.abs(outerPortError * OUTER_PORT_ERROR_P_GAIN); 
+    if (innerPortError > 0) {ballVelocity += increment;} 
+    else                    {ballVelocity -= increment;}
 
     double vx = ballVelocity * Math.cos(hoodAngle);
     double vy = ballVelocity * Math.sin(hoodAngle);
