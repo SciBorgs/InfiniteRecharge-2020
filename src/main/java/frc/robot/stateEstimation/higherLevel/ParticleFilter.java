@@ -3,7 +3,9 @@ package frc.robot.stateEstimation.higherLevel;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.Hashtable;
+import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import frc.robot.stateEstimation.interfaces.*;
 import frc.robot.Robot;
@@ -44,7 +46,7 @@ public class ParticleFilter implements Model{
     private int numOfParticles = 1000;
     private double weightSum = this.numOfParticles;
     // Need to combine particles and weights fields using Pair by merging master into this branch
-    private ArrayList<Particle> particles;
+    private List<Particle> particles;
     public Updater  updater;
     public Weighter weighter;
     public IllegalStateDeterminer illegalStateDeterminer;
@@ -79,11 +81,11 @@ public class ParticleFilter implements Model{
         sortParticle();
     }
 
-    public ArrayList<RobotStateHistory> getStatesList(){ // converts the Particles to a list of RobotStates
-        return Utils.toArrayList(this.particles.stream().map(particle -> particle.stateHistory));
+    public List<RobotStateHistory> getStatesList(){ // converts the Particles to a list of RobotStates
+        return this.particles.stream().map(particle -> particle.stateHistory).collect(Collectors.toList());
     }
-    public ArrayList<Double> getWeights(){ // converts the Particles to weights
-        return Utils.toArrayList(this.particles.stream().map(particle -> particle.weight));
+    public List<Double> getWeights(){ // converts the Particles to weights
+        return this.particles.stream().map(particle -> particle.weight).collect(Collectors.toList());
     }
 
     private Particle updateParticle(Particle particle) {
@@ -103,11 +105,11 @@ public class ParticleFilter implements Model{
     private void updateParticles(){
         // Choses which particles to update and then updates them
         // Chance a new particle comes from a given particle = weight-of-particle/sum-of-weights
-        ArrayList<Particle> newParticles = new ArrayList<>();
+        List<Particle> newParticles = new ArrayList<>();
         // Next particleOriginValues has random numbers between 0 and weightSum
         // Each number will generate a particle updated from the cummWeights before it
-        ArrayList<Double> particleOriginValues = Utils.randomArrayList(this.numOfParticles, 0, this.weightSum);
-        ArrayList<Double> cummWeights = Utils.cummSums(getWeights()); 
+        List<Double> particleOriginValues = Utils.randomArrayList(this.numOfParticles, 0, this.weightSum);
+        List<Double> cummWeights = Utils.cummSums(getWeights()); 
         particleOriginValues.sort(Utils.ascendingDoubleComparator);
         // I'm sorry about this. I don't know how to clean this up so if you have a good idea, please do so!
         while (!particleOriginValues.isEmpty()) {

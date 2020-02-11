@@ -1,4 +1,4 @@
-package frc.robot.commands;
+package frc.robot.commands.generalCommands;
 
 import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.sciSensorsActuators.SciTalon;
@@ -22,6 +22,7 @@ public class TalonDelayWarningCommand extends Command {
         if (!Utils.impreciseEquals(this.sciTalon.getMotorOutputPercent(), this.input)) {
             System.out.println("WARNING: " + this.sciTalon.getDeviceID() + " was set to " + this.input
             + " but still has a value of " + this.sciTalon.getMotorOutputPercent() +" after " + this.ticks + " ticks");
+            this.sciTalon.printAllData();
         }
     }
 

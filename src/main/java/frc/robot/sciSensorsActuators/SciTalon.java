@@ -5,24 +5,26 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 import frc.robot.Utils;
 import frc.robot.commands.generalCommands.SciTalonSpeedCommand;
-import frc.robot.commands.TalonDelayWarningCommand;
+import frc.robot.commands.generalCommands.TalonDelayWarningCommand;
 import frc.robot.helpers.DelayedPrinter;
 import frc.robot.robotState.RobotStateUpdater;
 import frc.robot.Robot;
 import frc.robot.robotState.RobotState.SD;
+import frc.robot.sciSensorsActuators.SciTalon.SciTalonSD;
 
-
+import java.util.HashMap;
 import java.util.Optional;
 
-public class SciTalon extends TalonSRX implements RobotStateUpdater {
+public class SciTalon extends TalonSRX implements RobotStateUpdater, SciSensorActuator<SciTalonSD> {
 
+    public static enum SciTalonSD {ValueSD, CurrentSD;}
     public static final double DEFAULT_MAX_JERK = 0.1;
+    public HashMap<SciTalonSD, SD> sdMap;
     public static final double TOLERABLE_DIFFERENCE = 0.01;
     private int commandNumber;
     public double goalSpeed;
     public double currentMaxJerk;
     public double gearRatio;
-    public Optional<SD> valueSD, currentSD;
     public boolean printValues;
 
     public SciTalon(int port) {
@@ -34,11 +36,14 @@ public class SciTalon extends TalonSRX implements RobotStateUpdater {
         this.goalSpeed = 0;
         this.currentMaxJerk = 0;
         this.commandNumber = 0;
-        this.valueSD   = Optional.empty();
-        this.currentSD = Optional.empty();
         this.printValues = false;
+        this.sdMap = new HashMap<>();
         Robot.addRobotStateUpdater(this);
     }
+    @Override
+    public HashMap<SciTalonSD, SD> getSDMap(){return this.sdMap;}
+    @Override 
+    public String getDeviceName(){return "Talon " + super.getDeviceID();}
 
 
     public double getGearRatio() {return this.gearRatio;}
@@ -54,17 +59,7 @@ public class SciTalon extends TalonSRX implements RobotStateUpdater {
             (new TalonDelayWarningCommand(this, input)).start();
         }   
     }
-
-    public void printDebuggingInfo() {
-        System.out.println("Debugging info:");
-        if (this.currentSD.isPresent()) {
-            System.out.println("Current: " + Robot.get(this.currentSD.get()));
-        }
-        if (this.valueSD.isPresent()) {
-            System.out.println("All Values: " + Robot.stateHistory.getFullSDData(this.valueSD.get()));
-        }
-    }
-
+    
     public void set(double speed, double maxJerk){
         this.goalSpeed = speed;
         this.currentMaxJerk = maxJerk;
@@ -79,13 +74,10 @@ public class SciTalon extends TalonSRX implements RobotStateUpdater {
     public void dontPrintValues(){this.printValues = false;}
 
     public void updateRobotState(){
-        Robot.optionalSet(this.valueSD,   super.getMotorOutputPercent());
-        Robot.optionalSet(this.currentSD, super.getSupplyCurrent());
+        sciSet(SciTalonSD.ValueSD,   super.getMotorOutputPercent());
+        sciSet(SciTalonSD.CurrentSD, super.getSupplyCurrent());
         if(this.printValues){
             DelayedPrinter.print("Talon " + super.getDeviceID() + " value: " + super.getMotorOutputPercent());
         }
     }
-
-    public void assignValueSD  (SD valueSD)   {this.valueSD   = Optional.of(valueSD);}
-    public void assignCurrentSD(SD currentSD) {this.currentSD = Optional.of(currentSD);}
 }
