@@ -7,14 +7,13 @@ import frc.robot.PortMap;
 import frc.robot.Robot;
 import frc.robot.robotState.RobotStateUpdater;
 import frc.robot.robotState.RobotState.SD;
+import frc.robot.logging.LogUpdater;
 import frc.robot.logging.Logger.DefaultValue;
 
-public class PneumaticsSubsystem extends Subsystem implements RobotStateUpdater {
-  
+public class PneumaticsSubsystem extends Subsystem implements RobotStateUpdater, LogUpdater {
   private AnalogInput pressureSensor;
   private final double NORMALIZED_SUPPLY_VOLTAGE = 5.0;
   private Compressor compressor;
-  private final String FILENAME = "PneumaticsSubsystem.java";
   public static final SD VOLTAGE_SD = SD.PressureSensorVoltage;
   
   @Override
@@ -26,10 +25,11 @@ public class PneumaticsSubsystem extends Subsystem implements RobotStateUpdater 
     this.compressor = new Compressor();
     //Robot.addSDToLog(SD.PressureSensorVoltage);
     Robot.addRobotStateUpdater(this);
+    Robot.addLogUpdater(this);
   }
     
 	public void periodicLog(){
-    Robot.logger.addData(FILENAME, "pressure", getPressure(), DefaultValue.Previous);
+    Robot.logger.addData("pressure", getPressure(), DefaultValue.Previous);
   }
   @Override
   public void updateRobotState(){
