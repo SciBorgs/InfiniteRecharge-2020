@@ -73,23 +73,22 @@ public class Robot extends TimedRobot {
     // testing
     public static Point  getPos() {return new Point(get(SD.X),get(SD.Y));}
     public static double getHeading() {return get(SD.Angle);}
+    public static Waypoint getWaypoint () { return new Waypoint(new Point(get(SD.X), get(SD.Y)), get(SD.Angle)); }
 
-    public static final Waypoint TEST_POINT_1 = new Waypoint(new Point(Utils.inchesToMeters(36),0),     Geo.HORIZONTAL_ANGLE);
-    public static final Waypoint TEST_POINT_2 = new Waypoint(new Point(Utils.inchesToMeters(96),Utils.inchesToMeters(36)),    Geo.HORIZONTAL_ANGLE + Math.PI);
-    public static final Waypoint TEST_POINT_3 = new Waypoint(new Point(Utils.inchesToMeters(36),Utils.inchesToMeters(72)),     Geo.HORIZONTAL_ANGLE + Math.PI);
-    public static final Waypoint TEST_POINT_4 = new Waypoint(new Point(0, Utils.inchesToMeters(72)), Geo.HORIZONTAL_ANGLE + Math.PI);
-    public static final Point ORIGINAL_POINT = new Point(0,0);
+    public static final Waypoint TEST_POINT_0 = new Waypoint(new Point(Utils.inchesToMeters(128), Utils.inchesToMeters(69)), Geo.HORIZONTAL_ANGLE);
+    public static final Waypoint TEST_POINT_1 = new Waypoint(new Point(0, 0), Geo.HORIZONTAL_ANGLE);
+    public static final Waypoint TEST_POINT_2 = new Waypoint(new Point(0, 1), Geo.HORIZONTAL_ANGLE);
+    public static final Waypoint TEST_POINT_3 = new Waypoint(new Point(0, 2), Geo.HORIZONTAL_ANGLE);
+    public static final Waypoint TEST_POINT_4 = new Waypoint(new Point(0, 3), Geo.HORIZONTAL_ANGLE);
+    public static final Point ORIGINAL_POINT  = new Point(0,0);
     public static final double ORIGINAL_ANGLE = Geo.HORIZONTAL_ANGLE;
-    public Waypoint[] arr = new Waypoint[] {TEST_POINT_1, TEST_POINT_2, TEST_POINT_3, TEST_POINT_4};
-    public ArrayList <Waypoint> path = new ArrayList<Waypoint>(Arrays.asList(arr));
+    public static Waypoint[] arr = new Waypoint[] {TEST_POINT_0, TEST_POINT_1, TEST_POINT_2, TEST_POINT_3, TEST_POINT_4};
+    public static ArrayList <Waypoint> path = new ArrayList<Waypoint>(Arrays.asList(arr));
 
     public Sequential sequential = new Sequential(path);
 
-    public static Point CURRENT_DESTINATION = ORIGINAL_POINT;
-    public static double CURRENT_DESTINATION_HEADING = Geo.HORIZONTAL_ANGLE;
+    public static Waypoint CURRENT_DESTINATION = TEST_POINT_0;
 
-    public static Point newDestPoint = new Point(Utils.inchesToMeters(4), .458);
-    public static double newDestHeading = Geo.HORIZONTAL_ANGLE;
     private int attemptsSinceLastLog;
     public static final int LOG_PERIOD = 5;
 

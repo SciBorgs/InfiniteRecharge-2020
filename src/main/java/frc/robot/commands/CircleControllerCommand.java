@@ -3,17 +3,15 @@ package frc.robot.commands;
 import frc.robot.Robot;
 import frc.robot.controllers.CircleController;
 import edu.wpi.first.wpilibj.command.InstantCommand;
-import frc.robot.logging.Logger.CommandStatus;
 import frc.robot.helpers.DelayedPrinter;
 
 public class CircleControllerCommand extends InstantCommand {
 
-    private final String FILENAME = "CircleControllerCommand.java";
     CircleController circleController = new CircleController();
 
     @Override
     protected void execute() {
-        Robot.logger.logCommandStatus(FILENAME, CommandStatus.Executing);
-        circleController.update(Robot.CURRENT_DESTINATION, Robot.CURRENT_DESTINATION_HEADING);
+        circleController.update(Robot.CURRENT_DESTINATION.point, Robot.CURRENT_DESTINATION.heading);
+        DelayedPrinter.print("currDest: " + Robot.CURRENT_DESTINATION, 20);
     }
 }
