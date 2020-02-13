@@ -1,4 +1,4 @@
-package frc.robot.controllers;
+package frc.robot.shapes;
 
 import frc.robot.shapes.Point;
 
