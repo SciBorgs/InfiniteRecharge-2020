@@ -21,12 +21,6 @@ public class OI {
 
         circleControllerButton = new JoystickButton(leftStick, PortMap.JOYSTICK_TRIGGER);
         circleControllerButton.whileActive(new CircleControllerCommand());
-
-        pointOneButton = new JoystickButton(leftStick, PortMap.JOYSTICK_LEFT_BUTTON);
-        pointOneButton.whenPressed(new IncreaseScaleCommand(true));
-
-        pointTwoButton = new JoystickButton(leftStick, PortMap.JOYSTICK_RIGHT_BUTTON);
-        pointTwoButton.whenPressed(new IncreaseScaleCommand(false));
         
         pointThreeButton = new JoystickButton(leftStick, PortMap.JOYSTICK_CENTER_BUTTON);
         pointThreeButton.whenPressed(new PointThreeCommand());       
