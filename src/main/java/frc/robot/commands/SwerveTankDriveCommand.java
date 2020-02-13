@@ -6,20 +6,14 @@ import frc.robot.logging.Logger.CommandStatus;
 import edu.wpi.first.wpilibj.command.InstantCommand;
 
 public class SwerveTankDriveCommand extends InstantCommand {
-    private final String FILENAME = "SwerveTankDriveCommand.java";
-   
-    
     public SwerveTankDriveCommand(){}
 
     @Override protected void execute() {
-        Robot.logger.logCommandStatus(FILENAME, CommandStatus.Executing);
+        Robot.logger.logCommandStatus(CommandStatus.Executing);
 
         // One controller controls turning percent, one controls velocity
-        double forward = Robot.driveSubsystem.processStick(Robot.oi.leftStick);
-        double turnAmount = -Robot.oi.rightStick.getX();
-        // double turnAmount = -Robot.oi.leftStick.getX();
+        double forward = Robot.oi.leftStick.getProcessedY();
+        double turnAmount = Robot.oi.rightStick.getProcessedX();
         Robot.driveSubsystem.setSpeedTankForwardTurningPercentage(forward, turnAmount);
-
-        
     }
 }

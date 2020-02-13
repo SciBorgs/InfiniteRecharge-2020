@@ -5,18 +5,27 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 
 import frc.robot.Utils;
 import frc.robot.commands.generalCommands.SciTalonSpeedCommand;
+import frc.robot.commands.generalCommands.TalonDelayWarningCommand;
 import frc.robot.helpers.DelayedPrinter;
+import frc.robot.robotState.RobotStateUpdater;
+import frc.robot.Robot;
+import frc.robot.robotState.RobotState.SD;
+import frc.robot.sciSensorsActuators.SciTalon.SciTalonSD;
 
-public class SciTalon extends TalonSRX {
+import java.util.HashMap;
+import java.util.Optional;
 
+public class SciTalon extends TalonSRX implements RobotStateUpdater, SciSensorActuator<SciTalonSD> {
+
+    public static enum SciTalonSD {ValueSD, CurrentSD;}
     public static final double DEFAULT_MAX_JERK = 0.1;
-    public static final double TICKS_PER_REV = 4096;
-    public static final double TICKS_PER_RADIAN = TICKS_PER_REV / (2 * Math.PI);
+    public HashMap<SciTalonSD, SD> sdMap;
+    public static final double TOLERABLE_DIFFERENCE = 0.01;
     private int commandNumber;
-    private double wheelAngleOffset = 0;
     public double goalSpeed;
     public double currentMaxJerk;
     public double gearRatio;
+    public boolean printValues;
 
     public SciTalon(int port) {
         this(port, 1);
@@ -26,63 +35,49 @@ public class SciTalon extends TalonSRX {
         super(port);
         this.goalSpeed = 0;
         this.currentMaxJerk = 0;
-        setWheelAngle(0);
-        setGearRatio(gearRatio);
         this.commandNumber = 0;
+        this.printValues = false;
+        this.sdMap = new HashMap<>();
+        Robot.addRobotStateUpdater(this);
     }
+    @Override
+    public HashMap<SciTalonSD, SD> getSDMap(){return this.sdMap;}
+    @Override 
+    public String getDeviceName(){return "Talon " + super.getDeviceID();}
 
+
+    public double getGearRatio() {return this.gearRatio;}
     public boolean isCurrentCommandNumber(int n){return n == this.commandNumber;}
-
-    public double getGearRatio() {
-        return this.gearRatio;
+    public boolean atGoal() {return this.goalSpeed == super.getMotorOutputPercent();}
+    public void instantSet() {
+        double limitedInput = Utils.limitChange(super.getMotorOutputPercent(), this.goalSpeed, this.currentMaxJerk);
+        super.set(ControlMode.PercentOutput, limitedInput);
+        checkWarningStatus(limitedInput,super.getMotorOutputPercent());
     }
-
-    public void setGearRatio(double gearRatio) {
-        double currentAngle = getWheelAngle();
-        this.gearRatio = gearRatio;
-        // W/o this when we changed gear ratios, it would weirdly change the angle
-        // For instance, if you have a gear ratio of 1/5 and your getPosition() is 20 radians
-        // and then you change the gear ratio to 1/10, your getPosition() will go to 10 radians
-        setWheelAngle(currentAngle);
-
+    public void checkWarningStatus(double input, double realOutput){
+        if (!Utils.inRange(input, super.getMotorOutputPercent(), TOLERABLE_DIFFERENCE)) {
+            (new TalonDelayWarningCommand(this, input)).start();
+        }   
     }
-
-    private double ticksToAngle(int ticks) {
-        return ticks / TICKS_PER_RADIAN * this.gearRatio;
-    }
-
-    private int angleToTicks(double angle) {
-        return (int) (angle * TICKS_PER_RADIAN / this.gearRatio);
-    }
-
-    public double getWheelAngle() {
-        return ticksToAngle(super.getSensorCollection().getQuadraturePosition());
-    }
-
-    public void setWheelAngle(double angle) {
-        super.getSensorCollection().setQuadraturePosition(angleToTicks(angle), 0);
-    }
-
-    public void instantSet(double speed, double maxJerk) {
-        super.set(ControlMode.PercentOutput, Utils.limitChange(super.getMotorOutputPercent(), speed, maxJerk));
-    }
-
+    
     public void set(double speed, double maxJerk){
         this.goalSpeed = speed;
         this.currentMaxJerk = maxJerk;
         this.commandNumber++;
+        // Set will call this command, which will continue to call instantSet
+        // InstantSet will only set the value of the motor to the correct value if it is within maxJerk
         (new SciTalonSpeedCommand(this, this.commandNumber)).start();
     }
+    public void set(double speed) {set(speed, DEFAULT_MAX_JERK);}
 
-    public void set(double speed) {
-        set(speed, DEFAULT_MAX_JERK);
-    }
-    public void moveToGoal(){
-        instantSet(this.goalSpeed, this.currentMaxJerk);
-    }
+    public void printValues()    {this.printValues = true;}
+    public void dontPrintValues(){this.printValues = false;}
 
-    public boolean atGoal(){
-        return this.goalSpeed == super.getMotorOutputPercent();
+    public void updateRobotState(){
+        sciSet(SciTalonSD.ValueSD,   super.getMotorOutputPercent());
+        sciSet(SciTalonSD.CurrentSD, super.getSupplyCurrent());
+        if(this.printValues){
+            DelayedPrinter.print("Talon " + super.getDeviceID() + " value: " + super.getMotorOutputPercent());
+        }
     }
-
 }

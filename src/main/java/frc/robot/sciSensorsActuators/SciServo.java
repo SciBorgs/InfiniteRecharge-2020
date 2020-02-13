@@ -1,15 +1,29 @@
 package frc.robot.sciSensorsActuators;
 
-import edu.wpi.first.wpilibj.Servo;
+import java.util.HashMap;
+import java.util.Optional;
 
-public class SciServo extends Servo {
+import edu.wpi.first.wpilibj.Servo;
+import frc.robot.Robot;
+import frc.robot.robotState.RobotStateUpdater;
+import frc.robot.robotState.RobotState.SD;
+import frc.robot.sciSensorsActuators.SciServo.SciServoSD;
+
+public class SciServo extends Servo implements RobotStateUpdater, SciSensorActuator<SciServoSD> {
+    public static enum SciServoSD {Angle, Raw}
+    public HashMap<SciServoSD, SD> sdMap;
     private static final double ANGLE_RANGE = Math.PI;
-    private double minAngle;
+    private double minAngle = 0;
 
     public SciServo(int channel) {
         super(channel);
-        this.minAngle = 0;
+        Robot.addRobotStateUpdater(this);
     }
+
+    @Override
+    public HashMap<SciServoSD, SD> getSDMap(){return this.sdMap;}
+    @Override 
+    public String getDeviceName(){return "Servo " + super.getChannel();}
 
     public double getMinAngle()    { return this.minAngle; }
     public double getCenterAngle() { return this.minAngle + ANGLE_RANGE/2; }
@@ -27,5 +41,10 @@ public class SciServo extends Servo {
     @Override
     public void setAngle(double angle) {
         super.setAngle(Math.toDegrees(angle - this.minAngle));
+    }
+
+    public void updateRobotState() {
+        sciSet(SciServoSD.Angle, getAngle());
+        sciSet(SciServoSD.Raw,   super.get());
     }
 }

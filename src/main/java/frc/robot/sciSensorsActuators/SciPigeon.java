@@ -1,15 +1,32 @@
 package frc.robot.sciSensorsActuators;
 
+import java.lang.StackWalker.Option;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.Optional;
+
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.sensors.PigeonIMU;
 
-public class SciPigeon extends PigeonIMU {
+import frc.robot.Robot;
+import frc.robot.robotState.RobotStateUpdater;
+import frc.robot.robotState.RobotState.SD;
+import frc.robot.sciSensorsActuators.SciPigeon.SciPigeonSD;;
 
-    public SciPigeon (TalonSRX talon) {
+public class SciPigeon extends PigeonIMU implements RobotStateUpdater, SciSensorActuator<SciPigeonSD> {
+    public static enum SciPigeonSD {Angle, Pitch, Role}
+    public HashMap<SciPigeonSD, SD> sdMap;
+
+    public SciPigeon(TalonSRX talon) {
         super(talon);
+        this.sdMap = new HashMap<>();
+        Robot.addRobotStateUpdater(this);
     }
 
-    public PigeonIMU getPigeonIMU() {return this;}
+    @Override
+    public HashMap<SciPigeonSD, SD> getSDMap(){return this.sdMap;}
+    @Override 
+    public String getDeviceName(){return "Pigeon " + super.getDeviceID();}
 
     private double[] yawPitchRole(){
         double[] yawPitchRoll = new double[3];
@@ -23,5 +40,11 @@ public class SciPigeon extends PigeonIMU {
     
     public void setAngle(double angle){
         super.setYaw(angle);
+    }
+
+    public void updateRobotState(){
+        sciSet(SciPigeonSD.Angle, getAngle());
+        sciSet(SciPigeonSD.Pitch, getPitch());
+        sciSet(SciPigeonSD.Role,  getRole());
     }
 }

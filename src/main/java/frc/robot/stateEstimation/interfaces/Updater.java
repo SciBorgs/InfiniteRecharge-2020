@@ -1,4 +1,4 @@
-package frc.robot.stateEstimation;
+package frc.robot.stateEstimation.interfaces;
 
 import frc.robot.robotState.*;
 import frc.robot.robotState.RobotState.SD;
