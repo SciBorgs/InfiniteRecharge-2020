@@ -1,4 +1,4 @@
-package frc.robot.commands;
+package frc.robot.commands.drive;
 
 import frc.robot.Robot;
 import frc.robot.logging.Logger.CommandStatus;
