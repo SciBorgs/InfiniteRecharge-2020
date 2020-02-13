@@ -44,4 +44,6 @@ public class Sequential {
     private boolean isFinished () {
         return lastPointHitIndex == path.size();
     }
+
+    public ArrayList<Waypoint> getPath () { return path; }
 }

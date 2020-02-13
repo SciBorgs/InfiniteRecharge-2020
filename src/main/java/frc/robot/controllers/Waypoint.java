@@ -15,4 +15,8 @@ public class Waypoint {
     public String toString () {
         return "Point: " + this.point + "\t Heading: " + this.heading;
     }
+
+    public boolean equals (Waypoint waypoint) { 
+        return this.point.equals(waypoint.point) && this.heading == waypoint.heading;
+    }
 }

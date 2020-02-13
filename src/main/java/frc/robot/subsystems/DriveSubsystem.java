@@ -6,6 +6,7 @@ import frc.robot.Utils;
 import frc.robot.robotState.RobotState.SD;
 import frc.robot.controllers.PID;
 import frc.robot.helpers.DelayedPrinter;
+import frc.robot.helpers.Geo;
 import frc.robot.robotState.StateInfo;
 import frc.robot.sciSensorsActuators.*;
 import frc.robot.logging.Logger.DefaultValue;
@@ -36,10 +37,13 @@ public class DriveSubsystem extends Subsystem {
     private static final double STRAIGHT_DEADZONE = 0.15;
     private static final double STRAIGHT_EQUAL_INPUT_DEADZONE = 0; // If goal Omega is 0 and our regular input diff magnitude is less than this, the input diff goes to 0
     public static final double GEAR_RATIO = 1 / 19.16;
+    public static final boolean RIGHT_INVERTED = true;
+    public static final boolean LEFT_INVERTED  = !RIGHT_INVERTED;
     private PID tankAnglePID;
     private PID tankSpeedLeftPID;
     private PID tankSpeedRightPID;
     public boolean assisted = false;
+    public boolean reversed = false;
     public double driveMultiplier = 1;
     public Hashtable<SciSpark, SD> sparkToWheelAngleSD;
     public Hashtable<SciSpark, SD> sparkToValueSD;
@@ -63,9 +67,7 @@ public class DriveSubsystem extends Subsystem {
 		this.r1 = new SciSpark(PortMap.RIGHT_MIDDLE_SPARK, GEAR_RATIO);
         this.r2 = new SciSpark(PortMap.RIGHT_BACK_SPARK,   GEAR_RATIO);
 
-        this.r .setInverted(true);
-        this.r1.setInverted(true);
-        this.r2.setInverted(true);
+        this.setReveresed(false);
 
         this.l1.follow(this.l);
         this.l2.follow(this.l);
@@ -141,10 +143,37 @@ public class DriveSubsystem extends Subsystem {
     public void setDriveMultiplier(double driveMultiplier){
         this.driveMultiplier = driveMultiplier;
     }
+
+    public void setReveresed(boolean reversed) {
+        this.reversed = reversed;
+        // credits to Zev Minksy-Primus
+        if (this.reversed == true) { 
+            Robot.set(SD.Angle, Geo.normalizeAngle(Robot.get(SD.Angle) + Math.PI));
+        } else if (this.reversed == false) {
+            Robot.set(SD.Angle, Geo.normalizeAngle(Robot.get(SD.Angle) - Math.PI));
+        }
+
+        boolean leftInversion  = LEFT_INVERTED  ^ this.reversed;
+        boolean rightInversion = RIGHT_INVERTED ^ this.reversed;
+
+        this.l.setInverted (leftInversion);
+        this.l1.setInverted(leftInversion);
+        this.l2.setInverted(leftInversion);
+
+        this.r.setInverted (rightInversion);
+        this.r1.setInverted(rightInversion);
+        this.r2.setInverted(rightInversion);
+    }
         	
 	public void setTank(double leftSpeed, double rightSpeed) {
+        if (reversed) {
+            double temp = leftSpeed;
+            leftSpeed = rightSpeed;
+            rightSpeed = temp; 
+        }
         this.l.set(leftSpeed  * this.driveMultiplier);
         this.r.set(rightSpeed * this.driveMultiplier);
+
     }
 
     public void setSpeedTank(double leftGoalSpeed, double rightGoalSpeed){
@@ -193,6 +222,7 @@ public class DriveSubsystem extends Subsystem {
         // Note: this controls dtheta/dt rather than dtheta/dx
         setTank(forward - turnMagnitude, forward + turnMagnitude);
     }
+
 
     public double limitJerk(double oldSpeed, double newSpeed, double maxJerk){
         // Makes sure that the change in input for a motor is not more than maxJerk
