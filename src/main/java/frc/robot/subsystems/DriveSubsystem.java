@@ -117,11 +117,7 @@ public class DriveSubsystem extends Subsystem implements LogUpdater {
     public void setReveresed(boolean reversed) {
         this.reversed = reversed;
         // credits to Zev Minksy-Primus
-        if (this.reversed == true) { 
-            Robot.set(SD.Angle, Geo.normalizeAngle(Robot.get(SD.Angle) + Math.PI));
-        } else if (this.reversed == false) {
-            Robot.set(SD.Angle, Geo.normalizeAngle(Robot.get(SD.Angle) - Math.PI));
-        }
+        Robot.set(SD.Angle, Robot.get(SD.Angle) + Math.PI);
 
         boolean leftInversion  = LEFT_INVERTED  ^ this.reversed;
         boolean rightInversion = RIGHT_INVERTED ^ this.reversed;
