@@ -21,19 +21,19 @@ public class CircleController {
 
     public CircleController () { Robot.logger.logFinalPIDConstants("final heading PID", this.finalHeadingPID);  }
 
-    public void update(Point finalPos, double finalHeading) {
-        update(Robot.getPos(), Robot.getHeading(), finalPos, finalHeading);
+    public void update(Waypoint finalDestination) {
+        update(Robot.getPos(), Robot.getHeading(), finalDestination);
     }
 
-    public void update (Point currPos, double currHeading, Point finalPos, double finalHeading) {
+    public void update (Point currPos, double currHeading, Waypoint finalDestination) {
         setup();
         Line sightLine = Geo.pointAngleForm(currPos, currHeading);
-        if (sightLine.contains(finalPos)) { // go straight
+        if (sightLine.contains(finalDestination.point)) { // go straight
             Robot.driveSubsystem.setSpeedTankTurningPercentage(0);
         } else {
-            setSpeed(currPos, currHeading, finalPos, finalHeading);
+            setSpeed(currPos, currHeading, finalDestination.point, finalDestination.heading);
         }
-        Robot.logger.addData("finalHeading", finalHeading, DefaultValue.Empty);
+        Robot.logger.addData("CircleController.java", "finalHeading", finalDestination.heading, DefaultValue.Empty);
     }
 
     private static void setup() { Robot.driveSubsystem.assistedDriveMode(); }

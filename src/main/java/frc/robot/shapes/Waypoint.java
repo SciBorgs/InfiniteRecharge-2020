@@ -1,5 +1,6 @@
 package frc.robot.shapes;
 
+import java.util.Objects;
 import frc.robot.shapes.Point;
 
 public class Waypoint {
@@ -10,6 +11,7 @@ public class Waypoint {
     public Waypoint (Point point, double heading) {
         this.point   = new Point(point.x, point.y);
         this.heading = heading;
+        hashCode();
     }
 
     public String toString () {
@@ -18,5 +20,10 @@ public class Waypoint {
 
     public boolean equals (Waypoint waypoint) { 
         return this.point.equals(waypoint.point) && this.heading == waypoint.heading;
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(this.point, this.heading);
     }
 }

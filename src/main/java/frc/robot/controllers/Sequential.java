@@ -14,8 +14,7 @@ public class Sequential {
     private CircleController circleController;
     private int lastPointHitIndex = 0;
     private int currDestinationIndex = 1;
-    private Point currDestination;
-    private double currDestinationHeading;
+    private Waypoint currDestination;
     private double distanceTolerance = .1;
 
     public Sequential (ArrayList<Waypoint> path) { 
@@ -27,10 +26,9 @@ public class Sequential {
         Waypoint currPos = new Waypoint(Robot.getPos(),Robot.getHeading());
         lastPointHitIndex      = getLastPointHitIndex(currPos.point);
         currDestinationIndex   = lastPointHitIndex + 1;
-        currDestination        = path.get(currDestinationIndex).point;
-        currDestinationHeading = path.get(currDestinationIndex).heading;
+        currDestination        = path.get(currDestinationIndex);
         if (!isFinished()) {
-            circleController.update(currDestination, currDestinationHeading);
+            circleController.update(currDestination);
         }
     }
 
