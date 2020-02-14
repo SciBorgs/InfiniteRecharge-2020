@@ -57,7 +57,7 @@ public class SciSpark extends CANSparkMax implements RobotStateUpdater, SciSenso
         this.snapModel  = new SnapModel (this);
         setWheelAngle(0);
         setGearRatio(gearRatio);
-        Robot.addRobotStateUpdater(this);
+        automateStateUpdating();
     }
 
     @Override

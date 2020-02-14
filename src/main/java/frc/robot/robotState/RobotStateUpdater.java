@@ -5,7 +5,7 @@ import frc.robot.Robot;
 public interface RobotStateUpdater {
 
     public void updateRobotState();
-    default void enableUpdating(){
+    default void automateStateUpdating(){
         Robot.addRobotStateUpdater(this);
     }
 }

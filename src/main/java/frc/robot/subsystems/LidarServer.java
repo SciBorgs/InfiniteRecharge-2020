@@ -34,7 +34,7 @@ public class LidarServer implements LogUpdater {
     private double minimumZeros = 3;
 
     public LidarServer() {
-        Robot.addLogUpdater(this);
+        automateLogging();
     }
 
     public static LidarServer getInstance() {

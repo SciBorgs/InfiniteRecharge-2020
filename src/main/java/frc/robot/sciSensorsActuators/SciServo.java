@@ -17,7 +17,7 @@ public class SciServo extends Servo implements RobotStateUpdater, SciSensorActua
 
     public SciServo(int channel) {
         super(channel);
-        Robot.addRobotStateUpdater(this);
+        automateStateUpdating();
     }
 
     @Override

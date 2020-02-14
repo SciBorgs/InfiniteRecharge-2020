@@ -38,7 +38,7 @@ public class SciTalon extends TalonSRX implements RobotStateUpdater, SciSensorAc
         this.commandNumber = 0;
         this.printValues = false;
         this.sdMap = new HashMap<>();
-        Robot.addRobotStateUpdater(this);
+        automateStateUpdating();
     }
     @Override
     public HashMap<SciTalonSD, SD> getSDMap(){return this.sdMap;}

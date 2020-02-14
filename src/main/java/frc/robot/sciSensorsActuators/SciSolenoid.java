@@ -42,7 +42,7 @@ public class SciSolenoid<ValueType extends Enum<ValueType>> extends DoubleSoleno
         this.valueTypeClass = forwardValue.getClass();
         this.printValues = false;
         this.sdMap = new HashMap<>();
-        Robot.addRobotStateUpdater(this);
+        automateStateUpdating();
     }
 
     private Value toDoubleSolenoidValue(ValueType e) {return valueMap.getForward(e);}

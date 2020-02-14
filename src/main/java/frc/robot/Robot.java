@@ -106,7 +106,7 @@ public class Robot extends TimedRobot implements LogUpdater {
     public static final int LOG_PERIOD = 5;
 
     public Robot() {
-        addLogUpdater(this);
+        automateLogging();
     }
 
     public static void addLogUpdater(LogUpdater logUpdater) {
