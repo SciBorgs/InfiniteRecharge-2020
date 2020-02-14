@@ -191,21 +191,6 @@ public class DriveSubsystem extends Subsystem implements LogUpdater {
         setTank(forward - turnMagnitude, forward + turnMagnitude);
     }
 
-<<<<<<< HEAD
-
-    public double limitJerk(double oldSpeed, double newSpeed, double maxJerk){
-        // Makes sure that the change in input for a motor is not more than maxJerk
-        if (oldSpeed - newSpeed > maxJerk){
-            return oldSpeed - maxJerk;
-        } else if (newSpeed - oldSpeed > maxJerk){
-            return oldSpeed + maxJerk;
-        } else {
-            return newSpeed;
-        }
-    }
-
-=======
->>>>>>> origin/master
     @Override
     protected void initDefaultCommand() {
 		//IGNORE THIS METHOD

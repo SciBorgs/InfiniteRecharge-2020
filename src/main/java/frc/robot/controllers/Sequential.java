@@ -6,6 +6,7 @@ import frc.robot.Robot;
 import frc.robot.controllers.CircleController;
 import frc.robot.helpers.Geo;
 import frc.robot.shapes.Point;
+import frc.robot.shapes.Waypoint;
 
 public class Sequential {
     
