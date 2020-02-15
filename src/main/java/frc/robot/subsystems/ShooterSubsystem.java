@@ -16,9 +16,9 @@ public class ShooterSubsystem extends Subsystem implements RobotStateUpdater {
   public SciThroughBoreEncoder absEncoder;
   public CANEncoder shooterSparkEncoder;
   
-  private final double SHOOTER_VELOCITY_P = 0.0011,
-      SHOOTER_VELOCITY_I = 0.0,
-      SHOOTER_VELOCITY_D = 0.0001;
+  private final double SHOOTER_VELOCITY_P = 0.0009,
+      SHOOTER_VELOCITY_I = 0.0000009,
+      SHOOTER_VELOCITY_D = 0.00012;
   private final double HOOD_SPARK_GEAR_RATIO = 36.0 / 334.0;
   private final double SHOOTER_SPARK_GEAR_RATIO = 1;
 
@@ -32,9 +32,9 @@ public class ShooterSubsystem extends Subsystem implements RobotStateUpdater {
 
   public ShooterSubsystem() {
     this.hoodSpark = new SciSpark(1, HOOD_SPARK_GEAR_RATIO);
-    this.rightShooterSpark = new SciSpark(2, SHOOTER_SPARK_GEAR_RATIO);
+    this.rightShooterSpark = new SciSpark(7, SHOOTER_SPARK_GEAR_RATIO);
     this.rightShooterSpark.setInverted(true);
-    this.leftShooterSpark  = new SciSpark(7, SHOOTER_SPARK_GEAR_RATIO);
+    this.leftShooterSpark  = new SciSpark(2, SHOOTER_SPARK_GEAR_RATIO);
     //this.leftShooterSpark.follow(rightShooterSpark, false);
 
     this.hoodAnglePID = new PID(HOOD_ANGLE_P, HOOD_ANGLE_I, HOOD_ANGLE_D);

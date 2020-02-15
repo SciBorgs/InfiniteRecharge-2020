@@ -14,7 +14,7 @@ public class LimelightLocalization implements MaybeUpdater {
     public LimelightSubsystem limeLight;
 
     private static final double CAMERA_ABOVE_GROUND_HEIGHT = Utils.inchesToMeters(29);
-    private static final double CAMERA_MOUNTING_ANGLE      = Math.toRadians(0);
+    private static final double CAMERA_MOUNTING_ANGLE      = Math.toRadians(35.6);
     private static final double OUTER_PORT_HEIGHT          = Utils.inchesToMeters(90);
 
     private static final double LANDMARK_X = 0;
