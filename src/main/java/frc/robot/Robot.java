@@ -5,7 +5,6 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-import com.fasterxml.jackson.databind.ser.std.StdKeySerializers.Default;
 import frc.robot.subsystems.*;
 import frc.robot.commands.*;
 import frc.robot.helpers.*;
@@ -121,8 +120,12 @@ public class Robot extends TimedRobot implements LogUpdater {
     }
     private void allUpdateRobotStates() {
         set(SD.Time, this.timer.get());
+        //double t = this.timer.get();
         for (RobotStateUpdater i : robotStateUpdaters) {
             i.updateRobotState();
+            //System.out.println("time diff: " + (this.timer.get() - t));
+            //System.out.println("updating: " + i.getClass());
+            //t = this.timer.get();
         }
     }
 
@@ -168,6 +171,7 @@ public class Robot extends TimedRobot implements LogUpdater {
     }
  
     public void robotPeriodic() {
+        //System.out.println("robo periodic");
         stateHistory.addState(getState().copy());
         allUpdateRobotStates();
         allModels();
@@ -183,37 +187,44 @@ public class Robot extends TimedRobot implements LogUpdater {
         set(SD.Angle, ORIGINAL_ANGLE);
         intakeSubsystem.reverseIntake();
         //new ShootCommand().start();
-        //shooterSubsystem.setShooterSpark(3958);
+        shooterSubsystem.setShooterSpark(shooterSubsystem.RPMToOmega(1000));
     }
 
     @Override
     public void autonomousPeriodic() {
-        sequential.update();
-        allPeriodicLogs();
-        logDataPeriodic();
+        System.out.println("OMEGA: " + shooterSubsystem.shooterSparkEncoder.getVelocity());
+        //shooterSubsystem.testShooterSpark2(0.3);
+        // shooterSubsystem.setHoodSpark(Math.toRadians(26));
+        // System.out.println("HOOD ANGLE " + shooterSubsystem.absEncoder.getRadians());
+        
+        //sequential.update();
+        //allPeriodicLogs();
+        //logDataPeriodic();
     }
     
     @Override
     public void teleopInit() {
-        intakeSubsystem.reverseIntake();
+        /*intakeSubsystem.reverseIntake();
         pneumaticsSubsystem.startCompressor();
         Robot.driveSubsystem.l.ignoreSnap();
-        Robot.driveSubsystem.r.ignoreSnap();
+        Robot.driveSubsystem.r.ignoreSnap();*/
     }  
 
     public void teleopPeriodic() {
-        (new TankDriveCommand()).start();    
+        //(new TankDriveCommand()).start();   
         allPeriodicLogs();
         logDataPeriodic();
     }
 
     @Override
     public void testInit() {
-        shooterSubsystem.absEncoder.setAngle(Math.toRadians(60));
+        shooterSubsystem.absEncoder.setAngle(Math.toRadians(57));
     }
 
     public void testPeriodic() {
         System.out.println("HOOD ANGLE " + shooterSubsystem.absEncoder.getRadians());
+        System.out.println("DIST " + Robot.get(SD.DistanceToPort));
+        shooterSubsystem.testHoodSpark(0);
     }
 
     public void disabledInit() {

@@ -22,7 +22,7 @@ public class OI {
 
         this.centerButton = new JoystickButton(leftStick, PortMap.JOYSTICK_CENTER_BUTTON);
         this.centerButton.whenPressed(new ShootCommand());
-        //this.centerButton.whenReleased(new StopShooterCommand());
+        this.centerButton.whenReleased(new StopShooterCommand());
         
     }
 }

@@ -57,6 +57,7 @@ public class DriveSubsystem extends Subsystem implements LogUpdater {
         this.r1.follow(this.r);
         this.r2.follow(this.r);
 
+        
         this.r.assignWheelAngleSD(SD.RightWheelAngle);
         this.r.assignVelocitySD(SD.RightWheelSpeed);
         this.r.assignAccelD(SD.RightWheelAccel);
@@ -64,8 +65,8 @@ public class DriveSubsystem extends Subsystem implements LogUpdater {
         this.r.assignSnapSD(SD.RightWheelSnap);
         this.r.assignValueSD(SD.RightSparkVal);
         this.r.assignCurrentSD(SD.RightCurrentVal);
-
         this.l.assignWheelAngleSD(SD.LeftWheelAngle);
+
         this.l.assignVelocitySD(SD.LeftWheelSpeed);
         this.l.assignAccelD(SD.LeftWheelAccel);
         this.l.assignJerkSD(SD.LeftWheelJerk);

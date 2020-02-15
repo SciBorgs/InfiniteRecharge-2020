@@ -16,25 +16,26 @@ public class ShooterSubsystem extends Subsystem implements RobotStateUpdater {
   public SciThroughBoreEncoder absEncoder;
   public CANEncoder shooterSparkEncoder;
   
-  private final double SHOOTER_VELOCITY_P = 0.0000001,
-      SHOOTER_VELOCITY_I = 0.0000001,
-      SHOOTER_VELOCITY_D = 0.15;
+  private final double SHOOTER_VELOCITY_P = 0.0011,
+      SHOOTER_VELOCITY_I = 0.0,
+      SHOOTER_VELOCITY_D = 0.0001;
   private final double HOOD_SPARK_GEAR_RATIO = 36.0 / 334.0;
   private final double SHOOTER_SPARK_GEAR_RATIO = 1;
 
   private final double SHOOTER_SPARK_MIN_OUTPUT = -1;
   private final double SHOOTER_SPARK_MAX_OUTPUT = 1;
 
-  private SciSpark hoodSpark, rightShooterSpark, leftShooterSpark;
+  public SciSpark hoodSpark, rightShooterSpark, leftShooterSpark;
 
   private CANPIDController shooterSparkVelocityPID;
   private PID hoodAnglePID;
 
   public ShooterSubsystem() {
     this.hoodSpark = new SciSpark(1, HOOD_SPARK_GEAR_RATIO);
-    this.rightShooterSpark = new SciSpark(7, SHOOTER_SPARK_GEAR_RATIO);
-    this.leftShooterSpark  = new SciSpark(8, SHOOTER_SPARK_GEAR_RATIO);
-    this.leftShooterSpark.follow(rightShooterSpark, true);
+    this.rightShooterSpark = new SciSpark(2, SHOOTER_SPARK_GEAR_RATIO);
+    this.rightShooterSpark.setInverted(true);
+    this.leftShooterSpark  = new SciSpark(7, SHOOTER_SPARK_GEAR_RATIO);
+    //this.leftShooterSpark.follow(rightShooterSpark, false);
 
     this.hoodAnglePID = new PID(HOOD_ANGLE_P, HOOD_ANGLE_I, HOOD_ANGLE_D);
     this.shooterSparkVelocityPID = this.rightShooterSpark.getPIDController();
@@ -63,11 +64,15 @@ public class ShooterSubsystem extends Subsystem implements RobotStateUpdater {
     this.shooterSparkVelocityPID.setReference(RPM, ControlType.kVelocity);
   }
 
-  public void testShooterSpark(double speed) {
+  public void testShooterSpark2(double speed) {
     this.rightShooterSpark.set(speed);
   }
 
-  private double RPMToOmega(double RPM) {
+  public void testShooterSpark7(double speed) {
+    this.leftShooterSpark.set(speed);
+  }
+
+  public double RPMToOmega(double RPM) {
     return RPM * Math.PI / 30;
   }
 
