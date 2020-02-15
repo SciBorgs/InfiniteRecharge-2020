@@ -10,6 +10,7 @@ public class WaitCommand extends Command {
 
     public WaitCommand (double timeToWait) {
         this.timeToWait = timeToWait;
+        timer = new Timer();
         timer.start();
     }
 

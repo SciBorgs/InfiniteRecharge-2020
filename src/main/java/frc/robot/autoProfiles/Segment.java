@@ -7,7 +7,7 @@ import frc.robot.shapes.Waypoint;
 
 public class Segment {
     public Waypoint waypoint;
-    public Command  sequentialCommand, parallelCommand, doneCommand = new EmptyCommand();
+    public Command  sequentialCommand, parallelCommand, doneCommand;
     public boolean  reverse;
     public double   startWait, endWait;
 
@@ -18,6 +18,9 @@ public class Segment {
         this.startWait = 0;
         this.endWait = 0;
         this.reverse = false;
+        sequentialCommand =  new EmptyCommand();
+        parallelCommand = new EmptyCommand();
+        doneCommand = new EmptyCommand();
     }
 
     public Segment (Point point, double heading){

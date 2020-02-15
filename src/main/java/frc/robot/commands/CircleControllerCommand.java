@@ -3,14 +3,17 @@ package frc.robot.commands;
 import frc.robot.Robot;
 import frc.robot.controllers.CircleController;
 import frc.robot.shapes.Waypoint;
-import edu.wpi.first.wpilibj.command.InstantCommand;
+
+import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.helpers.DelayedPrinter;
+import frc.robot.helpers.Geo;
 import frc.robot.logging.Logger.CommandStatus;
 
-public class CircleControllerCommand extends InstantCommand {
+public class CircleControllerCommand extends Command {
 
-    private CircleController circleController = new CircleController();
+    public CircleController circleController = new CircleController();
     private Waypoint waypoint;
+    private static final double TOLERANCE = .2;
 
     public CircleControllerCommand ()                  { waypoint = Robot.CURRENT_DESTINATION; }
     public CircleControllerCommand (Waypoint waypoint) { this.waypoint = waypoint; }
@@ -18,7 +21,12 @@ public class CircleControllerCommand extends InstantCommand {
     @Override
     protected void execute() {
         circleController.update(waypoint);
-        DelayedPrinter.print("currDest: " + Robot.CURRENT_DESTINATION, 20);
+        DelayedPrinter.print("currDest: " + Robot.CURRENT_DESTINATION);
         Robot.logger.logCommandStatus(CommandStatus.Executing);
+    }
+
+    @Override
+    protected boolean isFinished() {
+        return circleController.isFinished();
     }
 }

@@ -16,12 +16,16 @@ public class CircleController {
     private PID desiredHeadingPID = new PID(DESIRED_HEADING_P, 0, .02); // error for getting to the the correct point at the end
     private PID endingTurnPID = new PID(ENDING_TURN_P, 0, 0); // fix heading at close distance
 
+    private static final double STOPPING_DISTANCE_TOLERANCE = .1;
     private static final double ENDING_DISTANCE_TOLERANCE = .4;
     private static final double TURNING_WEIGHT = .5; // it will be raised to a power of this, ie x^TURNING_WEIGHT
+
+    private Waypoint destination;
 
     public CircleController () { Robot.logger.logFinalPIDConstants("final heading PID", this.finalHeadingPID);  }
 
     public void update(Waypoint finalDestination) {
+        this.destination = finalDestination;
         update(Robot.getPos(), Robot.getHeading(), finalDestination);
     }
 
@@ -89,5 +93,9 @@ public class CircleController {
 
     private static double getWeight(Point currPos, Point finalPos) {
        return 1 + Math.pow(Geo.getDistance(currPos, finalPos), TURNING_WEIGHT);
-    }    
+    }
+
+    public boolean isFinished () {
+        return Geo.getDistance(Robot.getPos(), destination.point) < STOPPING_DISTANCE_TOLERANCE;
+    }
 }

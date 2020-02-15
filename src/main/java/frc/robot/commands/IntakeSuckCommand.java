@@ -20,6 +20,7 @@ public class IntakeSuckCommand extends Command {
         requires(Robot.intakeSubsystem);
         this.timeToWait = timeout;
         usingTimeout = true;
+        timer = new Timer();
         timer.start();
     }
 

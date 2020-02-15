@@ -5,11 +5,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 
-import javax.swing.text.Position;
-
-import com.fasterxml.jackson.databind.ser.std.StdKeySerializers.Default;
-
 import frc.robot.subsystems.*;
+import frc.robot.autoProfiles.AutoRoutine;
 import frc.robot.commands.*;
 import frc.robot.helpers.*;
 import frc.robot.dataTypes.*;
@@ -53,8 +50,8 @@ public class Robot extends TimedRobot implements LogUpdater {
     public static CircleController circleController = new CircleController();
     public static OI oi = new OI();
 
-    public static Model positionModel = new MaybeDefaultUpdater(new LimelightLocalization(), new EncoderLocalization());
-
+    // public static Model positionModel = new MaybeDefaultUpdater(new LimelightLocalization(), new EncoderLocalization());
+    public static Model positionModel = new EncoderLocalization();
     public static RobotState getState(){ return stateHistory.currentState(); }
     public static RobotState statesAgo(int numTicks){return stateHistory.statesAgo(numTicks);}
 
@@ -87,12 +84,14 @@ public class Robot extends TimedRobot implements LogUpdater {
     public static double getHeading() {return get(SD.Angle);}
     public static Waypoint getWaypoint () { return new Waypoint(new Point(get(SD.X), get(SD.Y)), get(SD.Angle)); }
 
+    public static AutoRoutine autoRoutine = new AutoRoutine();
+
     public static final Waypoint TEST_POINT_0 = new Waypoint(new Point(Utils.inchesToMeters(128), Utils.inchesToMeters(69)), Geo.HORIZONTAL_ANGLE);
     public static final Waypoint TEST_POINT_1 = new Waypoint(new Point(0, 0), Geo.HORIZONTAL_ANGLE);
     public static final Waypoint TEST_POINT_2 = new Waypoint(new Point(0, 1), Geo.HORIZONTAL_ANGLE);
     public static final Waypoint TEST_POINT_3 = new Waypoint(new Point(0, 2), Geo.HORIZONTAL_ANGLE);
     public static final Waypoint TEST_POINT_4 = new Waypoint(new Point(0, 3), Geo.HORIZONTAL_ANGLE);
-    public static final Point ORIGINAL_POINT  = new Point(0,0);
+    public static final Point ORIGINAL_POINT  = new Point(3 - autoRoutine.xShift, -7.5 - autoRoutine.yShift);
     public static final double ORIGINAL_ANGLE = Geo.HORIZONTAL_ANGLE;
     public static Waypoint[] arr = new Waypoint[] {TEST_POINT_0, TEST_POINT_1, TEST_POINT_2, TEST_POINT_3, TEST_POINT_4};
     public static ArrayList <Waypoint> path = new ArrayList<Waypoint>(Arrays.asList(arr));
@@ -106,6 +105,7 @@ public class Robot extends TimedRobot implements LogUpdater {
     private int attemptsSinceLastLog = 0;
     public static final int LOG_PERIOD = 5;
 
+
     public Robot() {
         addLogUpdater(this);
     }
@@ -113,6 +113,7 @@ public class Robot extends TimedRobot implements LogUpdater {
     public static void addLogUpdater(LogUpdater logUpdater) {
         logUpdaters.add(logUpdater);
     }
+
     public static void addRobotStateUpdater(RobotStateUpdater robotStateUpdater){
         robotStateUpdaters.add(robotStateUpdater);
     }
@@ -174,6 +175,7 @@ public class Robot extends TimedRobot implements LogUpdater {
         allUpdateRobotStates();
         allModels();
         Scheduler.getInstance().run();
+        DelayedPrinter.print("x: " + getPos().x +"y: "+ getPos().y + "\nheading: "  + getWaypoint().heading);
         DelayedPrinter.incTicks();
     }
 
@@ -195,24 +197,23 @@ public class Robot extends TimedRobot implements LogUpdater {
     
     @Override
     public void teleopInit() {
-        intakeSubsystem.reverseIntake();
+        // intakeSubsystem.reverseIntake();
         Robot.driveSubsystem.l.ignoreSnap();
         Robot.driveSubsystem.r.ignoreSnap();
+        autoRoutine.tenBallAuto();
         // pneumaticsSubsystem.startCompressor();
     }
 
     public void teleopPeriodic() {
-        (new TankDriveCommand()).start();    
+        // (new TankDriveCommand()).start();
         allPeriodicLogs();
         logDataPeriodic();
     }
     
 
     public void testPeriodic() {
-        (new TankDriveCommand()).start();
-        Robot.driveSubsystem.l.diminishSnap();
-        Robot.driveSubsystem.r.diminishSnap();
-        DelayedPrinter.print("testing...");
+        (new CircleControllerCommand(new Waypoint(new Point(ORIGINAL_POINT.x + 1, ORIGINAL_POINT.y), Geo.HORIZONTAL_ANGLE))).start();
+        // DelayedPrinter.print("testing...");
     }
 
     @Override

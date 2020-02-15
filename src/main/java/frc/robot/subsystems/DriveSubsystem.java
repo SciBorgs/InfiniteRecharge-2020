@@ -12,6 +12,9 @@ import frc.robot.sciSensorsActuators.*;
 import frc.robot.sciSensorsActuators.SciSpark.SciSparkSD;
 import frc.robot.logging.LogUpdater;
 import frc.robot.logging.Logger.DefaultValue;
+
+import com.revrobotics.CANSparkMax.IdleMode;
+
 import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.command.Subsystem;
 
@@ -45,6 +48,8 @@ public class DriveSubsystem extends Subsystem implements LogUpdater {
 
     public DriveSubsystem() {
 
+        Robot.set(SD.Angle, 0);
+
 		this.l  = new SciSpark(PortMap.LEFT_FRONT_SPARK,   GEAR_RATIO);
 		this.l1 = new SciSpark(PortMap.LEFT_MIDDLE_SPARK,  GEAR_RATIO);
         this.l2 = new SciSpark(PortMap.LEFT_BACK_SPARK,    GEAR_RATIO);
@@ -53,6 +58,7 @@ public class DriveSubsystem extends Subsystem implements LogUpdater {
 		this.r1 = new SciSpark(PortMap.RIGHT_MIDDLE_SPARK, GEAR_RATIO);
         this.r2 = new SciSpark(PortMap.RIGHT_BACK_SPARK,   GEAR_RATIO);
 
+        this.reversed = false;
         this.setReveresed(false);
 
         this.l1.follow(this.l);
@@ -80,8 +86,11 @@ public class DriveSubsystem extends Subsystem implements LogUpdater {
         this.r.logAllSDs();
         this.l.logAllSDs();
 
-        this.l.diminishSnap();
-        this.r.diminishSnap();
+        this.l.setIdleMode(IdleMode.kCoast);
+        this.r.setIdleMode(IdleMode.kCoast);
+
+        // this.l.diminishSnap();
+        // this.r.diminishSnap();
 
         this.tankAnglePID      = new PID(TANK_ANGLE_P,       TANK_ANGLE_I,       TANK_ANGLE_D);
         this.tankSpeedRightPID = new PID(TANK_SPEED_LEFT_P,  TANK_SPEED_LEFT_I,  TANK_SPEED_LEFT_D);
@@ -115,17 +124,18 @@ public class DriveSubsystem extends Subsystem implements LogUpdater {
     }
 
     public void setReveresed(boolean reversed) {
-        this.reversed = reversed;
-        // credits to Zev Minksy-Primus
-        Robot.set(SD.Angle, Robot.get(SD.Angle) + Math.PI);
-
+        if(this.reversed != reversed){
+            this.reversed = reversed;
+            Robot.set(SD.Angle, Robot.get(SD.Angle) + Math.PI);
+        }
+    
         boolean leftInversion  = LEFT_INVERTED  ^ this.reversed;
         boolean rightInversion = RIGHT_INVERTED ^ this.reversed;
-
+    
         this.l.setInverted (leftInversion);
         this.l1.setInverted(leftInversion);
         this.l2.setInverted(leftInversion);
-
+    
         this.r.setInverted (rightInversion);
         this.r1.setInverted(rightInversion);
         this.r2.setInverted(rightInversion);
