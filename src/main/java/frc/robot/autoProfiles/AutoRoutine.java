@@ -4,7 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import frc.robot.shapes.Waypoint;
-import frc.robot.dataTypes.Pair;
+import frc.robot.commands.IntakeSuckCommand;
+import frc.robot.commands.PathCommand;
 import frc.robot.helpers.Geo;
 import frc.robot.shapes.Point;
 
@@ -15,19 +16,20 @@ public class AutoRoutine {
     private final double xShift = 15.98295 / 2;
 
     public void tenBallAuto() {
-        // start : (3, -7.5), heading: 0
-        Waypoint one = new Waypoint(new Point(6.3 - xShift, -7.5 - yShift), Geo.HORIZONTAL_ANGLE);
-        Waypoint two = new Waypoint(new Point(4.6 - xShift, -5 - yShift), Geo.HORIZONTAL_ANGLE - Math.PI / 2);
-        Waypoint three = new Waypoint(new Point(3.1 - xShift, -2.4 - yShift), Geo.HORIZONTAL_ANGLE);
-        Waypoint four = new Waypoint(new Point(8 - xShift, -.7 - yShift), Geo.HORIZONTAL_ANGLE);
-        Waypoint five = new Waypoint(new Point(3.1 - xShift, -2.4 - yShift), Geo.HORIZONTAL_ANGLE);
-        Pair<Waypoint, Boolean> p1 = new Pair<>(one, true);
-        Pair<Waypoint, Boolean> p2 = new Pair<>(two, true);
-        Pair<Waypoint, Boolean> p3 = new Pair<>(three, false);
-        Pair<Waypoint, Boolean> p4 = new Pair<>(four, true);
-        Pair<Waypoint, Boolean> p5 = new Pair<>(five, false);
-
-        ArrayList<Pair<Waypoint, Boolean>> points = new ArrayList<Pair<Waypoint, Boolean>>(List.of(p1, p2, p3, p4, p5));
-        this.path = new Path(points);
+        // start : (3, -7.5), heading: 0       
+        Segment s1 = new Segment(new Waypoint(6.3 - xShift, -7.5 - yShift, Geo.HORIZONTAL_ANGLE));
+        s1.doneCommand = new IntakeSuckCommand(2);
+        Segment s2 = new Segment(new Waypoint(4.6 - xShift, -5   - yShift, Geo.HORIZONTAL_ANGLE - Math.PI / 2));
+        s2.reverse = true;
+        Segment s3 = new Segment(new Waypoint(3.1 - xShift, -2.4 - yShift, Geo.HORIZONTAL_ANGLE));
+        s3.reverse = true;
+        // s3.doneCommand = new ShooterCommand();
+        Segment s4 = new Segment(new Waypoint(8   - xShift, -.7  - yShift, Geo.HORIZONTAL_ANGLE));
+        s4.reverse = false;
+        s4.doneCommand = new IntakeSuckCommand(2);
+        Segment s5 = new Segment(new Waypoint(3.1 - xShift, -2.4 - yShift, Geo.HORIZONTAL_ANGLE));
+        // s5.doneCommand = new ShooterCommand();
+        this.path = new Path(new ArrayList<>(List.of(s1, s2, s3, s4, s5)));
+        (new PathCommand(path)).start();
     }
 }

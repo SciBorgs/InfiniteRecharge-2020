@@ -14,6 +14,10 @@ public class Waypoint {
         hashCode();
     }
 
+    public Waypoint (double x, double y, double heading) {
+        this(new Point(x, y), heading);
+    }
+
     public String toString () {
         return "Point: " + this.point + "\t Heading: " + this.heading;
     }
