@@ -79,11 +79,11 @@ public class SciTalon extends TalonSRX implements RobotStateUpdater {
     public void dontPrintValues(){this.printValues = false;}
 
     public void updateRobotState(){
-        Robot.optionalSet(this.valueSD,   super.getMotorOutputPercent());
-        Robot.optionalSet(this.currentSD, super.getSupplyCurrent());
-        if(this.printValues){
-            DelayedPrinter.print("Talon " + super.getDeviceID() + " value: " + super.getMotorOutputPercent());
-        }
+        // Robot.optionalSet(this.valueSD,   super.getMotorOutputPercent());
+        // Robot.optionalSet(this.currentSD, super.getSupplyCurrent());
+        // if(this.printValues){
+        //     DelayedPrinter.print("Talon " + super.getDeviceID() + " value: " + super.getMotorOutputPercent());
+        // }
     }
 
     public void assignValueSD  (SD valueSD)   {this.valueSD   = Optional.of(valueSD);}

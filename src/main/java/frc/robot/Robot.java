@@ -181,21 +181,21 @@ public class Robot extends TimedRobot implements LogUpdater {
 
 
     public void autonomousInit() {
-        Robot.driveSubsystem.assistedDriveMode();
+        // Robot.driveSubsystem.assistedDriveMode();
         set(SD.X, ORIGINAL_POINT.x);
         set(SD.Y, ORIGINAL_POINT.y);
         set(SD.Angle, ORIGINAL_ANGLE);
-        intakeSubsystem.reverseIntake();
+        //intakeSubsystem.reverseIntake();
         //new ShootCommand().start();
-        shooterSubsystem.setShooterSpark(shooterSubsystem.RPMToOmega(3000));
+        //shooterSubsystem.setShooterSpark(shooterSubsystem.RPMToOmega(3000));
     }
 
     @Override
     public void autonomousPeriodic() {
-        System.out.println("OMEGA: " + shooterSubsystem.shooterSparkEncoder.getVelocity());
+        //System.out.println("OMEGA: " + shooterSubsystem.shooterSparkEncoder.getVelocity());
         //shooterSubsystem.testShooterSpark2(0.3);
-        // shooterSubsystem.setHoodSpark(Math.toRadians(26));
-        // System.out.println("HOOD ANGLE " + shooterSubsystem.absEncoder.getRadians());
+        shooterSubsystem.setHoodSpark(Math.toRadians(25));
+        //System.out.println("HOOD ANGLE " + shooterSubsystem.absEncoder.getRadians());
         
         //sequential.update();
         //allPeriodicLogs();
@@ -212,24 +212,27 @@ public class Robot extends TimedRobot implements LogUpdater {
 
     public void teleopPeriodic() {
         //(new TankDriveCommand()).start();   
-        allPeriodicLogs();
-        logDataPeriodic();
+        //allPeriodicLogs();
+        //logDataPeriodic();
     }
 
     @Override
     public void testInit() {
         shooterSubsystem.absEncoder.setAngle(Math.toRadians(57));
+        new StopShooterCommand().start();
     }
 
     public void testPeriodic() {
+        new StopShooterCommand().start();
+        shooterSubsystem.absEncoder.setAngle(Math.toRadians(57));
         System.out.println("HOOD ANGLE " + shooterSubsystem.absEncoder.getRadians());
         System.out.println("DIST " + Robot.get(SD.DistanceToPort));
         shooterSubsystem.testHoodSpark(0);
     }
 
     public void disabledInit() {
-        allPeriodicLogs();
-        logger.logData();
-        logger.writeLoggedData();
+        // allPeriodicLogs();
+        // logger.logData();
+        // logger.writeLoggedData();
     }
 }

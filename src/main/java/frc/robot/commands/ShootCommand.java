@@ -7,6 +7,8 @@ import frc.robot.helpers.DelayedPrinter;
 
 public class ShootCommand extends Command {
 
+  boolean paramsOptimized;
+
   public ShootCommand() {
     requires(Robot.shooterSubsystem);
   }
@@ -16,11 +18,13 @@ public class ShootCommand extends Command {
     while (!BallTrajectoryController.areParametersOptimal()){
       BallTrajectoryController.optimizeParameters();
     }
+    paramsOptimized = true;
   }
 
   @Override
   protected void execute() {
-    if (BallTrajectoryController.areParametersOptimal()) {
+    if (paramsOptimized) {
+      BallTrajectoryController.optimizeParameters();
       // System.out.println("ANGLE DIFF: " + Math.abs(BallTrajectoryController.getHoodAngle() - Robot.get(SD.HoodAngle)));
       System.out.println("RPS DIFF: " + (Robot.shooterSubsystem.RPMToOmega(BallTrajectoryController.getMotorRPM()) - Robot.shooterSubsystem.shooterSparkEncoder.getVelocity()));
       BallTrajectoryController.setHoodAngle();
@@ -35,7 +39,7 @@ public class ShootCommand extends Command {
 
   @Override 
   protected void end(){
-    Robot.shooterSubsystem.testHoodSpark(0);
-    Robot.shooterSubsystem.setShooterSpark(0);
+    //Robot.shooterSubsystem.testHoodSpark(0);
+    //Robot.shooterSubsystem.setShooterSpark(0);
   }
 }

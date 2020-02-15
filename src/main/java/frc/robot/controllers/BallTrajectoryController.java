@@ -25,8 +25,8 @@ public class BallTrajectoryController {
 
   private static final double OUTER_PORT_ERROR_P_GAIN = 0.35;
 
-  private static final double OUTER_PORT_HEIGHT_TOLERANCE = 0.01;
-  private static final double INNER_PORT_HEIGHT_TOLERANCE = 0.1;
+  private static final double OUTER_PORT_HEIGHT_TOLERANCE = 0.001;
+  private static final double INNER_PORT_HEIGHT_TOLERANCE = 0.01;
 
   private static double outerPortError = Double.POSITIVE_INFINITY;
   private static double innerPortError = Double.POSITIVE_INFINITY;
@@ -61,13 +61,8 @@ public class BallTrajectoryController {
   public static void shoot() {Robot.shooterSubsystem.setShooterSpark(Robot.shooterSubsystem.RPMToOmega(getMotorRPM()));}
 
   public static double getHoodAngle() {
-    double a = 0.843819;
-    double b = -14.4381;
-    double c = 81.5331;
-    double angle = Math.toRadians(Math.pow(a, 2) * distanceToPort * b 
-                                                 * distanceToPort + c);
-    //return Utils.limitOutput(angle, MAXIMUM_HOOD_ANGLE, MINIMUM_HOOD_ANGLE);
-    return Math.toRadians(25);
+    double angle = 81 - 61.6 * Math.sin(distanceToPort / (1.71 * Math.PI));
+    return Utils.limitOutput(Math.toRadians(angle), MAXIMUM_HOOD_ANGLE, MINIMUM_HOOD_ANGLE);
   }
 
   public static void setHoodAngle() {Robot.shooterSubsystem.setHoodSpark(getHoodAngle());}

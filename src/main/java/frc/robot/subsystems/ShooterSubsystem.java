@@ -12,7 +12,7 @@ import frc.robot.sciSensorsActuators.SciSpark;
 import frc.robot.sciSensorsActuators.SciThroughBoreEncoder;
 
 public class ShooterSubsystem extends Subsystem implements RobotStateUpdater {
-  public double HOOD_ANGLE_P = 0.3, HOOD_ANGLE_I = 0, HOOD_ANGLE_D = 0;
+  public double HOOD_ANGLE_P = 0.65, HOOD_ANGLE_I = 0.01, HOOD_ANGLE_D = 0.0;
   public SciThroughBoreEncoder absEncoder;
   public CANEncoder shooterSparkEncoder;
   
@@ -52,6 +52,8 @@ public class ShooterSubsystem extends Subsystem implements RobotStateUpdater {
   }
 
   public void setHoodSpark(double angle) {
+//    System.out.println("GOING TO: " + angle);
+    System.out.println("AT: " + Robot.get(SD.HoodAngle));
     this.hoodAnglePID.addMeasurement(angle - Robot.get(SD.HoodAngle));
     this.hoodSpark.set(this.hoodAnglePID.getOutput());
   }

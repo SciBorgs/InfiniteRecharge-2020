@@ -152,18 +152,18 @@ public class SciSpark extends CANSparkMax implements RobotStateUpdater {
     public void dontPrintValues(){this.printValues = false;}
 
     public void updateRobotState(){
-        if (getDeviceId() < 20){
-            Robot.optionalSet(this.wheelAngleSD, determineWheelAngle());
-            Robot.optionalSet(this.velocitySD,   determineVelocity());
-            Robot.optionalSet(this.valueSD,      super.get());
-            Robot.optionalSet(this.currentSD,    super.getOutputCurrent());
-            this.accelModel.updateRobotState();
-            this.jerkModel .updateRobotState();
-            this.snapModel .updateRobotState();
-            if(this.printValues){
-                DelayedPrinter.print("Spark " + super.getDeviceId() + " value: " + super.get());
-            }
-        }
+        // if (getDeviceId() < 20){
+        //     Robot.optionalSet(this.wheelAngleSD, determineWheelAngle());
+        //     Robot.optionalSet(this.velocitySD,   determineVelocity());
+        //     Robot.optionalSet(this.valueSD,      super.get());
+        //     Robot.optionalSet(this.currentSD,    super.getOutputCurrent());
+        //     this.accelModel.updateRobotState();
+        //     this.jerkModel .updateRobotState();
+        //     this.snapModel .updateRobotState();
+        //     if(this.printValues){
+        //         DelayedPrinter.print("Spark " + super.getDeviceId() + " value: " + super.get());
+        //     }
+        // }
     }
 
     public void assignWheelAngleSD(SD wheelAngleSD) {this.wheelAngleSD = Optional.of(wheelAngleSD); Robot.set(wheelAngleSD, 0);}
