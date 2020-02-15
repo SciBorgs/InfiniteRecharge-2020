@@ -53,7 +53,12 @@ public class BallTrajectoryController {
   public static void shoot() {Robot.shooterSubsystem.setShooterSpark(Robot.shooterSubsystem.RPMToOmega(getMotorRPM()));}
 
   public static double getHoodAngle() {
-    return Math.toRadians(26);
+    double a = 0.843819;
+    double b = -14.4381;
+    double c = 81.5331;
+    double angle = Math.toRadians(Math.pow(a, 2) * BALL_TO_OUTER_PORT_DISTANCE * b 
+                                                 * BALL_TO_OUTER_PORT_DISTANCE + c);
+    return Utils.limitOutput(angle, MAXIMUM_HOOD_ANGLE, MINIMUM_HOOD_ANGLE);
   }
 
   public static void setHoodAngle() {Robot.shooterSubsystem.setHoodSpark(getHoodAngle());}
