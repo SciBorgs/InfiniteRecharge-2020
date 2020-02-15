@@ -2,6 +2,7 @@ package frc.robot.commands;
 
 import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.Robot;
+import frc.robot.Utils;
 import frc.robot.autoProfiles.Segment;
 
 
@@ -27,15 +28,16 @@ public class SegmentCommand extends Command {
     @Override
     protected void execute() {
         if (this.startWaitCommand.isCompleted()) {
-            if (!this.segment.sequentialCommand.isRunning() && !this.segment.sequentialCommand.isCompleted()){
+            if (Utils.hasCommandStarted(this.segment.sequentialCommand)){
                 this.segment.sequentialCommand.start();
-            } else if (!this.segment.parallelCommand.isRunning() && this.segment.sequentialCommand.isCompleted()) {
-                this.segment.parallelCommand.start();
-                this.circleControllerCommand.start();
-                System.out.println("currentState: " + circleControllerCommand.circleController.isFinished());
-            } else if (!this.circleControllerCommand.isCompleted() && !this.segment.doneCommand.isRunning()) {
-                this.segment.doneCommand.start();
-            } else if (this.segment.doneCommand.isCompleted()) {
+            } else if (!this.circleControllerCommand.isCompleted() && this.segment.sequentialCommand.isCompleted()) {
+                if (Utils.hasCommandStarted(this.segment.parallelCommand)) {
+                    this.segment.parallelCommand.start();
+                    this.circleControllerCommand.start();
+                } else if (Utils.hasCommandStarted(this.segment.doneCommand)) {
+                    this.segment.doneCommand.start();
+                }
+            } else if (this.segment.doneCommand.isCompleted() && Utils.hasCommandStarted(this.endWaitCommand)) {
                 this.endWaitCommand.start();
             }
         }
@@ -43,6 +45,6 @@ public class SegmentCommand extends Command {
 
     @Override
     protected boolean isFinished() {
-        return this.endWaitCommand.isCompleted(); 
+        return this.endWaitCommand.isCompleted();
     }
 }
