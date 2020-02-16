@@ -124,7 +124,9 @@ public class Robot extends TimedRobot implements LogUpdater {
     private void allUpdateRobotStates() {
         set(SD.Time, this.timer.get());
         for (RobotStateUpdater i : robotStateUpdaters) {
-            i.updateRobotState();
+            if(!i.ignore()){
+                i.updateRobotState();
+            }
         }
     }
 
