@@ -1,10 +1,11 @@
-package frc.robot.commands;
+package frc.robot.commands.auto;
 
 import edu.wpi.first.wpilibj.command.Command;
+
 import frc.robot.Robot;
 import frc.robot.Utils;
 import frc.robot.autoProfiles.Segment;
-
+import frc.robot.commands.generalCommands.WaitCommand;
 
 public class SegmentCommand extends Command {
 

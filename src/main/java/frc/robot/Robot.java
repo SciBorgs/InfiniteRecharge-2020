@@ -7,7 +7,7 @@ import java.util.Optional;
 
 import frc.robot.subsystems.*;
 import frc.robot.autoProfiles.AutoRoutine;
-import frc.robot.commands.*;
+import frc.robot.commands.auto.CircleControllerCommand;
 import frc.robot.helpers.*;
 import frc.robot.dataTypes.*;
 import frc.robot.logging.*;
@@ -20,7 +20,6 @@ import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Scheduler;
 import frc.robot.controllers.*;
 import frc.robot.stateEstimation.interfaces.*;
-import frc.robot.stateEstimation.higherLevel.*;
 import frc.robot.stateEstimation.explicit.*;
 
 public class Robot extends TimedRobot implements LogUpdater {

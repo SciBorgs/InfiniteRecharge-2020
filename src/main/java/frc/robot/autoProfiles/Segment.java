@@ -1,7 +1,7 @@
 package frc.robot.autoProfiles;
 
 import edu.wpi.first.wpilibj.command.Command;
-import frc.robot.commands.EmptyCommand;
+import frc.robot.commands.generalCommands.EmptyCommand;
 import frc.robot.shapes.Point;
 import frc.robot.shapes.Waypoint;
 

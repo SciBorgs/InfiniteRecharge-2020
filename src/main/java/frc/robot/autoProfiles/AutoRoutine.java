@@ -4,8 +4,8 @@ import java.util.ArrayList;
 import java.util.List;
 
 import frc.robot.shapes.Waypoint;
-import frc.robot.commands.IntakeSuckCommand;
-import frc.robot.commands.PathCommand;
+import frc.robot.commands.intake.IntakeSuckCommand;
+import frc.robot.commands.auto.PathCommand;
 import frc.robot.helpers.Geo;
 import frc.robot.shapes.Point;
 
