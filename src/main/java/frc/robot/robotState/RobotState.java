@@ -37,7 +37,7 @@ public class RobotState implements Iterable<Pair<SD, Double>>{
 
         // Shooter
         HoodAngle,
-        ShooterSparkOmega,
+        ShooterOmega,
 
         DistanceToPort,
         Time,

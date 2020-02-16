@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Optional;
 
 import frc.robot.subsystems.*;
+import frc.robot.commands.ShootCommand;
 import frc.robot.commands.drive.*;
 import frc.robot.helpers.*;
 import frc.robot.dataTypes.*;
@@ -171,7 +172,6 @@ public class Robot extends TimedRobot implements LogUpdater {
     }
  
     public void robotPeriodic() {
-        //System.out.println("robo periodic");
         stateHistory.addState(getState().copy());
         allUpdateRobotStates();
         allModels();
@@ -186,17 +186,16 @@ public class Robot extends TimedRobot implements LogUpdater {
         set(SD.Y, ORIGINAL_POINT.y);
         set(SD.Angle, ORIGINAL_ANGLE);
         //intakeSubsystem.reverseIntake();
-        //new ShootCommand().start();
         //shooterSubsystem.setShooterSpark(shooterSubsystem.RPMToOmega(3000));
+ 
+        try { new ShootCommand().start(); } catch (Exception e) {}
     }
 
     @Override
     public void autonomousPeriodic() {
         //System.out.println("OMEGA: " + shooterSubsystem.shooterSparkEncoder.getVelocity());
-        //shooterSubsystem.testShooterSpark2(0.3);
-        shooterSubsystem.setHoodSpark(Math.toRadians(25));
-        //System.out.println("HOOD ANGLE " + shooterSubsystem.absEncoder.getRadians());
-        
+        //shooterSubsystem.setHoodSpark(Math.toRadians(25));
+        //System.out.println("AT: " + Robot.get(SD.HoodAngle));
         //sequential.update();
         //allPeriodicLogs();
         //logDataPeriodic();
@@ -218,16 +217,12 @@ public class Robot extends TimedRobot implements LogUpdater {
 
     @Override
     public void testInit() {
-        shooterSubsystem.absEncoder.setAngle(Math.toRadians(57));
-        new StopShooterCommand().start();
+        shooterSubsystem.stopMotors();
     }
 
     public void testPeriodic() {
-        new StopShooterCommand().start();
-        shooterSubsystem.absEncoder.setAngle(Math.toRadians(57));
-        System.out.println("HOOD ANGLE " + shooterSubsystem.absEncoder.getRadians());
+        System.out.println("HOOD ANGLE " + Robot.get(SD.HoodAngle));
         System.out.println("DIST " + Robot.get(SD.DistanceToPort));
-        shooterSubsystem.testHoodSpark(0);
     }
 
     public void disabledInit() {

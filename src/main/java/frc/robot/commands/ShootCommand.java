@@ -1,45 +1,32 @@
 package frc.robot.commands;
 
+import java.io.IOException;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+
 import edu.wpi.first.wpilibj.command.Command;
 import frc.robot.Robot;
-import frc.robot.controllers.BallTrajectoryController;
-import frc.robot.helpers.DelayedPrinter;
+import frc.robot.controllers.PowerCellTrajectoryController;
+import frc.robot.dataTypes.Pair;
+import frc.robot.robotState.RobotState.SD;
 
 public class ShootCommand extends Command {
+  private PowerCellTrajectoryController powerCellTrajectoryController;
 
-  boolean paramsOptimized;
-
-  public ShootCommand() {
-    requires(Robot.shooterSubsystem);
-  }
-
-  @Override 
-  protected void initialize(){
-    while (!BallTrajectoryController.areParametersOptimal()){
-      BallTrajectoryController.optimizeParameters();
-    }
-    paramsOptimized = true;
+  public ShootCommand() throws JsonProcessingException, IOException {
+    this.powerCellTrajectoryController = new PowerCellTrajectoryController();
   }
 
   @Override
   protected void execute() {
-    if (paramsOptimized) {
-      BallTrajectoryController.optimizeParameters();
-      // System.out.println("ANGLE DIFF: " + Math.abs(BallTrajectoryController.getHoodAngle() - Robot.get(SD.HoodAngle)));
-      System.out.println("RPS DIFF: " + (Robot.shooterSubsystem.RPMToOmega(BallTrajectoryController.getMotorRPM()) - Robot.shooterSubsystem.shooterSparkEncoder.getVelocity()));
-      BallTrajectoryController.setHoodAngle();
-      BallTrajectoryController.shoot();
-    }
+    Pair<Double, Double> optimalParamters = this.powerCellTrajectoryController.getOptimalParameters();
+    Robot.shooterSubsystem.setHoodAngle(optimalParamters.first);
+    Robot.shooterSubsystem.setShooterOmega(optimalParamters.second);
+    System.out.println("RPS Difference: " + (optimalParamters.second - Robot.get(SD.ShooterOmega)));
   }
 
   @Override
-  protected boolean isFinished(){
-    return !Robot.oi.centerButton.get();
-  }
-
-  @Override 
-  protected void end(){
-    //Robot.shooterSubsystem.testHoodSpark(0);
-    //Robot.shooterSubsystem.setShooterSpark(0);
+  protected boolean isFinished() {
+    return false;
   }
 }
