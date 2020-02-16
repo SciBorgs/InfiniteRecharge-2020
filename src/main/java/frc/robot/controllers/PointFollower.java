@@ -1,6 +1,8 @@
 package frc.robot.controllers;
 
 import java.util.ArrayList;
+import java.util.stream.Collectors;
+
 import frc.robot.Utils;
 import frc.robot.shapes.*;
 import frc.robot.helpers.Geo;
@@ -60,11 +62,11 @@ public class PointFollower {
 
     private ArrayList<Double> getWeights(Point currPos) {
         ArrayList<Double> distances = getCumulativeDistances(currPos);
-        return Utils.toArrayList(distances.stream().map(distance -> assignWeight(distance)));
+        return Utils.toArrayList(distances.stream().map(distance -> assignWeight(distance)).collect(Collectors.toList()));
     }
 
     private ArrayList<Double> getAngles(Point currPos) { // gets the angle to each point
-        return Utils.toArrayList(this.path.stream().map(point -> Geo.angleBetween(currPos, point)));
+        return Utils.toArrayList(this.path.stream().map(point -> Geo.angleBetween(currPos, point)).collect(Collectors.toList()));
     }
 
     private double calculateDesiredHeading(ArrayList<Double> angles, ArrayList<Double> weights) {

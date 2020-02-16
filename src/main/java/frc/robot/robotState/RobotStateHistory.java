@@ -1,10 +1,11 @@
 package frc.robot.robotState;
 
+import java.util.Iterator;
 import java.util.List;
 import frc.robot.dataTypes.Deque;
 import frc.robot.robotState.RobotState.SD;
 
-public class RobotStateHistory{
+public class RobotStateHistory implements Iterable<RobotState>{
 
     // allows us to more clearly pass through a history of states
     // and really allows it to be distinguished from just a list of RobotState objects
@@ -51,5 +52,9 @@ public class RobotStateHistory{
     
     public RobotStateHistory copy(){
         return new RobotStateHistory((Deque<RobotState>) this.robotStates.clone());
+    }
+
+    public Iterator<RobotState> iterator(){
+        return this.robotStates.iterator();
     }
 }

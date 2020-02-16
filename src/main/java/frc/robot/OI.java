@@ -3,7 +3,9 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
-import frc.robot.commands.*;
+import frc.robot.commands.auto.*;
+import frc.robot.commands.intake.*;
+import frc.robot.commands.drive.*;
 import frc.robot.sciSensorsActuators.SciJoystick;
 
 // FILE HAS NOT BEEN CLEANED UP //

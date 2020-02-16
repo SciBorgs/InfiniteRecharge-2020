@@ -8,6 +8,7 @@ import frc.robot.controllers.PID;
 import frc.robot.helpers.DelayedPrinter;
 import frc.robot.robotState.StateInfo;
 import frc.robot.sciSensorsActuators.*;
+import frc.robot.sciSensorsActuators.SciSpark.SciSparkSD;
 import frc.robot.logging.LogUpdater;
 import frc.robot.logging.Logger.DefaultValue;
 import edu.wpi.first.wpilibj.command.Subsystem;
@@ -57,22 +58,21 @@ public class DriveSubsystem extends Subsystem implements LogUpdater {
         this.r1.follow(this.r);
         this.r2.follow(this.r);
 
-        
-        this.r.assignWheelAngleSD(SD.RightWheelAngle);
-        this.r.assignVelocitySD(SD.RightWheelSpeed);
-        this.r.assignAccelD(SD.RightWheelAccel);
-        this.r.assignJerkSD(SD.RightWheelJerk);
-        this.r.assignSnapSD(SD.RightWheelSnap);
-        this.r.assignValueSD(SD.RightSparkVal);
-        this.r.assignCurrentSD(SD.RightCurrentVal);
-        this.l.assignWheelAngleSD(SD.LeftWheelAngle);
+        this.r.assignSD(SciSparkSD.WheelAngle, SD.RightWheelAngle);
+        this.r.assignSD(SciSparkSD.Velocity, SD.RightWheelSpeed);
+        this.r.assignSD(SciSparkSD.Accel, SD.RightWheelAccel);
+        this.r.assignSD(SciSparkSD.Jerk, SD.RightWheelJerk);
+        this.r.assignSD(SciSparkSD.Snap, SD.RightWheelSnap);
+        this.r.assignSD(SciSparkSD.Current, SD.RightWheelCurrent);
+        this.r.assignSD(SciSparkSD.Value, SD.RightWheelVal);
 
-        this.l.assignVelocitySD(SD.LeftWheelSpeed);
-        this.l.assignAccelD(SD.LeftWheelAccel);
-        this.l.assignJerkSD(SD.LeftWheelJerk);
-        this.l.assignSnapSD(SD.LeftWheelSnap);
-        this.l.assignValueSD(SD.LeftSparkVal);
-        this.l.assignCurrentSD(SD.LeftCurrentVal);
+        this.l.assignSD(SciSparkSD.WheelAngle, SD.LeftWheelAngle);
+        this.l.assignSD(SciSparkSD.Velocity, SD.LeftWheelSpeed);
+        this.l.assignSD(SciSparkSD.Accel, SD.LeftWheelAccel);
+        this.l.assignSD(SciSparkSD.Jerk, SD.LeftWheelJerk);
+        this.l.assignSD(SciSparkSD.Snap, SD.LeftWheelSnap);
+        this.l.assignSD(SciSparkSD.Current, SD.LeftWheelCurrent);
+        this.l.assignSD(SciSparkSD.Value, SD.LeftWheelVal);
 
         this.r.logAllSDs();
         this.l.logAllSDs();
@@ -87,7 +87,7 @@ public class DriveSubsystem extends Subsystem implements LogUpdater {
         Robot.logger.logFinalPIDConstants("tank angle PID", this.tankAnglePID);
         Robot.logger.logFinalField       ("input deadzone", INPUT_DEADZONE);
 
-        Robot.addLogUpdater(this);
+        automateLogging();
     }
 
     // If something is assiting, we don't want to drive using setSpeed

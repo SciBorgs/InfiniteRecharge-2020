@@ -1,17 +1,18 @@
-package frc.robot.commands;
+package frc.robot.commands.intake;
 
 import edu.wpi.first.wpilibj.command.InstantCommand;
 import frc.robot.Robot;
 import frc.robot.logging.Logger.CommandStatus;
 
-public class IntakeReleaseCommand extends InstantCommand {
-    public IntakeReleaseCommand() {
+public class IntakeSuckCommand extends InstantCommand {
+    public IntakeSuckCommand() {
         requires(Robot.intakeSubsystem);
     }
 
     @Override 
     protected void execute() {
 	    Robot.logger.logCommandStatus(CommandStatus.Executing);
-        Robot.intakeSubsystem.stop();
+        Robot.intakeSubsystem.suck();
     }
+    
 }

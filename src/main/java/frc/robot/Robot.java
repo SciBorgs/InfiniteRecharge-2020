@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Optional;
 
 import frc.robot.subsystems.*;
-import frc.robot.commands.*;
+import frc.robot.commands.drive.*;
 import frc.robot.helpers.*;
 import frc.robot.dataTypes.*;
 import frc.robot.logging.*;
@@ -103,7 +103,7 @@ public class Robot extends TimedRobot implements LogUpdater {
     public static final int LOG_PERIOD = 5;
 
     public Robot() {
-        addLogUpdater(this);
+        automateLogging();
     }
 
     public static void addLogUpdater(LogUpdater logUpdater) {
