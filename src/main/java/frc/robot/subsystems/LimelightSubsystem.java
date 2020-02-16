@@ -11,7 +11,7 @@ public class LimelightSubsystem extends Subsystem implements LogUpdater {
     public final static double IMAGE_HEIGHT = Math.toRadians(20.5); // In degrees
     
     public LimelightSubsystem() {
-        Robot.addLogUpdater(this);
+        automateLogging();;
     }
 
     public NetworkTable getCameraTable(){

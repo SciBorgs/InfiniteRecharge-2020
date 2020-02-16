@@ -37,7 +37,7 @@ public class EncoderLocalization implements Updater, Model, LogUpdater {
         this.stdDevs.put(SD.GearShiftSolenoid, 0.0);
         this.stdDevs.put(SD.LeftWheelAngle, 0.0);
         this.stdDevs.put(SD.RightWheelAngle, 0.0);
-        Robot.addLogUpdater(this);
+        automateLogging();
     }
 
     public SciPigeon getPigeon() {return this.pigeon;}

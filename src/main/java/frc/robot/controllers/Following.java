@@ -10,7 +10,7 @@ public class Following implements LogUpdater {
     public final static double LINEUP_SHIFT = -.95;
 
     public Following() {
-        Robot.addLogUpdater(this);
+        automateLogging();
     }
 
     public void followObject(PID pid, double angleTo){

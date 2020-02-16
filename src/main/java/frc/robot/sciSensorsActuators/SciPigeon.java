@@ -20,7 +20,7 @@ public class SciPigeon extends PigeonIMU implements RobotStateUpdater, SciSensor
     public SciPigeon(TalonSRX talon) {
         super(talon);
         this.sdMap = new HashMap<>();
-        Robot.addRobotStateUpdater(this);
+        automateStateUpdating();
     }
 
     @Override

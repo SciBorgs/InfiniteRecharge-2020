@@ -99,7 +99,7 @@ public class DriveSubsystem extends Subsystem implements LogUpdater {
         Robot.logger.logFinalPIDConstants("tank angle PID", this.tankAnglePID);
         Robot.logger.logFinalField       ("input deadzone", INPUT_DEADZONE);
 
-        Robot.addLogUpdater(this);
+        automateLogging();
     }
 
     // If something is assiting, we don't want to drive using setSpeed
