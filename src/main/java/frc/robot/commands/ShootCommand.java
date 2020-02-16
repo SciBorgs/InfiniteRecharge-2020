@@ -19,10 +19,10 @@ public class ShootCommand extends Command {
 
   @Override
   protected void execute() {
-    Pair<Double, Double> optimalParamters = this.powerCellTrajectoryController.getOptimalParameters();
-    Robot.shooterSubsystem.setHoodAngle(optimalParamters.first);
-    Robot.shooterSubsystem.setShooterOmega(optimalParamters.second);
-    System.out.println("RPS Difference: " + (optimalParamters.second - Robot.get(SD.ShooterOmega)));
+    Pair<Double, Double> optimalParameters = this.powerCellTrajectoryController.getOptimalParameters();
+    Robot.shooterSubsystem.setHoodAngle(optimalParameters.first);
+    Robot.shooterSubsystem.setShooterOmega(optimalParameters.second);
+    System.out.println("RPS Difference: " + (optimalParameters.second - Robot.get(SD.ShooterOmega)));
   }
 
   @Override
