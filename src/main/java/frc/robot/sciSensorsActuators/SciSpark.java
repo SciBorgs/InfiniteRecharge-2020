@@ -41,7 +41,7 @@ public class SciSpark extends CANSparkMax implements RobotStateUpdater, SciSenso
     public double decrementSnapSpeed = .3;
 
     @Override
-    public boolean ignore(){return super.getDeviceId() == PortMap.IGNORE_ID;}
+    public boolean ignore(){return sciIgnore(super.getDeviceId());}
 
     public SciSpark(int port) {
         this(port, 1);

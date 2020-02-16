@@ -47,7 +47,7 @@ public class SciTalon extends TalonSRX implements RobotStateUpdater, SciSensorAc
     public String getDeviceName(){return "Talon " + super.getDeviceID();}
 
     @Override
-    public boolean ignore(){return super.getDeviceID() == PortMap.IGNORE_ID;}
+    public boolean ignore(){return sciIgnore(super.getDeviceID());}
 
     public double getGearRatio() {return this.gearRatio;}
     public boolean isCurrentCommandNumber(int n){return n == this.commandNumber;}
