@@ -58,11 +58,13 @@ public class PortMap {
 
     public static final int PIGEON_TALON = 9;
     public static final int INTAKE_TALON = 12; // Temporary
+    public static final int TWISTER_TALON = 1; // Temporary
     
     //******************SOLENOIDS****************//
 
     public static final int INTAKE_SOLENOID_FORWARD = 1; // Temporary
     public static final int INTAKE_SOLENOID_REVERSE = 2; // Temporary
+    public static final int[] TWISTER_SOLENOID = new int[]{1, 2}; // Temporary
 
     //*******************MISC********************//
 

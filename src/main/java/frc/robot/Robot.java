@@ -48,6 +48,7 @@ public class Robot extends TimedRobot implements LogUpdater {
     public static PneumaticsSubsystem pneumaticsSubsystem = new PneumaticsSubsystem();
 
     public static IntakeSubsystem     intakeSubsystem     = new IntakeSubsystem();
+    public static TwisterSubsystem    twisterSubsystem    = new TwisterSubsystem();
     
     public static Following following = new Following();
     public static CircleController circleController = new CircleController();
