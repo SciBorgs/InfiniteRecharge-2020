@@ -5,6 +5,7 @@ import edu.wpi.first.wpilibj.SerialPort;
 import java.nio.charset.StandardCharsets;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.io.ByteArrayOutputStream;
 import java.lang.Double;
 
 import frc.robot.Utils;
@@ -75,6 +76,18 @@ public class SciAtlasColor implements RobotStateUpdater, SciSensorActuator<SciAt
         return output;
     }
 
+    private String readLine() {
+        ByteArrayOutputStream bytes = new ByteArrayOutputStream();
+        while (serial.getBytesReceived() > 0) {
+            byte b = serial.read(1)[0];
+            if (b == '\r') {
+                break;
+            }
+            bytes.write(b);
+        }
+        return new String(bytes.toByteArray(), StandardCharsets.US_ASCII);
+    }
+
     private String sendAndRead(String command) {
         send(command);
         return read();
@@ -90,6 +103,22 @@ public class SciAtlasColor implements RobotStateUpdater, SciSensorActuator<SciAt
         return sendAndCheckError(command + "," + (enabled ? 1 : 0));
     }
 
+    private String getResponseCode() {
+        String line = readLine();
+        while (!line.contains("*")) {
+            line = readLine();
+        }
+        return line; 
+    }
+
+    private boolean isOK() {
+        return getResponseCode().equals("*OK");
+    }
+
+    private boolean isError() {
+        return getResponseCode().equals("*ER");
+    }
+
     public String getTargetLEDBrightness() {
         return sendAndRead("L,?");
     }
@@ -99,7 +128,8 @@ public class SciAtlasColor implements RobotStateUpdater, SciSensorActuator<SciAt
     }
 
     public boolean setTargetLEDBrightness(int brightness, boolean powerSaving) {
-        return sendAndCheckError("L," + brightness + (powerSaving ? ",T" : ""));
+        send("L," + brightness + (powerSaving ? ",T" : ""));
+        return isOK();
     }
 
     public String getIndicatorLEDState() {
