@@ -1,5 +1,8 @@
 package frc.robot.sciSensorsActuators;
 
+import java.lang.StackWalker.Option;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.Optional;
 
 import com.ctre.phoenix.motorcontrol.can.TalonSRX;
@@ -8,16 +11,25 @@ import com.ctre.phoenix.sensors.PigeonIMU;
 import frc.robot.Robot;
 import frc.robot.robotState.RobotStateUpdater;
 import frc.robot.robotState.RobotState.SD;
+import frc.robot.sciSensorsActuators.SciPigeon.SciPigeonSD;;
 
-public class SciPigeon extends PigeonIMU implements RobotStateUpdater {
-    public Optional<SD> angleSD, pitchSD, roleSD;
+public class SciPigeon extends PigeonIMU implements RobotStateUpdater, SciSensorActuator<SciPigeonSD> {
+    public static enum SciPigeonSD {Angle, Pitch, Role}
+    public HashMap<SciPigeonSD, SD> sdMap;
 
     public SciPigeon(TalonSRX talon) {
         super(talon);
-        Robot.addRobotStateUpdater(this);
+        this.sdMap = new HashMap<>();
+        automateStateUpdating();
     }
 
-    public PigeonIMU getPigeonIMU() {return this;}
+    @Override
+    public HashMap<SciPigeonSD, SD> getSDMap(){return this.sdMap;}
+    @Override 
+    public String getDeviceName(){return "Pigeon " + super.getDeviceID();}
+
+    @Override
+    public boolean ignore(){return sciIgnore(super.getDeviceID());}
 
     private double[] yawPitchRole(){
         double[] yawPitchRoll = new double[3];
@@ -34,12 +46,8 @@ public class SciPigeon extends PigeonIMU implements RobotStateUpdater {
     }
 
     public void updateRobotState(){
-        Robot.optionalSet(this.angleSD, getAngle());
-        Robot.optionalSet(this.pitchSD, getPitch());
-        Robot.optionalSet(this.roleSD,  getRole());
+        sciSet(SciPigeonSD.Angle, getAngle());
+        sciSet(SciPigeonSD.Pitch, getPitch());
+        sciSet(SciPigeonSD.Role,  getRole());
     }
-
-    public void assignAngleSD(SD angleSD) {this.angleSD = Optional.of(angleSD);}
-    public void assignPitchSD(SD pitchSD) {this.pitchSD = Optional.of(pitchSD);}
-    public void assignRoleSD (SD roleSD)  {this.roleSD  = Optional.of(roleSD);}
 }

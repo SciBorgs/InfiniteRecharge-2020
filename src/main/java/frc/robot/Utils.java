@@ -22,6 +22,7 @@ public class Utils{
     private static Random r = new Random();
 
     public static final double METERS_TO_INCHES = 39.37;
+    public static final double SECONDS_PER_MINUTE = 60;
     // essnetially an error that we're willing to have, probably due to floating point rounding
     public static final double EPSILON = 1e-6;
 
@@ -122,7 +123,7 @@ public class Utils{
 
     // get's all the cummulative summs of an arraylist
     // for example: [1,3,5,2] -> [1,1+3,1+3+5,1+3+5+2] -> [1,4,9,11]
-    public static ArrayList<Double> cummSums(ArrayList<Double> arr){
+    public static ArrayList<Double> cummSums(Iterable<Double> arr){
         ArrayList<Double> ans = new ArrayList<>();
         double sum = 0;
         for(double n : arr){
@@ -159,17 +160,9 @@ public class Utils{
         for(T el : iterable){arrayList.add(el);}
         return arrayList;
     }
-    public static<T> ArrayList<T> toArrayList(T[] arr){
-        ArrayList<T> arrayList = new ArrayList<>();
-        for(T el : arr){arrayList.add(el);}
-        return arrayList;
+    public static<T> Stream<T> toStream(Iterable<T> iterable){
+        return toArrayList(iterable).stream();
     }
-    public static<T> ArrayList<T> toArrayList(Stream<T> stream){
-        ArrayList<T> arrayList = new ArrayList<>();
-        for(T el : stream.collect(Collectors.toList())){arrayList.add(el);}
-        return arrayList;
-    }
-
     public static double sumArrayList(List<Double> l){
         return l.stream().mapToDouble(a -> a).sum();
     }
@@ -208,6 +201,19 @@ public class Utils{
 
     public static double mod(double num1, double num2) {
         return (num1 % num2 + num2) % num2;
+    }
+
+    public static<T> ArrayList<T> initArrayList(T... args){
+        ArrayList<T> arrayList = new ArrayList<T>();
+        for (T el : args){arrayList.add(el);}
+        return arrayList;
+    }
+    public static<T> ArrayList<T> optionalInitArrayList(Optional<T>... args){
+        ArrayList<T> arrayList = new ArrayList<T>();
+        for (Optional<T> el : args){
+            if (el.isPresent()){arrayList.add(el.get());}
+        }
+        return arrayList;
     }
 
 }

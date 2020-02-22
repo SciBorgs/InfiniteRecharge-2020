@@ -1,4 +1,4 @@
-package frc.robot.stateEstimation;
+package frc.robot.stateEstimation.explicit;
 
 import frc.robot.Robot;
 import frc.robot.helpers.DelayedPrinter;
@@ -13,11 +13,11 @@ import frc.robot.robotState.*;
 import frc.robot.robotState.RobotState.SD;
 import frc.robot.sciSensorsActuators.SciPigeon;
 import frc.robot.subsystems.DriveSubsystem;
+import frc.robot.logging.LogUpdater;
 import frc.robot.logging.Logger.DefaultValue;
+import frc.robot.stateEstimation.interfaces.*;
 
-public class EncoderLocalization implements Updater, Model {
-
-    private final String FILENAME = "RobotPosition.java";
+public class EncoderLocalization implements Updater, Model, LogUpdater {
     private static final double X_STD_DEV     = 0; // These are meant to be estimates
     private static final double Y_STD_DEV     = 0;
     private static final double ANGLE_STD_DEV = 0;
@@ -37,12 +37,13 @@ public class EncoderLocalization implements Updater, Model {
         this.stdDevs.put(SD.GearShiftSolenoid, 0.0);
         this.stdDevs.put(SD.LeftWheelAngle, 0.0);
         this.stdDevs.put(SD.RightWheelAngle, 0.0);
+        automateLogging();
     }
 
     public SciPigeon getPigeon() {return this.pigeon;}
 
     @Override
-    public Hashtable<SD, Double> getStdDevs(){return this.stdDevs;}
+    public Hashtable<SD, Double> getStdDevs(){return (Hashtable<SD, Double>) this.stdDevs.clone();}
     
     // Just multiplies the difference in angle by the wheel radius
     public double wheelRotationChange(SD wheelAngleSD, RobotStateHistory stateHistory){
@@ -74,7 +75,6 @@ public class EncoderLocalization implements Updater, Model {
         double thetaChange = StateInfo.getDifference(stateHistory, SD.PigeonAngle, 1);
         RobotState newPosition = 
             nextPosition(state.get(SD.X), state.get(SD.Y), state.get(SD.Angle), wheelChanges, thetaChange);
-        printWheelAngles();
         stateHistory.currentState().incorporateOtherState(newPosition); 
     }
 

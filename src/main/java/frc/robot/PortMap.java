@@ -2,6 +2,8 @@ package frc.robot;
 
 public class PortMap {
 
+    public static final int IGNORE_ID = -1;
+
   	//*****************JOYSTICKS*****************//
 
     public static final int JOYSTICK_LEFT = 0;
