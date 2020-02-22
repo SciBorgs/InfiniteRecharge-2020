@@ -1,10 +1,10 @@
 package frc.robot.commands.generalCommands;
 
-import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.sciSensorsActuators.SciTalon;
 import frc.robot.Utils;
 
-public class TalonDelayWarningCommand extends Command {
+public class TalonDelayWarningCommand extends CommandBase {
 
     private SciTalon sciTalon;
     private double input;
@@ -17,7 +17,7 @@ public class TalonDelayWarningCommand extends Command {
     }
 
     @Override 
-    protected void execute () {
+    public void execute () {
         ticks++;
         if (!Utils.impreciseEquals(this.sciTalon.getMotorOutputPercent(), this.input)) {
             System.out.println("WARNING: " + this.sciTalon.getDeviceID() + " was set to " + this.input
@@ -27,7 +27,7 @@ public class TalonDelayWarningCommand extends Command {
     }
 
     @Override
-    protected boolean isFinished () { 
+    public boolean isFinished () { 
         return !Utils.impreciseEquals(this.sciTalon.getMotorOutputPercent(), this.input); 
     }
 

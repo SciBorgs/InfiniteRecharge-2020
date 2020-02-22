@@ -22,7 +22,7 @@ public class OI {
         xboxController = new XboxController(PortMap.XBOX_CONTROLLER);
 
         circleControllerButton = new JoystickButton(leftStick, PortMap.JOYSTICK_TRIGGER);
-        circleControllerButton.whileActive(new CircleControllerCommand());
+        circleControllerButton.whileActiveContinuous(new CircleControllerCommand());
         
         pointThreeButton = new JoystickButton(leftStick, PortMap.JOYSTICK_CENTER_BUTTON);
         pointThreeButton.whenPressed(new PointThreeCommand());       

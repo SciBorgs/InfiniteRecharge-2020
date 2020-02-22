@@ -210,7 +210,7 @@ public class Robot extends TimedRobot implements LogUpdater {
     
 
     public void testPeriodic() {
-        (new TankDriveCommand()).start();
+        CommandScheduler.getInstance().schedule(new TankDriveCommand());
         Robot.driveSubsystem.l.diminishSnap();
         Robot.driveSubsystem.r.diminishSnap();
         DelayedPrinter.print("testing...");

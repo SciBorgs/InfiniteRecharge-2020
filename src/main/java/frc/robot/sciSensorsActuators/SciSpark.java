@@ -110,7 +110,7 @@ public class SciSpark extends CANSparkMax implements RobotStateUpdater, SciSenso
 
     public void checkWarningStatus(double input, double realOutput){
         if (!Utils.inRange(input, super.get(), TOLERABLE_DIFFERENCE)) {
-            (new SparkDelayWarningCommand(this, input)).start();
+            CommandScheduler.getInstance().schedule(new SparkDelayWarningCommand(this, input));
         }   
     }
 

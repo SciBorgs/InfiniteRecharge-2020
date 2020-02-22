@@ -61,7 +61,7 @@ public class SciTalon extends TalonSRX implements RobotStateUpdater, SciSensorAc
     }
     public void checkWarningStatus(double input, double realOutput){
         if (!Utils.inRange(input, super.getMotorOutputPercent(), TOLERABLE_DIFFERENCE)) {
-            (new TalonDelayWarningCommand(this, input)).start();
+            CommandScheduler.getInstance().schedule(new TalonDelayWarningCommand(this, input));
         }   
     }
     
