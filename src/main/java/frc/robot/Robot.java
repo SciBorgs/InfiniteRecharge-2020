@@ -205,8 +205,8 @@ public class Robot extends TimedRobot implements LogUpdater {
 
     public void teleopPeriodic() {
         (new TankDriveCommand()).start();
-        hopperSubsystem.setInSpeed(new SciJoystick(PortMap.JOYSTICK_LEFT).getProcessedY()/2);    
-        hopperSubsystem.setUpSpeed(new SciJoystick(PortMap.JOYSTICK_RIGHT).getProcessedY()/2);    
+        hopperSubsystem.setInSpeed(oi.leftStick.getProcessedY()/2);    
+        hopperSubsystem.setUpSpeed(oi.rightStick.getProcessedY()/2);    
         allPeriodicLogs();
         logDataPeriodic();
     }
