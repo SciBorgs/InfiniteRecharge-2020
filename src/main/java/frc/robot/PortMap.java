@@ -2,7 +2,13 @@ package frc.robot;
 
 public class PortMap {
 
-    public static final int IGNORE_ID = -1;
+    private static int ignoreID = -1;
+    public static int getIgnoredID() {
+      return ignoreID--;
+    }
+    public static boolean ignoreID(int id){
+      return id < 0;
+    }
 
   	//*****************JOYSTICKS*****************//
 

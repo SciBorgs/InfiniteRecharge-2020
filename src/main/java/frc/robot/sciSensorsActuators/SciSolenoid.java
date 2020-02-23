@@ -31,7 +31,6 @@ public class SciSolenoid<ValueType extends Enum<ValueType>> extends DoubleSoleno
 
     public SciSolenoid(int pdpPort, int[] ports, ValueType forwardValue, ValueType reverseValue, ValueType offValue) {
         super(pdpPort, ports[0], ports[1]);
-        this.ignore = sciIgnore(ports[0]);
         this.valueMap = new BiHashMap<ValueType, Value>();
         this.valueMap.put(forwardValue, Value.kForward);
         this.valueMap.put(reverseValue, Value.kReverse);
@@ -46,6 +45,8 @@ public class SciSolenoid<ValueType extends Enum<ValueType>> extends DoubleSoleno
         this.sdMap = new HashMap<>();
         automateStateUpdating();
     }
+
+    public void setIgnore(boolean ignore){this.ignore = ignore;}
 
     private Value toDoubleSolenoidValue(ValueType e) {return valueMap.getForward(e);}
     private ValueType toValueType(Value v)           {return valueMap.getBackward(v);}
