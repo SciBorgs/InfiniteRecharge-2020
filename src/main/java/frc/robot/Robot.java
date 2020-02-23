@@ -18,6 +18,7 @@ import frc.robot.shapes.*;
 import frc.robot.logging.Logger.DefaultValue;
 import frc.robot.robotState.*;
 import frc.robot.robotState.RobotState.SD;
+import frc.robot.sciSensorsActuators.SciJoystick;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Scheduler;
@@ -46,8 +47,8 @@ public class Robot extends TimedRobot implements LogUpdater {
     public static PigeonSubsystem     pigeonSubsystem     = new PigeonSubsystem();
     public static LimelightSubsystem  limelightSubsystem  = new LimelightSubsystem();
     public static PneumaticsSubsystem pneumaticsSubsystem = new PneumaticsSubsystem();
-
     public static IntakeSubsystem     intakeSubsystem     = new IntakeSubsystem();
+    public static HopperSubsystem     hopperSubsystem     = new HopperSubsystem();
     
     public static Following following = new Following();
     public static CircleController circleController = new CircleController();
@@ -203,7 +204,9 @@ public class Robot extends TimedRobot implements LogUpdater {
     }
 
     public void teleopPeriodic() {
-        (new TankDriveCommand()).start();    
+        (new TankDriveCommand()).start();
+        hopperSubsystem.setInSpeed(new SciJoystick(PortMap.JOYSTICK_LEFT).getProcessedY()/2);    
+        hopperSubsystem.setUpSpeed(new SciJoystick(PortMap.JOYSTICK_RIGHT).getProcessedY()/2);    
         allPeriodicLogs();
         logDataPeriodic();
     }

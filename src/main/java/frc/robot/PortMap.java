@@ -46,6 +46,9 @@ public class PortMap {
     
     //*******************SPARKS******************//
 
+    public static final int HOPPER_UP_SPARK = 8;
+    public static final int HOPPER_IN_SPARK = 7;
+
     public static final int LEFT_FRONT_SPARK = 6; 
     public static final int LEFT_MIDDLE_SPARK = 5; 
     public static final int LEFT_BACK_SPARK = 4;
