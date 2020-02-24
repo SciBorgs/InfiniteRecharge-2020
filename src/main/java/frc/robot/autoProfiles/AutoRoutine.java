@@ -1,6 +1,7 @@
 package frc.robot.autoProfiles;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 import frc.robot.shapes.Waypoint;
@@ -34,9 +35,9 @@ public class AutoRoutine {
     }
 
     public void test() {
-        Segment s1 = new Segment(new Waypoint(.5, 1.5, Geo.HORIZONTAL_ANGLE / 2));
-        Segment s2 = new Segment(new Waypoint(1, 3, Geo.HORIZONTAL_ANGLE));
-        this.path = new Path(new ArrayList<>(List.of(s1, s2)));
+        Segment s1 = new Segment(new Waypoint(1.5, .5, Geo.HORIZONTAL_ANGLE + .321));
+        Segment s2 = new Segment(new Waypoint(3, 1, Geo.HORIZONTAL_ANGLE));
+        this.path = new Path(new ArrayList<>(Arrays.asList(s1, s2)));
         (new PathCommand(path)).start();
     }
 }

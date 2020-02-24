@@ -21,7 +21,7 @@ public class CircleControllerCommand extends Command {
     @Override
     protected void execute() {
         circleController.update(waypoint);
-        DelayedPrinter.print("currDest: " + Robot.CURRENT_DESTINATION);
+        DelayedPrinter.print("currDest: " + waypoint);
         Robot.logger.logCommandStatus(CommandStatus.Executing);
     }
 

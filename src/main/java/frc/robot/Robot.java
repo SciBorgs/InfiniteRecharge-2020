@@ -7,7 +7,10 @@ import java.util.Optional;
 
 import frc.robot.subsystems.*;
 import frc.robot.autoProfiles.AutoRoutine;
+import frc.robot.autoProfiles.Path;
+import frc.robot.autoProfiles.Segment;
 import frc.robot.commands.auto.CircleControllerCommand;
+import frc.robot.commands.auto.PathCommand;
 import frc.robot.helpers.*;
 import frc.robot.dataTypes.*;
 import frc.robot.logging.*;
@@ -187,11 +190,11 @@ public class Robot extends TimedRobot implements LogUpdater {
         set(SD.Y, ORIGINAL_POINT.y);
         set(SD.Angle, ORIGINAL_ANGLE);
         intakeSubsystem.reverseIntake();
+        autoRoutine.test();
     }
 
     @Override
     public void autonomousPeriodic() {
-        autoRoutine.tenBallAuto();
         allPeriodicLogs();
         logDataPeriodic();
     }
@@ -201,7 +204,6 @@ public class Robot extends TimedRobot implements LogUpdater {
         // intakeSubsystem.reverseIntake();
         Robot.driveSubsystem.l.ignoreSnap();
         Robot.driveSubsystem.r.ignoreSnap();
-        autoRoutine.tenBallAuto();
         // pneumaticsSubsystem.startCompressor();
     }
 

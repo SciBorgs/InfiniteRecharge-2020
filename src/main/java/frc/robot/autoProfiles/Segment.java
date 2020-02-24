@@ -1,6 +1,11 @@
 package frc.robot.autoProfiles;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import edu.wpi.first.wpilibj.command.Command;
+import edu.wpi.first.wpilibj.command.WaitCommand;
 import frc.robot.commands.generalCommands.EmptyCommand;
 import frc.robot.shapes.Point;
 import frc.robot.shapes.Waypoint;
@@ -9,18 +14,18 @@ public class Segment {
     public Waypoint waypoint;
     public Command  sequentialCommand, parallelCommand, doneCommand;
     public boolean  reverse;
-    public double   startWait, endWait;
+    public WaitCommand startWaitCommand, endWaitCommand;
+    public ArrayList<Command> commands;
 
-    public Segment () {}
-
-    public Segment (Waypoint waypoint){
+    public Segment (Waypoint waypoint) {
         this.waypoint = waypoint;
-        this.startWait = 0;
-        this.endWait = 0;
         this.reverse = false;
-        sequentialCommand =  new EmptyCommand();
-        parallelCommand = new EmptyCommand();
-        doneCommand = new EmptyCommand();
+        this.sequentialCommand = new EmptyCommand();   
+        this.parallelCommand = new EmptyCommand();
+        this.doneCommand = new EmptyCommand();
+        this.startWaitCommand = new WaitCommand(0);
+        this.endWaitCommand = new WaitCommand(0);
+        commands = new ArrayList<>(Arrays.asList(startWaitCommand, sequentialCommand, parallelCommand, doneCommand, endWaitCommand));
     }
 
     public Segment (Point point, double heading){

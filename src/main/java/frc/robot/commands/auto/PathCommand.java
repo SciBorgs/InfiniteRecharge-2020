@@ -12,7 +12,7 @@ public class PathCommand extends Command {
     private SegmentCommand currSegmentCommand;
 
     public PathCommand (Path path) {
-        remainingSegments = new ArrayList<>(path.sequence.size());
+        remainingSegments = new ArrayList<>();
         for (Segment segment : path.sequence) {
             remainingSegments.add(new SegmentCommand(segment));
         }

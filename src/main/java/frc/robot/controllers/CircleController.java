@@ -86,7 +86,8 @@ public class CircleController {
         } else {
             // want stronger bias towards our heading at the end as we get closer to the point -> weight
             turnMagnitude = getWeight(currPos, finalPos) * this.finalHeadingPID.getOutput() + this.desiredHeadingPID.getOutput();
-            Robot.driveSubsystem.setSpeedTankTurningPercentage(turnMagnitude);
+            Robot.driveSubsystem.setSpeedTankForwardTurningMagnitude(.5, turnMagnitude);
+            // Robot.driveSubsystem.setSpeedTankTurningPercentage(turnMagnitude);
         }
         Robot.logger.addData("CircleController.java", "turnMagnitude", turnMagnitude, DefaultValue.Empty);
     }
