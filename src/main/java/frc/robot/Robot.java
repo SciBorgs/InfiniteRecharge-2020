@@ -90,7 +90,9 @@ public class Robot extends TimedRobot implements LogUpdater {
     public static final Waypoint TEST_POINT_2 = new Waypoint(new Point(0, 1), Geo.HORIZONTAL_ANGLE);
     public static final Waypoint TEST_POINT_3 = new Waypoint(new Point(0, 2), Geo.HORIZONTAL_ANGLE);
     public static final Waypoint TEST_POINT_4 = new Waypoint(new Point(0, 3), Geo.HORIZONTAL_ANGLE);
-    public static final Point ORIGINAL_POINT  = new Point(3 - autoRoutine.xShift, -7.5 - autoRoutine.yShift);
+    // for tenBallAuto
+    // public static final Point ORIGINAL_POINT  = new Point(3 - autoRoutine.xShift, -7.5 - autoRoutine.yShift);
+    public static final Point ORIGINAL_POINT  = new Point(0, 0);
     public static final double ORIGINAL_ANGLE = Geo.HORIZONTAL_ANGLE;
     public static Waypoint[] arr = new Waypoint[] {TEST_POINT_0, TEST_POINT_1, TEST_POINT_2, TEST_POINT_3, TEST_POINT_4};
     public static ArrayList <Waypoint> path = new ArrayList<Waypoint>(Arrays.asList(arr));
@@ -189,7 +191,7 @@ public class Robot extends TimedRobot implements LogUpdater {
 
     @Override
     public void autonomousPeriodic() {
-        sequential.update();
+        autoRoutine.tenBallAuto();
         allPeriodicLogs();
         logDataPeriodic();
     }
@@ -211,7 +213,7 @@ public class Robot extends TimedRobot implements LogUpdater {
     
 
     public void testPeriodic() {
-        (new CircleControllerCommand(new Waypoint(new Point(ORIGINAL_POINT.x + 1, ORIGINAL_POINT.y), Geo.HORIZONTAL_ANGLE))).start();
+        // (new CircleControllerCommand(new Waypoint(new Point(ORIGINAL_POINT.x + 1, ORIGINAL_POINT.y), Geo.HORIZONTAL_ANGLE))).start();
         // DelayedPrinter.print("testing...");
     }
 

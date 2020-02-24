@@ -32,4 +32,11 @@ public class AutoRoutine {
         this.path = new Path(new ArrayList<>(List.of(s1, s2, s3, s4, s5)));
         (new PathCommand(path)).start();
     }
+
+    public void test() {
+        Segment s1 = new Segment(new Waypoint(.5, 1.5, Geo.HORIZONTAL_ANGLE / 2));
+        Segment s2 = new Segment(new Waypoint(1, 3, Geo.HORIZONTAL_ANGLE));
+        this.path = new Path(new ArrayList<>(List.of(s1, s2)));
+        (new PathCommand(path)).start();
+    }
 }
