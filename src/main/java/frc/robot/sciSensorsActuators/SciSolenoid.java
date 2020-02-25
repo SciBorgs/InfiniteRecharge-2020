@@ -46,6 +46,14 @@ public class SciSolenoid<ValueType extends Enum<ValueType>> extends DoubleSoleno
         automateStateUpdating();
     }
 
+    public static SciSolenoid<DoubleSolenoid.Value> defaultSolenoid(int pdpPort, int[] ports) {
+        return new SciSolenoid<DoubleSolenoid.Value>(pdpPort, ports, Value.kForward, Value.kReverse, Value.kOff);
+    }
+
+    public static SciSolenoid<DoubleSolenoid.Value> defauSolenoid(int[] ports) {
+        return defaultSolenoid(1, ports);
+    }
+
     public void setIgnore(boolean ignore){this.ignore = ignore;}
 
     private Value toDoubleSolenoidValue(ValueType e) {return valueMap.getForward(e);}
