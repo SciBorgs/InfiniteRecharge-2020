@@ -58,9 +58,6 @@ public class DriveSubsystem extends Subsystem implements LogUpdater {
 		this.r1 = new SciSpark(PortMap.RIGHT_MIDDLE_SPARK, GEAR_RATIO);
         this.r2 = new SciSpark(PortMap.RIGHT_BACK_SPARK,   GEAR_RATIO);
 
-        this.reversed = false;
-        this.setReveresed(false);
-
         this.l1.follow(this.l);
         this.l2.follow(this.l);
 
@@ -88,6 +85,9 @@ public class DriveSubsystem extends Subsystem implements LogUpdater {
 
         this.l.setIdleMode(IdleMode.kCoast);
         this.r.setIdleMode(IdleMode.kCoast);
+
+        this.reversed = false;
+        this.setReveresed(false);
 
         // this.l.diminishSnap();
         // this.r.diminishSnap();
@@ -139,6 +139,13 @@ public class DriveSubsystem extends Subsystem implements LogUpdater {
         this.r.setInverted (rightInversion);
         this.r1.setInverted(rightInversion);
         this.r2.setInverted(rightInversion);
+
+        this.l.setWheelAngle(Robot.get(SD.LeftWheelAngle));
+        this.r.setWheelAngle(Robot.get(SD.RightWheelAngle));
+    }
+
+    public void toggleDriveDirection() {
+        setReveresed(!this.reversed);
     }
         	
 	public void setTank(double leftSpeed, double rightSpeed) {

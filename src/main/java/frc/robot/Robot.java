@@ -16,9 +16,13 @@ import frc.robot.logging.Logger.DefaultValue;
 import frc.robot.robotState.*;
 import frc.robot.robotState.RobotState.SD;
 import frc.robot.sciSensorsActuators.SciSolenoid;
+import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Scheduler;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.controllers.*;
 import frc.robot.stateEstimation.interfaces.*;
 import frc.robot.stateEstimation.explicit.*;
@@ -107,6 +111,8 @@ public class Robot extends TimedRobot implements LogUpdater {
     private int attemptsSinceLastLog = 0;
     public static final int LOG_PERIOD = 5;
 
+    NetworkTableEntry getPos;
+
     public static enum ArmValue{Open, Closed, Off}
     public static SciSolenoid<ArmValue> temporarySolenoid = 
         new SciSolenoid<>(new int[]{4, 5}, ArmValue.Open, ArmValue.Closed, ArmValue.Off);
@@ -171,6 +177,8 @@ public class Robot extends TimedRobot implements LogUpdater {
         addSDToLog(SD.Y);
         addSDToLog(SD.Angle);
         addSDToLog(SD.Time);
+        
+        
     }
 
     public void logDataPeriodic() {
@@ -188,6 +196,10 @@ public class Robot extends TimedRobot implements LogUpdater {
         Scheduler.getInstance().run();
         DelayedPrinter.print("x: " + getPos().x +"y: "+ getPos().y + "\nheading: "  + getWaypoint().heading);
         DelayedPrinter.incTicks();
+        SmartDashboard.putNumber("GetPos.x", getPos().x);
+        SmartDashboard.putNumber("GetPos.y", getPos().y);
+        SmartDashboard.putNumber("Heading", get(SD.Angle));
+        SmartDashboard.putBoolean("reversed?", driveSubsystem.reversed);
     }
 
 
@@ -198,9 +210,11 @@ public class Robot extends TimedRobot implements LogUpdater {
         set(SD.Y, ORIGINAL_POINT.y);
         set(SD.Angle, ORIGINAL_ANGLE);
         //intakeSubsystem.reverseIntake();
-        autoRoutine.test1();
+        driveSubsystem.setReveresed(false);
+        autoRoutine.testDriveDirection();
         // new TemporaryInstantCommand().start();
         pneumaticsSubsystem.stopCompressor();
+
     }
 
     @Override

@@ -10,15 +10,15 @@ import frc.robot.logging.Logger.DefaultValue;
 public class CircleController {
 
     private static final double FINAL_HEADING_P = .2;
-    private static final double DESIRED_HEADING_P = .2;
+    private static final double DESIRED_HEADING_P = .4;
     private static final double ENDING_TURN_P = .1;
     private PID finalHeadingPID = new PID(FINAL_HEADING_P, 0, 0.02); // error for getting our correct heading at the end
-    private PID desiredHeadingPID = new PID(DESIRED_HEADING_P, 0, .02); // error for getting to the the correct point at the end
+    private PID desiredHeadingPID = new PID(DESIRED_HEADING_P, 0, 0); // error for getting to the the correct point at the end
     private PID endingTurnPID = new PID(ENDING_TURN_P, 0, 0); // fix heading at close distance
 
     private static final double STOPPING_DISTANCE_TOLERANCE = .1;
-    private static final double ENDING_DISTANCE_TOLERANCE = .4;
-    private static final double TURNING_WEIGHT = .5; // it will be raised to a power of this, ie x^TURNING_WEIGHT
+    private static final double ENDING_DISTANCE_TOLERANCE = .05;
+    private static final double TURNING_WEIGHT = 0; 
 
     private Waypoint destination;
 
@@ -86,14 +86,14 @@ public class CircleController {
         } else {
             // want stronger bias towards our heading at the end as we get closer to the point -> weight
             turnMagnitude = getWeight(currPos, finalPos) * this.finalHeadingPID.getOutput() + this.desiredHeadingPID.getOutput();
-            Robot.driveSubsystem.setSpeedTankForwardTurningMagnitude(.5, turnMagnitude);
+            Robot.driveSubsystem.setSpeedTankForwardTurningMagnitude(.3, turnMagnitude);
             // Robot.driveSubsystem.setSpeedTankTurningPercentage(turnMagnitude);
         }
         Robot.logger.addData("CircleController.java", "turnMagnitude", turnMagnitude, DefaultValue.Empty);
     }
 
     private static double getWeight(Point currPos, Point finalPos) {
-       return 1 + Math.pow(Geo.getDistance(currPos, finalPos), TURNING_WEIGHT);
+       return 1 + TURNING_WEIGHT * Math.pow(Geo.getDistance(currPos, finalPos), 0.5);
     }
 
     public boolean isFinished () {

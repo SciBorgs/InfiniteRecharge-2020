@@ -5,6 +5,7 @@ import edu.wpi.first.wpilibj.command.CommandGroup;
 import frc.robot.Utils;
 import frc.robot.commands.auto.CircleControllerCommand;
 import frc.robot.commands.auto.TemporaryInstantCommand;
+import frc.robot.commands.drive.ToggleDriveDirection;
 import frc.robot.helpers.Geo;
 
 public class AutoRoutine {
@@ -56,6 +57,16 @@ public class AutoRoutine {
         cGroup.addSequential(new CircleControllerCommand(w3));
         cGroup.addSequential(new CircleControllerCommand(w4));
         cGroup.addSequential(new CircleControllerCommand(w5));       
+        cGroup.start();
+    }
+
+    public void testDriveDirection() {
+        Waypoint w1 = new Waypoint(2.5, 1.0, Geo.HORIZONTAL_ANGLE);
+        Waypoint w2 = new Waypoint(0.0, 2.0, Math.PI);
+        CommandGroup cGroup = new CommandGroup();
+        cGroup.addSequential(new CircleControllerCommand(w1));
+        cGroup.addSequential(new ToggleDriveDirection());
+        // cGroup.addSequential(new CircleControllerCommand(w2));
         cGroup.start();
     }
 }
