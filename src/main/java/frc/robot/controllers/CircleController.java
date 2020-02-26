@@ -9,10 +9,10 @@ import frc.robot.logging.Logger.DefaultValue;
 
 public class CircleController {
 
-    private static final double FINAL_HEADING_P = .4;
+    private static final double FINAL_HEADING_P = .2;
     private static final double DESIRED_HEADING_P = .2;
     private static final double ENDING_TURN_P = .1;
-    private PID finalHeadingPID = new PID(FINAL_HEADING_P, 0, 0); // error for getting our correct heading at the end
+    private PID finalHeadingPID = new PID(FINAL_HEADING_P, 0, 0.02); // error for getting our correct heading at the end
     private PID desiredHeadingPID = new PID(DESIRED_HEADING_P, 0, .02); // error for getting to the the correct point at the end
     private PID endingTurnPID = new PID(ENDING_TURN_P, 0, 0); // fix heading at close distance
 
@@ -97,6 +97,6 @@ public class CircleController {
     }
 
     public boolean isFinished () {
-        return Geo.getDistance(Robot.getPos(), destination.point) < STOPPING_DISTANCE_TOLERANCE;
+        return Geo.getDistance(Robot.getPos(), destination.point) < ENDING_DISTANCE_TOLERANCE;
     }
 }

@@ -13,7 +13,6 @@ public class CircleControllerCommand extends Command {
 
     public CircleController circleController = new CircleController();
     private Waypoint waypoint;
-    private static final double TOLERANCE = .2;
 
     public CircleControllerCommand ()                  { waypoint = Robot.CURRENT_DESTINATION; }
     public CircleControllerCommand (Waypoint waypoint) { this.waypoint = waypoint; }
@@ -28,5 +27,18 @@ public class CircleControllerCommand extends Command {
     @Override
     protected boolean isFinished() {
         return circleController.isFinished();
+    }
+
+    @Override
+    protected void end() {
+        System.out.println("CCCommand finished:" + waypoint);
+        System.out.println("CCCommand finished:" + waypoint);
+        System.out.println("CCCommand finished:" + waypoint);
+        System.out.println("CCCommand finished:" + waypoint);
+        System.out.println("CCCommand finished:" + waypoint);
+        System.out.println("CCCommand finished:" + waypoint);
+        System.out.println("CCCommand finished:" + waypoint);
+        System.out.println("CCCommand finished:" + waypoint);
+        System.out.println("CCCommand finished:" + waypoint);
     }
 }

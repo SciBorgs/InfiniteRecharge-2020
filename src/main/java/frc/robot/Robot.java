@@ -7,10 +7,7 @@ import java.util.Optional;
 
 import frc.robot.subsystems.*;
 import frc.robot.autoProfiles.AutoRoutine;
-import frc.robot.autoProfiles.Path;
-import frc.robot.autoProfiles.Segment;
-import frc.robot.commands.auto.CircleControllerCommand;
-import frc.robot.commands.auto.PathCommand;
+
 import frc.robot.helpers.*;
 import frc.robot.dataTypes.*;
 import frc.robot.logging.*;
@@ -18,6 +15,7 @@ import frc.robot.shapes.*;
 import frc.robot.logging.Logger.DefaultValue;
 import frc.robot.robotState.*;
 import frc.robot.robotState.RobotState.SD;
+import frc.robot.sciSensorsActuators.SciSolenoid;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Scheduler;
@@ -109,6 +107,10 @@ public class Robot extends TimedRobot implements LogUpdater {
     private int attemptsSinceLastLog = 0;
     public static final int LOG_PERIOD = 5;
 
+    public static enum ArmValue{Open, Closed, Off}
+    public static SciSolenoid<ArmValue> temporarySolenoid = 
+        new SciSolenoid<>(new int[]{4, 5}, ArmValue.Open, ArmValue.Closed, ArmValue.Off);
+
 
     public Robot() {
         automateLogging();
@@ -129,8 +131,11 @@ public class Robot extends TimedRobot implements LogUpdater {
     }
     private void allUpdateRobotStates() {
         set(SD.Time, this.timer.get());
+        //System.out.println(Robot.get(SD.Time));
         for (RobotStateUpdater i : robotStateUpdaters) {
+            //double t1 = this.timer.get();
             i.updateRobotState();
+            //System.out.println("UPDATING " + i.getClass() + " T DIFF: " + (this.timer.get() - t1));
         }
     }
 
@@ -152,6 +157,8 @@ public class Robot extends TimedRobot implements LogUpdater {
 
     public void robotInit() {
         timer.start();
+        temporarySolenoid.defaultValue = ArmValue.Open;
+        temporarySolenoid.set(ArmValue.Open);
         attemptsSinceLastLog = 0;
         set(SD.X, ORIGINAL_POINT.x);
         set(SD.Y, ORIGINAL_POINT.y);
@@ -184,13 +191,16 @@ public class Robot extends TimedRobot implements LogUpdater {
     }
 
 
-    public void autonomousInit() {
+    public void autonomousInit() {       
+        temporarySolenoid.set(ArmValue.Open);
         Robot.driveSubsystem.assistedDriveMode();
         set(SD.X, ORIGINAL_POINT.x);
         set(SD.Y, ORIGINAL_POINT.y);
         set(SD.Angle, ORIGINAL_ANGLE);
-        intakeSubsystem.reverseIntake();
-        autoRoutine.test();
+        //intakeSubsystem.reverseIntake();
+        autoRoutine.test1();
+        // new TemporaryInstantCommand().start();
+        pneumaticsSubsystem.stopCompressor();
     }
 
     @Override
@@ -204,7 +214,7 @@ public class Robot extends TimedRobot implements LogUpdater {
         // intakeSubsystem.reverseIntake();
         Robot.driveSubsystem.l.ignoreSnap();
         Robot.driveSubsystem.r.ignoreSnap();
-        // pneumaticsSubsystem.startCompressor();
+        pneumaticsSubsystem.startCompressor();
     }
 
     public void teleopPeriodic() {

@@ -20,7 +20,7 @@ public class IntakeSubsystem extends Subsystem {
 
     public IntakeSubsystem() {
         this.upDownSolenoid = new DoubleSolenoid(PortMap.INTAKE_SOLENOID_FORWARD, PortMap.INTAKE_SOLENOID_REVERSE);
-        this.intakeMotor = new SciTalon(PortMap.INTAKE_TALON);
+        //this.intakeMotor = new SciTalon(PortMap.INTAKE_TALON);
         this.acceptingCell = true;
     }
     public void setIntakeSpeed(double speed) {
