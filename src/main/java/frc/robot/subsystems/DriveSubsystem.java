@@ -13,6 +13,8 @@ import frc.robot.sciSensorsActuators.SciSpark.SciSparkSD;
 import frc.robot.logging.LogUpdater;
 import frc.robot.logging.Logger.DefaultValue;
 
+import com.revrobotics.CANPIDController;
+import com.revrobotics.ControlType;
 import com.revrobotics.CANSparkMax.IdleMode;
 
 import edu.wpi.first.wpilibj.Joystick;
@@ -37,8 +39,7 @@ public class DriveSubsystem extends Subsystem implements LogUpdater {
     public static final boolean RIGHT_INVERTED = true;
     public static final boolean LEFT_INVERTED  = !RIGHT_INVERTED;
     private PID tankAnglePID;
-    private PID tankSpeedLeftPID;
-    private PID tankSpeedRightPID;
+    private CANPIDController tankSpeedLeftPID, tankSpeedRightPID;
     public boolean assisted = false;
     public boolean reversed = false;
     public double driveMultiplier = 1;
@@ -53,10 +54,13 @@ public class DriveSubsystem extends Subsystem implements LogUpdater {
 		this.l  = new SciSpark(PortMap.LEFT_FRONT_SPARK,   GEAR_RATIO);
 		this.l1 = new SciSpark(PortMap.LEFT_MIDDLE_SPARK,  GEAR_RATIO);
         this.l2 = new SciSpark(PortMap.LEFT_BACK_SPARK,    GEAR_RATIO);
-        
+
 		this.r  = new SciSpark(PortMap.RIGHT_FRONT_SPARK,  GEAR_RATIO);
 		this.r1 = new SciSpark(PortMap.RIGHT_MIDDLE_SPARK, GEAR_RATIO);
         this.r2 = new SciSpark(PortMap.RIGHT_BACK_SPARK,   GEAR_RATIO);
+
+        this.tankSpeedLeftPID = this.l.getPIDController();
+        this.tankSpeedRightPID = this.r.getPIDController();
 
         this.l1.follow(this.l);
         this.l2.follow(this.l);
@@ -93,9 +97,7 @@ public class DriveSubsystem extends Subsystem implements LogUpdater {
         // this.r.diminishSnap();
 
         this.tankAnglePID      = new PID(TANK_ANGLE_P,       TANK_ANGLE_I,       TANK_ANGLE_D);
-        this.tankSpeedRightPID = new PID(TANK_SPEED_LEFT_P,  TANK_SPEED_LEFT_I,  TANK_SPEED_LEFT_D);
-        this.tankSpeedLeftPID  = new PID(TANK_SPEED_RIGHT_P, TANK_SPEED_RIGHT_I, TANK_SPEED_RIGHT_D);
-
+        
         Robot.logger.logFinalPIDConstants("tank angle PID", this.tankAnglePID);
         Robot.logger.logFinalField       ("input deadzone", INPUT_DEADZONE);
 
@@ -160,9 +162,13 @@ public class DriveSubsystem extends Subsystem implements LogUpdater {
     }
 
     public void setSpeedTank(double leftGoalSpeed, double rightGoalSpeed){
-        this.tankSpeedLeftPID .addMeasurement(leftGoalSpeed  - Robot.get(SD.LeftWheelSpeed));
-        this.tankSpeedRightPID.addMeasurement(rightGoalSpeed - Robot.get(SD.RightWheelSpeed));
-        setTank(tankSpeedLeftPID.getOutput(), tankSpeedRightPID.getOutput());
+        if (reversed) {
+            double temp = leftGoalSpeed;
+            leftGoalSpeed = rightGoalSpeed;
+            rightGoalSpeed = temp; 
+        }
+        this.tankSpeedLeftPID.setReference(leftGoalSpeed, ControlType.kVelocity);
+        this.tankSpeedRightPID.setReference(rightGoalSpeed, ControlType.kVelocity);
     }
 	
 	public void setSpeedTankAngularControl(double leftSpeed, double rightSpeed) {
