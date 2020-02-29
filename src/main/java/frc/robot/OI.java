@@ -19,12 +19,6 @@ public class OI {
         leftStick = new SciJoystick(PortMap.JOYSTICK_LEFT);
         rightStick = new SciJoystick(PortMap.JOYSTICK_RIGHT);
         xboxController = new XboxController(PortMap.XBOX_CONTROLLER);
-
-        circleControllerButton = new JoystickButton(leftStick, PortMap.JOYSTICK_TRIGGER);
-        circleControllerButton.whileActive(new CircleControllerCommand());
-
-        pointChangerButton = new JoystickButton(leftStick, PortMap.JOYSTICK_LEFT_BUTTON);
-        pointChangerButton.whenPressed(new PointChangerCommand());
     }
 }
 

@@ -11,34 +11,50 @@ import frc.robot.logging.Logger.CommandStatus;
 
 public class CircleControllerCommand extends Command {
 
-    public CircleController circleController = new CircleController();
+    public CircleController circleController;
     private Waypoint waypoint;
+    private int counter = 0;
+    private int counterReq = 5;
+    private double prevDist;
 
-    public CircleControllerCommand ()                  { waypoint = Robot.CURRENT_DESTINATION; }
-    public CircleControllerCommand (Waypoint waypoint) { this.waypoint = waypoint; }
+    public CircleControllerCommand (Waypoint waypoint) { circleController = new CircleController(); }
+    
+    public CircleControllerCommand (Waypoint waypoint, double speed) {
+        this.waypoint = waypoint;
+        circleController = new CircleController(speed);
+        this.prevDist = Geo.getDistance(waypoint.point, Robot.getPos());
+    }
 
     @Override
     protected void execute() {
         circleController.update(waypoint);
         DelayedPrinter.print("currDest: " + waypoint);
         Robot.logger.logCommandStatus(CommandStatus.Executing);
+        double dist = Geo.getDistance(waypoint.point, Robot.getPos());
+        if (dist > this.prevDist) {
+            counter++;
+        } else {
+            counter = 0;
+        }
+        this.prevDist = dist;
     }
 
     @Override
     protected boolean isFinished() {
-        return circleController.isFinished();
+        return circleController.isFinished() || this.counter > this.counterReq;
     }
 
     @Override
     protected void end() {
-        System.out.println("CCCommand finished:" + waypoint);
-        System.out.println("CCCommand finished:" + waypoint);
-        System.out.println("CCCommand finished:" + waypoint);
-        System.out.println("CCCommand finished:" + waypoint);
-        System.out.println("CCCommand finished:" + waypoint);
-        System.out.println("CCCommand finished:" + waypoint);
-        System.out.println("CCCommand finished:" + waypoint);
-        System.out.println("CCCommand finished:" + waypoint);
-        System.out.println("CCCommand finished:" + waypoint);
+        System.out.println("CCCommand finished: " + waypoint);
+        System.out.println("CCCommand finished: " + waypoint);
+        System.out.println("CCCommand finished: " + waypoint);
+        System.out.println("CCCommand finished: " + waypoint);
+        System.out.println("CCCommand finished: " + waypoint);
+        System.out.println("CCCommand finished: " + waypoint);
+        System.out.println("CCCommand finished: " + waypoint);
+        System.out.println("CCCommand finished: " + waypoint);
+        System.out.println("CCCommand finished: " + waypoint);
+        Robot.driveSubsystem.setTank(0, 0);
     }
 }

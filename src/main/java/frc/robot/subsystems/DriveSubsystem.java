@@ -6,26 +6,24 @@ import frc.robot.Utils;
 import frc.robot.robotState.RobotState.SD;
 import frc.robot.controllers.PID;
 import frc.robot.helpers.DelayedPrinter;
-import frc.robot.helpers.Geo;
 import frc.robot.robotState.StateInfo;
 import frc.robot.sciSensorsActuators.*;
 import frc.robot.sciSensorsActuators.SciSpark.SciSparkSD;
 import frc.robot.logging.LogUpdater;
 import frc.robot.logging.Logger.DefaultValue;
 
-import com.revrobotics.CANPIDController;
-import com.revrobotics.ControlType;
 import com.revrobotics.CANSparkMax.IdleMode;
 
-import edu.wpi.first.wpilibj.Joystick;
 import edu.wpi.first.wpilibj.command.Subsystem;
 
 public class DriveSubsystem extends Subsystem implements LogUpdater {
     // Define tested error values here
-    double TANK_ANGLE_P = .075, TANK_ANGLE_D = 0.0, TANK_ANGLE_I = 0;
-    double TANK_SPEED_LEFT_P  = .1, TANK_SPEED_LEFT_D  = 0.0, TANK_SPEED_LEFT_I  = 0;
-    double TANK_SPEED_RIGHT_P = TANK_SPEED_LEFT_P, TANK_SPEED_RIGHT_D = TANK_SPEED_LEFT_D, TANK_SPEED_RIGHT_I = TANK_SPEED_LEFT_I;
-    double GOAL_OMEGA_CONSTANT = 8; // Change this to change angle
+    private static final double TANK_ANGLE_P = .075, TANK_ANGLE_D = 0.0, TANK_ANGLE_I = 0;
+    private static final double TANK_SPEED_LEFT_P  = .05, TANK_SPEED_LEFT_D  = 0.0, TANK_SPEED_LEFT_I  = 0.0;
+    private static final double TANK_SPEED_RIGHT_P = .04, TANK_SPEED_RIGHT_D = 0.0, TANK_SPEED_RIGHT_I = 0.0;
+    private static final double GOAL_OMEGA_CONSTANT = 8; // Change this to change angle
+    private static double kVLeft = .0375;
+    private static double kVRight = .036;  
     private double MAX_OMEGA_GOAL = 1 * GOAL_OMEGA_CONSTANT;
     public SciSpark l, l1, l2, r, r1, r2;
     public static final double WHEEL_RADIUS = Utils.inchesToMeters(3);
@@ -39,7 +37,8 @@ public class DriveSubsystem extends Subsystem implements LogUpdater {
     public static final boolean RIGHT_INVERTED = true;
     public static final boolean LEFT_INVERTED  = !RIGHT_INVERTED;
     private PID tankAnglePID;
-    private CANPIDController tankSpeedLeftPID, tankSpeedRightPID;
+    private PID tankSpeedLeftPID;
+    private PID tankSpeedRightPID;
     public boolean assisted = false;
     public boolean reversed = false;
     public double driveMultiplier = 1;
@@ -54,13 +53,10 @@ public class DriveSubsystem extends Subsystem implements LogUpdater {
 		this.l  = new SciSpark(PortMap.LEFT_FRONT_SPARK,   GEAR_RATIO);
 		this.l1 = new SciSpark(PortMap.LEFT_MIDDLE_SPARK,  GEAR_RATIO);
         this.l2 = new SciSpark(PortMap.LEFT_BACK_SPARK,    GEAR_RATIO);
-
+        
 		this.r  = new SciSpark(PortMap.RIGHT_FRONT_SPARK,  GEAR_RATIO);
 		this.r1 = new SciSpark(PortMap.RIGHT_MIDDLE_SPARK, GEAR_RATIO);
         this.r2 = new SciSpark(PortMap.RIGHT_BACK_SPARK,   GEAR_RATIO);
-
-        this.tankSpeedLeftPID = this.l.getPIDController();
-        this.tankSpeedRightPID = this.r.getPIDController();
 
         this.l1.follow(this.l);
         this.l2.follow(this.l);
@@ -91,13 +87,15 @@ public class DriveSubsystem extends Subsystem implements LogUpdater {
         this.r.setIdleMode(IdleMode.kCoast);
 
         this.reversed = false;
-        this.setReveresed(false);
+        this.setReversed(false);
 
         // this.l.diminishSnap();
         // this.r.diminishSnap();
 
         this.tankAnglePID      = new PID(TANK_ANGLE_P,       TANK_ANGLE_I,       TANK_ANGLE_D);
-        
+        this.tankSpeedLeftPID  = new PID(TANK_SPEED_LEFT_P,  TANK_SPEED_LEFT_I,  TANK_SPEED_LEFT_D);
+        this.tankSpeedRightPID = new PID(TANK_SPEED_RIGHT_P, TANK_SPEED_RIGHT_I, TANK_SPEED_RIGHT_D);
+
         Robot.logger.logFinalPIDConstants("tank angle PID", this.tankAnglePID);
         Robot.logger.logFinalField       ("input deadzone", INPUT_DEADZONE);
 
@@ -125,10 +123,18 @@ public class DriveSubsystem extends Subsystem implements LogUpdater {
         this.driveMultiplier = driveMultiplier;
     }
 
-    public void setReveresed(boolean reversed) {
+    public void setReversed(boolean reversed) {
         if(this.reversed != reversed){
             this.reversed = reversed;
             Robot.set(SD.Angle, Robot.get(SD.Angle) + Math.PI);
+
+            double kVTemp = kVLeft;
+            kVLeft = kVRight;
+            kVRight = kVTemp;
+
+            PID tempPID = tankSpeedLeftPID;
+            tankSpeedLeftPID = tankSpeedRightPID;
+            tankSpeedRightPID = tempPID;
         }
     
         boolean leftInversion  = LEFT_INVERTED  ^ this.reversed;
@@ -144,14 +150,16 @@ public class DriveSubsystem extends Subsystem implements LogUpdater {
 
         this.l.setWheelAngle(Robot.get(SD.LeftWheelAngle));
         this.r.setWheelAngle(Robot.get(SD.RightWheelAngle));
+
+        
     }
 
     public void toggleDriveDirection() {
-        setReveresed(!this.reversed);
+        setReversed(!this.reversed);
     }
         	
 	public void setTank(double leftSpeed, double rightSpeed) {
-        if (reversed) {
+        if (this.reversed) {
             double temp = leftSpeed;
             leftSpeed = rightSpeed;
             rightSpeed = temp; 
@@ -162,13 +170,10 @@ public class DriveSubsystem extends Subsystem implements LogUpdater {
     }
 
     public void setSpeedTank(double leftGoalSpeed, double rightGoalSpeed){
-        if (reversed) {
-            double temp = leftGoalSpeed;
-            leftGoalSpeed = rightGoalSpeed;
-            rightGoalSpeed = temp; 
-        }
-        this.tankSpeedLeftPID.setReference(leftGoalSpeed, ControlType.kVelocity);
-        this.tankSpeedRightPID.setReference(rightGoalSpeed, ControlType.kVelocity);
+        int precision = 5;
+        this.tankSpeedLeftPID .addMeasurement(leftGoalSpeed  - StateInfo.avgValue(SD.LeftWheelSpeed,  precision));
+        this.tankSpeedRightPID.addMeasurement(rightGoalSpeed - StateInfo.avgValue(SD.RightWheelSpeed, precision));
+        setTank(kVLeft * Robot.get(SD.LeftWheelSpeed) + tankSpeedLeftPID.getOutput(), kVRight * Robot.get(SD.RightWheelSpeed) + tankSpeedRightPID.getOutput());
     }
 	
 	public void setSpeedTankAngularControl(double leftSpeed, double rightSpeed) {
@@ -194,15 +199,15 @@ public class DriveSubsystem extends Subsystem implements LogUpdater {
 		setSpeedTankForwardTurningMagnitude(averageOutput, inputDiff);
 	}
 	
-	public void setSpeedTankForwardTurningPercentage(double forward, double turnMagnitude) {
+	public void setSpeedTankForwardTurningPercentage(double forwardOmega, double turnMagnitude) {
         // Note: this controls dtheta/dx rather than dtheta/dt
-		setSpeedTank((forward / TANK_SPEED_LEFT_P) * (1 -  turnMagnitude), (forward / TANK_SPEED_RIGHT_P) * (1 + turnMagnitude));
+		setSpeedTank(forwardOmega * (1 -  turnMagnitude), forwardOmega * (1 + turnMagnitude));
     }
     
     public void setSpeedTankTurningPercentage(double turnMagnitude){
         double forward = (Robot.oi.leftStick.getProcessedY() + Robot.oi.rightStick.getProcessedY()) / 2;
-        // double forward = (Robot.oi.leftStick.getY() + Robot.oi.rightStick.getY()) / 2;
-        setSpeedTankForwardTurningPercentage(forward, turnMagnitude);
+        double multiplier = 30;
+        setSpeedTankForwardTurningPercentage(forward * multiplier, turnMagnitude);
 	}
 
     public void setSpeedTankForwardTurningMagnitude(double forward, double turnMagnitude) {

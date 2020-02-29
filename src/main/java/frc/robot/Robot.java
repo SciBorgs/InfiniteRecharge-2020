@@ -51,7 +51,6 @@ public class Robot extends TimedRobot implements LogUpdater {
     public static IntakeSubsystem     intakeSubsystem     = new IntakeSubsystem();
     
     public static Following following = new Following();
-    public static CircleController circleController = new CircleController();
     public static OI oi = new OI();
 
     // public static Model positionModel = new MaybeDefaultUpdater(new LimelightLocalization(), new EncoderLocalization());
@@ -101,8 +100,6 @@ public class Robot extends TimedRobot implements LogUpdater {
     public static final double ORIGINAL_ANGLE = Geo.HORIZONTAL_ANGLE;
     public static Waypoint[] arr = new Waypoint[] {TEST_POINT_0, TEST_POINT_1, TEST_POINT_2, TEST_POINT_3, TEST_POINT_4};
     public static ArrayList <Waypoint> path = new ArrayList<Waypoint>(Arrays.asList(arr));
-
-    public Sequential sequential = new Sequential(path);
 
     public static Waypoint CURRENT_DESTINATION = TEST_POINT_0;
 
@@ -182,7 +179,7 @@ public class Robot extends TimedRobot implements LogUpdater {
     }
 
     public void logDataPeriodic() {
-        if(attemptsSinceLastLog == 2) {
+        if(attemptsSinceLastLog == -1) {
             logger.logData();
             attemptsSinceLastLog = 0;
         }
@@ -194,27 +191,28 @@ public class Robot extends TimedRobot implements LogUpdater {
         allUpdateRobotStates();
         allModels();
         Scheduler.getInstance().run();
-        DelayedPrinter.print("x: " + getPos().x +"y: "+ getPos().y + "\nheading: "  + getWaypoint().heading);
+        DelayedPrinter.print("x: " + getPos().x +"y: "+ getPos().y + "\nheading: "  + getWaypoint().heading, 5);
         DelayedPrinter.incTicks();
         SmartDashboard.putNumber("GetPos.x", getPos().x);
         SmartDashboard.putNumber("GetPos.y", getPos().y);
         SmartDashboard.putNumber("Heading", get(SD.Angle));
         SmartDashboard.putBoolean("reversed?", driveSubsystem.reversed);
+        SmartDashboard.putNumber("left wheel speed", get(SD.LeftWheelSpeed));
     }
 
 
-    public void autonomousInit() {       
+    public void autonomousInit() { 
+        driveSubsystem.setReversed(false);       
         temporarySolenoid.set(ArmValue.Open);
         Robot.driveSubsystem.assistedDriveMode();
         set(SD.X, ORIGINAL_POINT.x);
         set(SD.Y, ORIGINAL_POINT.y);
         set(SD.Angle, ORIGINAL_ANGLE);
         //intakeSubsystem.reverseIntake();
-        driveSubsystem.setReveresed(false);
-        autoRoutine.testDriveDirection();
+        driveSubsystem.setReversed(false);
         // new TemporaryInstantCommand().start();
-        pneumaticsSubsystem.stopCompressor();
-
+        //pneumaticsSubsystem.stopCompressor();
+        autoRoutine.testDriveDirection();
     }
 
     @Override
@@ -235,6 +233,7 @@ public class Robot extends TimedRobot implements LogUpdater {
         // (new TankDriveCommand()).start();
         allPeriodicLogs();
         logDataPeriodic();
+        Robot.driveSubsystem.setTank(0.2,0.2);
     }
     
 
