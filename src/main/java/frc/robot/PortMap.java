@@ -2,7 +2,13 @@ package frc.robot;
 
 public class PortMap {
 
-    public static final int IGNORE_ID = -1;
+    private static int ignoreID = -1;
+    public static int getIgnoredID() {
+      return ignoreID--;
+    }
+    public static boolean ignoreID(int id){
+      return id < 0;
+    }
 
   	//*****************JOYSTICKS*****************//
 
@@ -44,31 +50,32 @@ public class PortMap {
     public static final int XBOX_RIGHT_JOY_X = 4;
     public static final int XBOX_RIGHT_JOY_Y = 5;
     
-    //*******************SPARKS******************//
+    //*******************DRIVE TRAIN******************//
 
     public static final int HOPPER_UP_SPARK = 8;
     public static final int HOPPER_IN_SPARK = 7;
 
     public static final int LEFT_FRONT_SPARK = 6; 
     public static final int LEFT_MIDDLE_SPARK = 5; 
-    public static final int LEFT_BACK_SPARK = 4;
+    public static final int LEFT_BACK_SPARK = 54;
 
-    public static final int RIGHT_FRONT_SPARK = 3;
-    public static final int RIGHT_MIDDLE_SPARK = 2;
-    public static final int RIGHT_BACK_SPARK = 1;
+    public static final int RIGHT_FRONT_SPARK = 57;
+    public static final int RIGHT_MIDDLE_SPARK = 3;
+    public static final int RIGHT_BACK_SPARK = 56;
 
-    //*******************TALONS******************//
+    // *******************INTAKE******************//
 
-    public static final int PIGEON_TALON = 9;
-    public static final int INTAKE_TALON = 12; // Temporary
-    
-    //******************SOLENOIDS****************//
+    public static final int INTAKE_SPARK = 1;
+    public static final int[] INTAKE_SOLENOID_PORTS = {1, 2};
 
-    public static final int INTAKE_SOLENOID_FORWARD = 1; // Temporary
-    public static final int INTAKE_SOLENOID_REVERSE = 2; // Temporary
+    // *******************HOPPER******************//
+
+    public static final int HOPPER_SUCK_SPARK = 58;
+    public static final int HOPPER_ELEVATOR_SPARK = 55;
 
     //*******************MISC********************//
 
     public static final int PRESSURE_SENSOR = 0;
     public static final int TARGETING_LIGHT_DIGITAL_OUTPUT = 5;
+    public static final int PIGEON_ID = -1;
 }

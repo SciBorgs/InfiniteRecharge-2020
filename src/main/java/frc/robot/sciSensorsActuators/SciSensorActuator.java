@@ -14,7 +14,7 @@ public interface SciSensorActuator<SciSD> {
     public String getDeviceName();
 
     public default boolean sciIgnore(int deviceID){
-        return deviceID == PortMap.IGNORE_ID;
+        return PortMap.ignoreID(deviceID);
     }
 
     public default void sciSet(SciSD sciSD, double v){

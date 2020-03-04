@@ -31,6 +31,7 @@ public class SciSpark extends CANSparkMax implements RobotStateUpdater, SciSenso
     private int commandNumber;
     private boolean printValues;
     private boolean diminishSnap = false;
+    private boolean isSetting;
     public static final double TOLERABLE_DIFFERENCE = 0.01;
     public static final int DEFAULT_STALL_CURRENT_LIMIT = 40;
     public static final int DEFAULT_FREE_CURRENT_LIMT = 40;
@@ -99,11 +100,13 @@ public class SciSpark extends CANSparkMax implements RobotStateUpdater, SciSenso
     public boolean isCurrentCommandNumber(int n){return n == this.commandNumber;} 
     public boolean atGoal() {return this.goalSpeed == super.get();}
     public void instantSet() {
-        if(ignore()){return;}
+        if(ignore() && !this.isSetting){return;}
+        this.isSetting = true;
         double limitedInput = Utils.limitChange(super.get(), this.goalSpeed, this.currentMaxJerk);
         double input = this.diminishSnap ? diminishSnap(limitedInput) : limitedInput;
         super.set(input);
         checkWarningStatus(input, super.get());
+        this.isSetting = false;
     }
 
     public void checkWarningStatus(double input, double realOutput){

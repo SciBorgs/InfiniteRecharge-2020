@@ -5,7 +5,7 @@ import com.ctre.phoenix.motorcontrol.ControlMode;
 
 import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
-
+import edu.wpi.first.wpilibj.command.Command;
 import edu.wpi.first.wpilibj.DigitalOutput;
 import frc.robot.robotState.RobotState.SD;
 import frc.robot.robotState.*;
@@ -214,6 +214,10 @@ public class Utils{
             if (el.isPresent()){arrayList.add(el.get());}
         }
         return arrayList;
+    }
+
+    public static boolean hasCommandStarted(Command command) {
+        return !command.isRunning() && !command.isCompleted();
     }
 
 }
