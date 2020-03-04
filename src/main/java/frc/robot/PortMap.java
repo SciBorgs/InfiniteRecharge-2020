@@ -54,7 +54,7 @@ public class PortMap {
 
     public static final int LEFT_FRONT_SPARK = 6; 
     public static final int LEFT_MIDDLE_SPARK = 5; 
-    public static final int LEFT_BACK_SPARK = 4;
+    public static final int LEFT_BACK_SPARK = 54;
 
     public static final int RIGHT_FRONT_SPARK = 57;
     public static final int RIGHT_MIDDLE_SPARK = 3;
