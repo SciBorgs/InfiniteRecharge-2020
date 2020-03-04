@@ -6,15 +6,11 @@ import frc.robot.sciSensorsActuators.SciTalon;
 public class SciTalonSpeedCommand extends Command {
 
     private SciTalon talon;
-    private double goalSpeed;
-    private double maxJerk;
     private int commandNunber;
 
     public SciTalonSpeedCommand(SciTalon talon, int commandNumber){
         this.talon = talon;
         this.commandNunber = commandNumber;
-        this.goalSpeed = this.talon.goalSpeed;
-        this.maxJerk = this.talon.currentMaxJerk;
     }
 
     @Override

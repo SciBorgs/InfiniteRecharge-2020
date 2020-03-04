@@ -20,7 +20,8 @@ public class SciSparkSpeedCommand extends Command {
     @Override
     protected void execute(){this.spark.instantSet();}
     @Override
-    //protected boolean isFinished(){return true;}
-    protected boolean isFinished(){return this.spark.atGoal() || !this.spark.isCurrentCommandNumber(this.commandNunber);}
+    protected boolean isFinished(){
+        return this.spark.atGoal() || !this.spark.isCurrentCommandNumber(this.commandNunber);
+    }
 
 }
