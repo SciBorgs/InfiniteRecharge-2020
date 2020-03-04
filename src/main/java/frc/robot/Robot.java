@@ -212,7 +212,6 @@ public class Robot extends TimedRobot implements LogUpdater {
 
     @Override
     public void autonomousPeriodic() {
-        driveSubsystem.setTank(0,0.3);
         //allPeriodicLogs();
         //logDataPeriodic();
     }
@@ -233,12 +232,9 @@ public class Robot extends TimedRobot implements LogUpdater {
         allPeriodicLogs();
         logDataPeriodic();
 */
-        driveSubsystem.setTank(0,-0.3);
-
         // (new TankDriveCommand()).start();
         //allPeriodicLogs();
         //logDataPeriodic();
-        //Robot.driveSubsystem.setTank(0.2,0.2 ;
     }
     
 
