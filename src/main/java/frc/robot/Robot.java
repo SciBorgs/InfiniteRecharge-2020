@@ -110,11 +110,6 @@ public class Robot extends TimedRobot implements LogUpdater {
 
     NetworkTableEntry getPos;
 
-    public static enum ArmValue{Open, Closed, Off}
-    public static SciSolenoid<ArmValue> temporarySolenoid = 
-        new SciSolenoid<>(new int[]{4, 5}, ArmValue.Open, ArmValue.Closed, ArmValue.Off);
-
-
     public Robot() {
         automateLogging();
     }
@@ -162,8 +157,6 @@ public class Robot extends TimedRobot implements LogUpdater {
 
     public void robotInit() {
         timer.start();
-        temporarySolenoid.defaultValue = ArmValue.Open;
-        temporarySolenoid.set(ArmValue.Open);
         attemptsSinceLastLog = 0;
         set(SD.X, ORIGINAL_POINT.x);
         set(SD.Y, ORIGINAL_POINT.y);
@@ -205,22 +198,23 @@ public class Robot extends TimedRobot implements LogUpdater {
 
     public void autonomousInit() { 
         driveSubsystem.setReversed(false);       
-        temporarySolenoid.set(ArmValue.Open);
-        Robot.driveSubsystem.assistedDriveMode();
+        //Robot.driveSubsystem.assistedDriveMode();
         set(SD.X, ORIGINAL_POINT.x);
         set(SD.Y, ORIGINAL_POINT.y);
         set(SD.Angle, ORIGINAL_ANGLE);
         //intakeSubsystem.reverseIntake();
-        driveSubsystem.setReversed(false);
+        //driveSubsystem.setReversed(false);
         // new TemporaryInstantCommand().start();
         //pneumaticsSubsystem.stopCompressor();
-        autoRoutine.testDriveDirection();
+        //autoRoutine.testDriveDirection();
     }
 
     @Override
     public void autonomousPeriodic() {
-        allPeriodicLogs();
-        logDataPeriodic();
+        intakeSubsystem.intakeSpark.set(0.5);
+        System.out.println("current: " + intakeSubsystem.intakeSpark.get());
+        //allPeriodicLogs();
+        //logDataPeriodic();
     }
     
     @Override
@@ -232,14 +226,20 @@ public class Robot extends TimedRobot implements LogUpdater {
     }
 
     public void teleopPeriodic() {
+        intakeSubsystem.setIntakeSpeed(1);
+        System.out.println("current: " + intakeSubsystem.intakeSpark.get());
+       
         // (new TankDriveCommand()).start();
-        allPeriodicLogs();
-        logDataPeriodic();
-        Robot.driveSubsystem.setTank(0.2,0.2);
+        //allPeriodicLogs();
+        //logDataPeriodic();
+        //Robot.driveSubsystem.setTank(0.2,0.2 ;
     }
     
 
+    @Override
     public void testPeriodic() {
+        intakeSubsystem.setIntakeSpeed(0.5);
+        System.out.println("current: " + intakeSubsystem.intakeSpark.get());
         // (new CircleControllerCommand(new Waypoint(new Point(ORIGINAL_POINT.x + 1, ORIGINAL_POINT.y), Geo.HORIZONTAL_ANGLE))).start();
         // DelayedPrinter.print("testing...");
     }
