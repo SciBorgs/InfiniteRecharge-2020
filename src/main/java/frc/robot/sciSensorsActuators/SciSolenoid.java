@@ -27,6 +27,7 @@ public class SciSolenoid<ValueType extends Enum<ValueType>> extends DoubleSoleno
     private HashMap<SciSolenoidSD, SD> sdMap;
     public ValueType defaultValue;
     public Optional<SD> valueSD;
+    private boolean ignore;
 
     public SciSolenoid(int[] ports, ValueType forwardValue, ValueType reverseValue, ValueType offValue) {
         this(1, ports, forwardValue, reverseValue, offValue);
@@ -53,6 +54,8 @@ public class SciSolenoid<ValueType extends Enum<ValueType>> extends DoubleSoleno
         automateStateUpdating();
     }
 
+    public void setIgnore(boolean ignore){this.ignore = ignore;}
+
     private Value toDoubleSolenoidValue(ValueType e) {return valueMap.getForward(e);}
     private ValueType toValueType(Value v)           {return valueMap.getBackward(v);}
 
@@ -77,8 +80,7 @@ public class SciSolenoid<ValueType extends Enum<ValueType>> extends DoubleSoleno
      * 
      * @deprecated
      */
-    @Override
-    @Deprecated
+    @Override @Deprecated
     public Value get() {
         throw new RuntimeException("get() is deprecated for SciSolenoids. Use getValue() instead");
     }
@@ -100,4 +102,7 @@ public class SciSolenoid<ValueType extends Enum<ValueType>> extends DoubleSoleno
     public HashMap<SciSolenoidSD, SD> getSDMap() {return sdMap;}
     @Override
     public String getDeviceName() {return "Solenoid " + super.m_moduleNumber;}
+
+    @Override
+    public boolean ignore(){return this.ignore;}
 }

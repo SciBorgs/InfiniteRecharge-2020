@@ -137,7 +137,9 @@ public class Robot extends TimedRobot implements LogUpdater {
         //System.out.println(Robot.get(SD.Time));
         for (RobotStateUpdater i : robotStateUpdaters) {
             //double t1 = this.timer.get();
-            i.updateRobotState();
+            if(!i.ignore()){
+                i.updateRobotState();
+            }
             //System.out.println("UPDATING " + i.getClass() + " T DIFF: " + (this.timer.get() - t1));
         }
     }

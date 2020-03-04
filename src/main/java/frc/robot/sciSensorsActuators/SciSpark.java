@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Optional;
 
+import frc.robot.PortMap;
 import frc.robot.Robot;
 import frc.robot.Utils;
 import frc.robot.commands.generalCommands.SparkDelayWarningCommand;
@@ -30,6 +31,7 @@ public class SciSpark extends CANSparkMax implements RobotStateUpdater, SciSenso
     private int commandNumber;
     private boolean printValues;
     private boolean diminishSnap = false;
+    private boolean isSetting;
     public static final double TOLERABLE_DIFFERENCE = 0.01;
     public static final int DEFAULT_STALL_CURRENT_LIMIT = 40;
     public static final int DEFAULT_FREE_CURRENT_LIMT = 40;
@@ -38,6 +40,9 @@ public class SciSpark extends CANSparkMax implements RobotStateUpdater, SciSenso
     public static final double CHOP_CYCLE_DURATION = 0.05;
     public static final int DEFAULT_CHOP_CYCLES = (int) (DEFAULT_SPIKE_MAX_TIME / CHOP_CYCLE_DURATION);
     public double decrementSnapSpeed = .3;
+
+    @Override
+    public boolean ignore(){return sciIgnore(super.getDeviceId());}
 
     public SciSpark(int port) {
         this(port, 1);
@@ -95,10 +100,13 @@ public class SciSpark extends CANSparkMax implements RobotStateUpdater, SciSenso
     public boolean isCurrentCommandNumber(int n){return n == this.commandNumber;} 
     public boolean atGoal() {return this.goalSpeed == super.get();}
     public void instantSet() {
+        if(ignore() && !this.isSetting){return;}
+        this.isSetting = true;
         double limitedInput = Utils.limitChange(super.get(), this.goalSpeed, this.currentMaxJerk);
         double input = this.diminishSnap ? diminishSnap(limitedInput) : limitedInput;
         super.set(input);
         checkWarningStatus(input, super.get());
+        this.isSetting = false;
     }
 
     public void checkWarningStatus(double input, double realOutput){
@@ -123,6 +131,7 @@ public class SciSpark extends CANSparkMax implements RobotStateUpdater, SciSenso
     }
 
     public void set(double speed, double maxJerk) {
+        if(ignore()){return;}
         this.goalSpeed = speed;
         this.currentMaxJerk = maxJerk;
         this.commandNumber++;
