@@ -13,12 +13,15 @@ public class OI {
     public SciJoystick leftStick, rightStick;
     public XboxController xboxController;
 
-    public JoystickButton circleControllerButton, pointChangerButton;
+    public JoystickButton circleControllerButton, pointChangerButton, toggleDriveDirectionButton;
     
     public OI() {
         leftStick = new SciJoystick(PortMap.JOYSTICK_LEFT);
         rightStick = new SciJoystick(PortMap.JOYSTICK_RIGHT);
         xboxController = new XboxController(PortMap.XBOX_CONTROLLER);
+
+        toggleDriveDirectionButton = new JoystickButton(rightStick, PortMap.JOYSTICK_TRIGGER);
+        toggleDriveDirectionButton.whenPressed(new ToggleDriveDirection());
     }
 }
 

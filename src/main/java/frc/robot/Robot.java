@@ -7,7 +7,7 @@ import java.util.Optional;
 
 import frc.robot.subsystems.*;
 import frc.robot.autoProfiles.AutoRoutine;
-
+import frc.robot.commands.drive.TankDriveCommand;
 import frc.robot.helpers.*;
 import frc.robot.dataTypes.*;
 import frc.robot.logging.*;
@@ -212,7 +212,9 @@ public class Robot extends TimedRobot implements LogUpdater {
         driveSubsystem.setReversed(false);
         // new TemporaryInstantCommand().start();
         //pneumaticsSubsystem.stopCompressor();
-        autoRoutine.testDriveDirection();
+        //autoRoutine.testDriveDirection();
+        Robot.driveSubsystem.l.ignoreSnap();
+        Robot.driveSubsystem.r.ignoreSnap();
     }
 
     @Override
@@ -224,18 +226,19 @@ public class Robot extends TimedRobot implements LogUpdater {
     @Override
     public void teleopInit() {
         // intakeSubsystem.reverseIntake();
-        Robot.driveSubsystem.l.ignoreSnap();
-        Robot.driveSubsystem.r.ignoreSnap();
-        pneumaticsSubsystem.startCompressor();
+        // pneumaticsSubsystem.startCompressor();
     }
 
     public void teleopPeriodic() {
-        // (new TankDriveCommand()).start();
+        (new TankDriveCommand()).start();
         allPeriodicLogs();
         logDataPeriodic();
-        Robot.driveSubsystem.setTank(0.2,0.2);
     }
     
+    public void testInit() {
+        driveSubsystem.l.diminishSnap();
+        driveSubsystem.r.diminishSnap();
+    }
 
     public void testPeriodic() {
         // (new CircleControllerCommand(new Waypoint(new Point(ORIGINAL_POINT.x + 1, ORIGINAL_POINT.y), Geo.HORIZONTAL_ANGLE))).start();
