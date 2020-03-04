@@ -8,7 +8,7 @@ import java.util.Optional;
 import frc.robot.subsystems.*;
 import frc.robot.commands.shooter.ShootCommand;
 import frc.robot.autoProfiles.AutoRoutine;
-import frc.robot.commands.drive.*;
+import frc.robot.commands.drive.TankDriveCommand;
 import frc.robot.helpers.*;
 import frc.robot.dataTypes.*;
 import frc.robot.logging.*;
@@ -16,6 +16,7 @@ import frc.robot.shapes.*;
 import frc.robot.logging.Logger.DefaultValue;
 import frc.robot.robotState.*;
 import frc.robot.robotState.RobotState.SD;
+import frc.robot.sciSensorsActuators.SciJoystick;
 import frc.robot.sciSensorsActuators.SciSolenoid;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.TimedRobot;
@@ -52,6 +53,7 @@ public class Robot extends TimedRobot implements LogUpdater {
     public static ShooterSubsystem    shooterSubsystem    = new ShooterSubsystem();
 
     public static IntakeSubsystem     intakeSubsystem     = new IntakeSubsystem();
+    public static HopperSubsystem     hopperSubsystem     = new HopperSubsystem();
     
     public static Following following = new Following();
     public static OI oi = new OI();
@@ -230,12 +232,11 @@ public class Robot extends TimedRobot implements LogUpdater {
 
     public void teleopPeriodic() {
         //intakeSubsystem.setIntakeSpeed(1);
-        System.out.println("current: " + intakeSubsystem.intakeSpark.get());
+        //System.out.println("current: " + intakeSubsystem.intakeSpark.get());
        
         // (new TankDriveCommand()).start();
         //allPeriodicLogs();
         //logDataPeriodic();
-        //Robot.driveSubsystem.setTank(0.2,0.2 ;
     }
 
     @Override
