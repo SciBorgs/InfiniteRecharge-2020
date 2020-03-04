@@ -71,6 +71,7 @@ public class PID {
 		// This is split up into two functions because often we will have a better estimate of the derivative of the error
 		// The split up allows us to use that better estimate by calling this step directly
 		double currentTime = timer.get();
+		this.integral *= Math.pow(.7, dt(false));
 		this.integral += error * dt(false);
 		this.output = this.p * error + this.d * derivative + this.i * this.integral;
 		this.times.add(currentTime);

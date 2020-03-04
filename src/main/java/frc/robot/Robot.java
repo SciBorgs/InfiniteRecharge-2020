@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Optional;
 
 import frc.robot.subsystems.*;
+import frc.robot.commands.shooter.ShootCommand;
 import frc.robot.autoProfiles.AutoRoutine;
 import frc.robot.commands.drive.TankDriveCommand;
 import frc.robot.helpers.*;
@@ -48,6 +49,9 @@ public class Robot extends TimedRobot implements LogUpdater {
     public static PigeonSubsystem     pigeonSubsystem     = new PigeonSubsystem();
     public static LimelightSubsystem  limelightSubsystem  = new LimelightSubsystem();
     public static PneumaticsSubsystem pneumaticsSubsystem = new PneumaticsSubsystem();
+    public static TurretSubsystem     turretSubsystem     = new TurretSubsystem();
+    public static ShooterSubsystem    shooterSubsystem    = new ShooterSubsystem();
+
     public static IntakeSubsystem     intakeSubsystem     = new IntakeSubsystem();
     public static HopperSubsystem     hopperSubsystem     = new HopperSubsystem();
     
@@ -130,13 +134,12 @@ public class Robot extends TimedRobot implements LogUpdater {
     }
     private void allUpdateRobotStates() {
         set(SD.Time, this.timer.get());
-        //System.out.println(Robot.get(SD.Time));
+        //double t = this.timer.get();
         for (RobotStateUpdater i : robotStateUpdaters) {
-            //double t1 = this.timer.get();
-            if(!i.ignore()){
-                i.updateRobotState();
-            }
-            //System.out.println("UPDATING " + i.getClass() + " T DIFF: " + (this.timer.get() - t1));
+            i.updateRobotState();
+            //System.out.println("time diff: " + (this.timer.get() - t));
+            //System.out.println("updating: " + i.getClass());
+            //t = this.timer.get();
         }
     }
 
@@ -162,6 +165,7 @@ public class Robot extends TimedRobot implements LogUpdater {
         set(SD.X, ORIGINAL_POINT.x);
         set(SD.Y, ORIGINAL_POINT.y);
         set(SD.Angle, ORIGINAL_ANGLE);
+        set(SD.DistanceToPort, 0);
         allUpdateRobotStates();
         pneumaticsSubsystem.stopCompressor();
         // logger.incrementPrevious("robot.java", "deploy", DefaultValue.Previous);
@@ -204,14 +208,16 @@ public class Robot extends TimedRobot implements LogUpdater {
         set(SD.Y, ORIGINAL_POINT.y);
         set(SD.Angle, ORIGINAL_ANGLE);
         //intakeSubsystem.reverseIntake();
-        //driveSubsystem.setReversed(false);
-        // new TemporaryInstantCommand().start();
-        //pneumaticsSubsystem.stopCompressor();
-        //autoRoutine.testDriveDirection();
+        //shooterSubsystem.setShooterOmega(314);
+        try { new ShootCommand().start(); } catch (Exception e) {}
     }
 
     @Override
     public void autonomousPeriodic() {
+        //shooterSubsystem.setHoodAngle(Math.toRadians(25));
+        //System.out.println("HOOD ANGLE: " + Robot.get(SD.HoodAngle));
+        //System.out.println("OMEGA: " + Robot.get(SD.ShooterOmega));
+        //sequential.update();
         //allPeriodicLogs();
         //logDataPeriodic();
     }
@@ -221,31 +227,31 @@ public class Robot extends TimedRobot implements LogUpdater {
         // intakeSubsystem.reverseIntake();
         Robot.driveSubsystem.l.ignoreSnap();
         Robot.driveSubsystem.r.ignoreSnap();
-        pneumaticsSubsystem.startCompressor();
+        //pneumaticsSubsystem.startCompressor();
     }
 
     public void teleopPeriodic() {
-        hopperSubsystem.suck();
+        //intakeSubsystem.setIntakeSpeed(1);
+        //System.out.println("current: " + intakeSubsystem.intakeSpark.get());
+       
         // (new TankDriveCommand()).start();
         //allPeriodicLogs();
         //logDataPeriodic();
     }
-    
 
     @Override
-    public void testPeriodic() {
-        // (new CircleControllerCommand(new Waypoint(new Point(ORIGINAL_POINT.x + 1, ORIGINAL_POINT.y), Geo.HORIZONTAL_ANGLE))).start();
-        // DelayedPrinter.print("testing...");
+    public void testInit() {
+        shooterSubsystem.stopMotors();
     }
 
-    @Override
-    public void disabledPeriodic() {
-        DelayedPrinter.print("disabled...");
+    public void testPeriodic() {
+        System.out.println("HOOD ANGLE " + Robot.get(SD.HoodAngle));
+        System.out.println("DIST " + Robot.get(SD.DistanceToPort));
     }
 
     public void disabledInit() {
-        allPeriodicLogs();
-        logger.logData();
-        logger.writeLoggedData();
+        // allPeriodicLogs();
+        // logger.logData();
+        // logger.writeLoggedData();
     }
 }

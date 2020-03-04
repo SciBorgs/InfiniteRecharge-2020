@@ -14,7 +14,7 @@ public class LimelightLocalization implements MaybeUpdater {
     public LimelightSubsystem limeLight;
 
     private static final double CAMERA_ABOVE_GROUND_HEIGHT = Utils.inchesToMeters(29);
-    private static final double CAMERA_MOUNTING_ANGLE      = Math.toRadians(0);
+    private static final double CAMERA_MOUNTING_ANGLE      = Math.toRadians(30.7);
     private static final double OUTER_PORT_HEIGHT          = Utils.inchesToMeters(90);
 
     private static final double LANDMARK_X = 0;
@@ -25,8 +25,9 @@ public class LimelightLocalization implements MaybeUpdater {
     public LimelightLocalization() {
         this.limeLight = Robot.limelightSubsystem;
         this.stdDevs = new Hashtable<>();
-        this.stdDevs.put(SD.X,     0.0);
-        this.stdDevs.put(SD.Y,     0.0);
+        this.stdDevs.put(SD.X, 0.0);
+        this.stdDevs.put(SD.Y, 0.0);
+        this.stdDevs.put(SD.DistanceToPort, 0.0);
     }
 
     public double calculateDistance() {
@@ -46,10 +47,11 @@ public class LimelightLocalization implements MaybeUpdater {
     }
 
     @Override
-    public void updateState(RobotStateHistory pastRobotStates) {
+    public void updateState(RobotStateHistory stateHistory) {
         Point absolutePosition = getRobotPosition();
-        pastRobotStates.statesAgo(0).set(SD.X, absolutePosition.x);
-        pastRobotStates.statesAgo(0).set(SD.Y, absolutePosition.y);
+        stateHistory.statesAgo(0).set(SD.DistanceToPort, calculateDistance());
+        stateHistory.statesAgo(0).set(SD.X, absolutePosition.x);
+        stateHistory.statesAgo(0).set(SD.Y, absolutePosition.y);
     }
 
     @Override

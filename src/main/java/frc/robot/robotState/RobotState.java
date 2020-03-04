@@ -35,7 +35,15 @@ public class RobotState implements Iterable<Pair<SD, Double>>{
         // Pneumatics
         PressureSensorVoltage,
 
-        Time
+        // Turret
+        TurretAngle,
+
+        // Shooter
+        HoodAngle,
+        ShooterOmega,
+
+        DistanceToPort,
+        Time,
     }
     
     private HashMap<SD, Double> data;
