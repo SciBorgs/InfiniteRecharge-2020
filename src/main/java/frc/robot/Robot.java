@@ -7,7 +7,7 @@ import java.util.Optional;
 
 import frc.robot.subsystems.*;
 import frc.robot.autoProfiles.AutoRoutine;
-
+import frc.robot.commands.drive.TankDriveCommand;
 import frc.robot.helpers.*;
 import frc.robot.dataTypes.*;
 import frc.robot.logging.*;
@@ -212,8 +212,7 @@ public class Robot extends TimedRobot implements LogUpdater {
 
     @Override
     public void autonomousPeriodic() {
-        intakeSubsystem.intakeSpark.set(0.5);
-        System.out.println("current: " + intakeSubsystem.intakeSpark.get());
+        driveSubsystem.setTank(0,0.3);
         //allPeriodicLogs();
         //logDataPeriodic();
     }
@@ -227,16 +226,15 @@ public class Robot extends TimedRobot implements LogUpdater {
     }
 
     public void teleopPeriodic() {
-/* 
-        (new TankDriveCommand()).start();
-        hopperSubsystem.setInSpeed(oi.leftStick.getProcessedY()/2);    
+
+        //(new TankDriveCommand()).start();
+/*      hopperSubsystem.setInSpeed(oi.leftStick.getProcessedY()/2);    
         hopperSubsystem.setUpSpeed(oi.rightStick.getProcessedY()/2);    
         allPeriodicLogs();
         logDataPeriodic();
 */
-        intakeSubsystem.setIntakeSpeed(1);
-        System.out.println("current: " + intakeSubsystem.intakeSpark.get());
-       
+        driveSubsystem.setTank(0,-0.3);
+
         // (new TankDriveCommand()).start();
         //allPeriodicLogs();
         //logDataPeriodic();
@@ -246,8 +244,6 @@ public class Robot extends TimedRobot implements LogUpdater {
 
     @Override
     public void testPeriodic() {
-        intakeSubsystem.setIntakeSpeed(0.5);
-        System.out.println("current: " + intakeSubsystem.intakeSpark.get());
         // (new CircleControllerCommand(new Waypoint(new Point(ORIGINAL_POINT.x + 1, ORIGINAL_POINT.y), Geo.HORIZONTAL_ANGLE))).start();
         // DelayedPrinter.print("testing...");
     }

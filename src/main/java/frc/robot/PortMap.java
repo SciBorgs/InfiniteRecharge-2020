@@ -77,5 +77,5 @@ public class PortMap {
 
     public static final int PRESSURE_SENSOR = 0;
     public static final int TARGETING_LIGHT_DIGITAL_OUTPUT = 5;
-    public static final int PIGEON_ID = -1;
+    public static final int PIGEON_ID = 58;
 }
