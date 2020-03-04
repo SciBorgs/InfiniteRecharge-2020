@@ -63,16 +63,12 @@ public class PortMap {
     // *******************INTAKE******************//
 
     public static final int INTAKE_SPARK = 1;
+    public static final int[] INTAKE_SOLENOID_PORTS = {1, 2};
 
     // *******************HOPPER******************//
 
-    public static final int HOPPER_SUCK_SPARK = 59;
+    public static final int HOPPER_SUCK_SPARK = 58;
     public static final int HOPPER_ELEVATOR_SPARK = 55;
-
-    //******************SOLENOIDS****************//
-
-    public static final int INTAKE_SOLENOID_FORWARD = 1; // Temporary
-    public static final int INTAKE_SOLENOID_REVERSE = 2; // Temporary
 
     //*******************MISC********************//
 
