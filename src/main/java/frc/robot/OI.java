@@ -21,6 +21,8 @@ public class OI {
 
         this.intakeButton = new JoystickButton(this.rightStick, PortMap.JOYSTICK_CENTER_BUTTON);
         this.intakeButton.whenPressed(new IntakeSuckCommand());
+        this.intakeButton.whenReleased(new IntakeStopCommand());
+
 
     }
 }

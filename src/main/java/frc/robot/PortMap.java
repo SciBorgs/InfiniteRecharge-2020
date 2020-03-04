@@ -52,6 +52,9 @@ public class PortMap {
     
     //*******************DRIVE TRAIN******************//
 
+    public static final int HOPPER_UP_SPARK = 8;
+    public static final int HOPPER_IN_SPARK = 7;
+
     public static final int LEFT_FRONT_SPARK = 6; 
     public static final int LEFT_MIDDLE_SPARK = 5; 
     public static final int LEFT_BACK_SPARK = 54;
@@ -74,5 +77,5 @@ public class PortMap {
 
     public static final int PRESSURE_SENSOR = 0;
     public static final int TARGETING_LIGHT_DIGITAL_OUTPUT = 5;
-    public static final int PIGEON_ID = -1;
+    public static final int PIGEON_ID = 58;
 }

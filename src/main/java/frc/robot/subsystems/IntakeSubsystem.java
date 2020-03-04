@@ -14,7 +14,7 @@ public class IntakeSubsystem extends Subsystem {
     public SciSpark intakeSpark;
     public static enum IntakeValue{Down, Up, Off}
 
-    public static final double INTAKE_SPEED = 1; //Temporary
+    public static final double INTAKE_SPEED = 0.5; //Temporary
 
     public IntakeSubsystem() {
         this.upDownSolenoid = new SciSolenoid<IntakeValue>(PortMap.INTAKE_SOLENOID_PORTS, IntakeValue.Up, IntakeValue.Down, IntakeValue.Off);

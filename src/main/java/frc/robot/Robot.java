@@ -7,7 +7,7 @@ import java.util.Optional;
 
 import frc.robot.subsystems.*;
 import frc.robot.autoProfiles.AutoRoutine;
-
+import frc.robot.commands.drive.TankDriveCommand;
 import frc.robot.helpers.*;
 import frc.robot.dataTypes.*;
 import frc.robot.logging.*;
@@ -15,6 +15,7 @@ import frc.robot.shapes.*;
 import frc.robot.logging.Logger.DefaultValue;
 import frc.robot.robotState.*;
 import frc.robot.robotState.RobotState.SD;
+import frc.robot.sciSensorsActuators.SciJoystick;
 import frc.robot.sciSensorsActuators.SciSolenoid;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.TimedRobot;
@@ -47,8 +48,8 @@ public class Robot extends TimedRobot implements LogUpdater {
     public static PigeonSubsystem     pigeonSubsystem     = new PigeonSubsystem();
     public static LimelightSubsystem  limelightSubsystem  = new LimelightSubsystem();
     public static PneumaticsSubsystem pneumaticsSubsystem = new PneumaticsSubsystem();
-
     public static IntakeSubsystem     intakeSubsystem     = new IntakeSubsystem();
+    public static HopperSubsystem     hopperSubsystem     = new HopperSubsystem();
     
     public static Following following = new Following();
     public static OI oi = new OI();
@@ -224,11 +225,10 @@ public class Robot extends TimedRobot implements LogUpdater {
     }
 
     public void teleopPeriodic() {
-       
+        hopperSubsystem.suck();
         // (new TankDriveCommand()).start();
         //allPeriodicLogs();
         //logDataPeriodic();
-        //Robot.driveSubsystem.setTank(0.2,0.2 ;
     }
     
 
