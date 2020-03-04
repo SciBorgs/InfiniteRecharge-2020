@@ -34,7 +34,5 @@ public class TemporaryInstantCommand extends InstantCommand {
         System.out.println("RUNNING TEMPORARY INSTANT COMMAND");
         System.out.println("RUNNING TEMPORARY INSTANT COMMAND");
         System.out.println("RUNNING TEMPORARY INSTANT COMMAND");
-
-        Robot.temporarySolenoid.toggle();
     }
 }

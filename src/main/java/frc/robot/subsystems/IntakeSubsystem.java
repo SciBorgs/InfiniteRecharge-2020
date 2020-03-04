@@ -5,30 +5,24 @@ import edu.wpi.first.wpilibj.DoubleSolenoid;
 import edu.wpi.first.wpilibj.DoubleSolenoid.Value;
 import frc.robot.PortMap;
 import frc.robot.Utils;
-import frc.robot.sciSensorsActuators.SciTalon;
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import frc.robot.sciSensorsActuators.SciSolenoid;
+import frc.robot.sciSensorsActuators.SciSpark;
 
 
 public class IntakeSubsystem extends Subsystem {
-    DoubleSolenoid upDownSolenoid;
-    public SciTalon intakeMotor;
+    public SciSolenoid<IntakeValue> upDownSolenoid;
+    public SciSpark intakeSpark;
+    public static enum IntakeValue{Down, Up, Off}
 
-    private static final DoubleSolenoid.Value OPEN_VALUE   = Value.kForward;
-    private static final DoubleSolenoid.Value CLOSED_VALUE = Utils.oppositeDoubleSolenoidValue(OPEN_VALUE);
-    public  boolean acceptingCell;
     public static final double INTAKE_SPEED = 1; //Temporary
 
     public IntakeSubsystem() {
-        this.upDownSolenoid = new DoubleSolenoid(PortMap.INTAKE_SOLENOID_FORWARD, PortMap.INTAKE_SOLENOID_REVERSE);
-        //this.intakeMotor = new SciTalon(PortMap.INTAKE_TALON);
-        this.acceptingCell = true;
+        this.upDownSolenoid = new SciSolenoid<IntakeValue>(PortMap.INTAKE_SOLENOID_PORTS, IntakeValue.Up, IntakeValue.Down, IntakeValue.Off);
+        this.intakeSpark = new SciSpark(PortMap.INTAKE_SPARK);
     }
     public void setIntakeSpeed(double speed) {
-        this.intakeMotor.set(speed);
+        this.intakeSpark.set(speed);
     }
-
-    public void forwardIntake() {this.upDownSolenoid.set(CLOSED_VALUE);}
-    public void reverseIntake() {this.upDownSolenoid.set(OPEN_VALUE);}
 
     public void suck() {setIntakeSpeed(INTAKE_SPEED);}
     public void stop() {setIntakeSpeed(0);}
