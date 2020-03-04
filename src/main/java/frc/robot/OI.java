@@ -13,19 +13,12 @@ public class OI {
     public SciJoystick leftStick, rightStick;
     public XboxController xboxController;
 
-    public JoystickButton circleControllerButton, pointOneButton, pointTwoButton, pointThreeButton;
-
+    public JoystickButton circleControllerButton, pointChangerButton;
     
     public OI() {
         leftStick = new SciJoystick(PortMap.JOYSTICK_LEFT);
         rightStick = new SciJoystick(PortMap.JOYSTICK_RIGHT);
         xboxController = new XboxController(PortMap.XBOX_CONTROLLER);
-
-        circleControllerButton = new JoystickButton(leftStick, PortMap.JOYSTICK_TRIGGER);
-        circleControllerButton.whileActive(new CircleControllerCommand());
-        
-        pointThreeButton = new JoystickButton(leftStick, PortMap.JOYSTICK_CENTER_BUTTON);
-        pointThreeButton.whenPressed(new PointThreeCommand());       
     }
 }
 

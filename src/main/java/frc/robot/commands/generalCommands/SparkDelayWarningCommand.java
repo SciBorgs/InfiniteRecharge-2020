@@ -20,9 +20,8 @@ public class SparkDelayWarningCommand extends Command {
     protected void execute () {
         ticks++;
         if (!Utils.impreciseEquals(this.sciSpark.get(), this.input)) {
-            System.out.println("WARNING: " + this.sciSpark.getDeviceName() + " was set to " + this.input
-            + " but still has a value of " + this.sciSpark.get() +" after " + this.ticks + " ticks");
-            this.sciSpark.printAllData();
+            // System.out.println("WARNING: " + this.sciSpark.getDeviceName() + " was set to " + this.input + " but still has a value of " + this.sciSpark.get() +" after " + this.ticks + " ticks");
+            // this.sciSpark.printAllData();
         }
     }
 
