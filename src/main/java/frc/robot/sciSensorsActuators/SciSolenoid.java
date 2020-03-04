@@ -29,12 +29,20 @@ public class SciSolenoid<ValueType extends Enum<ValueType>> extends DoubleSoleno
     public Optional<SD> valueSD;
     private boolean ignore;
 
+    public SciSolenoid(int[] ports, ValueType forwardValue, ValueType reverseValue, ValueType offValue) {
+        this(1, ports, forwardValue, reverseValue, offValue);
+    }
+
     public SciSolenoid(int pdpPort, int[] ports, ValueType forwardValue, ValueType reverseValue, ValueType offValue) {
         super(pdpPort, ports[0], ports[1]);
         this.valueMap = new BiHashMap<ValueType, Value>();
         this.valueMap.put(forwardValue, Value.kForward);
         this.valueMap.put(reverseValue, Value.kReverse);
         this.valueMap.put(offValue, Value.kOff);
+        
+        this.defaultValue = offValue;
+        this.valueDoubleMap = new BiHashMap<>();
+        
         for (ValueType valueType : valueMap.keySet()) {
             Value value = valueMap.getForward(valueType);
             this.valueDoubleMap.put(valueType, SOLENOID_MAPPING.getForward(value));
