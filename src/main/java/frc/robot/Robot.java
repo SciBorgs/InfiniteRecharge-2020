@@ -7,6 +7,7 @@ import java.util.Optional;
 
 import frc.robot.subsystems.*;
 import frc.robot.commands.shooter.ShootCommand;
+import frc.robot.autoProfiles.AutoRoutine;
 import frc.robot.commands.drive.*;
 import frc.robot.helpers.*;
 import frc.robot.dataTypes.*;
@@ -15,12 +16,16 @@ import frc.robot.shapes.*;
 import frc.robot.logging.Logger.DefaultValue;
 import frc.robot.robotState.*;
 import frc.robot.robotState.RobotState.SD;
+import frc.robot.sciSensorsActuators.SciSolenoid;
+import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Scheduler;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
+import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.controllers.*;
 import frc.robot.stateEstimation.interfaces.*;
-import frc.robot.stateEstimation.higherLevel.*;
 import frc.robot.stateEstimation.explicit.*;
 
 public class Robot extends TimedRobot implements LogUpdater {
@@ -49,11 +54,10 @@ public class Robot extends TimedRobot implements LogUpdater {
     public static IntakeSubsystem     intakeSubsystem     = new IntakeSubsystem();
     
     public static Following following = new Following();
-    public static CircleController circleController = new CircleController();
     public static OI oi = new OI();
 
-    public static Model positionModel = new MaybeDefaultUpdater(new LimelightLocalization(), new EncoderLocalization());
-
+    // public static Model positionModel = new MaybeDefaultUpdater(new LimelightLocalization(), new EncoderLocalization());
+    public static Model positionModel = new EncoderLocalization();
     public static RobotState getState(){ return stateHistory.currentState(); }
     public static RobotState statesAgo(int numTicks){return stateHistory.statesAgo(numTicks);}
 
@@ -84,25 +88,30 @@ public class Robot extends TimedRobot implements LogUpdater {
     // testing
     public static Point  getPos() {return new Point(get(SD.X),get(SD.Y));}
     public static double getHeading() {return get(SD.Angle);}
+    public static Waypoint getWaypoint () { return new Waypoint(new Point(get(SD.X), get(SD.Y)), get(SD.Angle)); }
 
-    public static final Waypoint TEST_POINT_1 = new Waypoint(new Point(Utils.inchesToMeters(36),0),     Geo.HORIZONTAL_ANGLE);
-    public static final Waypoint TEST_POINT_2 = new Waypoint(new Point(Utils.inchesToMeters(96),Utils.inchesToMeters(36)),    Geo.HORIZONTAL_ANGLE + Math.PI);
-    public static final Waypoint TEST_POINT_3 = new Waypoint(new Point(Utils.inchesToMeters(36),Utils.inchesToMeters(72)),     Geo.HORIZONTAL_ANGLE + Math.PI);
-    public static final Waypoint TEST_POINT_4 = new Waypoint(new Point(0, Utils.inchesToMeters(72)), Geo.HORIZONTAL_ANGLE + Math.PI);
-    public static final Point ORIGINAL_POINT = new Point(0,0);
+    public static AutoRoutine autoRoutine = new AutoRoutine();
+
+    public static final Waypoint TEST_POINT_0 = new Waypoint(new Point(Utils.inchesToMeters(128), Utils.inchesToMeters(69)), Geo.HORIZONTAL_ANGLE);
+    public static final Waypoint TEST_POINT_1 = new Waypoint(new Point(0, 0), Geo.HORIZONTAL_ANGLE);
+    public static final Waypoint TEST_POINT_2 = new Waypoint(new Point(0, 1), Geo.HORIZONTAL_ANGLE);
+    public static final Waypoint TEST_POINT_3 = new Waypoint(new Point(0, 2), Geo.HORIZONTAL_ANGLE);
+    public static final Waypoint TEST_POINT_4 = new Waypoint(new Point(0, 3), Geo.HORIZONTAL_ANGLE);
+    // for tenBallAuto
+    // public static final Point ORIGINAL_POINT  = new Point(3 - autoRoutine.xShift, -7.5 - autoRoutine.yShift);
+    public static final Point ORIGINAL_POINT  = new Point(0, 0);
     public static final double ORIGINAL_ANGLE = Geo.HORIZONTAL_ANGLE;
-    public Waypoint[] arr = new Waypoint[] {TEST_POINT_1, TEST_POINT_2, TEST_POINT_3, TEST_POINT_4};
-    public ArrayList <Waypoint> path = new ArrayList<Waypoint>(Arrays.asList(arr));
+    public static Waypoint[] arr = new Waypoint[] {TEST_POINT_0, TEST_POINT_1, TEST_POINT_2, TEST_POINT_3, TEST_POINT_4};
+    public static ArrayList <Waypoint> path = new ArrayList<Waypoint>(Arrays.asList(arr));
 
-    public Sequential sequential = new Sequential(path);
-
-    public static Point CURRENT_DESTINATION = ORIGINAL_POINT;
-    public static double CURRENT_DESTINATION_HEADING = Geo.HORIZONTAL_ANGLE;
+    public static Waypoint CURRENT_DESTINATION = TEST_POINT_0;
 
     public static Point newDestPoint = new Point(Utils.inchesToMeters(4), .458);
     public static double newDestHeading = Geo.HORIZONTAL_ANGLE;
     private int attemptsSinceLastLog = 0;
     public static final int LOG_PERIOD = 5;
+
+    NetworkTableEntry getPos;
 
     public Robot() {
         automateLogging();
@@ -111,6 +120,7 @@ public class Robot extends TimedRobot implements LogUpdater {
     public static void addLogUpdater(LogUpdater logUpdater) {
         logUpdaters.add(logUpdater);
     }
+
     public static void addRobotStateUpdater(RobotStateUpdater robotStateUpdater){
         robotStateUpdaters.add(robotStateUpdater);
     }
@@ -162,10 +172,12 @@ public class Robot extends TimedRobot implements LogUpdater {
         addSDToLog(SD.Y);
         addSDToLog(SD.Angle);
         addSDToLog(SD.Time);
+        
+        
     }
 
     public void logDataPeriodic() {
-        if(attemptsSinceLastLog == 2) {
+        if(attemptsSinceLastLog == -1) {
             logger.logData();
             attemptsSinceLastLog = 0;
         }
@@ -177,12 +189,19 @@ public class Robot extends TimedRobot implements LogUpdater {
         allUpdateRobotStates();
         allModels();
         Scheduler.getInstance().run();
+        DelayedPrinter.print("x: " + getPos().x +"y: "+ getPos().y + "\nheading: "  + getWaypoint().heading, 5);
         DelayedPrinter.incTicks();
+        SmartDashboard.putNumber("GetPos.x", getPos().x);
+        SmartDashboard.putNumber("GetPos.y", getPos().y);
+        SmartDashboard.putNumber("Heading", get(SD.Angle));
+        SmartDashboard.putBoolean("reversed?", driveSubsystem.reversed);
+        SmartDashboard.putNumber("left wheel speed", get(SD.LeftWheelSpeed));
     }
 
 
-    public void autonomousInit() {
-        // Robot.driveSubsystem.assistedDriveMode();
+    public void autonomousInit() { 
+        driveSubsystem.setReversed(false);       
+        //Robot.driveSubsystem.assistedDriveMode();
         set(SD.X, ORIGINAL_POINT.x);
         set(SD.Y, ORIGINAL_POINT.y);
         set(SD.Angle, ORIGINAL_ANGLE);
@@ -203,16 +222,20 @@ public class Robot extends TimedRobot implements LogUpdater {
     
     @Override
     public void teleopInit() {
-        /*intakeSubsystem.reverseIntake();
-        pneumaticsSubsystem.startCompressor();
+        // intakeSubsystem.reverseIntake();
         Robot.driveSubsystem.l.ignoreSnap();
-        Robot.driveSubsystem.r.ignoreSnap();*/
-    }  
+        Robot.driveSubsystem.r.ignoreSnap();
+        //pneumaticsSubsystem.startCompressor();
+    }
 
     public void teleopPeriodic() {
-        //(new TankDriveCommand()).start();   
+        //intakeSubsystem.setIntakeSpeed(1);
+        System.out.println("current: " + intakeSubsystem.intakeSpark.get());
+       
+        // (new TankDriveCommand()).start();
         //allPeriodicLogs();
         //logDataPeriodic();
+        //Robot.driveSubsystem.setTank(0.2,0.2 ;
     }
 
     @Override

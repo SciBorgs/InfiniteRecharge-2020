@@ -23,13 +23,7 @@ public class EncoderLocalization implements Updater, Model, LogUpdater {
     private static final double ANGLE_STD_DEV = 0;
     private Hashtable<SD, Double> stdDevs;
 
-    private SciPigeon pigeon;
-    private TalonSRX pigeonTalon;
-
     public EncoderLocalization(){
-        this.pigeonTalon = new TalonSRX(PortMap.PIGEON_TALON);
-        this.pigeon      = new SciPigeon(pigeonTalon);
-
         this.stdDevs = new Hashtable<>();
         this.stdDevs.put(SD.X,     X_STD_DEV);
         this.stdDevs.put(SD.Y,     Y_STD_DEV);
@@ -39,8 +33,6 @@ public class EncoderLocalization implements Updater, Model, LogUpdater {
         this.stdDevs.put(SD.RightWheelAngle, 0.0);
         automateLogging();
     }
-
-    public SciPigeon getPigeon() {return this.pigeon;}
 
     @Override
     public Hashtable<SD, Double> getStdDevs(){return (Hashtable<SD, Double>) this.stdDevs.clone();}

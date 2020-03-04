@@ -27,6 +27,11 @@ public class SciSolenoid<ValueType extends Enum<ValueType>> extends DoubleSoleno
     private HashMap<SciSolenoidSD, SD> sdMap;
     public ValueType defaultValue;
     public Optional<SD> valueSD;
+    private boolean ignore;
+
+    public SciSolenoid(int[] ports, ValueType forwardValue, ValueType reverseValue, ValueType offValue) {
+        this(1, ports, forwardValue, reverseValue, offValue);
+    }
 
     public SciSolenoid(int pdpPort, int[] ports, ValueType forwardValue, ValueType reverseValue, ValueType offValue) {
         super(pdpPort, ports[0], ports[1]);
@@ -34,6 +39,10 @@ public class SciSolenoid<ValueType extends Enum<ValueType>> extends DoubleSoleno
         this.valueMap.put(forwardValue, Value.kForward);
         this.valueMap.put(reverseValue, Value.kReverse);
         this.valueMap.put(offValue, Value.kOff);
+        
+        this.defaultValue = offValue;
+        this.valueDoubleMap = new BiHashMap<>();
+        
         for (ValueType valueType : valueMap.keySet()) {
             Value value = valueMap.getForward(valueType);
             this.valueDoubleMap.put(valueType, SOLENOID_MAPPING.getForward(value));
@@ -44,6 +53,8 @@ public class SciSolenoid<ValueType extends Enum<ValueType>> extends DoubleSoleno
         this.sdMap = new HashMap<>();
         automateStateUpdating();
     }
+
+    public void setIgnore(boolean ignore){this.ignore = ignore;}
 
     private Value toDoubleSolenoidValue(ValueType e) {return valueMap.getForward(e);}
     private ValueType toValueType(Value v)           {return valueMap.getBackward(v);}
@@ -69,8 +80,7 @@ public class SciSolenoid<ValueType extends Enum<ValueType>> extends DoubleSoleno
      * 
      * @deprecated
      */
-    @Override
-    @Deprecated
+    @Override @Deprecated
     public Value get() {
         throw new RuntimeException("get() is deprecated for SciSolenoids. Use getValue() instead");
     }
@@ -92,4 +102,7 @@ public class SciSolenoid<ValueType extends Enum<ValueType>> extends DoubleSoleno
     public HashMap<SciSolenoidSD, SD> getSDMap() {return sdMap;}
     @Override
     public String getDeviceName() {return "Solenoid " + super.m_moduleNumber;}
+
+    @Override
+    public boolean ignore(){return this.ignore;}
 }
