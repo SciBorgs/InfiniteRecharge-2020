@@ -8,4 +8,5 @@ public interface RobotStateUpdater {
     default void automateStateUpdating(){
         Robot.addRobotStateUpdater(this);
     }
+    default boolean ignore(){return false;}
 }

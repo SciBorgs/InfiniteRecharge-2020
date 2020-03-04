@@ -28,6 +28,9 @@ public class SciPigeon extends PigeonIMU implements RobotStateUpdater, SciSensor
     @Override 
     public String getDeviceName(){return "Pigeon " + super.getDeviceID();}
 
+    @Override
+    public boolean ignore(){return sciIgnore(super.getDeviceID());}
+
     private double[] yawPitchRole(){
         double[] yawPitchRoll = new double[3];
         super.getYawPitchRoll(yawPitchRoll);

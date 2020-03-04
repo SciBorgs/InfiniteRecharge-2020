@@ -25,6 +25,9 @@ public class SciServo extends Servo implements RobotStateUpdater, SciSensorActua
     @Override 
     public String getDeviceName(){return "Servo " + super.getChannel();}
 
+    @Override
+    public boolean ignore(){return sciIgnore(super.getChannel());}
+
     public double getMinAngle()    { return this.minAngle; }
     public double getCenterAngle() { return this.minAngle + ANGLE_RANGE/2; }
     public double getMaxAngle()    { return this.minAngle + ANGLE_RANGE; }
