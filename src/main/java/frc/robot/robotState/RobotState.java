@@ -35,6 +35,9 @@ public class RobotState implements Iterable<Pair<SD, Double>>{
         // Pneumatics
         PressureSensorVoltage,
 
+        // Turret
+        TurretAngle,
+
         // Shooter
         HoodAngle,
         ShooterOmega,

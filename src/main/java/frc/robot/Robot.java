@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Optional;
 
 import frc.robot.subsystems.*;
-import frc.robot.commands.ShootCommand;
+import frc.robot.commands.shooter.ShootCommand;
 import frc.robot.commands.drive.*;
 import frc.robot.helpers.*;
 import frc.robot.dataTypes.*;
@@ -43,6 +43,7 @@ public class Robot extends TimedRobot implements LogUpdater {
     public static PigeonSubsystem     pigeonSubsystem     = new PigeonSubsystem();
     public static LimelightSubsystem  limelightSubsystem  = new LimelightSubsystem();
     public static PneumaticsSubsystem pneumaticsSubsystem = new PneumaticsSubsystem();
+    public static TurretSubsystem     turretSubsystem     = new TurretSubsystem();
     public static ShooterSubsystem    shooterSubsystem    = new ShooterSubsystem();
 
     public static IntakeSubsystem     intakeSubsystem     = new IntakeSubsystem();
@@ -186,16 +187,15 @@ public class Robot extends TimedRobot implements LogUpdater {
         set(SD.Y, ORIGINAL_POINT.y);
         set(SD.Angle, ORIGINAL_ANGLE);
         //intakeSubsystem.reverseIntake();
-        //shooterSubsystem.setShooterSpark(shooterSubsystem.RPMToOmega(3000));
- 
+        //shooterSubsystem.setShooterOmega(314);
         try { new ShootCommand().start(); } catch (Exception e) {}
     }
 
     @Override
     public void autonomousPeriodic() {
-        //System.out.println("OMEGA: " + shooterSubsystem.shooterSparkEncoder.getVelocity());
-        //shooterSubsystem.setHoodSpark(Math.toRadians(25));
-        //System.out.println("AT: " + Robot.get(SD.HoodAngle));
+        //shooterSubsystem.setHoodAngle(Math.toRadians(25));
+        //System.out.println("HOOD ANGLE: " + Robot.get(SD.HoodAngle));
+        //System.out.println("OMEGA: " + Robot.get(SD.ShooterOmega));
         //sequential.update();
         //allPeriodicLogs();
         //logDataPeriodic();

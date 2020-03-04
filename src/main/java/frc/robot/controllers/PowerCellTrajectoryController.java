@@ -25,6 +25,6 @@ public class PowerCellTrajectoryController {
     double distanceToOuterPort = Robot.get(SD.DistanceToPort) - LIMELIGHT_OFFSET;
     JsonNode distanceField = this.rootNode.get(String.format("%.2f", distanceToOuterPort));
     return new Pair<Double, Double>(
-        distanceField.get("hood_angle").asDouble(), distanceField.get("rps").asDouble());
+        distanceField.get("hood_angle").asDouble(), distanceField.get("omega").asDouble());
   }
 }

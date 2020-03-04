@@ -33,7 +33,7 @@ public class ShooterSubsystem extends Subsystem implements RobotStateUpdater {
     this.hoodSpark = new SciSpark(1, HOOD_SPARK_GEAR_RATIO);
     this.rightShooterSpark = new SciSpark(7, SHOOTER_SPARK_GEAR_RATIO);
     this.rightShooterSpark.setInverted(true);
-    //this.leftShooterSpark  = new SciSpark(2, SHOOTER_SPARK_GEAR_RATIO);
+    //this.leftShooterSpark = new SciSpark(2, SHOOTER_SPARK_GEAR_RATIO);
     //this.leftShooterSpark.follow(rightShooterSpark);
 
     this.hoodAnglePID = new PID(HOOD_ANGLE_P, HOOD_ANGLE_I, HOOD_ANGLE_D);
@@ -47,10 +47,10 @@ public class ShooterSubsystem extends Subsystem implements RobotStateUpdater {
 
     this.absEncoder = new SciThroughBoreEncoder(1);
     this.absEncoder.setDistancePerRotation(2 * Math.PI * HOOD_SPARK_GEAR_RATIO);
-    Robot.set(SD.HoodAngle, this.absEncoder.getRadians());
     this.absEncoder.setAngle(Math.toRadians(57));
+    Robot.set(SD.HoodAngle, this.absEncoder.getRadians());
     
-    Robot.addRobotStateUpdater(this);
+    automateStateUpdating();
   }
 
   public void setHoodAngle(double angle) {
