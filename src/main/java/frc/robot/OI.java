@@ -1,4 +1,3 @@
-
 package frc.robot;
 
 import edu.wpi.first.wpilibj.XboxController;
@@ -13,12 +12,16 @@ public class OI {
     public SciJoystick leftStick, rightStick;
     public XboxController xboxController;
 
-    public JoystickButton circleControllerButton, pointChangerButton;
+    public JoystickButton circleControllerButton, pointChangerButton, intakeButton;
     
     public OI() {
-        leftStick = new SciJoystick(PortMap.JOYSTICK_LEFT);
-        rightStick = new SciJoystick(PortMap.JOYSTICK_RIGHT);
-        xboxController = new XboxController(PortMap.XBOX_CONTROLLER);
+        this.leftStick  = new SciJoystick(PortMap.JOYSTICK_LEFT);
+        this.rightStick = new SciJoystick(PortMap.JOYSTICK_RIGHT);
+        this.xboxController = new XboxController(PortMap.XBOX_CONTROLLER);
+
+        this.intakeButton = new JoystickButton(this.rightStick, PortMap.JOYSTICK_CENTER_BUTTON);
+        this.intakeButton.whenPressed(new IntakeSuckCommand());
+
     }
 }
 

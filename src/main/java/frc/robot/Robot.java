@@ -211,8 +211,6 @@ public class Robot extends TimedRobot implements LogUpdater {
 
     @Override
     public void autonomousPeriodic() {
-        intakeSubsystem.intakeSpark.set(0.5);
-        System.out.println("current: " + intakeSubsystem.intakeSpark.get());
         //allPeriodicLogs();
         //logDataPeriodic();
     }
@@ -226,8 +224,6 @@ public class Robot extends TimedRobot implements LogUpdater {
     }
 
     public void teleopPeriodic() {
-        intakeSubsystem.setIntakeSpeed(1);
-        System.out.println("current: " + intakeSubsystem.intakeSpark.get());
        
         // (new TankDriveCommand()).start();
         //allPeriodicLogs();
@@ -238,8 +234,6 @@ public class Robot extends TimedRobot implements LogUpdater {
 
     @Override
     public void testPeriodic() {
-        intakeSubsystem.setIntakeSpeed(0.5);
-        System.out.println("current: " + intakeSubsystem.intakeSpark.get());
         // (new CircleControllerCommand(new Waypoint(new Point(ORIGINAL_POINT.x + 1, ORIGINAL_POINT.y), Geo.HORIZONTAL_ANGLE))).start();
         // DelayedPrinter.print("testing...");
     }
