@@ -8,6 +8,7 @@ import frc.robot.commands.generalCommands.SciTalonSpeedCommand;
 import frc.robot.commands.generalCommands.TalonDelayWarningCommand;
 import frc.robot.helpers.DelayedPrinter;
 import frc.robot.robotState.RobotStateUpdater;
+import frc.robot.PortMap;
 import frc.robot.Robot;
 import frc.robot.robotState.RobotState.SD;
 import frc.robot.sciSensorsActuators.SciTalon.SciTalonSD;
@@ -45,11 +46,14 @@ public class SciTalon extends TalonSRX implements RobotStateUpdater, SciSensorAc
     @Override 
     public String getDeviceName(){return "Talon " + super.getDeviceID();}
 
+    @Override
+    public boolean ignore(){return sciIgnore(super.getDeviceID());}
 
     public double getGearRatio() {return this.gearRatio;}
     public boolean isCurrentCommandNumber(int n){return n == this.commandNumber;}
     public boolean atGoal() {return this.goalSpeed == super.getMotorOutputPercent();}
     public void instantSet() {
+        if(ignore()){return;}
         double limitedInput = Utils.limitChange(super.getMotorOutputPercent(), this.goalSpeed, this.currentMaxJerk);
         super.set(ControlMode.PercentOutput, limitedInput);
         checkWarningStatus(limitedInput,super.getMotorOutputPercent());
@@ -61,6 +65,7 @@ public class SciTalon extends TalonSRX implements RobotStateUpdater, SciSensorAc
     }
     
     public void set(double speed, double maxJerk){
+        if(ignore()){return;}
         this.goalSpeed = speed;
         this.currentMaxJerk = maxJerk;
         this.commandNumber++;
