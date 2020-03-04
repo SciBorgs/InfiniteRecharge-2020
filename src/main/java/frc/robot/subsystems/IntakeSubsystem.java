@@ -10,7 +10,7 @@ import frc.robot.sciSensorsActuators.SciSpark;
 
 
 public class IntakeSubsystem extends Subsystem {
-    DoubleSolenoid upDownSolenoid;
+    public SciSolenoid<IntakeValue> upDownSolenoid;
     public SciSpark intakeSpark;
     public static enum IntakeValue{Down, Up, Off}
 
