@@ -6,12 +6,10 @@ import frc.robot.sciSensorsActuators.SciJoystick;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.commands.*;
 import frc.robot.commands.auto.*;
-import frc.robot.commands.turret.*;
 import frc.robot.commands.drive.*;
 import frc.robot.commands.intake.IntakeStopCommand;
 import frc.robot.commands.intake.IntakeSuckCommand;
 import frc.robot.commands.shooter.*;
-import frc.robot.commands.turret.*;
 
 // FILE HAS NOT BEEN CLEANED UP //
 public class OI {
