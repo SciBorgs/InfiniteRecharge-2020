@@ -209,7 +209,6 @@ public class Robot extends TimedRobot implements LogUpdater {
         set(SD.Angle, ORIGINAL_ANGLE);
         //intakeSubsystem.reverseIntake();
         //shooterSubsystem.setShooterOmega(314);
-        try { new ShootCommand().start(); } catch (Exception e) {}
     }
 
     @Override

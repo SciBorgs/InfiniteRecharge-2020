@@ -18,4 +18,6 @@ public class HopperSubsystem {
 
     public void elevator() { this.setUpSpeed(UP_SPEED); }
     public void suck() { this.setInSpeed(IN_SPEED); }
+    public void stopElevator() {this.setUpSpeed(0);}
+    public void stopSuck()     {this.setInSpeed(0);}
 }
