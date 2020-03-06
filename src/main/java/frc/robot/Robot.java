@@ -170,8 +170,6 @@ public class Robot extends TimedRobot implements LogUpdater {
         addSDToLog(SD.Y);
         addSDToLog(SD.Angle);
         addSDToLog(SD.Time);
-        
-        
     }
 
     public void logDataPeriodic() {
@@ -235,8 +233,7 @@ public class Robot extends TimedRobot implements LogUpdater {
         // (new TankDriveCommand()).start();
         //allPeriodicLogs();
         //logDataPeriodic();
-    }
-    
+    }    
 
     @Override
     public void testPeriodic() {
