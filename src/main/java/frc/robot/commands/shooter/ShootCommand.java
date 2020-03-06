@@ -13,7 +13,7 @@ import frc.robot.robotState.RobotState.SD;
 public class ShootCommand extends Command {
   private PowerCellTrajectoryController powerCellTrajectoryController;
 
-  public ShootCommand() throws JsonProcessingException, IOException {
+  public ShootCommand() {
     this.powerCellTrajectoryController = new PowerCellTrajectoryController();
   }
 

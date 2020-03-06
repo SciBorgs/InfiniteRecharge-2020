@@ -17,8 +17,12 @@ public class PowerCellTrajectoryController {
 
   private JsonNode rootNode;
 
-  public PowerCellTrajectoryController() throws JsonProcessingException, IOException {
-    this.rootNode = new ObjectMapper().readTree(new File(TRAJECTORY_DATA_PATH));
+  public PowerCellTrajectoryController() {
+    try {
+      this.rootNode = new ObjectMapper().readTree(new File(TRAJECTORY_DATA_PATH));
+    } catch(IOException e) {
+      throw new RuntimeException("FAILED TO INITIALIZE POWERCELLTRAJECTORYCONTROLLER");
+    }
   }
 
   public Pair<Double, Double> getOptimalParameters() {
