@@ -9,5 +9,4 @@ public class ElevatorHopperCommand extends InstantCommand {
     protected void execute(){
         Robot.hopperSubsystem.elevator();
     }
-
 }
