@@ -4,11 +4,11 @@ import edu.wpi.first.wpilibj.command.Subsystem;
 import frc.robot.Robot;
 import frc.robot.controllers.PID;
 import frc.robot.robotState.RobotState.SD;
-import frc.robot.robotState.RobotStateUpdater;
 import frc.robot.sciSensorsActuators.SciSpark;
 import frc.robot.sciSensorsActuators.SciThroughBoreEncoder;
+import frc.robot.sciSensorsActuators.SciThroughBoreEncoder.SciThroughBoreEncoderSD;
 
-public class TurretSubsystem extends Subsystem implements RobotStateUpdater {
+public class TurretSubsystem extends Subsystem {
   private SciThroughBoreEncoder absEncoder;
   private SciSpark turretSpark;
   private PID turretPID;
@@ -23,6 +23,8 @@ public class TurretSubsystem extends Subsystem implements RobotStateUpdater {
 
     this.turretSpark = new SciSpark(-1);
     this.turretPID = new PID(TURRET_P, TURRET_I, TURRET_D);
+
+    this.absEncoder.assignSD(SciThroughBoreEncoderSD.Radians, SD.TurretAngle);
   }
 
   public void rotateToAngle(double angle) {
@@ -32,9 +34,4 @@ public class TurretSubsystem extends Subsystem implements RobotStateUpdater {
 
   @Override
   protected void initDefaultCommand() {}
-
-  @Override
-  public void updateRobotState() {
-    Robot.set(SD.TurretAngle, this.absEncoder.getRadians());
-  }
 }

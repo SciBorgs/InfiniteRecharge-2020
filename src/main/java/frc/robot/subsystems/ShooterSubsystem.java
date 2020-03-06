@@ -11,8 +11,10 @@ import frc.robot.robotState.RobotStateUpdater;
 import frc.robot.robotState.RobotState.SD;
 import frc.robot.sciSensorsActuators.SciSpark;
 import frc.robot.sciSensorsActuators.SciThroughBoreEncoder;
+import frc.robot.sciSensorsActuators.SciSpark.SciSparkSD;
+import frc.robot.sciSensorsActuators.SciThroughBoreEncoder.SciThroughBoreEncoderSD;
 
-public class ShooterSubsystem extends Subsystem implements RobotStateUpdater {
+public class ShooterSubsystem extends Subsystem {
   private double HOOD_ANGLE_P = 0.65, HOOD_ANGLE_I = 0.01, HOOD_ANGLE_D = 0.0;
   private final double SHOOTER_VELOCITY_P = 0.0009,
       SHOOTER_VELOCITY_I = 0.0000009,
@@ -51,7 +53,8 @@ public class ShooterSubsystem extends Subsystem implements RobotStateUpdater {
     this.absEncoder.setAngle(Math.toRadians(57));
     Robot.set(SD.HoodAngle, this.absEncoder.getRadians());
     
-    automateStateUpdating();
+    this.rightShooterSpark.assignSD(SciSparkSD.Velocity, SD.ShooterOmega);
+    this.absEncoder.assignSD(SciThroughBoreEncoderSD.Radians, SD.HoodAngle);
   }
 
   public void setHoodAngle(double angle) {
@@ -75,10 +78,4 @@ public class ShooterSubsystem extends Subsystem implements RobotStateUpdater {
 
   @Override
   protected void initDefaultCommand() {}
-
-  @Override
-  public void updateRobotState() {
-    Robot.set(SD.HoodAngle, this.absEncoder.getRadians());
-    Robot.set(SD.ShooterOmega, this.shooterSparkEncoder.getVelocity());
-  }
 }
