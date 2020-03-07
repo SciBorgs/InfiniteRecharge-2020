@@ -14,8 +14,10 @@ public class TurretSubsystem extends Subsystem {
   private SciThroughBoreEncoder turretEncoder;
   private SciSpark turretSpark;
   private PID turretPID;
+  private PID initialPositionPID;
 
   private final double TURRET_P = 0, TURRET_I = 0, TURRET_D = 0;
+  private final double INITIAL_POSITION_P = 0, INITIAL_POSITION_I = 0, INITIAL_POSITION_D = 0;
   private final double TURRET_SPARK_GEAR_RATIO = 1;
 
   private final double MAX_TURRET_ANGLE = Math.PI / 2;
@@ -31,6 +33,7 @@ public class TurretSubsystem extends Subsystem {
 
     this.turretSpark = new SciSpark(PortMap.TURRET_SPARK);
     this.turretPID = new PID(TURRET_P, TURRET_I, TURRET_D);
+    this.initialPositionPID = new PID(INITIAL_POSITION_P, INITIAL_POSITION_I, INITIAL_POSITION_D);
 
     this.turretEncoder.assignSD(SciThroughBoreEncoderSD.Radians, SD.TurretAngle);
   }
@@ -44,6 +47,11 @@ public class TurretSubsystem extends Subsystem {
   public void pointTowardsTarget(double angle) {
     this.turretPID.addMeasurement(-angle);
     setTurretSpeed(this.turretPID.getOutput());
+  }
+
+  public void moveToInitialPosition() {
+    this.initialPositionPID.addMeasurement(Robot.get(SD.TurretAngle));
+    this.turretSpark.set(this.initialPositionPID.getOutput());
   }
 
   @Override
