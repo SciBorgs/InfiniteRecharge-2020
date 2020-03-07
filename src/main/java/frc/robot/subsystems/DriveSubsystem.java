@@ -20,9 +20,9 @@ public class DriveSubsystem extends Subsystem implements LogUpdater {
     // Define tested error values here
     private static final double TANK_ANGLE_P = .075, TANK_ANGLE_D = 0.0, TANK_ANGLE_I = 0;
     private static final double TANK_SPEED_LEFT_P  = .05, TANK_SPEED_LEFT_D  = 0.0, TANK_SPEED_LEFT_I  = 0.0;
-    private static final double TANK_SPEED_RIGHT_P = .04, TANK_SPEED_RIGHT_D = 0.0, TANK_SPEED_RIGHT_I = 0.0;
+    private static final double TANK_SPEED_RIGHT_P = .05, TANK_SPEED_RIGHT_D = 0.0, TANK_SPEED_RIGHT_I = 0.0;
     private static final double GOAL_OMEGA_CONSTANT = 8; // Change this to change angle
-    private static double kVLeft = .0375;
+    private static double kVLeft = .036;
     private static double kVRight = .036;  
     private double MAX_OMEGA_GOAL = 1 * GOAL_OMEGA_CONSTANT;
     public SciSpark l, l1, l2, r, r1, r2;
@@ -100,6 +100,9 @@ public class DriveSubsystem extends Subsystem implements LogUpdater {
         Robot.logger.logFinalField       ("input deadzone", INPUT_DEADZONE);
 
         automateLogging();
+
+        this.l.diminishSnap();
+        this.r.diminishSnap();
     }
 
     // If something is assiting, we don't want to drive using setSpeed

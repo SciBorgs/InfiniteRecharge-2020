@@ -17,7 +17,7 @@ public class OI {
     public SciJoystick leftStick, rightStick;
     public XboxController xboxController;
 
-    public JoystickButton circleControllerButton, pointChangerButton, intakeButton;
+    public JoystickButton circleControllerButton, pointChangerButton, intakeButton, toggleDriveDirectionButton;
     
     public OI() {
         this.leftStick  = new SciJoystick(PortMap.JOYSTICK_LEFT);
@@ -27,6 +27,9 @@ public class OI {
         this.intakeButton = new JoystickButton(this.rightStick, PortMap.JOYSTICK_CENTER_BUTTON);
         this.intakeButton.whenPressed(new IntakeSuckCommand());
         this.intakeButton.whenReleased(new IntakeStopCommand());
+
+        this.toggleDriveDirectionButton = new JoystickButton(rightStick, PortMap.JOYSTICK_TRIGGER);
+        this.toggleDriveDirectionButton.whenPressed(new ToggleDriveDirection());
 
 
     }

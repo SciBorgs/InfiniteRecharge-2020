@@ -208,7 +208,16 @@ public class Robot extends TimedRobot implements LogUpdater {
         set(SD.Y, ORIGINAL_POINT.y);
         set(SD.Angle, ORIGINAL_ANGLE);
         //intakeSubsystem.reverseIntake();
+<<<<<<< HEAD
+        driveSubsystem.setReversed(false);
+        // new TemporaryInstantCommand().start();
+        //pneumaticsSubsystem.stopCompressor();
+        //autoRoutine.testDriveDirection();
+        Robot.driveSubsystem.l.ignoreSnap();
+        Robot.driveSubsystem.r.ignoreSnap();
+=======
         //shooterSubsystem.setShooterOmega(314);
+>>>>>>> origin/master
     }
 
     @Override
@@ -225,6 +234,21 @@ public class Robot extends TimedRobot implements LogUpdater {
     @Override
     public void teleopInit() {
         // intakeSubsystem.reverseIntake();
+<<<<<<< HEAD
+        // pneumaticsSubsystem.startCompressor();
+    }
+
+    public void teleopPeriodic() {
+        (new TankDriveCommand()).start();
+        allPeriodicLogs();
+        logDataPeriodic();
+    }
+    
+    public void testInit() {
+        driveSubsystem.l.diminishSnap();
+        driveSubsystem.r.diminishSnap();
+    }
+=======
         Robot.driveSubsystem.l.ignoreSnap();
         Robot.driveSubsystem.r.ignoreSnap();
         //pneumaticsSubsystem.startCompressor();
@@ -238,6 +262,7 @@ public class Robot extends TimedRobot implements LogUpdater {
         //allPeriodicLogs();
         //logDataPeriodic();
     }
+>>>>>>> origin/master
 
     @Override
     public void testInit() {
