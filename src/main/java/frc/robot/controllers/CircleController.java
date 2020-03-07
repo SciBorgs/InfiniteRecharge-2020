@@ -9,20 +9,28 @@ import frc.robot.logging.Logger.DefaultValue;
 
 public class CircleController {
 
-    private static final double FINAL_HEADING_P = .4;
-    private static final double DESIRED_HEADING_P = .2;
+    private static final double FINAL_HEADING_P = .28;
+    private static final double DESIRED_HEADING_P = .4;
     private static final double ENDING_TURN_P = .1;
-    private PID finalHeadingPID = new PID(FINAL_HEADING_P, 0, 0); // error for getting our correct heading at the end
-    private PID desiredHeadingPID = new PID(DESIRED_HEADING_P, 0, .02); // error for getting to the the correct point at the end
+    private PID finalHeadingPID = new PID(FINAL_HEADING_P, 0, 0.0); // error for getting our correct heading at the end
+    private PID desiredHeadingPID = new PID(DESIRED_HEADING_P, 0, 0); // error for getting to the the correct point at the end
     private PID endingTurnPID = new PID(ENDING_TURN_P, 0, 0); // fix heading at close distance
 
-    private static final double STOPPING_DISTANCE_TOLERANCE = .1;
-    private static final double ENDING_DISTANCE_TOLERANCE = .4;
-    private static final double TURNING_WEIGHT = .5; // it will be raised to a power of this, ie x^TURNING_WEIGHT
+    private static final double ENDING_DISTANCE_TOLERANCE = .1;
+    private static final double TURNING_WEIGHT = 0; 
+    private static final double STRAIGHT_DISTANCE = ENDING_DISTANCE_TOLERANCE * 2/3;
+    private static final double DEFAULT_SPEED = 18;
+    private double speed;
+    
 
     private Waypoint destination;
 
-    public CircleController () { Robot.logger.logFinalPIDConstants("final heading PID", this.finalHeadingPID);  }
+    public CircleController () { this(DEFAULT_SPEED); }
+
+    public CircleController (double speed) { 
+        Robot.logger.logFinalPIDConstants("final heading PID", this.finalHeadingPID);
+        this.speed = speed;  
+    }
 
     public void update(Waypoint finalDestination) {
         this.destination = finalDestination;
@@ -32,8 +40,9 @@ public class CircleController {
     public void update (Point currPos, double currHeading, Waypoint finalDestination) {
         setup();
         Line sightLine = Geo.pointAngleForm(currPos, currHeading);
-        if (sightLine.contains(finalDestination.point)) { // go straight
-            Robot.driveSubsystem.setSpeedTankTurningPercentage(0);
+        if (sightLine.contains(finalDestination.point) || Geo.getDistance(sightLine, currPos) < STRAIGHT_DISTANCE) { // go straight
+            //Robot.driveSubsystem.setSpeedTankTurningPercentage(0);
+            Robot.driveSubsystem.setSpeedTankForwardTurningPercentage(speed, 0);
         } else {
             setSpeed(currPos, currHeading, finalDestination.point, finalDestination.heading);
         }
@@ -85,17 +94,20 @@ public class CircleController {
             Robot.driveSubsystem.setSpeedTankForwardTurningMagnitude(0, turnMagnitude);
         } else {
             // want stronger bias towards our heading at the end as we get closer to the point -> weight
+            DelayedPrinter.print("Final heaidng pid: " + this.finalHeadingPID.getOutput(), 5);
             turnMagnitude = getWeight(currPos, finalPos) * this.finalHeadingPID.getOutput() + this.desiredHeadingPID.getOutput();
-            Robot.driveSubsystem.setSpeedTankTurningPercentage(turnMagnitude);
+            Robot.driveSubsystem.setSpeedTankForwardTurningPercentage(this.speed, turnMagnitude * (1 - (1 / (1 + (0.7 * Geo.getDistance(currPos, finalPos))))));
+            DelayedPrinter.print("turn magin: " + turnMagnitude, 5);
+            // Robot.driveSubsystem.setSpeedTankTurningPercentage(turnMagnitude);
         }
         Robot.logger.addData("CircleController.java", "turnMagnitude", turnMagnitude, DefaultValue.Empty);
     }
 
-    private static double getWeight(Point currPos, Point finalPos) {
-       return 1 + Math.pow(Geo.getDistance(currPos, finalPos), TURNING_WEIGHT);
+    private double getWeight(Point currPos, Point finalPos) {
+       return 1 + TURNING_WEIGHT * Math.pow(Geo.getDistance(currPos, finalPos), speed);
     }
 
     public boolean isFinished () {
-        return Geo.getDistance(Robot.getPos(), destination.point) < STOPPING_DISTANCE_TOLERANCE;
+        return Geo.getDistance(Robot.getPos(), destination.point) < ENDING_DISTANCE_TOLERANCE;
     }
 }

@@ -61,6 +61,18 @@ public class StateInfo{
         return getRateOfChange(Robot.stateHistory, sd, ticksBack);
     }
 
+    public static double avgValue(RobotStateHistory stateHistory, SD sd, int numValues) {
+        double sum = 0;
+        for(int i = 0; i < numValues; i++){
+            sum += stateHistory.statesAgo(i).get(sd);
+        }
+        return sum / numValues;
+    }
+
+    public static double avgValue(SD sd, int numValues){
+        return avgValue(Robot.stateHistory, sd, numValues);
+    }
+
     public static double getAngularVelocity() {return getAngularVelocity(Robot.stateHistory);}
     public static double getXVelocity()       {return getXVelocity(      Robot.stateHistory);}
     public static double getYVelocity()       {return getYVelocity(      Robot.stateHistory);}

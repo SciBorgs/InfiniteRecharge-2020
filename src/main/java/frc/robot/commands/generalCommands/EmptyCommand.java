@@ -6,9 +6,6 @@ public class EmptyCommand extends Command {
 
     public EmptyCommand () {
         System.out.println("make wait command");
-        System.out.println("make wait command");
-        System.out.println("make wait command");
-        System.out.println("make wait command");
     }
     
     @Override
