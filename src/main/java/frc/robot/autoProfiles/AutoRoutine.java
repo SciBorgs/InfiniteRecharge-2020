@@ -7,6 +7,7 @@ import frc.robot.Utils;
 import frc.robot.commands.auto.*;
 import frc.robot.commands.drive.*;
 import frc.robot.commands.intake.*;
+import frc.robot.commands.shooter.ShootCommand;
 import frc.robot.helpers.Geo;
 
 public class AutoRoutine {
@@ -14,14 +15,14 @@ public class AutoRoutine {
     public double yShift = 8.21055 / 2;
     public double xShift = 15.98295 / 2;
 
-    public void tenBallAuto() {
-        // start : (3, -7.5), heading: 0       
+    public void eightBallAuto() {
+        // start : (3 - xShift, -7.5 - yShift), heading: 0       
         Waypoint trench     = new Waypoint(6.3 - xShift, -7.5 - yShift, Geo.HORIZONTAL_ANGLE);
         double speedToTrench = 15;
         Waypoint midToShoot = new Waypoint(4.6 - xShift, -5   - yShift, Geo.HORIZONTAL_ANGLE + Math.PI / 2);
         Waypoint shootPos   = new Waypoint(3.1 - xShift, -2.4 - yShift, Geo.HORIZONTAL_ANGLE + Math.PI);
         double speedOnPath  = 15;
-        Waypoint trench2    = new Waypoint(8   - xShift, -.7  - yShift, Geo.HORIZONTAL_ANGLE + Math.PI);
+        Waypoint trench2    = new Waypoint(8   - xShift, -.7  - yShift, Geo.HORIZONTAL_ANGLE + Math.PI); // can be tenBallAuto if the bot goes farther
         CommandGroup cGroup = new CommandGroup();
         cGroup.addParallel  (new IntakeSuckCommand());
         cGroup.addSequential(new CircleControllerCommand(trench, speedToTrench));
@@ -29,15 +30,16 @@ public class AutoRoutine {
         cGroup.addParallel  (new IntakeStopCommand());
         cGroup.addSequential(new CircleControllerCommand(midToShoot, speedOnPath));
         cGroup.addSequential(new CircleControllerCommand(shootPos, speedOnPath));
-        // cGroup.addSequential(new ShooterCommand()); should be the shooter command
-        cGroup.addSequential(new WaitCommand(2)); 
+        cGroup.addSequential(new ShootCommand());
+        cGroup.addSequential(new WaitCommand(4)); 
         cGroup.addSequential(new ToggleDriveDirection());
         cGroup.addParallel  (new IntakeSuckCommand());
         cGroup.addSequential(new CircleControllerCommand(trench2, speedToTrench));
         cGroup.addSequential(new ToggleDriveDirection());
         cGroup.addParallel  (new IntakeStopCommand());
         cGroup.addSequential(new CircleControllerCommand(shootPos, speedOnPath));
-        // cGroup.addSequential(new ShooterCommand()); should be the shooter command
+        cGroup.addSequential(new ShootCommand());
+        cGroup.addSequential(new WaitCommand(4)); 
         cGroup.start();
     }
 

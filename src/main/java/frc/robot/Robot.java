@@ -6,10 +6,7 @@ import java.util.List;
 import java.util.Optional;
 
 import frc.robot.subsystems.*;
-import frc.robot.commands.shooter.ShootCommand;
 import frc.robot.autoProfiles.AutoRoutine;
-import frc.robot.commands.drive.HighGearCommand;
-import frc.robot.commands.drive.TankDriveCommand;
 import frc.robot.helpers.*;
 import frc.robot.dataTypes.*;
 import frc.robot.logging.*;
@@ -17,14 +14,10 @@ import frc.robot.shapes.*;
 import frc.robot.logging.Logger.DefaultValue;
 import frc.robot.robotState.*;
 import frc.robot.robotState.RobotState.SD;
-import frc.robot.sciSensorsActuators.SciJoystick;
-import frc.robot.sciSensorsActuators.SciSolenoid;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Scheduler;
-import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
-import edu.wpi.first.wpilibj.shuffleboard.ShuffleboardTab;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.controllers.*;
 import frc.robot.stateEstimation.interfaces.*;
@@ -100,13 +93,11 @@ public class Robot extends TimedRobot implements LogUpdater {
     public static final Waypoint TEST_POINT_2 = new Waypoint(new Point(0, 1), Geo.HORIZONTAL_ANGLE);
     public static final Waypoint TEST_POINT_3 = new Waypoint(new Point(0, 2), Geo.HORIZONTAL_ANGLE);
     public static final Waypoint TEST_POINT_4 = new Waypoint(new Point(0, 3), Geo.HORIZONTAL_ANGLE);
-    // for tenBallAuto
-    // public static final Point ORIGINAL_POINT  = new Point(3 - autoRoutine.xShift, -7.5 - autoRoutine.yShift);
-    public static final Point ORIGINAL_POINT  = new Point(0, 0);
+    // for Auto
+    public static final Point ORIGINAL_POINT  = new Point(3 - autoRoutine.xShift, -7.5 - autoRoutine.yShift);
+    // for testing
+    // public static final Point ORIGINAL_POINT  = new Point(0, 0);
     public static final double ORIGINAL_ANGLE = Geo.HORIZONTAL_ANGLE;
-    public static Waypoint[] arr = new Waypoint[] {TEST_POINT_0, TEST_POINT_1, TEST_POINT_2, TEST_POINT_3, TEST_POINT_4};
-    public static ArrayList <Waypoint> path = new ArrayList<Waypoint>(Arrays.asList(arr));
-
     public static Waypoint CURRENT_DESTINATION = TEST_POINT_0;
 
     public static Point newDestPoint = new Point(Utils.inchesToMeters(4), .458);
