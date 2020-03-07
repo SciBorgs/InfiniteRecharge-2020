@@ -19,6 +19,9 @@ public class ShooterSubsystem extends Subsystem {
   private final double SHOOTER_VELOCITY_P = 0.0009,
       SHOOTER_VELOCITY_I = 0.0000009,
       SHOOTER_VELOCITY_D = 0.00012;
+
+  private final double HOOD_INITIAL_ANGLE = 17;
+
   private final double HOOD_SPARK_GEAR_RATIO = 36.0 / 334.0;
   private final double SHOOTER_SPARK_GEAR_RATIO = 1;
 
@@ -26,9 +29,8 @@ public class ShooterSubsystem extends Subsystem {
   private final double SHOOTER_SPARK_MAX_OUTPUT = 1;
 
   private SciSpark hoodSpark, rightShooterSpark, leftShooterSpark;
-  private SciThroughBoreEncoder absEncoder;
+  private SciThroughBoreEncoder hoodEncoder;
 
-  private CANEncoder shooterSparkEncoder;
   private CANPIDController shooterSparkVelocityPID;
   private PID hoodAnglePID;
 
@@ -46,15 +48,13 @@ public class ShooterSubsystem extends Subsystem {
     this.shooterSparkVelocityPID.setD(SHOOTER_VELOCITY_D);
     this.shooterSparkVelocityPID.setOutputRange(SHOOTER_SPARK_MIN_OUTPUT, SHOOTER_SPARK_MAX_OUTPUT);
 
-    this.shooterSparkEncoder = this.rightShooterSpark.getEncoder();
-
-    this.absEncoder = new SciThroughBoreEncoder(1);
-    this.absEncoder.setDistancePerRotation(2 * Math.PI * HOOD_SPARK_GEAR_RATIO);
-    this.absEncoder.setAngle(Math.toRadians(57));
-    Robot.set(SD.HoodAngle, this.absEncoder.getRadians());
+    this.hoodEncoder = new SciThroughBoreEncoder(PortMap.HOOD_ENCODER);
+    this.hoodEncoder.setDistancePerRotation(2 * Math.PI * HOOD_SPARK_GEAR_RATIO);
+    this.hoodEncoder.setAngle(Math.toRadians(HOOD_INITIAL_ANGLE));
+    Robot.set(SD.HoodAngle, this.hoodEncoder.getRadians());
     
     this.rightShooterSpark.assignSD(SciSparkSD.Velocity, SD.ShooterOmega);
-    this.absEncoder.assignSD(SciThroughBoreEncoderSD.Radians, SD.HoodAngle);
+    this.hoodEncoder.assignSD(SciThroughBoreEncoderSD.Radians, SD.HoodAngle);
   }
 
   public void setHoodAngle(double angle) {

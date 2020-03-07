@@ -17,6 +17,8 @@ public class PowerCellTrajectoryController {
 
   private JsonNode rootNode;
 
+  private final double HOOD_ANGLE_OFFSET = 3;
+
   public PowerCellTrajectoryController() {
     try {
       this.rootNode = new ObjectMapper().readTree(new File(TRAJECTORY_DATA_PATH));
@@ -29,6 +31,6 @@ public class PowerCellTrajectoryController {
     double distanceToOuterPort = Robot.get(SD.DistanceToPort) - LIMELIGHT_OFFSET;
     JsonNode distanceField = this.rootNode.get(String.format("%.2f", distanceToOuterPort));
     return new Pair<Double, Double>(
-        distanceField.get("hood_angle").asDouble(), distanceField.get("omega").asDouble());
+        distanceField.get("hood_angle").asDouble() + HOOD_ANGLE_OFFSET, distanceField.get("omega").asDouble());
   }
 }
