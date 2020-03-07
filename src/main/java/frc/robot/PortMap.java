@@ -70,13 +70,19 @@ public class PortMap {
     // *******************HOPPER******************//
 
     public static final int HOPPER_SUCK_SPARK = 58;
-    public static final int HOPPER_ELEVATOR_SPARK = 55;
+    public static final int HOPPER_ELEVATOR_SPARK = -1;
 
     // *******************SHOOTER******************//
 
-    public static final int SHOOTER_LEFT_SPARK = -1;
+    public static final int SHOOTER_LEFT_SPARK = 4;
     public static final int SHOOTER_RIGHT_SPARK = -1;
-    public static final int HOOD_SPARK = -1;
+    public static final int HOOD_SPARK = 55;
+    public static final int HOOD_ENCODER = -1;
+
+    // *******************TURRET******************//
+
+    public static final int TURRET_SPARK = -1;
+    public static final int TURRET_ENCODER = -1;
     
     //*******************MISC********************//
 

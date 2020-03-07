@@ -210,11 +210,17 @@ public class Robot extends TimedRobot implements LogUpdater {
         set(SD.Y, ORIGINAL_POINT.y);
         set(SD.Angle, ORIGINAL_ANGLE);
         //intakeSubsystem.reverseIntake();
-        //shooterSubsystem.setShooterOmega(314);
+        driveSubsystem.setReversed(false);
+        // new TemporaryInstantCommand().start();
+        //pneumaticsSubsystem.stopCompressor();
+        //autoRoutine.testDriveDirection();
+        Robot.driveSubsystem.l.ignoreSnap();
+        Robot.driveSubsystem.r.ignoreSnap();
     }
 
     @Override
     public void autonomousPeriodic() {
+        shooterSubsystem.setShooterOmega(100);
         //shooterSubsystem.setHoodAngle(Math.toRadians(25));
         //System.out.println("HOOD ANGLE: " + Robot.get(SD.HoodAngle));
         //System.out.println("OMEGA: " + Robot.get(SD.ShooterOmega));
@@ -232,7 +238,7 @@ public class Robot extends TimedRobot implements LogUpdater {
     }
 
     public void teleopPeriodic() {
-        //intakeSubsystem.setIntakeSpeed(1);
+        shooterSubsystem.testShooterSpark(0.1);
         //System.out.println("current: " + intakeSubsystem.intakeSpark.get());
        
         // (new TankDriveCommand()).start();

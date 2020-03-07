@@ -6,7 +6,6 @@ import frc.robot.sciSensorsActuators.SciJoystick;
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.commands.*;
 import frc.robot.commands.auto.*;
-import frc.robot.commands.turret.*;
 import frc.robot.commands.drive.*;
 import frc.robot.commands.intake.*;
 import frc.robot.commands.shooter.*;
@@ -17,7 +16,7 @@ public class OI {
     public SciJoystick leftStick, rightStick;
     public XboxController xboxController;
 
-    public JoystickButton circleControllerButton, pointChangerButton, intakeButton, gearShiftButton;
+    public JoystickButton circleControllerButton, pointChangerButton, intakeButton, shootButton, gearShiftButton, toggleDriveDirectionButton;
 
     public OI() {
         this.leftStick  = new SciJoystick(PortMap.JOYSTICK_LEFT);
@@ -31,6 +30,15 @@ public class OI {
         this.gearShiftButton = new JoystickButton(this.leftStick, PortMap.JOYSTICK_RIGHT_BUTTON);
         this.gearShiftButton.whenPressed(new LowGearCommand());
         this.gearShiftButton.whenReleased(new HighGearCommand());
+
+        this.toggleDriveDirectionButton = new JoystickButton(rightStick, PortMap.JOYSTICK_TRIGGER);
+        this.toggleDriveDirectionButton.whenPressed(new ToggleDriveDirection());
+
+        this.shootButton = new JoystickButton(rightStick, PortMap.JOYSTICK_TRIGGER);
+        this.shootButton.whenActive(new ShootCommand());
+        this.shootButton.whenReleased(new StopShooterCommand());
+
+
     }
 }
 

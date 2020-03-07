@@ -22,6 +22,7 @@ public class ShootCommand extends Command {
     Pair<Double, Double> optimalParameters = this.powerCellTrajectoryController.getOptimalParameters();
     Robot.shooterSubsystem.setHoodAngle(optimalParameters.first);
     Robot.shooterSubsystem.setShooterOmega(optimalParameters.second);
+    Robot.hopperSubsystem.elevator();
     System.out.println("RPS Difference: " + (optimalParameters.second - Robot.get(SD.ShooterOmega)));
   }
 
