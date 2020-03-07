@@ -4,6 +4,7 @@ import java.util.HashMap;
 
 import edu.wpi.first.wpilibj.DutyCycleEncoder;
 import frc.robot.robotState.RobotState.SD;
+import frc.robot.Utils;
 import frc.robot.robotState.RobotStateUpdater;
 import frc.robot.sciSensorsActuators.SciThroughBoreEncoder.SciThroughBoreEncoderSD;
 
@@ -21,7 +22,10 @@ public class SciThroughBoreEncoder extends DutyCycleEncoder implements RobotStat
     }
 
     public void setOffset(double offset) {this.offset = offset;}
-    public void setAngle(double angle)   {this.offset = angle - getDistance();}
+    public void setAngle(double angle) {
+        for (int i = 0; i < 10 || !Utils.impreciseEquals(getRadians(), angle); ++i)
+            this.offset = angle - getDistance();
+    }
 
     public double getRadians() {return getDistance() + this.offset;}
 
