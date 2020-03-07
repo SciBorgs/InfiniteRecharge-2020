@@ -16,8 +16,8 @@ public class TurretSubsystem extends Subsystem {
   private PID turretPID;
   private PID initialPositionPID;
 
-  private final double TURRET_P = 0, TURRET_I = 0, TURRET_D = 0;
-  private final double INITIAL_POSITION_P = 0, INITIAL_POSITION_I = 0, INITIAL_POSITION_D = 0;
+  private final double TURRET_P = 0.05, TURRET_I = 0, TURRET_D = 0;
+  private final double INITIAL_POSITION_P = 0.5, INITIAL_POSITION_I = 0, INITIAL_POSITION_D = 0;
   private final double TURRET_SPARK_GEAR_RATIO = 1;
 
   private final double MAX_TURRET_ANGLE = Math.PI / 2;
@@ -50,7 +50,7 @@ public class TurretSubsystem extends Subsystem {
   }
 
   public void moveToInitialPosition() {
-    this.initialPositionPID.addMeasurement(Robot.get(SD.TurretAngle));
+    this.initialPositionPID.addMeasurement(TURRET_INITAL_ANGLE - Robot.get(SD.TurretAngle));
     this.turretSpark.set(this.initialPositionPID.getOutput());
   }
 
