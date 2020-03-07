@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Optional;
 
 import frc.robot.subsystems.*;
+import frc.robot.commands.shooter.ShootCommand;
 import frc.robot.autoProfiles.AutoRoutine;
 import frc.robot.commands.drive.TankDriveCommand;
 import frc.robot.helpers.*;
@@ -15,6 +16,7 @@ import frc.robot.shapes.*;
 import frc.robot.logging.Logger.DefaultValue;
 import frc.robot.robotState.*;
 import frc.robot.robotState.RobotState.SD;
+import frc.robot.sciSensorsActuators.SciJoystick;
 import frc.robot.sciSensorsActuators.SciSolenoid;
 import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.TimedRobot;
@@ -47,8 +49,11 @@ public class Robot extends TimedRobot implements LogUpdater {
     public static PigeonSubsystem     pigeonSubsystem     = new PigeonSubsystem();
     public static LimelightSubsystem  limelightSubsystem  = new LimelightSubsystem();
     public static PneumaticsSubsystem pneumaticsSubsystem = new PneumaticsSubsystem();
+    public static TurretSubsystem     turretSubsystem     = new TurretSubsystem();
+    public static ShooterSubsystem    shooterSubsystem    = new ShooterSubsystem();
 
     public static IntakeSubsystem     intakeSubsystem     = new IntakeSubsystem();
+    public static HopperSubsystem     hopperSubsystem     = new HopperSubsystem();
     
     public static Following following = new Following();
     public static OI oi = new OI();
@@ -110,11 +115,6 @@ public class Robot extends TimedRobot implements LogUpdater {
 
     NetworkTableEntry getPos;
 
-    public static enum ArmValue{Open, Closed, Off}
-    public static SciSolenoid<ArmValue> temporarySolenoid = 
-        new SciSolenoid<>(new int[]{4, 5}, ArmValue.Open, ArmValue.Closed, ArmValue.Off);
-
-
     public Robot() {
         automateLogging();
     }
@@ -134,13 +134,12 @@ public class Robot extends TimedRobot implements LogUpdater {
     }
     private void allUpdateRobotStates() {
         set(SD.Time, this.timer.get());
-        //System.out.println(Robot.get(SD.Time));
+        //double t = this.timer.get();
         for (RobotStateUpdater i : robotStateUpdaters) {
-            //double t1 = this.timer.get();
-            if(!i.ignore()){
-                i.updateRobotState();
-            }
-            //System.out.println("UPDATING " + i.getClass() + " T DIFF: " + (this.timer.get() - t1));
+            i.updateRobotState();
+            //System.out.println("time diff: " + (this.timer.get() - t));
+            //System.out.println("updating: " + i.getClass());
+            //t = this.timer.get();
         }
     }
 
@@ -162,12 +161,11 @@ public class Robot extends TimedRobot implements LogUpdater {
 
     public void robotInit() {
         timer.start();
-        temporarySolenoid.defaultValue = ArmValue.Open;
-        temporarySolenoid.set(ArmValue.Open);
         attemptsSinceLastLog = 0;
         set(SD.X, ORIGINAL_POINT.x);
         set(SD.Y, ORIGINAL_POINT.y);
         set(SD.Angle, ORIGINAL_ANGLE);
+        set(SD.DistanceToPort, 0);
         allUpdateRobotStates();
         pneumaticsSubsystem.stopCompressor();
         // logger.incrementPrevious("robot.java", "deploy", DefaultValue.Previous);
@@ -205,29 +203,38 @@ public class Robot extends TimedRobot implements LogUpdater {
 
     public void autonomousInit() { 
         driveSubsystem.setReversed(false);       
-        temporarySolenoid.set(ArmValue.Open);
-        Robot.driveSubsystem.assistedDriveMode();
+        //Robot.driveSubsystem.assistedDriveMode();
         set(SD.X, ORIGINAL_POINT.x);
         set(SD.Y, ORIGINAL_POINT.y);
         set(SD.Angle, ORIGINAL_ANGLE);
         //intakeSubsystem.reverseIntake();
+<<<<<<< HEAD
         driveSubsystem.setReversed(false);
         // new TemporaryInstantCommand().start();
         //pneumaticsSubsystem.stopCompressor();
         //autoRoutine.testDriveDirection();
         Robot.driveSubsystem.l.ignoreSnap();
         Robot.driveSubsystem.r.ignoreSnap();
+=======
+        //shooterSubsystem.setShooterOmega(314);
+>>>>>>> origin/master
     }
 
     @Override
     public void autonomousPeriodic() {
-        allPeriodicLogs();
-        logDataPeriodic();
+        shooterSubsystem.setShooterOmega(100);
+        //shooterSubsystem.setHoodAngle(Math.toRadians(25));
+        //System.out.println("HOOD ANGLE: " + Robot.get(SD.HoodAngle));
+        //System.out.println("OMEGA: " + Robot.get(SD.ShooterOmega));
+        //sequential.update();
+        //allPeriodicLogs();
+        //logDataPeriodic();
     }
     
     @Override
     public void teleopInit() {
         // intakeSubsystem.reverseIntake();
+<<<<<<< HEAD
         // pneumaticsSubsystem.startCompressor();
     }
 
@@ -241,20 +248,35 @@ public class Robot extends TimedRobot implements LogUpdater {
         driveSubsystem.l.diminishSnap();
         driveSubsystem.r.diminishSnap();
     }
-
-    public void testPeriodic() {
-        // (new CircleControllerCommand(new Waypoint(new Point(ORIGINAL_POINT.x + 1, ORIGINAL_POINT.y), Geo.HORIZONTAL_ANGLE))).start();
-        // DelayedPrinter.print("testing...");
+=======
+        Robot.driveSubsystem.l.ignoreSnap();
+        Robot.driveSubsystem.r.ignoreSnap();
+        //pneumaticsSubsystem.startCompressor();
     }
 
+    public void teleopPeriodic() {
+        shooterSubsystem.testShooterSpark(0.1);
+        //System.out.println("current: " + intakeSubsystem.intakeSpark.get());
+       
+        // (new TankDriveCommand()).start();
+        //allPeriodicLogs();
+        //logDataPeriodic();
+    }
+>>>>>>> origin/master
+
     @Override
-    public void disabledPeriodic() {
-        DelayedPrinter.print("disabled...");
+    public void testInit() {
+        shooterSubsystem.stopMotors();
+    }
+
+    public void testPeriodic() {
+        System.out.println("HOOD ANGLE " + Robot.get(SD.HoodAngle));
+        System.out.println("DIST " + Robot.get(SD.DistanceToPort));
     }
 
     public void disabledInit() {
-        allPeriodicLogs();
-        logger.logData();
-        logger.writeLoggedData();
+        // allPeriodicLogs();
+        // logger.logData();
+        // logger.writeLoggedData();
     }
 }

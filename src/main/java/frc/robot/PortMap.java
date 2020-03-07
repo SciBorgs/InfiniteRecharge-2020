@@ -50,28 +50,49 @@ public class PortMap {
     public static final int XBOX_RIGHT_JOY_X = 4;
     public static final int XBOX_RIGHT_JOY_Y = 5;
     
-    //*******************SPARKS******************//
+    //*******************DRIVE TRAIN******************//
+
+    public static final int HOPPER_UP_SPARK = 8;
+    public static final int HOPPER_IN_SPARK = 7;
 
     public static final int LEFT_FRONT_SPARK = 6; 
     public static final int LEFT_MIDDLE_SPARK = 5; 
-    public static final int LEFT_BACK_SPARK = 4;
+    public static final int LEFT_BACK_SPARK = 54;
 
-    public static final int RIGHT_FRONT_SPARK = 3;
-    public static final int RIGHT_MIDDLE_SPARK = 2;
-    public static final int RIGHT_BACK_SPARK = 1;
+    public static final int RIGHT_FRONT_SPARK = 57;
+    public static final int RIGHT_MIDDLE_SPARK = 3;
+    public static final int RIGHT_BACK_SPARK = 56;
 
-    //*******************TALONS******************//
+    // *******************INTAKE******************//
 
-    public static final int PIGEON_TALON = 9;
-    public static final int INTAKE_TALON = 12; // Temporary
+    public static final int INTAKE_SPARK = 1;
+    public static final int[] INTAKE_SOLENOID_PORTS = {1, 2};
+
+    // *******************HOPPER******************//
+
+    public static final int HOPPER_SUCK_SPARK = 58;
+    public static final int HOPPER_ELEVATOR_SPARK = 55;
+
+    // *******************SHOOTER******************//
+
+    public static final int SHOOTER_LEFT_SPARK = -1;
+    public static final int SHOOTER_RIGHT_SPARK = -1;
+    public static final int HOOD_SPARK = -1;
+    public static final int HOOD_ENCODER = -1;
+
+    // *******************TURRET******************//
+
+    public static final int TURRET_SPARK = -1;
+    public static final int TURRET_ENCODER = -1;
     
-    //******************SOLENOIDS****************//
-
-    public static final int INTAKE_SOLENOID_FORWARD = 1; // Temporary
-    public static final int INTAKE_SOLENOID_REVERSE = 2; // Temporary
-
     //*******************MISC********************//
+
+    public static final int TILT_PIGEON = 11;      // CHANGE TO ACTUAL INPUT
+    public static final int SHIFTING_TALON = 10;   // CHANGE TO ACTUAL INPUT
+    public static final int LIFT_LEFT_TALON = 12;  // CHANGE TO ACTUAL INPUT
+    public static final int LIFT_RIGHT_TALON = 13; // CHANGE TO ACTUAL INPUT
 
     public static final int PRESSURE_SENSOR = 0;
     public static final int TARGETING_LIGHT_DIGITAL_OUTPUT = 5;
+    public static final int PIGEON_ID = 58;
 }

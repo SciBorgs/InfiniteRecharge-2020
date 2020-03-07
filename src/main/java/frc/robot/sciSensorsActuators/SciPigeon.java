@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Optional;
 
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.sensors.PigeonIMU;
 
 import frc.robot.Robot;
@@ -17,8 +16,8 @@ public class SciPigeon extends PigeonIMU implements RobotStateUpdater, SciSensor
     public static enum SciPigeonSD {Angle, Pitch, Role}
     public HashMap<SciPigeonSD, SD> sdMap;
 
-    public SciPigeon(TalonSRX talon) {
-        super(talon);
+    public SciPigeon(int id) {
+        super(id);
         this.sdMap = new HashMap<>();
         automateStateUpdating();
     }

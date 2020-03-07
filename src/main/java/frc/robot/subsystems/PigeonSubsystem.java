@@ -12,11 +12,9 @@ import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 public class PigeonSubsystem extends Subsystem {
   // for the main pigeon on the robot
     public  SciPigeon pigeon;
-    private TalonSRX pigeonTalon;
     
     public PigeonSubsystem () {
-        this.pigeonTalon = new TalonSRX(PortMap.PIGEON_TALON);
-        this.pigeon      = new SciPigeon(pigeonTalon);
+        this.pigeon = new SciPigeon(PortMap.PIGEON_ID);
         this.pigeon.assignSD(SciPigeonSD.Angle, SD.PigeonAngle);
     }
 
