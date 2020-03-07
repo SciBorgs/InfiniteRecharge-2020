@@ -43,6 +43,10 @@ public class DriveSubsystem extends Subsystem implements LogUpdater {
     public boolean reversed = false;
     public double driveMultiplier = 1;
 
+    public SciSolenoid<GearRatio> shiftSolenoid;
+
+    public static enum GearRatio {High, Low, Off}
+
     public PID getTankAnglePID()   {return this.tankAnglePID;}
     public double getMaxOmegaGoal(){return MAX_OMEGA_GOAL;}
 
@@ -95,6 +99,8 @@ public class DriveSubsystem extends Subsystem implements LogUpdater {
         this.tankAnglePID      = new PID(TANK_ANGLE_P,       TANK_ANGLE_I,       TANK_ANGLE_D);
         this.tankSpeedLeftPID  = new PID(TANK_SPEED_LEFT_P,  TANK_SPEED_LEFT_I,  TANK_SPEED_LEFT_D);
         this.tankSpeedRightPID = new PID(TANK_SPEED_RIGHT_P, TANK_SPEED_RIGHT_I, TANK_SPEED_RIGHT_D);
+
+        this.shiftSolenoid = new SciSolenoid<GearRatio>(PortMap.SHIFTING_SOLENOID, GearRatio.High, GearRatio.Low, GearRatio.Off);
 
         Robot.logger.logFinalPIDConstants("tank angle PID", this.tankAnglePID);
         Robot.logger.logFinalField       ("input deadzone", INPUT_DEADZONE);

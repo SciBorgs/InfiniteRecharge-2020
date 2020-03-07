@@ -8,8 +8,7 @@ import frc.robot.commands.*;
 import frc.robot.commands.auto.*;
 import frc.robot.commands.turret.*;
 import frc.robot.commands.drive.*;
-import frc.robot.commands.intake.IntakeStopCommand;
-import frc.robot.commands.intake.IntakeSuckCommand;
+import frc.robot.commands.intake.*;
 import frc.robot.commands.shooter.*;
 import frc.robot.commands.turret.*;
 
@@ -18,8 +17,8 @@ public class OI {
     public SciJoystick leftStick, rightStick;
     public XboxController xboxController;
 
-    public JoystickButton circleControllerButton, pointChangerButton, intakeButton;
-    
+    public JoystickButton circleControllerButton, pointChangerButton, intakeButton, gearShiftButton;
+
     public OI() {
         this.leftStick  = new SciJoystick(PortMap.JOYSTICK_LEFT);
         this.rightStick = new SciJoystick(PortMap.JOYSTICK_RIGHT);
@@ -29,7 +28,9 @@ public class OI {
         this.intakeButton.whenPressed(new IntakeSuckCommand());
         this.intakeButton.whenReleased(new IntakeStopCommand());
 
-
+        this.gearShiftButton = new JoystickButton(this.leftStick, PortMap.JOYSTICK_RIGHT_BUTTON);
+        this.gearShiftButton.whenPressed(new LowGearCommand());
+        this.gearShiftButton.whenReleased(new HighGearCommand());
     }
 }
 

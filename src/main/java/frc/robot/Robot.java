@@ -8,6 +8,7 @@ import java.util.Optional;
 import frc.robot.subsystems.*;
 import frc.robot.commands.shooter.ShootCommand;
 import frc.robot.autoProfiles.AutoRoutine;
+import frc.robot.commands.drive.HighGearCommand;
 import frc.robot.commands.drive.TankDriveCommand;
 import frc.robot.helpers.*;
 import frc.robot.dataTypes.*;
@@ -202,7 +203,8 @@ public class Robot extends TimedRobot implements LogUpdater {
 
 
     public void autonomousInit() { 
-        driveSubsystem.setReversed(false);       
+        driveSubsystem.setReversed(false); 
+        //(new HighGearCommand()).start();      
         //Robot.driveSubsystem.assistedDriveMode();
         set(SD.X, ORIGINAL_POINT.x);
         set(SD.Y, ORIGINAL_POINT.y);
