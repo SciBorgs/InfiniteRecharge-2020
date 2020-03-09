@@ -19,12 +19,12 @@ public class PowerCellTrajectoryController {
 
   private final double HOOD_ANGLE_OFFSET = 3;
 
-  public PowerCellTrajectoryController() {
+  public PowerCellTrajectoryController() {/*
     try {
       this.rootNode = new ObjectMapper().readTree(new File(TRAJECTORY_DATA_PATH));
     } catch(IOException e) {
       throw new RuntimeException("FAILED TO INITIALIZE POWERCELLTRAJECTORYCONTROLLER");
-    }
+    }*/
   }
 
   public Pair<Double, Double> getOptimalParameters() {

@@ -100,7 +100,7 @@ public class DriveSubsystem extends Subsystem implements LogUpdater {
         this.tankSpeedLeftPID  = new PID(TANK_SPEED_LEFT_P,  TANK_SPEED_LEFT_I,  TANK_SPEED_LEFT_D);
         this.tankSpeedRightPID = new PID(TANK_SPEED_RIGHT_P, TANK_SPEED_RIGHT_I, TANK_SPEED_RIGHT_D);
 
-        this.shiftSolenoid = new SciSolenoid<GearRatio>(PortMap.SHIFTING_SOLENOID, GearRatio.High, GearRatio.Low, GearRatio.Off);
+        //this.shiftSolenoid = new SciSolenoid<GearRatio>(PortMap.SHIFTING_SOLENOID, GearRatio.High, GearRatio.Low, GearRatio.Off);
 
         Robot.logger.logFinalPIDConstants("tank angle PID", this.tankAnglePID);
         Robot.logger.logFinalField       ("input deadzone", INPUT_DEADZONE);
@@ -119,7 +119,9 @@ public class DriveSubsystem extends Subsystem implements LogUpdater {
         if (!this.assisted) {
             double leftInput  = leftStick.getProcessedY();
             double rightInput = rightStick.getProcessedY();
-            setSpeedTankAngularControl(leftInput, rightInput);
+            setTank(leftInput, rightInput);
+            System.out.println("left: " + leftInput + "\t right: " + rightInput);
+            //setSpeedTankAngularControl(leftInput, rightInput);
         }
     }
 	

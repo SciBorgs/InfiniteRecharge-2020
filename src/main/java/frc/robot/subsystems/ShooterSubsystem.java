@@ -7,6 +7,7 @@ import edu.wpi.first.wpilibj.command.Subsystem;
 import frc.robot.PortMap;
 import frc.robot.Robot;
 import frc.robot.controllers.PID;
+import frc.robot.helpers.DelayedPrinter;
 import frc.robot.robotState.RobotStateUpdater;
 import frc.robot.robotState.RobotState.SD;
 import frc.robot.sciSensorsActuators.SciSpark;
@@ -48,13 +49,14 @@ public class ShooterSubsystem extends Subsystem {
     this.shooterSparkVelocityPID.setD(SHOOTER_VELOCITY_D);
     this.shooterSparkVelocityPID.setOutputRange(SHOOTER_SPARK_MIN_OUTPUT, SHOOTER_SPARK_MAX_OUTPUT);
 
+    /*
     this.hoodEncoder = new SciThroughBoreEncoder(PortMap.HOOD_ENCODER);
     this.hoodEncoder.setDistancePerRotation(2 * Math.PI * HOOD_SPARK_GEAR_RATIO);
-    this.hoodEncoder.setAngle(Math.toRadians(HOOD_INITIAL_ANGLE));
-    Robot.set(SD.HoodAngle, this.hoodEncoder.getRadians());
+    this.hoodEncoder.setAngle(Math.toRadians(HOOD_INITIAL_ANGLE));*/
+    Robot.set(SD.HoodAngle, 0);// this.hoodEncoder.getRadians());
     
     this.rightShooterSpark.assignSD(SciSparkSD.Velocity, SD.ShooterOmega);
-    this.hoodEncoder.assignSD(SciThroughBoreEncoderSD.Radians, SD.HoodAngle);
+    //this.hoodEncoder.assignSD(SciThroughBoreEncoderSD.Radians, SD.HoodAngle);
   }
 
   public void setHoodAngle(double angle) {
@@ -67,7 +69,9 @@ public class ShooterSubsystem extends Subsystem {
   }
 
   public void testShooterSpark(double speed){
+    DelayedPrinter.print("setting to: " + speed);
     this.rightShooterSpark.set(speed);
+    DelayedPrinter.print("is at: " + this.rightShooterSpark.get());
   }
 
   public void stopMotors() {

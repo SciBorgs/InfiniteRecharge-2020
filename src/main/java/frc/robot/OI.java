@@ -2,10 +2,10 @@ package frc.robot;
 
 import edu.wpi.first.wpilibj.XboxController;
 import edu.wpi.first.wpilibj.buttons.JoystickButton;
-import frc.robot.sciSensorsActuators.SciJoystick;
+import frc.robot.sciSensorsActuators.SciJoystick;/*
 import frc.robot.subsystems.IntakeSubsystem;
 import frc.robot.commands.*;
-import frc.robot.commands.auto.*;
+import frc.robot.commands.auto.*;*/
 import frc.robot.commands.drive.*;
 import frc.robot.commands.intake.*;
 import frc.robot.commands.shooter.*;
@@ -31,14 +31,12 @@ public class OI {
         this.gearShiftButton.whenPressed(new LowGearCommand());
         this.gearShiftButton.whenReleased(new HighGearCommand());
 
-        this.toggleDriveDirectionButton = new JoystickButton(rightStick, PortMap.JOYSTICK_TRIGGER);
+        this.toggleDriveDirectionButton = new JoystickButton(this.rightStick, PortMap.JOYSTICK_TRIGGER);
         this.toggleDriveDirectionButton.whenPressed(new ToggleDriveDirection());
 
-        this.shootButton = new JoystickButton(rightStick, PortMap.JOYSTICK_TRIGGER);
+        this.shootButton = new JoystickButton(this.rightStick, PortMap.JOYSTICK_TRIGGER);
         this.shootButton.whenActive(new ShootCommand());
         this.shootButton.whenReleased(new StopShooterCommand());
-
-
     }
 }
 

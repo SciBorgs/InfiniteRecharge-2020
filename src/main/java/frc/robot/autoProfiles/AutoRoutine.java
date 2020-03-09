@@ -81,6 +81,7 @@ public class AutoRoutine {
         cGroup.start();
     }
 
+    // gay
     public void straight (double distance) {
         Waypoint w1 = new Waypoint(distance, 0.0, Geo.HORIZONTAL_ANGLE);
         CommandGroup cGroup = new CommandGroup();

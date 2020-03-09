@@ -1,7 +1,7 @@
 package frc.robot.helpers;
 
 public class DelayedPrinter {
-    public static final int INTERVAL = 20; // default num of ticks/print
+    public static final int INTERVAL = 5; // default num of ticks/print
     public static double numTicks = 0;     // rmbr that each tick is .02 seconds, 50 ticks/second
 
     public static void print (String message, int interval) {

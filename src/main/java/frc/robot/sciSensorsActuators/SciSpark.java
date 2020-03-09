@@ -130,6 +130,10 @@ public class SciSpark extends CANSparkMax implements RobotStateUpdater, SciSenso
         return sciGet(SciSparkSD.Value) + newJerk;
     }
 
+    public void overrideSet(double speed){
+        super.set(speed);
+    }
+
     public void set(double speed, double maxJerk) {
         if(ignore()){return;}
         this.goalSpeed = speed;

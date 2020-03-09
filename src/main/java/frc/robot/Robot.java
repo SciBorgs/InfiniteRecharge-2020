@@ -7,6 +7,7 @@ import java.util.Optional;
 
 import frc.robot.subsystems.*;
 import frc.robot.autoProfiles.AutoRoutine;
+import frc.robot.commands.drive.TankDriveCommand;
 import frc.robot.helpers.*;
 import frc.robot.dataTypes.*;
 import frc.robot.logging.*;
@@ -43,7 +44,7 @@ public class Robot extends TimedRobot implements LogUpdater {
     public static PigeonSubsystem     pigeonSubsystem     = new PigeonSubsystem();
     public static LimelightSubsystem  limelightSubsystem  = new LimelightSubsystem();
     public static PneumaticsSubsystem pneumaticsSubsystem = new PneumaticsSubsystem();
-    public static TurretSubsystem     turretSubsystem     = new TurretSubsystem();
+    public static TurretSubsystem     turretSubsystem;//     = new TurretSubsystem();
     public static ShooterSubsystem    shooterSubsystem    = new ShooterSubsystem();
 
     public static IntakeSubsystem     intakeSubsystem     = new IntakeSubsystem();
@@ -181,7 +182,7 @@ public class Robot extends TimedRobot implements LogUpdater {
     public void robotPeriodic() {
         stateHistory.addState(getState().copy());
         allUpdateRobotStates();
-        allModels();
+        //allModels();
         Scheduler.getInstance().run();
         DelayedPrinter.print("x: " + getPos().x +"y: "+ getPos().y + "\nheading: "  + getWaypoint().heading, 5);
         DelayedPrinter.incTicks();
@@ -190,6 +191,7 @@ public class Robot extends TimedRobot implements LogUpdater {
         SmartDashboard.putNumber("Heading", get(SD.Angle));
         SmartDashboard.putBoolean("reversed?", driveSubsystem.reversed);
         SmartDashboard.putNumber("left wheel speed", get(SD.LeftWheelSpeed));
+        SmartDashboard.putNumber("OMEGA", Robot.get(SD.ShooterOmega));
     }
 
 
@@ -201,7 +203,6 @@ public class Robot extends TimedRobot implements LogUpdater {
         set(SD.Y, ORIGINAL_POINT.y);
         set(SD.Angle, ORIGINAL_ANGLE);
         //intakeSubsystem.reverseIntake();
-        driveSubsystem.setReversed(false);
         // new TemporaryInstantCommand().start();
         //pneumaticsSubsystem.stopCompressor();
         //autoRoutine.testDriveDirection();
@@ -212,6 +213,7 @@ public class Robot extends TimedRobot implements LogUpdater {
     @Override
     public void autonomousPeriodic() {
         shooterSubsystem.setShooterOmega(100);
+        hopperSubsystem.elevator();
         //shooterSubsystem.setHoodAngle(Math.toRadians(25));
         //System.out.println("HOOD ANGLE: " + Robot.get(SD.HoodAngle));
         //System.out.println("OMEGA: " + Robot.get(SD.ShooterOmega));
@@ -232,7 +234,7 @@ public class Robot extends TimedRobot implements LogUpdater {
         shooterSubsystem.testShooterSpark(0.1);
         //System.out.println("current: " + intakeSubsystem.intakeSpark.get());
        
-        // (new TankDriveCommand()).start();
+        (new TankDriveCommand()).start();
         //allPeriodicLogs();
         //logDataPeriodic();
     }

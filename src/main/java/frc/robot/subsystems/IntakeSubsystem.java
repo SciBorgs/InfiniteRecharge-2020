@@ -17,8 +17,8 @@ public class IntakeSubsystem extends Subsystem {
     public static final double INTAKE_SPEED = 0.5; //Temporary
 
     public IntakeSubsystem() {
-        this.upDownSolenoid = new SciSolenoid<IntakeValue>(PortMap.INTAKE_SOLENOID_PORTS, IntakeValue.Up, IntakeValue.Down, IntakeValue.Off);
-        this.intakeSpark = new SciSpark(PortMap.INTAKE_SPARK);
+        //this.upDownSolenoid = new SciSolenoid<IntakeValue>(PortMap.INTAKE_SOLENOID_PORTS, IntakeValue.Up, IntakeValue.Down, IntakeValue.Off);
+        //this.intakeSpark = new SciSpark(PortMap.INTAKE_SPARK);
     }
     public void setIntakeSpeed(double speed) {
         this.intakeSpark.set(speed);

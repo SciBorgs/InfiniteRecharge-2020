@@ -54,13 +54,13 @@ public class PortMap {
 
     public static final int[] SHIFTING_SOLENOID = {1, 2};
 
-    public static final int LEFT_FRONT_SPARK = 6; 
-    public static final int LEFT_MIDDLE_SPARK = 5; 
-    public static final int LEFT_BACK_SPARK = 54;
+    public static final int LEFT_FRONT_SPARK = 58; 
+    public static final int LEFT_MIDDLE_SPARK = 9; 
+    public static final int LEFT_BACK_SPARK = 7;
 
-    public static final int RIGHT_FRONT_SPARK = 57;
-    public static final int RIGHT_MIDDLE_SPARK = 3;
-    public static final int RIGHT_BACK_SPARK = 56;
+    public static final int RIGHT_FRONT_SPARK = 55;
+    public static final int RIGHT_MIDDLE_SPARK = 5;
+    public static final int RIGHT_BACK_SPARK = 4;
 
     // *******************INTAKE******************//
 
@@ -69,19 +69,19 @@ public class PortMap {
 
     // *******************HOPPER******************//
 
-    public static final int HOPPER_SUCK_SPARK = 58;
-    public static final int HOPPER_ELEVATOR_SPARK = -1;
+    public static final int HOPPER_SUCK_SPARK = 57;
+    public static final int HOPPER_ELEVATOR_SPARK = 8;
 
     // *******************SHOOTER******************//
 
-    public static final int SHOOTER_LEFT_SPARK = 4;
-    public static final int SHOOTER_RIGHT_SPARK = -1;
-    public static final int HOOD_SPARK = 55;
+    public static final int SHOOTER_LEFT_SPARK = 59;
+    public static final int SHOOTER_RIGHT_SPARK = 56;
+    public static final int HOOD_SPARK = 3;
     public static final int HOOD_ENCODER = -1;
 
     // *******************TURRET******************//
 
-    public static final int TURRET_SPARK = -1;
+    public static final int TURRET_SPARK = 6;
     public static final int TURRET_ENCODER = -1;
     
     //*******************MISC********************//
