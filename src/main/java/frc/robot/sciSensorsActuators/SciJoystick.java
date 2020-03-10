@@ -1,8 +1,15 @@
 package frc.robot.sciSensorsActuators;
 
-import edu.wpi.first.wpilibj.Joystick;
+import java.util.HashMap;
 
-public class SciJoystick extends Joystick {
+import edu.wpi.first.wpilibj.Joystick;
+import frc.robot.robotState.RobotStateUpdater;
+import frc.robot.robotState.RobotState.SD;
+import frc.robot.sciSensorsActuators.SciJoystick.SciJoystickSD;
+
+public class SciJoystick extends Joystick implements RobotStateUpdater,SciSensorActuator<SciJoystickSD> {
+    public static enum SciJoystickSD {Y};
+    public HashMap<SciJoystickSD, SD> sdMap;
 
     private double inputDeadZoneX = 0.11; //deadzone because the joysticks are bad and they detect input when there is none
     private double inputDeadZoneY = 0.11; //deadzone because the joysticks are bad and they detect input when there is none
@@ -21,4 +28,13 @@ public class SciJoystick extends Joystick {
     //Cannot override final method 
     public double getProcessedX() {return  this.deadzoneX(this.getX());}
     public double getProcessedY() {return -this.deadzoneY(this.getY());}    
+
+    @Override
+    public HashMap<SciJoystickSD, SD> getSDMap() { return this.sdMap; }
+
+    @Override
+    public String getDeviceName() { return "Joystick on port: " + super.getPort(); }
+
+    @Override
+    public void updateRobotState() { sciSet(SciJoystickSD.Y, super.getY()); }
 }

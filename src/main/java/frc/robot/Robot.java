@@ -19,6 +19,7 @@ import edu.wpi.first.networktables.NetworkTableEntry;
 import edu.wpi.first.wpilibj.TimedRobot;
 import edu.wpi.first.wpilibj.Timer;
 import edu.wpi.first.wpilibj.command.Scheduler;
+import edu.wpi.first.wpilibj.shuffleboard.Shuffleboard;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import frc.robot.controllers.*;
 import frc.robot.stateEstimation.interfaces.*;
@@ -192,6 +193,7 @@ public class Robot extends TimedRobot implements LogUpdater {
         SmartDashboard.putBoolean("reversed?", driveSubsystem.reversed);
         SmartDashboard.putNumber("left wheel speed", get(SD.LeftWheelSpeed));
         SmartDashboard.putNumber("OMEGA", Robot.get(SD.ShooterOmega));
+
     }
 
 

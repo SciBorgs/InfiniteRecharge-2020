@@ -42,6 +42,10 @@ public class RobotState implements Iterable<Pair<SD, Double>>{
         HoodAngle,
         ShooterOmega,
 
+        // Joystick
+        LeftJoystick,
+        RightJoystick,
+
         DistanceToPort,
         Time,
     }
