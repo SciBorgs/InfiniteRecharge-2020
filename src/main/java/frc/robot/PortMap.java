@@ -69,8 +69,8 @@ public class PortMap {
 
     // *******************HOPPER******************//
 
-    public static final int HOPPER_SUCK_SPARK = 57;
-    public static final int HOPPER_ELEVATOR_SPARK = 8;
+    public static final int HOPPER_SUCK_SPARK = 8;
+    public static final int HOPPER_ELEVATOR_SPARK = 57;
 
     // *******************SHOOTER******************//
 
@@ -93,5 +93,5 @@ public class PortMap {
 
     public static final int PRESSURE_SENSOR = 0;
     public static final int TARGETING_LIGHT_DIGITAL_OUTPUT = 5;
-    public static final int PIGEON_ID = 58;
+    public static final int PIGEON_ID = 20;
 }

@@ -14,7 +14,10 @@ public class SciJoystick extends Joystick implements RobotStateUpdater,SciSensor
     private double inputDeadZoneX = 0.11; //deadzone because the joysticks are bad and they detect input when there is none
     private double inputDeadZoneY = 0.11; //deadzone because the joysticks are bad and they detect input when there is none
 
-    public SciJoystick(int port) {super(port);}
+    public SciJoystick(int port) {
+        super(port);
+        this.sdMap = new HashMap<>();
+    }
 
     public void setInputDeadZoneX(double inputDeadZoneX) {this.inputDeadZoneX = inputDeadZoneX; }
     public void setInputDeadZoneY(double inputDeadZoneY) {this.inputDeadZoneY = inputDeadZoneY; }

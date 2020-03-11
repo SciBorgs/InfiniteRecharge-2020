@@ -153,6 +153,8 @@ public class Robot extends TimedRobot implements LogUpdater {
         }
     }
 
+    SciffleBoard sciffleBoard;
+
     public void robotInit() {
         timer.start();
         attemptsSinceLastLog = 0;
@@ -168,7 +170,8 @@ public class Robot extends TimedRobot implements LogUpdater {
         addSDToLog(SD.Y);
         addSDToLog(SD.Angle);
         addSDToLog(SD.Time);
-        
+        sciffleBoard = new SciffleBoard();
+        sciffleBoard.addNetworkTableEntrys();
         
     }
 
@@ -183,17 +186,19 @@ public class Robot extends TimedRobot implements LogUpdater {
     public void robotPeriodic() {
         stateHistory.addState(getState().copy());
         allUpdateRobotStates();
-        //allModels();
+        allModels();
         Scheduler.getInstance().run();
         DelayedPrinter.print("x: " + getPos().x +"y: "+ getPos().y + "\nheading: "  + getWaypoint().heading, 5);
         DelayedPrinter.incTicks();
+        DelayedPrinter.print("Pigeon: " + pigeonSubsystem.getPigeon().getAngle());
+        SmartDashboard.putNumber("Pigeon Angle", get(SD.PigeonAngle));
         SmartDashboard.putNumber("GetPos.x", getPos().x);
         SmartDashboard.putNumber("GetPos.y", getPos().y);
         SmartDashboard.putNumber("Heading", get(SD.Angle));
         SmartDashboard.putBoolean("reversed?", driveSubsystem.reversed);
         SmartDashboard.putNumber("left wheel speed", get(SD.LeftWheelSpeed));
         SmartDashboard.putNumber("OMEGA", Robot.get(SD.ShooterOmega));
-
+        sciffleBoard.update();
     }
 
 
@@ -214,8 +219,7 @@ public class Robot extends TimedRobot implements LogUpdater {
 
     @Override
     public void autonomousPeriodic() {
-        shooterSubsystem.setShooterOmega(100);
-        hopperSubsystem.elevator();
+        //shooterSubsystem.setShooterOmega(100);
         //shooterSubsystem.setHoodAngle(Math.toRadians(25));
         //System.out.println("HOOD ANGLE: " + Robot.get(SD.HoodAngle));
         //System.out.println("OMEGA: " + Robot.get(SD.ShooterOmega));
@@ -233,7 +237,7 @@ public class Robot extends TimedRobot implements LogUpdater {
     }
 
     public void teleopPeriodic() {
-        shooterSubsystem.testShooterSpark(0.1);
+        //shooterSubsystem.testShooterSpark(0.1);
         //System.out.println("current: " + intakeSubsystem.intakeSpark.get());
        
         (new TankDriveCommand()).start();

@@ -42,7 +42,7 @@ public class SciffleBoard {
         makeRegNTE(driveTab, SD.LeftJoystick,  -1, 1, BuiltInWidgets.kNumberBar);
         makeRegNTE(driveTab, SD.LeftWheelVal,  -1, 1, BuiltInWidgets.kNumberBar);
         makeRegNTE(driveTab, SD.RightWheelVal, -1, 1, BuiltInWidgets.kNumberBar);
-        makeFunctionNTE(shooterTab, SD.HoodAngle,   17, 65, a -> Math.toDegrees(a), BuiltInWidgets.kDial);
+        makeFunctionNTE(shooterTab, SD.HoodAngle,   17, 65, Math::toDegrees, BuiltInWidgets.kDial);
         makeRegNTE(shooterTab, SD.TurretAngle, - Math.PI / 2, Math.PI / 2, BuiltInWidgets.kNumberBar);
         makeRegNTE(shooterTab, SD.ShooterOmega, 0, 10000, BuiltInWidgets.kNumberBar);
     }
