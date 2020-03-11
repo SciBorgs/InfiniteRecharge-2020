@@ -65,6 +65,7 @@ public class Robot extends TimedRobot implements LogUpdater {
 
     public static double get(SD sd)            {return getState().get(sd);}
     public static void   set(SD sd, double val){       getState().set(sd, val);}
+    public static <K> void setMapped(BiHashMap<K,Double> biMap, SD sd, K key) { getState().setMapped(biMap, sd, key);}
     public static void optionalSet(Optional<SD> optionalSD , double val){       
         getState().optionalSet(optionalSD, val);
     }
